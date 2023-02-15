@@ -3,9 +3,13 @@ infra_setup.sh
 
 # For installing "Bürokratt", there are 4 scripts for 4 vm-s and config file.
 bykstack - byk_build.sh
+
 databases - database_byk_build.sh
+
 bot - bot_byk_build.sh
+
 trainingbot - trainbot_byk_build.sh
+
 config.txt
 
 # Before using scripts user has to:
