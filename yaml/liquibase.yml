@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
 
-    byk-liquibase-update:
+   byk-liquibase-update:
     image: liquibase/liquibase
     command: --url=jdbc:postgresql://DB_IP:5433/byk?user=byk --password= --changelog-file=/master.yml update
     ports:
