@@ -1,25 +1,14 @@
 version: '3.9'
-
 services:
-
-
-  byk-resql:
-    container_name: byk-resql
-    image: riaee/byk-resql:11
-    environment:
-      - sqlms.datasources.[0].name=byk
-      - sqlms.datasources.[0].jdbcUrl=jdbc:postgresql://DB_IP:5433/byk?sslmode=require
-      - sqlms.datasources.[0].username=byk
-      - sqlms.datasources.[0].password=
-      - logging.level.org.springframework.boot=INFO
+  resql:
+    container_name: resql
+    build:
+      context: .
+      network: host
     ports:
-      - 8082:8443
+      - 8082:8082
     volumes:
-      - ./server.xml:/usr/local/tomcat/conf/server.xml:ro
-      - ./cert.crt:/usr/local/tomcat/conf/cert.crt:ro
-      - ./key.key:/usr/local/tomcat/conf/key.key:ro
-      - ../DSL.Resql:/usr/local/tomcat/templates/byk/
-    restart: always
+      - ./DSL.Resql:/workspace/app/templates/
     networks:
       - bykstack
 
@@ -27,3 +16,5 @@ networks:
   bykstack:
     name: bykstack
     driver: bridge
+    driver_opts:                         
+       com.docker.network.driver.mtu: 1400
