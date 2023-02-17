@@ -11,7 +11,7 @@ Run the following command
 ##### Dmapper  
 Currently `handlebars` files are copied into a `byk` folder.
 
-Example outcome
+Example outcome  
 `http://localhost:3000//byk/byk/notification_redirected_chat`
 ![image](https://user-images.githubusercontent.com/101868197/219674765-155cdd52-df07-4cb7-92da-bef6621aa246.png)
 
