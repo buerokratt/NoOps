@@ -1,3 +1,8 @@
+#### About
+Here is documented the changes required for RESQL and POSTGRES DB database connection
+
+
+`application.yml`  
 ```
 spring:
   profiles:
