@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  widget:
+    container_name: widget
+    build:
+      context: .
+      network: host
+    ports:
+      - 3000:443
+    volumes:
+      - ./public/widget-index.html:/usr/share/nginx/html/widget/index.html
+
+    networks:
+      - bykstack
+
+networks:
+  bykstack:
+    name: bykstack
+    driver: bridge
+    driver_opts:                         
+       com.docker.network.driver.mtu: 1400
