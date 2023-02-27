@@ -73,6 +73,13 @@ services:
     networks:
       - bykstack
       
+  buerokratt_GUI:
+    container_name: byk-admin
+    build:
+      context: .
+      target: bykstack
+    ports:
+      - 3001:80 
 
   tim-postgresql:
     container_name: tim-postgresql
