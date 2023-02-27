@@ -2,7 +2,7 @@ version: '3.9'
 services:
 
   ruuter:
-    container_name: ruuter
+    container_name: byk-public-ruuter
     build:
       context: .
       network: host
@@ -14,7 +14,7 @@ services:
       - bykstack
 
   priv-ruuter:
-    container_name: private-ruuter
+    container_name: byk-private-ruuter
     build:
       context: .
       network: host
@@ -59,7 +59,7 @@ services:
     networks:
       - bykstack
   widget:
-    container_name: widget
+    container_name: byk-widget
     build:
       context: .
       network: host
@@ -71,7 +71,7 @@ services:
       - bykstack
       
   resql:
-    container_name: resql
+    container_name: byk-resql
     build:
       context: .
       network: host
@@ -83,7 +83,7 @@ services:
       - bykstack
       
   dmapper:
-    container_name: dmapper
+    container_name: byk-dmapper
     build:
       context: .
       network: host 
@@ -93,6 +93,42 @@ services:
       - ./DSL.DMapper:/workspace/app/views/byk/
     networks:
       - bykstack
+      
+
+  tim-postgresql:
+    container_name: tim-postgresql
+    image: postgres:14.1
+#    command: ["postgres", "-c", "ssl=on", "-c", "ssl_cert_file=/etc/tls/tls.crt", "-c", "ssl_key_file=/etc/tls/tls.key"]
+    environment:
+      - POSTGRES_USER=tim
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=tim
+    volumes:
+#      - ./tim-db/cert.crt:/etc/tls/tls.crt
+#      - ./tim-db/key.key:/etc/tls/tls.key
+      - tim-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - bykstack
+
+  users-db:
+    container_name: users-db
+    image: postgres:14.1
+#    command: ["postgres", "-c", "ssl=on", "-c", "ssl_cert_file=/etc/tls/tls.crt", "-c", "ssl_key_file=/etc/tls/tls.key"]
+    environment:
+      - POSTGRES_USER=byk
+      - POSTGRES_PASSWORD=01234
+      - POSTGRES_DB=byk
+    volumes:
+#      - ./users-db/cert.crt:/etc/tls/tls.crt
+#      - ./users-db/key.key:/etc/tls/tls.key
+      - users-db:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    networks:
+      - bykstack
+
 
 networks:
   bykstack:
