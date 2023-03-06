@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ruuter
+spec:
+  selector:
+    matchLabels:
+      app: ruuter
+  serviceName: ruuter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ruuter
+    spec:
+      containers:
+        - name: byk-public-ruuter
+          image: public-ruuter
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: dsl
+              mountPath: /DSL
+  volumeClaimTemplates:
+  - metadata:
+      name: dsl
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
