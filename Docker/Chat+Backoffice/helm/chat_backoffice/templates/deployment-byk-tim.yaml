@@ -16,3 +16,6 @@ spec:
           image: riaee/byk-tim:07
           ports:
             - containerPort: 8443
+          envFrom:
+            - configMapRef:
+              name: byk-env
