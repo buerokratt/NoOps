@@ -11,7 +11,7 @@ Make sure to store the passphrased used.
 
 Create the insecure key, the one without a passphrase, and shuffle the key names
 
-`openssl rsa -in server.key -out server.key.insecure`  
+```openssl rsa -in server.key -out server.key.insecure```
 
 `mv server.key server.key.secure`
 `mv server.key.insecure server.key`  
