@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: byk-resql
+spec:
+  selector:
+    matchLabels:
+      app: byk-resql
+  serviceName: byk-resql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: byk-resql
+    spec:
+      containers:
+        - name: byk-resql
+          image: byk-resql  # TODO: change
+          ports:
+            - containerPort: 8082
+              name: http
+          volumeMounts:
+            - name: resql-templates
+              mountPath: /workspace/app/templates/
+  volumeClaimTemplates:
+  - metadata:
+      name: resql-templates
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Mi

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: byk-dmapper
+spec:
+  selector:
+    matchLabels:
+      app: byk-dmapper
+  serviceName: byk-dmapper
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: byk-dmapper
+    spec:
+      containers:
+        - name: byk-dmapper
+          image: byk-dmapper  # TODO: change
+          ports:
+            - containerPort: 3000
+              name: http
+          volumeMounts:
+            - name: dmapper-views
+              mountPath: /workspace/app/templates/
+  volumeClaimTemplates:
+  - metadata:
+      name: dmapper-views
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Mi

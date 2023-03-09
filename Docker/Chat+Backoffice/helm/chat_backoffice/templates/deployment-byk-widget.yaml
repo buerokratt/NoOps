@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-widget
+spec:
+  selector:
+    matchLabels:
+      app: byk-widget
+  template:
+    metadata:
+      labels:
+        app: byk-widget
+    spec:
+      containers:
+        - name: byk-widget
+          image: byk-widget # TODO: change
+          ports:
+            - containerPort: 443
+              name: http

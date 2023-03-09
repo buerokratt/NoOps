@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: priv-ruuter
+spec:
+  selector:
+    matchLabels:
+      app: priv-ruuter
+  serviceName: priv-ruuter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: priv-ruuter
+    spec:
+      containers:
+        - name: byk-private-ruuter
+          image: public-ruuter  # TODO: change
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: ruuter.cors.allowedOrigins
+              value: http://test.buerokratt.ee:3000
+          volumeMounts:
+            - name: dsl
+              mountPath: /DSL
+  volumeClaimTemplates:
+  - metadata:
+      name: private-dsl
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
