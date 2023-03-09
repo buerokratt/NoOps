@@ -7,7 +7,7 @@ IMPORTANT!!!
 Make sure to store the passphrased used.
 
 
-` openssl genrsa -des3 -out server.key 2048 `  
+```openssl genrsa -des3 -out server.key 2048```
 
 Create the insecure key, the one without a passphrase, and shuffle the key names
 
