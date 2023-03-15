@@ -42,7 +42,7 @@ volumes:
 
 networks:
   opensearch-net:
-    name: oensearch-net
+    name: opensearch-net
     driver: bridge
     driver_opts:                         
             com.docker.network.driver.mtu: 1400
