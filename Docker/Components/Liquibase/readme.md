@@ -55,10 +55,10 @@ Create a new database ( for example `treening`)
 ```
 createdb -U byk treening
 ```
-To seed the new database make sure to change following line  
-`
+To seed the new database make sure to change following line in `docker-compose.yml`    
+```
 command: --url=jdbc:postgresql://database_address:5433/byk?user=byk --password= --changelog-file=/master.yml update
-`
+```
 into
 ```
 command: --url=jdbc:postgresql://database_address:5433/treening?user=byk --password= --changelog-file=/master.yml update
