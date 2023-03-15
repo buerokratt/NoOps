@@ -66,3 +66,6 @@ command: --url=jdbc:postgresql://database_address:5433/treening?user=byk --passw
 
 ##### RESQL
 To make sure, that your RESQL container can connect to your database, replace database name to mirror the correct one
+
+##### Changelog  
+For test purposes, changelog and master.yml is added
