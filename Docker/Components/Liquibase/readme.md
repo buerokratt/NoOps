@@ -63,3 +63,6 @@ into
 ```
 command: --url=jdbc:postgresql://database_address:5433/treening?user=byk --password= --changelog-file=/master.yml update
 ```
+
+##### RESQL
+To make sure, that your RESQL container can connect to your database, replace database name to mirror the correct one
