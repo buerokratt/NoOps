@@ -10,7 +10,7 @@ services:
     volumes:
       - ./DSL.Liquibase/master.yml:/liquibase/master.yml
       - ./DSL.Liquibase/changelog:/liquibase/changelog
-      - ./DSL.Liquibase/data:/liquibase/data
+      - ./DSL.Liquibase/data:/liquibase/data # Comment this out, unless marked otherwise
     networks:
       - bykstack
       
