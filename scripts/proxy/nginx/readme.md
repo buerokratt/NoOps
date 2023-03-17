@@ -52,7 +52,7 @@ In `/etc/nginx/nginx.conf` check if:
 ```
 include /etc/nginx/conf.d/*.conf;
 ```
-is present. If not add it
+is present. If not add it, otherwise it wont be loaded as part of the nginx reverse proxy
 
 Example:
 
@@ -113,3 +113,5 @@ http {
 #	include /etc/nginx/sites-availabe/*;
 }
 ```
+#### Note  
+You can create a conf file for every service, nginx.conf will load them due to `include /etc/nginx/conf.d/*.conf;`
