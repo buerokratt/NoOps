@@ -26,3 +26,5 @@ cd /var/lib/
 sudo mv docker/ /opt/docker
 sudo ln -s /opt/docker
 ls -al | grep docker
+sudo systemctl restart docker.service
+sudo systemctl restart docker.socket
