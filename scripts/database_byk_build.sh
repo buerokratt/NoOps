@@ -35,9 +35,8 @@ fi
 
 echo -e "[+] \x1b[1;32mreplace in files placeholders with config values\x1b[0m"
 sed -i "s|POSTGRES_PASSWORD=123|POSTGRES_PASSWORD=$safe_tim_db|g;
-  s|POSTGRES_PASSWORD=01234|POSTGRES_PASSWORD=$safe_byk_db|g;
   s|POSTGRES_PASSWORD=01234|POSTGRES_PASSWORD=$safe_byk_db|g" $sqlcompose
-sed -i "s|users-db|$dburl|g" $backofficompose
+sed -i "s|users-db|$timdb|g" $backofficompose
 cd "$bykstack_dir/sql-db/"
 
 #generate_certs
@@ -88,7 +87,7 @@ if [ $( docker ps -a -f name=users-db | wc -l ) -eq 2 ]; then
   output=$( echo ${status} | awk '{ print $7}' )
   echo "$output"
   if [ $output == "Up" ]; then
-    docker run --network=bykstack riaee/byk-users-db:liquibase20220615 bash -c "sleep 5 && liquibase --url=jdbc:postgresql://$dburl:5433/byk?user=byk --password=$safe_byk_db --changelog-file=/master.yml update"
+    docker run --network=bykstack riaee/byk-users-db:liquibase20220615 bash -c "sleep 5 && liquibase --url=jdbc:postgresql://$timdb:5433/byk?user=byk --password=$safe_byk_db --changelog-file=/master.yml update"
     psqlcommand="insert into configuration(key, value) values ('bot_institution_id', '$bot_name');"
     psqlcommand2='"'$psqlcommand'"'
     docker run --network=bykstack ubuntu:latest bash -c "apt-get -y update && apt-get -y install postgresql-client && PGPASSWORD=$safe_byk_db psql -d byk -U byk -h users-db -p 5432 -c $psqlcommand2 -c 'CREATE EXTENSION hstore;'"
