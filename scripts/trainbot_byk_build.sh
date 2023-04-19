@@ -25,7 +25,7 @@ deploy="$buildpath/Installation-Guides/default-setup/chatbot-and-training/bot_tr
 train="$buildpath/Installation-Guides/default-setup/chatbot-and-training/bot_training/train.sh"
 echo "$(sed "s|DIR=/your/actual/directory|DIR=$buildpath/Installation-Guides/default-setup/chatbot-and-training/bot/loba|g" $train)" > $train
 echo "$(sed "s|DIR=/your/actual/directory|DIR=$buildpath/Installation-Guides/default-setup/chatbot-and-training/bot/loba|g" $deploy)" > $deploy
-echo "$(sed "s|BOT_HOST='BOT_HOSTNAME'|BOT_HOST='$keytoolOU'|g" $deploy)" > $deploy
+echo "$(sed "s|BOT_HOST='BOT_HOSTNAME'|BOT_HOST='buerokratt'|g" $deploy)" > $deploy
 echo "$(sed "s|BOT_USER='BOT_USER'|BOT_USER='$username'|g" $deploy)" > $deploy
 echo "$(sed "s|SSH_KEY='SSH_KEY_PATH'|SSH_KEY='$SSH_KEY'|g" $deploy)" > $deploy
 
