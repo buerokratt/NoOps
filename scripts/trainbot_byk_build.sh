@@ -30,7 +30,7 @@ echo "$(sed "s|BOT_USER='BOT_USER'|BOT_USER='$username'|g" $deploy)" > $deploy
 echo "$(sed "s|SSH_KEY='SSH_KEY_PATH'|SSH_KEY='$SSH_KEY'|g" $deploy)" > $deploy
 
 cd $buildpath/Installation-Guides/default-setup/chatbot-and-training/bot_training/
-mv * $buildpath/../
+mv * $buildpath
 cd $buildpath
 chmod +x deploy.sh train.sh
 docker-compose up -d
