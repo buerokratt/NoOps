@@ -11,15 +11,6 @@ admin.play.buerokratt.ee {
         not path /treening/treening/teemad* 
     }
 
-#    route @static {
-#        root * /opt/html/training-module/assets
-#        file_server browse
-#    }
-
-#    route {
-#        try_files {path} /opt/html/training-module/index.html
-#        reverse_proxy /training/* http://admin.play.buerokratt.ee:3001
-#    }
 
     handle_path /treening/treening/teemad* {
         root * /opt/html/training-module
