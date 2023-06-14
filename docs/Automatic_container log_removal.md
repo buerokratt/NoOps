@@ -1,5 +1,5 @@
 #### About
-Here is shown, how to remove container logs using crontab monthly
+Here is shown, how to remove container logs using crontab weekly
 
 Edit file `/etc/crontab` accordingly  
 ```
