@@ -1,0 +1,103 @@
+ruuter.play.buerokratt.ee {
+	handle_path /private/v1* {
+	reverse_proxy * localhost:8090 {
+		transport http { 
+			tls 
+			tls_insecure_skip_verify 
+		}
+}
+
+}
+	handle_path /private/v2* {
+        reverse_proxy * localhost:8088 {
+
+}
+}
+
+	handle_path /v1* {
+        reverse_proxy * localhost:8080 {
+		transport http {
+                        tls
+                        tls_insecure_skip_verify
+                }
+}
+}
+        handle_path /v2* {
+        reverse_proxy * localhost:8086 {
+}
+}
+# In case there are need for a custom ruuter that handles requests to specific module only and is not or should not go through other ruuter's, add it here
+	handle_path /custom_ruuter_subpath* {
+	reverse_proxy * localhost:8087         
+}
+}
+admin.play.buerokratt.ee {
+	reverse_proxy * localhost:3004 {
+                }
+	handle_path /chat* {
+		reverse_proxy * localhost:3001 {
+		transport http {
+                        tls
+                        tls_insecure_skip_verify	
+		}
+	}
+	}
+	handle_path /training* {
+		reverse_proxy * localhost:3002 {
+		transport http {
+                        tls
+                        tls_insecure_skip_verify
+		}
+	}
+	}
+	handle_path /services* {
+		reverse_proxy * localhost:3006 {
+		transport http {
+                        tls
+                        tls_insecure_skip_verify
+		}
+	}
+    }    
+	handle_path /analytics* {
+		reverse_proxy * localhost:3010 {
+
+			}		
+	}
+	handle_path /analyticsdmapper* {
+		reverse_proxy * localhost:3011
+	}
+
+	handle_path /resql* {
+		reverse_proxy * localhost:8089
+	}
+	
+	handle_path /services* {
+		reverse_proxy * localhost:3006
+	}
+
+        handle_path /training* {
+                reverse_proxy * localhost:3104
+        }
+}
+    
+
+play.buerokratt.ee {
+	reverse_proxy /* 171.22.247.156:3003 {
+              transport http {
+                        tls
+                        tls_insecure_skip_verify
+                }
+
+	}
+
+	handle_path /resql* {
+	reverse_proxy * localhost:8082
+	}	
+
+
+}
+
+tim.play.buerokratt.ee {
+                reverse_proxy /* 171.22.247.156:8085 {
+                }
+}
