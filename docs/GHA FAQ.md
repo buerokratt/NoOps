@@ -2,7 +2,8 @@
 
 ##### STEP 1 - SSH key management
 Generate key-pair
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/tim_rsa -C "buerokratt@ria.ee"
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/***_rsa -C "buerokratt@mail.ee"
+NOTE: Change the *** to reflect the repo for which you are creating the SSH for
 
 copy private key to "Actions" (Settings/Secrets and variables/Actions) by pressing "New repository secret"
 copy public key to "Deploy keys" (Settings/Deploy keys) by pressing "Add deploy key"
