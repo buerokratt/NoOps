@@ -18,8 +18,52 @@ for example:
     in play.buerokratt.ee environment the deploy YAML is shown to push repo into /opt/etapp2/
     YAML is written, so it would create following path after it (using ruuter example) - /main/ruuter
 
+##### STEP 3 - Build image with Git Actions, tag it using .end and push it into packages  
+NOTE - This example is written using `Ruuter` repo and it triggers, when `.env` file in `dev` branch is commited to its branch
+```
+name: Build and publish Ruuter
 
-##### STEP 3 - Deploy example YAML
+on:
+  push:
+    branches: [ dev ]
+    paths:
+      - '.env'
+
+jobs:
+  PackageDeploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Docker Setup BuildX
+        uses: docker/setup-buildx-action@v2
+
+      - name: Load environment variables and set them
+        run: |
+          if [ -f .env ]; then
+            export $(cat .env | grep -v '^#' | xargs)
+          fi
+          echo "RELEASE=$RELEASE" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD=$BUILD" >> $GITHUB_ENV
+          echo "FIX=$FIX" >> $GITHUB_ENV
+      - name: Set repo
+        run: |
+           LOWER_CASE_GITHUB_REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')
+           echo "DOCKER_TAG_CUSTOM=ghcr.io/${LOWER_CASE_GITHUB_REPOSITORY}:$RELEASE-$VERSION.$BUILD.$FIX" >> $GITHUB_ENV
+      - name: Docker Build
+        run: docker image build --tag $DOCKER_TAG_CUSTOM .
+
+      - name: Log in to GitHub container registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Push Docker image to ghcr
+        run: docker push $DOCKER_TAG_CUSTOM
+```
+
+
+##### STEP 4 - Deploy example YAML for pushing repo into remote server (commit trigger)
 
 ```
 name: Deploy Docker Compose
