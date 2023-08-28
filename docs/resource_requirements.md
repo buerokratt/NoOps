@@ -6,26 +6,26 @@
 <b>RUUTER V2</b>  
 | Resource      | Request       | Limit |
 | ------------- |:-------------:| -----:|
-| CPU           | 0.25G          | 0.5G  |
+| CPU           | 0.25          | 0.5  |
 | RAM           | 256M          | 512M |
 
 
 <b>RESQL</b>  
 | Resource      | Request       | Limit |
 | ------------- |:-------------:| -----:|
-| CPU           | 0.25G             | 0.75G     |
+| CPU           | 0.25             | 0.75     |
 | RAM           | 512M      |   1G |
 
 
 <b>DATA-MAPPER</b>  
 | Resource      | Request       | Limit |
 | ------------- |:-------------:| -----:|
-| CPU           |      0.125G        | 0.5G     |
+| CPU           |      0.125        | 0.5     |
 | RAM           | 125M     |   256M |
 
 
 <b>TIM</b>  
 | Resource      | Request       | Limit |
 | ------------- |:-------------:| -----:|
-| CPU           | 0.25G            | 0.5G    |
+| CPU           | 0.25            | 0.5    |
 | RAM           | 256M      |   512M |
