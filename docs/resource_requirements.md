@@ -7,7 +7,7 @@
 | Resource      | Request       | Limit |
 | ------------- |:-------------:| -----:|
 | CPU           | 0.25G          | 0.5G  |
-| RAM           | 256M          | 512  |
+| RAM           | 256M          | 512M |
 
 
 <b>RESQL</b>  
