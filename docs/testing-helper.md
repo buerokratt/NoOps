@@ -1,4 +1,4 @@
-## Testimise Juhised
+## Testimisel abiks
 
 ### Eeltingimused:
 - Testimiseks eeldame, et kasutatakse Chrome'i.
