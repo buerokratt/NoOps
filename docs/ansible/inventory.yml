@@ -1,0 +1,13 @@
+all:
+  hosts: # Add as many hosts as needed. Make sure to add the host under "children" also
+    server_name1:
+      ansible_host: # Here goes IP for the remote server
+      ansible_user: # Here goes username for remote server
+    server_name2:
+      ansible_host: # Here goes IP for the remote server
+      ansible_user: # Here goes username for remote server
+  children:
+    group_name: # Here goes groupname, so you can run the playbooks when you dont want to specify servers one by one
+      hosts:
+        server_name1:
+        server_name2:
