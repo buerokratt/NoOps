@@ -29,5 +29,5 @@ REACT_APP_TRAINING_BASE_URL=https://admin.localhost.ee/training
 REACT_APP_ANALYTICS_BASE_URL=https://admin.localhost.ee/analytivs
 REACT_APP_SERVICES_BASE_URL=https://admin.localhost.ee/services
 REACT_APP_SETTINGS_BASE_URL=https://admin.localhost.ee/settings
-REACT_APP_MONITORING_BASE_URL=https://admin.localhost.ee
+REACT_APP_MONITORING_BASE_URL=https://admin.localhost.ee  
 REACT_APP_SERVICE_ID=analytics
