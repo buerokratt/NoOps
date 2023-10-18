@@ -14,8 +14,8 @@ postgres_container = test_postgre_db
 postgres_image = postgres:latest
 liquibase_container = test_liquibase
 liquibase_image = liquibase/liquibase:latest
-master_yml = /path/to/location/master.yml
-changelog = /path/to/location/changelog
+master_yml = ./path/to/location/master.yml
+changelog = ./path/to/location/changelog
 ```
 
 Run the script  
@@ -24,4 +24,11 @@ python3 postgre.py
 ```
 
 ##### Database updating   
-To be filled.
+Make sure, that your changelog/ folder and master.yml paths are correct and contain the correct info you wish to seed the db with.  
+Example of master.yml  
+```
+databaseChangeLog:
+  - includeAll:
+      path: changelog/
+      errorIfMissingOrEmpty: true
+```
