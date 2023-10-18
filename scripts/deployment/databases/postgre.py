@@ -15,6 +15,8 @@ postgres_container = config['PostgreSQL']['postgres_container']
 postgres_image = config['PostgreSQL']['postgres_image']
 liquibase_container = config['PostgreSQL']['liquibase_container']
 liquibase_image = config['PostgreSQL']['liquibase_image']
+master_yml = config['PostgreSQL']['master_yml']
+changelog = config['PostgreSQL']['changelog']
 
 # Check if the PostgreSQL container is already running, if it is, stop and remove
 check_command = f"docker ps --filter name={postgres_container} --format '{{.Names}}'"
@@ -34,7 +36,7 @@ subprocess.run(postgres_container_cmd, shell=True)
 time.sleep(10)
 
 # Liquibase build and seeding the database
-liquibase_cmd = f"docker run --name {liquibase_container} -v ./DSL/Liquibase/changelog:/liquibase/changelog -v ./DSL/Liquibase/master.yml:/liquibase/master.yml {liquibase_image} --url=jdbc:postgresql://{postgres_ip}:{postgres_port}/{postgres_db} --username={postgres_username} --password={postgres_password} --changeLogFile=master.yml update -Dliquibase.hub.mode=OFF"
+liquibase_cmd = f"docker run --name {liquibase_container} -v {changelog}:/liquibase/changelog -v {master_yml}:/liquibase/master.yml {liquibase_image} --url=jdbc:postgresql://{postgres_ip}:{postgres_port}/{postgres_db} --username={postgres_username} --password={postgres_password} --changeLogFile=master.yml update -Dliquibase.hub.mode=OFF"
 
 # Run Liquibase to apply your changes to the "train_db" database
 subprocess.run(liquibase_cmd, shell=True)
