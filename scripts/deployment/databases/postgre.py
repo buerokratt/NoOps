@@ -38,7 +38,7 @@ time.sleep(10)
 # Liquibase build and seeding the database
 liquibase_cmd = f"docker run --name {liquibase_container} -v {changelog}:/liquibase/changelog -v {master_yml}:/liquibase/master.yml {liquibase_image} --url=jdbc:postgresql://{postgres_ip}:{postgres_port}/{postgres_db} --username={postgres_username} --password={postgres_password} --changeLogFile=master.yml update -Dliquibase.hub.mode=OFF"
 
-# Run Liquibase to apply your changes to the "train_db" database
+# Run Liquibase to apply your changes to the database
 subprocess.run(liquibase_cmd, shell=True)
 
 # Debug line
