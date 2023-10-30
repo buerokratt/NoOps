@@ -2,7 +2,10 @@ import os
 import subprocess
 import re
 import shutil
-from config_service import *
+from config_base import *
+from colorama import Fore, Style
+
+print(f"{Fore.GREEN}Let's GO!!!{Style.RESET_ALL}")
 
 # Set up config
 def execute_command(command):
@@ -15,7 +18,7 @@ def execute_command(command):
     return stdout
 
 # Import variables from config_service.py
-config_file = "config_service.py"
+config_file = "config_base.py"
 if os.path.isfile(config_file):
     with open(config_file, "r") as file:
         config_content = file.read()
@@ -34,9 +37,14 @@ else:
     execute_command(f" git clone https://github.com/buerokratt/Service-Module.git && cd Service-Module && git branch && git checkout dev && cd ../../")
 
 # Copy files
-for source, destination in copy_files:
-    if not os.path.exists(destination) or os.path.realpath(source) != os.path.realpath(destination):
-        shutil.copy(source, destination)
+if not copy_files:
+    print("No info in config.py, skipping copy_files")
+else:
+
+    for source, destination in copy_files:
+        if source and destination:
+            if not os.path.exists(destination) or os.path.realpath(source) != os.path.realpath(destination):
+                shutil.copy(source, destination)
 
 # Change Dockerfile
 if os.path.isfile(node_dockerfile):
@@ -62,7 +70,7 @@ for dockerfile_path, modifications in dockerfile_modifications.items():
     else:
         print(f"Dockerfile not found at {dockerfile_path}")
         exit(1)
-
+print(f"{Fore.BLUE}CHECK{Fore.RED}POINT{Style.RESET_ALL}")
 # Check dockre-compose.yml
 if os.path.isfile(docker_compose_path):
     with open(docker_compose_path, "r") as file:
@@ -110,6 +118,16 @@ docker_compose_modifications = {
     ],
 }
 
+# Check if any modifications were made
+modifications_made = any(old_text != new_text for old_text, new_text in modifications)
+
+if modifications_made:
+    print(f"{Fore.GREEN}Docker-compose change was successful{Style.RESET_ALL}")
+else:
+    print(f"{Fore.GRAY}No changes made to docker-compose{Style.RESET_ALL}")
+
+#print(f"{Fore.YELLOW}[+] docker-copose.yml updated{Style.RESET_ALL}")
+
 # Define the path to .env.development
 env_path = "Service-Module/GUI/.env.development"
 # Define the content to be written
@@ -141,7 +159,7 @@ REACT_APP_SERVICE_ID={REACT_APP_SERVICE_ID}
 with open(env_path, "w") as file:
     file.write(env_content)
 
-print("[+] .env.development file updated")
+print(f"{Fore.YELLOW}[+] .env.development file updated{Style.RESET_ALL}")
 
 #.env file change
 env_file_path = "Service-Module/GUI/.env" 
@@ -151,14 +169,15 @@ if os.path.isfile(env_file_path):
     with open(env_file_path, "w") as file:
         file.write(gui_env)
 else:
-    print(f".env file not found at {env_file_path}")
+    print(f".{Fore.RED}.env not found at {env_file_path} {Style.RESET_ALL}")
     exit(1)
-
+print(f"{Fore.YELLOW}[+] .env file updated{Style.RESET_ALL}")
 
 # Run it all
-print("[+] Running containers")
-Service-Module_module_path = "scripts/Service-Module"
+ print("[+] Running containers")
+
 execute_command(f"cd Service-Module && docker-compose up -d --build && cd ../../")
 
-# Finish
-print("Enjoy the Ruuter")
+# Final debug
+print(f"{Fore.BLUE}Finished{Style.RESET_ALL}")
+print(f"{Fore.BLUE}Enjoy the Ruuter{Style.RESET_ALL}")
