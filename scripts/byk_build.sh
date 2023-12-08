@@ -50,32 +50,32 @@ sed -i "s|http://BOT_IP:5005|http://$bot_url|g;
     s|TRAINIG_BOT|$training_url|g;
     s|TRAINING_BOT_USERNAME|$username|g;
     s|TRAINING_DATA_DIRECTORY|$training_bot_dir|g" $privateurls
-sed -i "s|https://ruuter.test.buerokratt.ee|https://ruuter.$organization.buerokratt.ee|g;
-    s|https://TIM_URL|https://tim.$organization.buerokratt.ee|g;
+sed -i "s|https://ruuter.test.buerokratt.ee|https://ruuter.buerokratt.$organization.ee|g;
+    s|https://TIM_URL|https://tim.buerokratt.$organization.ee|g;
     s|https://URL_WHERE_TO_WIDGET_IS_INSTALLED|https://$organization.buerokratt.ee|g" $index
 sed -i "s|https://URL_WHERE_TO_WIDGET_IS_INSTALLED|https://$organization.buerokratt.ee|g" $chatnginx
-sed -i "s|https://PRIVATE_RUUTER_URL|https://priv-ruuter.$organization.buerokratt.ee|g;
-    s|https://TIM_URL|https://tim.$organization.buerokratt.ee|g;
-    s|https://CUSTOMER_SERVICE_URL|https://admin.$organization.buerokratt.ee|g" $envconfig
-sed -i "s|https://RUUTER_URL|https://ruuter.$organization.buerokratt.ee|g;
-    s|https://TIM_URL|https://tim.$organization.buerokratt.ee|g;
-    s|https://CUSTOMER_SERVICE_URL|https://admin.$organization.buerokratt.ee|g;
-    s|https://PRIV-RUUTER_URL|https://priv-ruuter.$organization.buerokratt.ee|g" $customernginx
+sed -i "s|https://PRIVATE_RUUTER_URL|https://priv-ruuter.buerokratt.$organization.ee|g;
+    s|https://TIM_URL|https://tim.buerokratt.$organization.ee|g;
+    s|https://CUSTOMER_SERVICE_URL|https://admin.buerokratt.$organization.ee|g" $envconfig
+sed -i "s|https://RUUTER_URL|https://ruuter.buerokratt.$organization.ee|g;
+    s|https://TIM_URL|https://tim.buerokratt.$organization.ee|g;
+    s|https://CUSTOMER_SERVICE_URL|https://admin.buerokratt.$organization.ee|g;
+    s|https://PRIV-RUUTER_URL|https://priv-ruuter.buerokratt.$organization.ee|g" $customernginx
 sed -i "s|spring.datasource.password=123|spring.datasource.password=$safe_tim_db|g;
     s|POSTGRES_PASSWORD=123|POSTGRES_PASSWORD=$safe_byk_db|g" $timdockercompose
 sed -i "s|spring.datasource.password=123|spring.datasource.password=$safe_tim_db|g;
     s|https://buerokratt.ee|https://$organization.buerokratt.ee|g;
-    s|https://admin.buerokratt.ee|https://admin.$organization.buerokratt.ee|g;
-    s|https://tim.buerokratt.ee|https://tim.$organization.buerokratt.ee|g;
+    s|https://admin.buerokratt.ee|https://admin.buerokratt.$organization.ee|g;
+    s|https://tim.buerokratt.ee|https://tim.buerokratt.$organization.ee|g;
     s|tim-postgresql|$timdb|g;
     s|tara_client_id|$taraid|g;
     s|tara_client_secret|$tarapass|g;
-    s|https://tim.byk.buerokratt.ee|https://tim.$organization.buerokratt.ee|g;
-    s|https://admin.byk.buerokratt.ee|https://admin.$organization.buerokratt.ee|g;
+    s|https://tim.byk.buerokratt.ee|https://tim.buerokratt.$organization.ee|g;
+    s|https://admin.byk.buerokratt.ee|https://admin.buerokratt.$organization.ee|g;
     s|https://byk.buerokratt.ee|https://$organization.buerokratt.ee|g;
-    s|https://ruuter.byk.buerokratt.ee|https://ruuter.$organization.buerokratt.ee|g;
-    s|https://priv-ruuter.byk.buerokratt.ee|https://priv-ruuter.$organization.buerokratt.ee|g;
-    s|https://priv-ruuter.buerokratt.ee|https://priv-ruuter.$organization.buerokratt.ee|g;
+    s|https://ruuter.byk.buerokratt.ee|https://ruuter.buerokratt.$organization.ee|g;
+    s|https://priv-ruuter.byk.buerokratt.ee|https://priv-ruuter.buerokratt.$organization.ee|g;
+    s|https://priv-ruuter.buerokratt.ee|https://priv-ruuter.buerokratt.$organization.ee|g;
     s|jwt-integration.signature.issuer=byk.buerokratt.ee|jwt-integration.signature.issuer=$organization.buerokratt.ee|g;
     s|safe_keystore_password|$keytoolpass|g;
     s|users-db|$timdb|g;
