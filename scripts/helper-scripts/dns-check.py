@@ -34,14 +34,29 @@ if __name__ == "__main__":
                     "ips": subdomain_info["ips"]
                 }
 
-    # Print the results
-    for main_domain, info in domain_dict.items():
-        print(f"Main Domain: {main_domain} {'(exists)' if info['exists'] else '(does not exist)'}")
+# Print the results
+for main_domain, info in domain_dict.items():
+    box_width = 80
+    main_domain_str = f" Main Domain: {main_domain} {'(exists)' if info['exists'] else '(does not exist)'}"
+    main_domain_str = main_domain_str[:box_width - 2].center(box_width - 2)
+    
+    print(f"+{'=' * box_width}+")
+    print(f"|{main_domain_str}|")
+    print(f"+{'-' * box_width}+")
 
-        for subdomain, subdomain_info in info["subdomains"].items():
-            exists_str = "(exists)" if subdomain_info["exists"] else "(does not exist)"
-            ips_str = ", ".join(subdomain_info["ips"]) if subdomain_info["ips"] else "No IPs found"
-            print(f"  - Subdomain: {subdomain} {exists_str}")
-            print(f"    IPs: {ips_str}")
+    for subdomain, subdomain_info in info["subdomains"].items():
+        exists_str = "(exists)" if subdomain_info["exists"] else "(does not exist)"
+        ips_str = ", ".join(subdomain_info["ips"]) if subdomain_info["ips"] else "No IPs found"
+        
+        subdomain_str = f" - Subdomain: {subdomain} {exists_str}"
+        subdomain_str = subdomain_str[:box_width - 4].center(box_width - 4)
+        
+        ips_str = f"   IPs: {ips_str}"
+        ips_str = ips_str[:box_width - 4].center(box_width - 4)
 
-    print("\nScript finished.")
+        print(f"|{subdomain_str}|")
+        print(f"|{ips_str}|")
+
+    print(f"+{'=' * box_width}+\n")
+print("Script finished.")
+
