@@ -9,7 +9,7 @@ Run scripts use `-` config scripts use `_`
 ```
 dns-check.py  
 ```
-This script is used for DNS and its subdomain chcking. Necsessary variables are written into `dns_config.py`   
+This script is used for DNS and its subdomain checking. Necsessary variables are written into `dns_config.py`   
 Example output:  
 ![image](https://github.com/buerokratt/NoOps/assets/101868197/3a1b21f3-901f-439a-87d5-ae3ab0752ddc)
 
