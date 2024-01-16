@@ -1,6 +1,9 @@
 #### About
 Here are scripts for testing  
 
+Script naming legend:  
+Run scripts use `-` config scripts use `_`
+
 ##### Scripts info  
 
 ```
