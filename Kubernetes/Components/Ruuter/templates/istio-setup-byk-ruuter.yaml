@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: byk-ruuter
+spec:
+  host: byk-ruuter
+  subsets:
+  - name: byk-ruuter
+    labels:
+      app: byk-ruuter
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: byk-ruuter
+spec:
+  hosts:
+  - byk-ruuter
+  http:
+  - route:
+    - destination:
+        host: byk-ruuter

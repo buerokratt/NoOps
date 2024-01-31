@@ -1,1 +1,46 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
 
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: test.buerokratt.ee # Domain name
+
+#ingress:
+#  tlsConfigMapName: byk-tls-configmap
+
+ingress:
+  certIssuerName: letsencrypt-prod-issuer
+
+byk:
+  dsl:
+    image:
+      registry: "ghcr.io"
+      repository: "buerokratt/buerokratt-dsl"
+      tag: "pre-alpha-kube-1.12.33"
+  ruuter:
+    dsl:
+      path: "/DSL/"
+  ruuterPrivate:
+    dsl:
+      path: "/DSL/"
+  resql:
+    dsl:
+      path: "/DSL/"
+
+images:
+  ruuter:
+    registry: "ghcr.io"
+    repository: "buerokratt/Ruuter"
+    tag: "pre-alpha-2.4.1"

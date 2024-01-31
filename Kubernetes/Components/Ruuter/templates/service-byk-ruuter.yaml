@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: byk-ruuter
+spec:
+  selector:
+    app: byk-ruuter
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
