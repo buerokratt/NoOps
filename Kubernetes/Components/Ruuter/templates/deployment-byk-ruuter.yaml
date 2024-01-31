@@ -28,14 +28,9 @@ spec:
             - name: application.logging.displayResponseContent
               value: "true"
           volumeMounts:
-            - name: dsl
-              mountPath: {{ .Values.byk.ruuter.dsl.path }}
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
-            - name: byk-dsl-services
-              mountPath: "/opt/dsl"
-              readOnly: true
           livenessProbe:
             tcpSocket:
               port: 8080
@@ -46,17 +41,6 @@ spec:
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 10
-      initContainers:
-        - name: dsl-installer
-          image: {{ .Values.byk.dsl.image.registry }}/{{ .Values.byk.dsl.image.repository }}:{{ .Values.byk.dsl.image.tag }}
-          volumeMounts:
-            - name: dsl
-              mountPath: /root/DSL/
-          command: ["/bin/sh"]
-          args:
-            - "-c"
-            - >
-              ls -l /Ruuter/public/v2/ && mv /Ruuter/public/v2/* /root/DSL/ && echo 'moved'
       volumes:
         - name: dsl
           emptyDir: {}
