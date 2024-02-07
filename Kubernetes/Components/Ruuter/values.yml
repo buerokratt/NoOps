@@ -35,9 +35,7 @@ byk:
   ruuterPrivate:
     dsl:
       path: "/DSL/"
-  resql:
-    dsl:
-      path: "/DSL/"
+      
 
 images:
   ruuter:

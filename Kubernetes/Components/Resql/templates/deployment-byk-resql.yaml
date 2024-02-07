@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-resql
+spec:
+  selector:
+    matchLabels:
+      app: byk-resql
+  template:
+    metadata:
+      labels:
+        app: byk-resql
+    spec:
+      containers:
+        - name: byk-resql
+          image: ghcr.io/buerokratt/resql:pre-alpha-2.4.0-27
+          env:
+            - name: logging.level.root
+              value: TRACE
+            - name: SQLMS_DATASOURCES_0_NAME
+              value: "byk"
+            - name: SQLMS_DATASOURCES_0_JDBCURL
+              value: "jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk"
+            - name: SQLMS_DATASOURCES_0_USERNAME
+              value: "byk"
+            - name: SQLMS_DATASOURCES_0_PASSWORD
+              value: "01234"
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT
+              value: "DEBUG"
+          ports:
+            - containerPort: 8082
+              name: http
+          volumeMounts:
+            - name: dsl
+              mountPath: {{ .Values.byk.resql.dsl.path }}
+          livenessProbe:
+            httpGet:
+              path: /datasources
+              port: 8082
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /datasources
+              port: 8082
+            initialDelaySeconds: 70
+            periodSeconds: 10
+      initContainers:
+        - name: dsl-installer
+          image: {{ .Values.byk.dsl.image.registry }}/{{ .Values.byk.dsl.image.repository }}:{{ .Values.byk.dsl.image.tag }}
+          volumeMounts:
+            - name: dsl
+              mountPath: /root/DSL/
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              ls -l /Resql/ && mv /Resql/* /root/DSL/ && echo 'moved'
+      volumes:
+        - name: dsl
+          emptyDir: {}
