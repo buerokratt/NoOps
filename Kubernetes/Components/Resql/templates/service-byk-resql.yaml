@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: byk-resql
+spec:
+  selector:
+    app: byk-resql
+  ports:
+    - port: 8082
+      targetPort: http
+      protocol: TCP
+      name: http
