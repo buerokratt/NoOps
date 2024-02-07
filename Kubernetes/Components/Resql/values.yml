@@ -34,7 +34,7 @@ byk:
       path: "/DSL/"
 
 images:
-  ruuter:
+  resql:
     registry: "ghcr.io"
     repository: "buerokratt/resql"
     tag: "re-alpha-2.4.0-27"

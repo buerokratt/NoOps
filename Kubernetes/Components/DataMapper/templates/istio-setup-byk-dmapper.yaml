@@ -1,0 +1,39 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: byk-dmapper
+spec:
+  host: byk-dmapper
+  subsets:
+  - name: byk-dmapper
+    labels:
+      app: byk-dmapper
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: byk-dmapper
+spec:
+  hosts:
+  - byk-dmapper
+  http:
+  - name: allow
+    match:
+    - sourceLabels:
+        app: byk-ruuter
+    - sourceLabels:
+        app: byk-ruuter-private
+    route:
+    - destination:
+        host: byk-dmapper
+        subset: byk-dmapper
+  - name: reject
+    route:
+    - destination:
+        host: byk-dmapper
+        subset: byk-dmapper
+    fault:
+      abort:
+        percentage:
+          value: 100.0
+        httpStatus: 403

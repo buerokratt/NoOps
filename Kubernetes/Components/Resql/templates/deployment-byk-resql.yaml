@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: byk-resql
-          image: ghcr.io/buerokratt/resql:pre-alpha-2.4.0-27
+          image: {{ .Values.images.resql.registry }}/{{ .Values.images.resql.repository }}:{{ .Values.images.resql.tag }}
           env:
             - name: logging.level.root
               value: TRACE

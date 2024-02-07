@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-dmapper
+spec:
+  selector:
+    matchLabels:
+      app: byk-dmapper
+  template:
+    metadata:
+      labels:
+        app: byk-dmapper
+    spec:
+      containers:
+        - name: byk-dmapper
+          image: {{ .Values.images.dmapper.registry }}/{{ .Values.images.dmapper.repository }}:{{ .Values.images.dmapper.tag }}
+          env:
+            - name: EXTENSION
+              value: .hbs
+          ports:
+            - containerPort: 3000
+              name: http
+          volumeMounts:
+            - name: dsl-mount
+              mountPath: {{ .Values.byk.dmapper.dsl.path }}
+            - name: byk-dsl-training
+              mountPath: "/opt/dsl-training"
+            - name: byk-dsl-services
+              mountPath: "/opt/dsl-services"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 10 
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 70
+            periodSeconds: 10 
+      initContainers:
+        - name: dsl-installer
+          image: {{ .Values.byk.dsl.image.registry }}/{{ .Values.byk.dsl.image.repository }}:{{ .Values.byk.dsl.image.tag }}
+          volumeMounts:
+            - name: dsl-mount
+              mountPath: /root/DSL/
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+                ls -l /DataMapper/ && mv /DataMapper/v1/* /root/DSL/ && echo 'moved'
+      volumes:
+        - name: dsl-mount
+          emptyDir: {}
+        - name: byk-dsl-training
+          persistentVolumeClaim:
+            claimName: byk-dsl-training
+        - name: byk-dsl-services
+          persistentVolumeClaim:
+            claimName: byk-dsl-services
