@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ruuter-byk-tim-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  labels:
+    name: ruuter-byk-tim-ingress
+spec:
+  rules:
+  - host: tim.{{ .Values.domain }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: byk-tim
+            port:
+              number: 8085
+  tls:
+  - hosts:
+    - tim.{{ .Values.domain }}
+    secretName: byk-tls-tim-secret 
