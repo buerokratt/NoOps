@@ -29,7 +29,7 @@ byk:
       registry: "ghcr.io"
       repository: "buerokratt/buerokratt-dsl"
       tag: "pre-alpha-kube-1.12.33"
-  ruuter:
+  ruuterPrivate:
     dsl:
       path: "/DSL/"
       

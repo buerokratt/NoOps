@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-ruuter-private
+spec:
+  selector:
+    matchLabels:
+      app: byk-ruuter-private
+  template:
+    metadata:
+      labels:
+        app: byk-ruuter-private
+    spec:
+      containers:
+        - name: byk-ruuter-private
+          image: "{{ .Values.images.ruuter.registry }}/{{ .Values.images.ruuter.repository }}:{{ .Values.images.ruuter.tag }}"
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: logging.level.root
+              value: INFO
+            - name: LOG_LEVEL_TIMING
+              value: INFO
+            - name: application.logging.displayRequestContent
+              value: "true"
+            - name: application.logging.displayResponseContent
+              value: "true"
+            - name: application.cors.allowedOrigins
+              value: https://admin.test.buerokratt.ee
+            - name: application.openSearchConfiguration.url
+              value: http://opensearch-node:9200
+          volumeMounts:
+            - name: dsl
+              mountPath: {{ .Values.byk.ruuterPrivate.dsl.path }}
+            - name: urls-env
+              mountPath: /app/constants.ini
+              subPath: constants.ini
+            - name: byk-dsl-services
+              mountPath: /opt/dsl
+              readOnly: true
+#          livenessProbe:
+#            tcpSocket:
+#              port: 8080
+#            initialDelaySeconds: 10
+#            periodSeconds: 10
+#          readinessProbe:
+#            tcpSocket:
+#              port: 8080
+#            initialDelaySeconds: 15
+#            periodSeconds: 10
+      initContainers:
+        - name: dsl-installer
+          image: {{ .Values.byk.dsl.image.registry }}/{{ .Values.byk.dsl.image.repository }}:{{ .Values.byk.dsl.image.tag }}
+          volumeMounts:
+            - name: dsl
+              mountPath: /root/DSL/
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              ls -l /Ruuter/private/v2/ && mv /Ruuter/private/v2/* /root/DSL/ && echo 'moved'
+      volumes:
+        - name: dsl
+          emptyDir: {}
+        - name: urls-env
+          configMap:
+            name: urls-env-config
+        - name: byk-dsl-services
+          persistentVolumeClaim:
+            claimName: byk-dsl-services
