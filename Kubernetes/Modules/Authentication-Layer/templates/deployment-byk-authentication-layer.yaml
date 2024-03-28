@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-backoffice-login
+spec:
+  selector:
+    matchLabels:
+      app: byk-backoffice-login
+  template:
+    metadata:
+      labels:
+        app: byk-backoffice-login
+    spec:
+      containers:
+        - name: byk-backoffice-login
+          image: "{{ .Values.images.authentication.registry }}/{{ .Values.images.authentication.repository }}:{{ .Values.images.authentication.tag }}"
+          #command: ["/bin/sh"]
+          #args: ["-c", "tail -f /dev/null"]
+          ports:
+            - containerPort: 443
+              name: http
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 34
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 34
+            periodSeconds: 10
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/conf.d
+              #subPath: default.conf
+            - name: env-config-volume
+              mountPath: /usr/share/nginx/html/customer-service/env-config.js
+              subPath: env-config.js
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: constant-config
+        - name: env-config-volume
+          configMap:
+            name: constant-config

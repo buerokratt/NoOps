@@ -1,0 +1,30 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: test.buerokratt.ee # Domain name
+
+#ingress:
+#  tlsConfigMapName: byk-tls-configmap
+
+ingress:
+  certIssuerName: letsencrypt-prod-issuer
+     
+images:
+  authentication:
+    registry: "ghcr.io"
+    repository: "buerokratt/authentication-layer"
+    tag: "pre-alpha-1.1.0"

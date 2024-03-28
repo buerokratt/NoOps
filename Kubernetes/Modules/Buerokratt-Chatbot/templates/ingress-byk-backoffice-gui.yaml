@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backoffice-gui-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+#    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST"
+#    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+#    nginx.ingress.kubernetes.io/cors-allow-origin: "https://test.buerokratt.ee"
+#    nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
+#    nginx.ingress.kubernetes.io/proxy-set-header: "Content-Type: application/json"
+#    nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type, Cache-Control"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
+  labels:
+    name: backoffice-gui-ingress
+spec:
+  rules:
+  - host: admin.{{ .Values.domain }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/chat"
+        backend:
+          service:
+            name: byk-backoffice-gui
+            port:
+              number: 3001
+  tls:
+  - hosts:
+    - admin.{{ .Values.domain }}
+    secretName: admin.test.buerokratt.ee0503prod 
