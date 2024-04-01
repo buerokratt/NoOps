@@ -22,12 +22,16 @@ domain: test.buerokratt.ee # Domain name
 
 ingress:
   certIssuerName: letsencrypt-prod-issuer
-     
+
 images:
-  scope:
+  gui:
     registry: "ghcr.io"
     repository: "buerokratt/service-module"
     tag: "pre-alpha-1.3.0"
+  dsl:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "pre-alpha-1.3.0" # TODO: Change this to the correct tag
 
 env:
   REACT_APP_RUUTER_API_URL:

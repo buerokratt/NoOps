@@ -13,23 +13,23 @@ spec:
     spec:
       containers:
         - name: byk-ruuter-private
-          image: "{{ .Values.images.ruuter.registry }}/{{ .Values.images.ruuter.repository }}:{{ .Values.images.ruuter.tag }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           ports:
             - containerPort: 8080
               name: http
           env:
             - name: logging.level.root
-              value: INFO
+              value: "{{ .Values.env.logging.level.root }}"
             - name: LOG_LEVEL_TIMING
-              value: INFO
+              value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
             - name: application.logging.displayRequestContent
-              value: "true"
+              value: "{{ .Values.env.application.logging.displayRequestContent }}"
             - name: application.logging.displayResponseContent
-              value: "true"
+              value: "{{ .Values.env.application.logging.displayResponseContent }}"
             - name: application.cors.allowedOrigins
-              value: https://admin.test.buerokratt.ee
+              value: "{{ .Values.env.application.cors.allowedOrigins }}"
             - name: application.openSearchConfiguration.url
-              value: http://opensearch-node:9200
+              value: "{{ .Values.env.application.openSearchConfiguration.url }}"
           volumeMounts:
             - name: dsl
               mountPath: {{ .Values.byk.ruuterPrivate.dsl.path }}

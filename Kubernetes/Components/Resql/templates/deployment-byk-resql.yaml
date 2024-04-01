@@ -13,20 +13,20 @@ spec:
     spec:
       containers:
         - name: byk-resql
-          image: {{ .Values.images.resql.registry }}/{{ .Values.images.resql.repository }}:{{ .Values.images.resql.tag }}
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           env:
             - name: logging.level.root
-              value: TRACE
+              value: "{{ .Values.env.logging.level.root }}"
             - name: SQLMS_DATASOURCES_0_NAME
-              value: "byk"
+              value: "{{ .Values.env.SQLMS_DATASOURCES_0_NAME }}"
             - name: SQLMS_DATASOURCES_0_JDBCURL
-              value: "jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk"
+              value: "{{ .Values.env.SQLMS_DATASOURCES_0_JDBCURL }}"
             - name: SQLMS_DATASOURCES_0_USERNAME
-              value: "byk"
+              value: "{{ .Values.env.SQLMS_DATASOURCES_0_USERNAME }}"
             - name: SQLMS_DATASOURCES_0_PASSWORD
-              value: "01234"
+              value: "{{ .Values.env.SQLMS_DATASOURCES_0_PASSWORD }}"
             - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT
-              value: "DEBUG"
+              value: "{{ .Values.env.LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT }}"
           ports:
             - containerPort: 8082
               name: http

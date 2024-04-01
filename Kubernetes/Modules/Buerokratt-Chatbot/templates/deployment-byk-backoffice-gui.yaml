@@ -13,41 +13,41 @@ spec:
     spec:
       containers:
         - name: byk-backoffice-gui
-          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3001
               name: http
           env:
             - name: REACT_APP_RUUTER_API_URL
-              value: "{{ .Values.env.RUUTER_API_URL }}"
+              value: "{{ .Values.env.REACT_APP_RUUTER_API_URL }}"
             - name: REACT_APP_RUUTER_PRIVATE_API_URL
-              value: "{{ .Values.env.RUUTER_PRIVATE_API_URL }}"
+              value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_API_URL }}"
             - name: REACT_APP_BUEROKRATT_CHATBOT_URL
-              value: "{{ .Values.env.BUEROKRATT_CHATBOT_URL }}"
+              value: "{{ .Values.env.REACT_APP_BUEROKRATT_CHATBOT_URL }}"
             - name: REACT_APP_MENU_URL
-              value: "{{ .Values.env.MENU_URL }}"
+              value: "{{ .Values.env.REACT_APP_MENU_URL }}"
             - name: REACT_APP_MENU_PATH
-              value: "{{ .Values.env.MENU_PATH }}"
+              value: "{{ .Values.env.REACT_APP_MENU_PATH }}"
             - name: REACT_APP_CUSTOMER_SERVICE_LOGIN
-              value: "{{ .Values.env.scope.CUSTOMER_SERVICE_LOGIN }}"
+              value: "{{ .Values.env.REACT_APP_CUSTOMER_SERVICE_LOGIN }}"
             - name: DOMAIN
               value: "{{ .Values.env.DOMAIN }}"
             - name: REACT_APP_CONVERSATIONS_BASE_URL
-              value: "{{ .Values.env.CONVERSATIONS_BASE_URL }}"
+              value: "{{ .Values.env.REACT_APP_CONVERSATIONS_BASE_URL }}"
             - name: REACT_APP_TRAINING_BASE_URL
-              value: "{{ .Values.env.TRAINING_BASE_URL }}"
+              value: "{{ .Values.env.REACT_APP_TRAINING_BASE_URL }}"
             - name: REACT_APP_ANALYTICS_BASE_URL
-              value: "{{ .Values.env.ANALYTICS_BASE_URL }}"
+              value: "{{ .Values.env.REACT_APP_ANALYTICS_BASE_URL }}"
             - name: REACT_APP_SERVICES_BASE_URL
-              value: "{{ .Values.env.SERVICES_BASE_URL }}"
+              value: "{{ .Values.env.REACT_APP_SERVICES_BASE_URL }}"
             - name: REACT_APP_SETTINGS_BASE_URL
-              value: "{{ .Values.env.SETTINGS_BASE_URL }}"
+              value: "{{ .Values.env.REACT_APP_SETTINGS_BASE_URL }}"
             - name: REACT_APP_MONITORING_BASE_URL
-              value: "{{ .Values.env.MONITORING_BASE_URL }}"
+              value: "{{ .Values.env.REACT_APP_MONITORING_BASE_URL }}"
             - name: REACT_APP_SERVICE_ID
-              value: "{{ .Values.env.SERVICE_ID }}"
+              value: "{{ .Values.env.REACT_APP_SERVICE_ID }}"
             - name: REACT_APP_NOTIFICATION_NODE_URL
-              value: "{{ .Values.env.NOTIFICATION_NODE_URL }}"
+              value: "{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}"
           livenessProbe:
             httpGet:
               path: /

@@ -22,9 +22,13 @@ domain: test.buerokratt.ee # Domain name
 
 ingress:
   certIssuerName: letsencrypt-prod-issuer
-     
+
 images:
-  scope:
+  gui:
     registry: "ghcr.io"
     repository: "buerokratt/chat-widget"
     tag: "pre-alpha-1.3.2"
+  dsl:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "pre-alpha-1.3.2" # TODO: Change this to the correct tag

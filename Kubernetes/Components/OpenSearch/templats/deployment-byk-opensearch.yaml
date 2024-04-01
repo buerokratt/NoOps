@@ -17,19 +17,19 @@ spec:
           image: opensearchproject/opensearch:latest
           env:
             - name: cluster.name
-              value: opensearch-cluster
+              value: "{{ .Values.env.cluster.name }}"
             - name: node.name
-              value: opensearch-node
+              value: "{{ .Values.env.node.name }}"
             - name: discovery.type
-              value: single-node
+              value: "{{ .Values.env.discovery.type }}"
             - name: bootstrap.memory_lock
-              value: "true"
+              value: "{{ .Values.env.bootstrap.memory_lock }}"
             - name: OPENSEARCH_JAVA_OPTS
-              value: "-Xms512m -Xmx512m"
+              value: "{{ .Values.env.OPENSEARCH_JAVA_OPTS }}"
             - name: DISABLE_INSTALL_DEMO_CONFIG
-              value: "true"
+              value: "{{ .Values.env.DISABLE_INSTALL_DEMO_CONFIG }}"
             - name: DISABLE_SECURITY_PLUGIN
-              value: "true"
+              value: "{{ .Values.env.DISABLE_SECURITY_PLUGIN }}"
           ports:
             - containerPort: 9200
               name: http

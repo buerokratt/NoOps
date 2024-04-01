@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: byk-backoffice-login
-          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           #command: ["/bin/sh"]
           #args: ["-c", "tail -f /dev/null"]
           ports:
