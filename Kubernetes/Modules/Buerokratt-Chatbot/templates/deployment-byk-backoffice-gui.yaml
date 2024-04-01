@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-backoffice-gui
+spec:
+  selector:
+    matchLabels:
+      app: byk-backoffice-gui
+  template:
+    metadata:
+      labels:
+        app: byk-backoffice-gui
+    spec:
+      containers:
+        - name: byk-backoffice-gui
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
+          ports:
+            - containerPort: 3001
+              name: http
+          env:
+            - name: REACT_APP_RUUTER_API_URL
+              value: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"
+            - name: REACT_APP_RUUTER_PRIVATE_API_URL
+              value: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
+            - name: REACT_APP_BUEROKRATT_CHATBOT_URL
+              value: "https://admin.test.buerokratt.ee/chat"
+            - name: REACT_APP_MENU_URL
+              value: "https://admin.test.buerokratt.ee"
+            - name:  REACT_APP_MENU_PATH
+              value: "/chat/menu.json"
+            - name: REACT_APP_CUSTOMER_SERVICE_LOGIN
+              value: "http://admin.test.buerokratt.ee/et/log-in"
+            - name: DOMAIN
+              value: "test.buerokratt.ee"
+            - name: REACT_APP_CONVERSATIONS_BASE_URL
+              value: "https://admin.test.buerokratt.ee/chat"
+            - name: REACT_APP_TRAINING_BASE_URL
+              value: "https://admin.test.buerokratt.ee/training"
+            - name: REACT_APP_ANALYTICS_BASE_URL
+              value: "https://admin.test.buerokratt.ee/analytics"
+            - name: REACT_APP_SERVICES_BASE_URL
+              value: "https://admin.test.buerokratt.ee/services"
+            - name: REACT_APP_SETTINGS_BASE_URL
+              value: "https://admin.test.buerokratt.ee/settings"
+            - name: REACT_APP_MONITORING_BASE_URL
+              value: "https://admin.test.buerokratt.ee/monitoring"
+            - name: REACT_APP_SERVICE_ID
+              value: "conversations,settings,monitoring"
+            - name: REACT_APP_NOTIFICATION_NODE_URL
+              value: https://ruuter.test.buerokratt.ee
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: menu-configmap-volume
+              mountPath: /app/menu.json
+              subPath: menu.json
+              readOnly: true
+      volumes:
+        - name: menu-configmap-volume
+          configMap:
+            name: menu-configmap

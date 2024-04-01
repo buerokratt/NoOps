@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: byk-opensearch-update
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+
+
+
+
+## More to come here
+
+
+
+      volumes:
+        - name: dsl
+          emptyDir: {}
+      restartPolicy: Never

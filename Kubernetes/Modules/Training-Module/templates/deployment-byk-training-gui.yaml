@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-training-gui
+spec:
+  selector:
+    matchLabels:
+      app: byk-training-gui
+  template:
+    metadata:
+      labels:
+        app: byk-training-gui
+    spec:
+      containers:
+        - name: byk-training-gui
+          image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
+          ports:
+            - containerPort: 3001
+              name: http
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/.env.development
+              subPath: env.development
+          env:
+            - name: REACT_APP_RUUTER_API_URL
+              value: https://ruuter.test.buerokratt.ee/v2/private/backoffice
+            - name: NODE_ENV
+              value: development
+            - name: CHOKIDAR_USEPOLLING
+              value: 'true'
+            - name: REACT_APP_API_URL
+              value: https://ruuter.test.buerokratt.ee/v2/private/training
+            - name: REACT_APP_BUEROKRATT_CHATBOT_URL
+              value: http://byk-bot:5005
+            - name: REACT_APP_OPENSEARCH_DASHBOARD_URL
+              value: https://opensearch.org/
+            - name: REACT_APP_OPENDATAPORT_URL
+              value: https://avaandmed.eesti.ee
+            - name: REACT_APP_RUUTER_V2_PRIVATE_API_URL
+              value: https://ruuter.test.buerokratt.ee/v2/private/backoffice
+            - name: REACT_APP_RUUTER_V2_ANALYTICS_API_URL
+              value: https://ruuter.test.buerokratt.ee/v2/private/analytics
+            - name: REACT_APP_MENU_URL
+              value: https://admin.test.buerokratt.ee
+            - name: REACT_APP_MENU_PATH
+              value: /chat/menu.json
+            - name: REACT_APP_AUTH_BASE_URL
+              value: https://ruuter.test.buerokratt.ee
+            - name: REACT_APP_APP_PORT
+              value: '3001'
+            - name: REACT_APP_LOCAL
+              value: 'false'
+            - name: REACT_APP_AUTH_PATH
+              value: /v2/private/backoffice/custom-jwt/userinfo
+            - name: REACT_APP_DOCKER_RUUTER
+              value: http://byk-ruuter-private:8080
+            - name: REACT_APP_CUSTOMER_SERVICE_LOGIN
+              value: http://admin.test.buerokratt.ee/et/dev-auth
+            - name: REACT_APP_CONVERSATIONS_BASE_URL
+              value: https://admin.test.buerokratt.ee/chat
+            - name: REACT_APP_TRAINING_BASE_URL
+              value: https://admin.test.buerokratt.ee/training
+            - name: REACT_APP_ANALYTICS_BASE_URL
+              value: https://admin.test.buerokratt.ee/analytics
+            - name: REACT_APP_SERVICES_BASE_URL
+              value: https://admin.test.buerokratt.ee/services
+            - name: REACT_APP_SETTINGS_BASE_URL
+              value: https://admin.test.buerokratt.ee/settings
+            - name: REACT_APP_MONITORING_BASE_URL
+              value: https://admin.test.buerokratt.ee/monitoring
+            - name: REACT_APP_SERVICE_ID
+              value: training
+            - name: REACT_APP_RUUTER_PRIVATE_API_URL
+              value: https://ruuter.test.buerokratt.ee/v2/private/backoffice
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 5
+            periodSeconds: 11
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 11
+
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: configmap-byk-training

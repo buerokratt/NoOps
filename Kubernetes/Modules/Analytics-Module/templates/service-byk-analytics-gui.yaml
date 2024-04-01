@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: byk-analytics-gui
+spec:
+  selector:
+    app: byk-analytics-gui
+  ports:
+    - port: 3001
+      targetPort: http
+      protocol: TCP
+      name: http

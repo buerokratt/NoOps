@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: widget-nginx-config
+data:
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+
+            server_tokens off;
+            add_header 'Access-Control-Allow-Origin' 'https://test.buerokratt.ee' always;
+
+        location / {
+            root /usr/share/nginx/html/widget;
+            index index.html;
+        }
+
+        location /status {
+            access_log off;
+            default_type text/plain;
+            add_header Content-Type text/plain;
+            return 200 "alive";
+        }
+
+        location ~* \.(js|jpg|png|css)$ {
+            root /usr/share/nginx/html/widget;
+        }
+    }

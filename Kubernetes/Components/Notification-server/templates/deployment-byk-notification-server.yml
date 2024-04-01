@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-node
+  template:
+    metadata:
+      labels:
+        app: notification-node
+    spec:
+      containers:
+        - name: notification-node
+          image: "{{ .Values.images.notification.registry }}/{{ .Values.images.notification.repository }}:{{ .Values.images.notification.tag }}"
+          image: riaee/byk:notification-server-1.0.6 ## To be deleted
+          ports:
+            - containerPort: 4040
+          env:
+            - name: OPENSEARCH_PROTOCOL
+              value: "http"
+            - name: OPENSEARCH_HOST
+              value: "opensearch-node"
+            - name: OPENSEARCH_PORT
+              value: "9200"
+            - name: OPENSEARCH_USERNAME
+              value: "admin"
+            - name: OPENSEARCH_PASSWORD
+              value: "admin"
+            - name: PORT
+              value: "4040"
+            - name: REFRESH_INTERVAL
+              value: "1000"
+            - name: CORS_WHITELIST_ORIGINS
+              value: "http://byk-widget:3001,http://byk-backoffice-gui:3000,http://byk-ruuter-private:8080,http://byk-ruuter:8080"
+          volumeMounts:
+            - name: notification-server
+              mountPath: /app/notification-server
+      volumes:
+        - name: notification-server
+          emptyDir: {}
+      initContainers:
+        - name: clone-repo
+          image: alpine/git
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              git clone --branch dev --single-branch https://github.com/buerokratt/Buerokratt-Chatbot.git /app/Buerokratt-Chatbot && \
+              cp -r /app/Buerokratt-Chatbot/notification-server/* /app/notification-server/
+          volumeMounts:
+            - name: notification-server
+              mountPath: /app/notification-server

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-widget
+spec:
+  selector:
+    matchLabels:
+      app: byk-widget
+  template:
+    metadata:
+      labels:
+        app: byk-widget
+    spec:
+      containers:
+        - name: byk-widget
+          image: "{{ .Values.images.widget.registry }}/{{ .Values.images.widget.repository }}:{{ .Values.images.widget.tag }}"
+          ports:
+            - containerPort: 3003
+              name: http
+          volumeMounts:
+            - name: widget-index-volume
+              mountPath: /usr/share/nginx/html/widget/index.html
+              subPath: index.html
+            - name: widget-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: nginx.conf
+            - mountPath: /app/public/env-config.js
+              name: widget-index-volume
+              subPath: env-config.js
+      volumes:
+        - name: widget-index-volume
+          configMap:
+            name: widget-index-config
+        - name: widget-config
+          configMap:
+            name: widget-nginx-config

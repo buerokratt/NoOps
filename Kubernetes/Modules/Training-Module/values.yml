@@ -22,20 +22,8 @@ domain: test.buerokratt.ee # Domain name
 
 ingress:
   certIssuerName: letsencrypt-prod-issuer
-
-byk:
-  dsl:
-    image:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "pre-alpha-kube-1.12.33"
-  ruuter:
-    dsl:
-      path: "/DSL/"
-      
-
+     
 images:
-  ruuter:
     registry: "ghcr.io"
-    repository: "buerokratt/Ruuter"
-    tag: "pre-alpha-2.4.1"
+    repository: "buerokratt/training-module"
+    tag: "pre-alpha-clean-1.15.2"
