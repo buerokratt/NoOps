@@ -1,0 +1,58 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: test.buerokratt.ee # Domain name
+
+#ingress:
+#  tlsConfigMapName: byk-tls-configmap
+
+ingress:
+  certIssuerName: letsencrypt-prod-issuer
+
+# byk:
+#   dsl:
+#     image:
+#       registry: "ghcr.io"
+#       repository: "buerokratt/buerokratt-dsl"
+#       tag: "pre-alpha-kube-1.13.64"
+#   ruuter:
+#     dsl:
+#       path: "/script/"
+
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: ""
+    tag: ""
+
+env:
+  OPENSEARCH_PROTOCOL:
+    value: "http"
+  OPENSEARCH_HOST:
+    value: "opensearch-node"
+  OPENSEARCH_PORT:
+    value: "9200"
+  OPENSEARCH_USERNAME:
+    value: "admin"
+  OPENSEARCH_PASSWORD:
+    value: "admin"
+  PORT:
+    value: "4040"
+  REFRESH_INTERVAL:
+    value: "1000"
+  CORS_WHITELIST_ORIGINS:
+    value: "http://byk-widget:3001,http://byk-backoffice-gui:3000,http://byk-ruuter-private:8080,http://byk-ruuter:8080"

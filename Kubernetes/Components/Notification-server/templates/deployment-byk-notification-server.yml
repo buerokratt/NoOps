@@ -14,27 +14,27 @@ spec:
     spec:
       containers:
         - name: notification-node
-          image: "{{ .Values.images.notification.registry }}/{{ .Values.images.notification.repository }}:{{ .Values.images.notification.tag }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           image: riaee/byk:notification-server-1.0.6 ## To be deleted
           ports:
             - containerPort: 4040
           env:
             - name: OPENSEARCH_PROTOCOL
-              value: "http"
+              value: "{{ .Values.env.OPENSEARCH_PROTOCOL }}"
             - name: OPENSEARCH_HOST
-              value: "opensearch-node"
+              value: "{{ .Values.env.OPENSEARCH_HOST }}"
             - name: OPENSEARCH_PORT
-              value: "9200"
+              value: "{{ .Values.env.OPENSEARCH_PORT }}"
             - name: OPENSEARCH_USERNAME
-              value: "admin"
+              value: "{{ .Values.env.OPENSEARCH_USERNAME }}"
             - name: OPENSEARCH_PASSWORD
-              value: "admin"
+              value: "{{ .Values.env.OPENSEARCH_PASSWORD }}"
             - name: PORT
-              value: "4040"
+              value: "{{ .Values.env.PORT }}"
             - name: REFRESH_INTERVAL
-              value: "1000"
+              value: "{{ .Values.env.REFRESH_INTERVAL }}"
             - name: CORS_WHITELIST_ORIGINS
-              value: "http://byk-widget:3001,http://byk-backoffice-gui:3000,http://byk-ruuter-private:8080,http://byk-ruuter:8080"
+              value: "{{ .Values.env.CORS_WHITELIST_ORIGINS }}"
           volumeMounts:
             - name: notification-server
               mountPath: /app/notification-server

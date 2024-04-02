@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: byk-widget
-          image: "{{ .Values.images.widget.registry }}/{{ .Values.images.widget.repository }}:{{ .Values.images.widget.tag }}"
+          image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3003
               name: http
