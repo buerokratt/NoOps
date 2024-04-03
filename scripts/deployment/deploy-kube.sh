@@ -1,15 +1,25 @@
 #!/bin/bash
 
+# Steps
+
+# 1. Handle Script Inputs
+# 2. Handle Namespaces
+# 3. Handle Pods
+# 4. Deploy OR Upgrade Pods
+
 selected_pods=("$@")
+namespaces=() # kubectl get namespaces
 
-components_pod_names=("byk-dmapper" "notification-node" "opensearch-node" "tim" "byk-ruuter-private" 
-"byk-resql" "byk-ruuter" "byk-tim")
+# Components
+components_pod_names=("component-byk-dmapper" "component-notification-node" "component-opensearch-node" "component-byk-ruuter-private" 
+"component-byk-resql" "component-byk-ruuter" "component-byk-tim")
 
-module_pod_names=("byk-analytics-gui" "byk-backoffice-login" "byk-backoffice-gui" "byk-services-gui" 
-"byk-training-gui" "byk-widget")
+# Modules
+module_pod_names=("module-byk-analytics-gui" "module-byk-backoffice-login" "module-byk-backoffice-gui" "module-byk-services-gui" 
+"module-byk-training-gui" "module-byk-widget")
 
 # Get all running pods
-running_pods=($(docker container ls --format '{{.Names }}' | tr -s ":") ) # TODO get all running pod names
+running_pods=($(docker container ls --format '{{.Names }}' | tr -s ":") ) # in k8 = kubectl get pods -n byrokratt --no-headers -o custom-columns=":metadata.name"
 
 # Get all non running pods
 non_existing_pods=()
@@ -32,7 +42,7 @@ if [[ -z $selected_pods ]]; then
     #     echo "Deploying $pod"
     # done
 
-    echo `helm upgrade analytics-module ./Modules/ --namespace byk-test`;
+    echo `helm upgrade module-byk-analytics-gui ./Modules/ --namespace byk-test`;
     # for pod in "${non_existing_pods[@]}"; do
     #     echo "Deploying $pod"
     # done
