@@ -23,6 +23,8 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
+release_name: "component-byk-resql"
+
 # byk:
 #   dsl:
 #     image:
@@ -40,15 +42,9 @@ images:
     tag: "re-alpha-2.4.0-27"
 
 env:
-  logging.level.root:
-    value: TRACE
-  SQLMS_DATASOURCES_0_NAME:
-    value: "byk"
-  SQLMS_DATASOURCES_0_JDBCURL:
-    value: "jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk"
-  SQLMS_DATASOURCES_0_USERNAME:
-    value: "byk"
-  SQLMS_DATASOURCES_0_PASSWORD:
-    value: "01234"
-  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT:
-    value: "DEBUG"
+  LOGGING_LEVEL_ROOT: "TRACE"
+  SQLMS_DATASOURCES_0_NAME: "byk"
+  SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk"
+  SQLMS_DATASOURCES_0_USERNAME: "byk"
+  SQLMS_DATASOURCES_0_PASSWORD: "01234"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"

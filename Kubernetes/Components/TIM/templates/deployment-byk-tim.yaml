@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "byk-tim"
+  name: "{{ .Value.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-tim
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-tim
+        app: "{{ .Value.release_name }}"
     spec:
       initContainers:
         - name: init-keytool
@@ -33,7 +33,7 @@ spec:
               mountPath: /workspace/app-shared
 
       containers:
-        - name: "byk-tim"
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.tim.registry }}/{{ .Values.images.tim.repository }}:{{ .Values.images.tim.tag }}"
           ports:
             - containerPort: 8085

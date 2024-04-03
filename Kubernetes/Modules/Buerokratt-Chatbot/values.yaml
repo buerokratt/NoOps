@@ -23,6 +23,8 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
+release_name: "module-byk-backoffice-gui"
+
 images:
   gui:
     registry: "ghcr.io"
@@ -34,33 +36,18 @@ images:
     tag: "pre-alpha-test-2.2.12" # TODO: Change this to the correct tag
 
 env:
-  REACT_APP_RUUTER_API_URL:
-    value: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"
-  REACT_APP_RUUTER_PRIVATE_API_URL:
-    value: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
-  REACT_APP_BUEROKRATT_CHATBOT_URL:
-    value: "https://admin.test.buerokratt.ee/chat"
-  REACT_APP_MENU_URL:
-    value: "https://admin.test.buerokratt.ee"
-  REACT_APP_MENU_PATH:
-    value: "/chat/menu.json"
-  REACT_APP_CUSTOMER_SERVICE_LOGIN:
-    value: "http://admin.test.buerokratt.ee/et/log-in"
-  DOMAIN:
-    value: "test.buerokratt.ee"
-  REACT_APP_CONVERSATIONS_BASE_URL:
-    value: "https://admin.test.buerokratt.ee/chat"
-  REACT_APP_TRAINING_BASE_URL:
-    value: "https://admin.test.buerokratt.ee/training"
-  REACT_APP_ANALYTICS_BASE_URL:
-    value: "https://admin.test.buerokratt.ee/analytics"
-  REACT_APP_SERVICES_BASE_URL:
-    value: "https://admin.test.buerokratt.ee/services"
-  REACT_APP_SETTINGS_BASE_URL:
-    value: "https://admin.test.buerokratt.ee/settings"
-  REACT_APP_MONITORING_BASE_URL:
-    value: "https://admin.test.buerokratt.ee/monitoring"
-  REACT_APP_SERVICE_ID:
-    value: "conversations,settings,monitoring"
-  REACT_APP_NOTIFICATION_NODE_URL:
-    value: https://ruuter.test.buerokratt.ee
+  REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"
+  REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
+  REACT_APP_BUEROKRATT_CHATBOT_URL: "https://admin.test.buerokratt.ee/chat"
+  REACT_APP_MENU_URL: "https://admin.test.buerokratt.ee"
+  REACT_APP_MENU_PATH: "/chat/menu.json"
+  REACT_APP_CUSTOMER_SERVICE_LOGIN: "http://admin.test.buerokratt.ee/et/log-in"
+  DOMAIN: "test.buerokratt.ee"
+  REACT_APP_CONVERSATIONS_BASE_URL: "https://admin.test.buerokratt.ee/chat"
+  REACT_APP_TRAINING_BASE_URL: "https://admin.test.buerokratt.ee/training"
+  REACT_APP_ANALYTICS_BASE_URL: "https://admin.test.buerokratt.ee/analytics"
+  REACT_APP_SERVICES_BASE_URL: "https://admin.test.buerokratt.ee/services"
+  REACT_APP_SETTINGS_BASE_URL: "https://admin.test.buerokratt.ee/settings"
+  REACT_APP_MONITORING_BASE_URL: "https://admin.test.buerokratt.ee/monitoring"
+  REACT_APP_SERVICE_ID: "conversations,settings,monitoring"
+  REACT_APP_NOTIFICATION_NODE_URL: "https://ruuter.test.buerokratt.ee"

@@ -23,6 +23,8 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
+release_name: "component-notification-node"  
+
 # byk:
 #   dsl:
 #     image:
@@ -40,19 +42,11 @@ images:
     tag: ""
 
 env:
-  OPENSEARCH_PROTOCOL:
-    value: "http"
-  OPENSEARCH_HOST:
-    value: "opensearch-node"
-  OPENSEARCH_PORT:
-    value: "9200"
-  OPENSEARCH_USERNAME:
-    value: "admin"
-  OPENSEARCH_PASSWORD:
-    value: "admin"
-  PORT:
-    value: "4040"
-  REFRESH_INTERVAL:
-    value: "1000"
-  CORS_WHITELIST_ORIGINS:
-    value: "http://byk-widget:3001,http://byk-backoffice-gui:3000,http://byk-ruuter-private:8080,http://byk-ruuter:8080"
+  OPENSEARCH_PROTOCOL: "http"
+  OPENSEARCH_HOST: "opensearch-node"
+  OPENSEARCH_PORT: "9200"
+  OPENSEARCH_USERNAME: "admin"
+  OPENSEARCH_PASSWORD: "admin"
+  PORT: "4040"
+  REFRESH_INTERVAL: "1000"
+  CORS_WHITELIST_ORIGINS: "http://byk-widget:3001,http://byk-backoffice-gui:3000,http://byk-ruuter-private:8080,http://byk-ruuter:8080"

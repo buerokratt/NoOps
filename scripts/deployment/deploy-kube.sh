@@ -15,7 +15,7 @@ components_pod_names=("component-byk-dmapper" "component-notification-node" "com
 "component-byk-resql" "component-byk-ruuter" "component-byk-tim")
 
 # Modules
-module_pod_names=("module-byk-analytics-gui" "module-byk-backoffice-login" "module-byk-backoffice-gui" "module-byk-services-gui" 
+module_pod_names=("module-byk-analytics-gui" "module-byk-authentication-layer" "module-byk-backoffice-gui" "module-byk-services-gui" 
 "module-byk-training-gui" "module-byk-widget")
 
 # Get all running pods

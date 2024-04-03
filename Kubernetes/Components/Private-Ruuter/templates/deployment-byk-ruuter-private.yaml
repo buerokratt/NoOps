@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-ruuter-private
+  name: "{{ .Value.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-ruuter-private
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-ruuter-private
+        app: "{{ .Value.release_name }}"
     spec:
       containers:
-        - name: byk-ruuter-private
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           ports:
             - containerPort: 8080
               name: http
           env:
             - name: logging.level.root
-              value: "{{ .Values.env.logging.level.root }}"
+              value: "{{ .Values.env.LOGGIN_LEVEL_ROOT }}"
             - name: LOG_LEVEL_TIMING
               value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
             - name: application.logging.displayRequestContent
-              value: "{{ .Values.env.application.logging.displayRequestContent }}"
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT }}"
             - name: application.logging.displayResponseContent
-              value: "{{ .Values.env.application.logging.displayResponseContent }}"
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT }}"
             - name: application.cors.allowedOrigins
-              value: "{{ .Values.env.application.cors.allowedOrigins }}"
+              value: "{{ .Values.env.APPLICATION_CORS_ALLOWED_ORIGINS }}"
             - name: application.openSearchConfiguration.url
-              value: "{{ .Values.env.application.openSearchConfiguration.url }}"
+              value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
           volumeMounts:
             - name: dsl
               mountPath: {{ .Values.byk.ruuterPrivate.dsl.path }}

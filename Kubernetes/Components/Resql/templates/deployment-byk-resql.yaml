@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-resql
+  name: "{{ .Value.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-resql
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-resql
+        app: "{{ .Value.release_name }}"
     spec:
       containers:
-        - name: byk-resql
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           env:
             - name: logging.level.root
-              value: "{{ .Values.env.logging.level.root }}"
+              value: "{{ .Values.env.LOGGING_LEVEL_ROOT }}"
             - name: SQLMS_DATASOURCES_0_NAME
               value: "{{ .Values.env.SQLMS_DATASOURCES_0_NAME }}"
             - name: SQLMS_DATASOURCES_0_JDBCURL
