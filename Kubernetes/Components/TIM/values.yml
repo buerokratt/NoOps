@@ -24,41 +24,41 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
-byk:
-  tim:
-    env:
-      security:
-        allowlist:
-          jwt: byk-ruuter,byk-ruuter-private,byk-dmapper,byk-widget,byk-backoffice-login,byk-resql,byk-tim
-        oauth2:
-          client:
-            clientId: byk_public_test
-            clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh
-            scope: openid
-            userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize
-            accessTokenUri: https://tara-test.ria.ee/oidc/token
-          resource:
-            jwk:
-              keySetUri: https://tara-test.ria.ee/oidc/jwks
-      legacyPortalIntegration:
-        legacyUrl: arendus.eesti.ee
-        legacyPortalRefererMarker: https://arendus.eesti.ee/portaal
-        sessionCookieDomain: buerokratt.ee
-      jwtIntegration:
-        signature:
-          issuer: test.buerokratt.ee
-          keyStorePassword: ppjjpp
-          keyStore: classpath:jwtkeystore.jks
-      spring:
-        profiles:
-          active: dev
-      logging:
-        level:
-          root: INFO
+# byk:
+#   tim:
+#     env:
+#       security:
+#         allowlist:
+#           jwt: byk-ruuter,byk-ruuter-private,byk-dmapper,byk-widget,byk-backoffice-login,byk-resql,byk-tim
+#         oauth2:
+#           client:
+#             clientId: byk_public_test
+#             clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh
+#             scope: openid
+#             userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize
+#             accessTokenUri: https://tara-test.ria.ee/oidc/token
+#           resource:
+#             jwk:
+#               keySetUri: https://tara-test.ria.ee/oidc/jwks
+#       legacyPortalIntegration:
+#         legacyUrl: arendus.eesti.ee
+#         legacyPortalRefererMarker: https://arendus.eesti.ee/portaal
+#         sessionCookieDomain: buerokratt.ee
+#       jwtIntegration:
+#         signature:
+#           issuer: test.buerokratt.ee
+#           keyStorePassword: ppjjpp
+#           keyStore: classpath:jwtkeystore.jks
+#       spring:
+#         profiles:
+#           active: dev
+#       logging:
+#         level:
+#           root: INFO
       
 
 images:
-  ruuter:
+  scope:
     registry: "ghcr.io"
     repository: "buerokratt/tim"
     tag: "pre-apha-2.4.2"

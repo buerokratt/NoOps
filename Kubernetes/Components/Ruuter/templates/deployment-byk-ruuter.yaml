@@ -13,20 +13,20 @@ spec:
     spec:
       containers:
         - name: byk-ruuter
-          image: image: {{ .Values.images.ruuter.registry }}/{{ .Values.images.ruuter.repository }}:{{ .Values.images.ruuter.tag }}
+          image: image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           ports:
           ports:
             - containerPort: 8080
               name: http
           env:
             - name: logging.level.root
-              value: INFO
+              value: "{{ .Values.env.logging.level.root}}"
             - name: LOG_LEVEL_TIMING
-              value: INFO
+              value: "{{ .Values.env.LOG_LEVEL_TIMING}}"
             - name: application.logging.displayRequestContent
-              value: "true"
+              value: "{{ .Values.env.application.logging.displayRequestContent}}"
             - name: application.logging.displayResponseContent
-              value: "true"
+              value: "{{ .Values.env.application.logging.displayResponseContent}}"
           volumeMounts:
             - name: urls-env
               mountPath: /app/constants.ini

@@ -12,77 +12,77 @@ spec:
         app: byk-tim
     spec:
       initContainers:
-      - name: init-keytool
-        image: {{ .Values.images.tim.registry }}/{{ .Values.images.tim.repository }}:{{ .Values.images.tim.tag }}
-        command: 
-          - 'sh'
-          - '-c'
-          - |
-            if [ ! -e "/workspace/app-shared/keystore.jwt" ]; then
-              keytool -delete -alias jwtsign -keystore '/workspace/app-shared/jwtkeystore.jks' -storepass 123456
-              keytool -genkeypair -alias jwtsign -keyalg RSA -keysize 2048 -keystore 'jwtkeystore.jks' -validity 3650 -noprompt -dname "CN=test.buerokratt.ee" -storepass ppjjpp
-              touch /workspace/app-shared/keystore.jwt
-              echo "Initialization successful: keystore.jwt created."
-            else
-              echo "keystore.jwt already exists. No initialization needed really."
-            fi
-        volumeMounts:
-        - name: workspace
-          mountPath: /workspace/app
-        - name: workspace-shared
-          mountPath: /workspace/app-shared
+        - name: init-keytool
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          command:
+            - "sh"
+            - "-c"
+            - |
+              if [ ! -e "/workspace/app-shared/keystore.jwt" ]; then
+                keytool -delete -alias jwtsign -keystore '/workspace/app-shared/jwtkeystore.jks' -storepass 123456
+                keytool -genkeypair -alias jwtsign -keyalg RSA -keysize 2048 -keystore 'jwtkeystore.jks' -validity 3650 -noprompt -dname "CN=test.buerokratt.ee" -storepass ppjjpp
+                touch /workspace/app-shared/keystore.jwt
+                echo "Initialization successful: keystore.jwt created."
+              else
+                echo "keystore.jwt already exists. No initialization needed really."
+              fi
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace/app
+            - name: workspace-shared
+              mountPath: /workspace/app-shared
 
       containers:
-      - name: "byk-tim"
-        image: "{{ .Values.images.tim.registry }}/{{ .Values.images.tim.repository }}:{{ .Values.images.tim.tag }}"
-        ports:
-        - containerPort: 8085
-          name: "http"
-        env:
-        - name: "DB_PASSWORD"
-          valueFrom:
-            secretKeyRef:
-              name: "{{ .Release.Name }}-tim-postgresql"
-              key: password
-        - name: "OAUTH2_CLIENT_SECRET"
-          valueFrom:
-            secretKeyRef:
-              name: "byk-tim-env-secret"
-              key: "oauth2_client_secret"
-        - name: "KEY_STORE_PASSWORD"
-          valueFrom:
-            secretKeyRef:
-              name: "byk-tim-env-secret"
-              key: "jwt_integration_key_store_password"
-        volumeMounts:
-        - name: application-properties
-          mountPath: /workspace/app/src/main/resources/application.properties
-          subPath: application.properties
-        - name: workspace-shared
-          mountPath: /workspace/app-shared
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8085
-          initialDelaySeconds: 45
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8085
-          initialDelaySeconds: 45
-          periodSeconds: 10
+        - name: "byk-tim"
+          image: "{{ .Values.images.tim.registry }}/{{ .Values.images.tim.repository }}:{{ .Values.images.tim.tag }}"
+          ports:
+            - containerPort: 8085
+              name: "http"
+          env:
+            - name: "DB_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Release.Name }}-tim-postgresql"
+                  key: password
+            - name: "OAUTH2_CLIENT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: "byk-tim-env-secret"
+                  key: "oauth2_client_secret"
+            - name: "KEY_STORE_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: "byk-tim-env-secret"
+                  key: "jwt_integration_key_store_password"
+          volumeMounts:
+            - name: application-properties
+              mountPath: /workspace/app/src/main/resources/application.properties
+              subPath: application.properties
+            - name: workspace-shared
+              mountPath: /workspace/app-shared
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8085
+            initialDelaySeconds: 45
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8085
+            initialDelaySeconds: 45
+            periodSeconds: 10
 
       volumes:
-      - name: tomcat-config
-        configMap:
-          name: tomcat-server-config
-      - name: application-properties
-        configMap:
-          name: byk-tim-config
-      - name: workspace
-        persistentVolumeClaim:
-          claimName: byk-tim-workspace-pvc
-      - name: workspace-shared
-        persistentVolumeClaim:
-          claimName: byk-tim-workspace-shared-pvc
+        - name: tomcat-config
+          configMap:
+            name: tomcat-server-config
+        - name: application-properties
+          configMap:
+            name: byk-tim-config
+        - name: workspace
+          persistentVolumeClaim:
+            claimName: byk-tim-workspace-pvc
+        - name: workspace-shared
+          persistentVolumeClaim:
+            claimName: byk-tim-workspace-shared-pvc

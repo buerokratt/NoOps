@@ -13,41 +13,41 @@ spec:
     spec:
       containers:
         - name: byk-backoffice-gui
-          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
+          image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3001
               name: http
           env:
             - name: REACT_APP_RUUTER_API_URL
-              value: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"
+              value: "{{ .Values.env.REACT_APP_RUUTER_API_URL }}"
             - name: REACT_APP_RUUTER_PRIVATE_API_URL
-              value: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
+              value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_API_URL }}"
             - name: REACT_APP_BUEROKRATT_CHATBOT_URL
-              value: "https://admin.test.buerokratt.ee/chat"
+              value: "{{ .Values.env.REACT_APP_BUEROKRATT_CHATBOT_URL }}"
             - name: REACT_APP_MENU_URL
-              value: "https://admin.test.buerokratt.ee"
-            - name:  REACT_APP_MENU_PATH
-              value: "/chat/menu.json"
+              value: "{{ .Values.env.REACT_APP_MENU_URL }}"
+            - name: REACT_APP_MENU_PATH
+              value: "{{ .Values.env.REACT_APP_MENU_PATH }}"
             - name: REACT_APP_CUSTOMER_SERVICE_LOGIN
-              value: "http://admin.test.buerokratt.ee/et/log-in"
+              value: "{{ .Values.env.REACT_APP_CUSTOMER_SERVICE_LOGIN }}"
             - name: DOMAIN
-              value: "test.buerokratt.ee"
+              value: "{{ .Values.env.DOMAIN }}"
             - name: REACT_APP_CONVERSATIONS_BASE_URL
-              value: "https://admin.test.buerokratt.ee/chat"
+              value: "{{ .Values.env.REACT_APP_CONVERSATIONS_BASE_URL }}"
             - name: REACT_APP_TRAINING_BASE_URL
-              value: "https://admin.test.buerokratt.ee/training"
+              value: "{{ .Values.env.REACT_APP_TRAINING_BASE_URL }}"
             - name: REACT_APP_ANALYTICS_BASE_URL
-              value: "https://admin.test.buerokratt.ee/analytics"
+              value: "{{ .Values.env.REACT_APP_ANALYTICS_BASE_URL }}"
             - name: REACT_APP_SERVICES_BASE_URL
-              value: "https://admin.test.buerokratt.ee/services"
+              value: "{{ .Values.env.REACT_APP_SERVICES_BASE_URL }}"
             - name: REACT_APP_SETTINGS_BASE_URL
-              value: "https://admin.test.buerokratt.ee/settings"
+              value: "{{ .Values.env.REACT_APP_SETTINGS_BASE_URL }}"
             - name: REACT_APP_MONITORING_BASE_URL
-              value: "https://admin.test.buerokratt.ee/monitoring"
+              value: "{{ .Values.env.REACT_APP_MONITORING_BASE_URL }}"
             - name: REACT_APP_SERVICE_ID
-              value: "conversations,settings,monitoring"
+              value: "{{ .Values.env.REACT_APP_SERVICE_ID }}"
             - name: REACT_APP_NOTIFICATION_NODE_URL
-              value: https://ruuter.test.buerokratt.ee
+              value: "{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}"
           livenessProbe:
             httpGet:
               path: /

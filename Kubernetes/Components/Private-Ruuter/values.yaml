@@ -23,19 +23,33 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
-byk:
-  dsl:
-    image:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "pre-alpha-kube-1.12.33"
-  ruuterPrivate:
-    dsl:
-      path: "/DSL/"
+# byk:
+#   dsl:
+#     image:
+#       registry: "ghcr.io"
+#       repository: "buerokratt/buerokratt-dsl"
+#       tag: "pre-alpha-kube-1.12.33"
+#   ruuterPrivate:
+#     dsl:
+#       path: "/DSL/"
       
 
 images:
-  ruuter:
+  scope:
     registry: "ghcr.io"
     repository: "buerokratt/Ruuter"
     tag: "pre-alpha-2.4.1"
+
+env:
+  logging.level.root:
+    value: INFO
+  LOG_LEVEL_TIMING:
+    value: INFO
+  application.logging.displayRequestContent:
+    value: "true"
+  application.logging.displayResponseContent:
+    value: "true"
+  application.cors.allowedOrigins:
+    value: https://admin.test.buerokratt.ee
+  application.openSearchConfiguration.url:
+    value: http://opensearch-node:9200
