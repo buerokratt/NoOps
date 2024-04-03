@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: byk-liquibase-update
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - name: byk-liquibase-update
+        image: liquibase/liquibase:4.23.2
+        command: ["/bin/sh"]
+        {{ $password := index .Values "users-db" "auth" "password" }}
+        args:
+          - "-c"
+          - >
+            ls -l /DSL && cd /DSL && liquibase --url=jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk?user=byk --password={{ $password }} --changelog-file=master.yml update
+        volumeMounts:
+          - name: dsl
+            mountPath: /DSL
+      initContainers:
+        - name: dsl-installer
+          image: alpine/git:2.36.3
+          volumeMounts:
+            - name: dsl
+              mountPath: /root/DSL
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              git clone $DSL_REPO /tmp/dsl-source &&
+              echo 'downloaded' &&
+              mv /tmp/dsl-source/$DSL_PATH/master.yml /root/DSL/ &&
+              mv /tmp/dsl-source/$DSL_PATH/changelog /root/DSL/ &&
+              mv /tmp/dsl-source/$DSL_PATH/data /root/DSL/ &&
+              echo 'moved' &&
+              ls /root/DSL
+          env:
+            - name: DSL_REPO
+              value: {{ .Values.byk.liquibase.dsl.repo | quote }}
+            - name: DSL_PATH
+              value: {{ .Values.byk.liquibase.dsl.path | quote }}
+      volumes:
+        - name: dsl
+          emptyDir: {}
+      restartPolicy: Never
