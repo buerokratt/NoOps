@@ -33,6 +33,8 @@ images:
     repository: "buerokratt/buerokratt-dsl"
     tag: "analytics-1.0.0" # TODO: Change this to the correct tag
 
+release_name: "module-byk-analytics-gui"
+
 env:
   REACT_APP_RUUTER_API_URL:
     value: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"

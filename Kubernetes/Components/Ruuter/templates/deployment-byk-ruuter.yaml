@@ -13,8 +13,7 @@ spec:
     spec:
       containers:
         - name: byk-ruuter
-          image: image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
-          ports:
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           ports:
             - containerPort: 8080
               name: http
