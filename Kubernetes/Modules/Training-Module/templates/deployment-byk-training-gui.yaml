@@ -11,6 +11,30 @@ spec:
       labels:
         app: byk-training-gui
     spec:
+      initCointainers:
+        - name: copy-dsl-to-shared-storage
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["kubectl"]
+          args:
+            - "cp"
+            - "Ruuter/private/v2/training"
+            - "/data/Ruuter/training"
+            - "Resql/training"
+            - "/data/Resql/training"
+            - "DataMapper/v1/training"
+            - "/data/DataMapper/training"
+      initContainers:
+        - name: copy-dsl-files-to-pods
+          image: bitnami/kubectl
+          command: ["kubectl"]
+          args:
+            - "cp"
+            - "/data/Ruuter/training" #todo - correct paths
+            - "byk-ruuter:/DSL/Ruuter/training" #todo - correct paths
+            - "/data/Resql"
+            - "byk-resql:/DSL/Resql/training"
+            - "/data/DataMapper"
+            - "byk-dmapper:/DSL/DataMapper/training"
       containers:
         - name: byk-training-gui
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -89,3 +113,7 @@ spec:
         - name: config-volume
           configMap:
             name: configmap-byk-training
+        - name: dsl-volume
+          persistentVolumeClaim:
+            claimName: pvc-training-dsl
+

@@ -1,0 +1,20 @@
+apiVersion: v2
+name: chat_backoffice
+description: A Helm chart for chat and backoffice services
+
+type: application
+version: 0.1.20
+
+dependencies:
+  - name: postgresql
+    version: 12.2.2
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - tim-postgresql
+    alias: tim-postgresql
+  - name: postgresql
+    version: 12.2.2
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - users-db
+    alias: users-db

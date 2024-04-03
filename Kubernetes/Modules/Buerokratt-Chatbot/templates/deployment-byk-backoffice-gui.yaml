@@ -11,6 +11,30 @@ spec:
       labels:
         app: byk-backoffice-gui
     spec:
+      initCointainers:
+        - name: copy-dsl-to-shared-storage
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["kubectl"]
+          args:
+            - "cp"
+            - "Ruuter/private/v2/backoffice"
+            - "/data/Ruuter/backoffice"
+            - "Resql/backoffice"
+            - "/data/Resql/backoffice"
+            - "DataMapper/v1/backoffice"
+            - "/data/DataMapper/backoffice"
+      initContainers:
+        - name: copy-dsl-files-to-pods
+          image: bitnami/kubectl
+          command: ["kubectl"]
+          args:
+            - "cp"
+            - "/data/Ruuter/backoffice" #todo - correct paths
+            - "byk-ruuter:/DSL/Ruuter/backoffice" #todo - correct paths
+            - "/data/Resql"
+            - "byk-resql:/DSL/Resql/backoffice"
+            - "/data/DataMapper"
+            - "byk-dmapper:/DSL/DataMapper/backoffice"
       containers:
         - name: byk-backoffice-gui
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -69,3 +93,6 @@ spec:
         - name: menu-configmap-volume
           configMap:
             name: menu-configmap
+        - name: dsl-volume
+          persistentVolumeClaim:
+            claimName: pvc-backoffice-dsl

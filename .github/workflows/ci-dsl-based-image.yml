@@ -1,0 +1,39 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'Kubernetes/Components/chart_versions.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: List Workspace Contents
+        run: |
+          ls -la $GITHUB_WORKSPACE
+          ls -la $GITHUB_WORKSPACE/Kubernetes/Components 
+          cd $GITHUB_WORKSPACE && pwd
+      - name: Change Script Permissions
+        run: chmod +x $GITHUB_WORKSPACE/Kubernetes/Components/charts.py
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Run Python Script
+        run: python $GITHUB_WORKSPACE/Kubernetes/Components/charts.py
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
