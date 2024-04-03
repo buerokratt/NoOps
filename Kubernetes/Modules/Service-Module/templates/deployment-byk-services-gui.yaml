@@ -11,6 +11,30 @@ spec:
       labels:
         app: byk-services-gui
     spec:
+      initCointainers:
+        - name: copy-dsl-to-shared-storage
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["kubectl"]
+          args:
+            - "cp"
+            - "Ruuter/private/v2/services"
+            - "/data/Ruuter/services"
+            - "Resql/services"
+            - "/data/Resql/services"
+            - "DataMapper/v1/services"
+            - "/data/DataMapper/services"
+      initContainers:
+        - name: copy-dsl-files-to-pods
+          image: bitnami/kubectl
+          command: ["kubectl"]
+          args:
+            - "cp"
+            - "/data/Ruuter/services" #todo - correct paths
+            - "byk-ruuter:/DSL/Ruuter/services" #todo - correct paths
+            - "/data/Resql"
+            - "byk-resql:/DSL/Resql/services"
+            - "/data/DataMapper"
+            - "byk-dmapper:/DSL/DataMapper/services"
       containers:
         - name: byk-services-gui
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -90,5 +114,8 @@ spec:
       volumes:
         - name: dsl
           emptyDir: {}
+        - name: dsl-volume
+          persistentVolumeClaim:
+            claimName: pvc-services-dsl
 
 
