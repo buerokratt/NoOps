@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Value.release_name }}"
+  name: "{{ .Values.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: "{{ .Value.release_name }}"
+      app: "{{ .Values.release_name }}"
   template:
     metadata:
       labels:
-        app: "{{ .Value.release_name }}"
+        app: "{{ .Values.release_name }}"
     spec:
       containers:
-        - name: "{{ .Value.release_name }}"
+        - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           env:
             - name: EXTENSION

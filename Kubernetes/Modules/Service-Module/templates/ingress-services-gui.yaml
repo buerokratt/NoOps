@@ -23,7 +23,7 @@ spec:
             path: "/services"
             backend:
               service:
-                name: "{{ .Value.release_name }}"
+                name: "{{ .Values.release_name }}"
                 port:
                   number: 3001
   tls:
