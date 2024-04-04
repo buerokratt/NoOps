@@ -38,7 +38,7 @@ selected_namespaces=($(echo "${selected_namespaces[@]}" | tr ' ' '\n' | sort -u 
 selected_pods=($(echo "${selected_pods[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
 
 # Get all running namespaces
-running_namespaces=($(kubectl get namespaces))
+running_namespaces=($(kubectl get namespaces --no-headers -o custom-columns=":metadata.name"))
 
 # Create namespaces that does not exist
 for element in "${selected_namespaces[@]}"; do
