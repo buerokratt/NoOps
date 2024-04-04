@@ -27,7 +27,7 @@ spec:
         path: "/"
         backend:
           service:
-            name: byk-ruuter
+            name: "{{ .Values.release_name }}"
             port:
               number: 8080
   tls:

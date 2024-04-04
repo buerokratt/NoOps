@@ -27,6 +27,26 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Function to get the chart path
+get_chart() {
+  local selected_pod=$1
+  local pods=("${@:2}")
+  local found=0
+
+  for c in "${pods[@]}"; do
+    if [[ $found -eq 1 ]]; then
+      echo "$c"
+      return
+    fi
+
+    if [[ $c == "$selected_pod" ]]; then
+      found=1
+    fi
+  done
+
+  echo "Component not found or no next component."
+}
+
 # Check if namespaces are provided
 if [[ -z $selected_namespaces ]]; then
     echo "Namespaces are required, Use -n flag to specify namespaces"
@@ -50,10 +70,25 @@ done
 # Components
 components_pod_names=("component-byk-dmapper" "component-notification-node" "component-opensearch-node" "component-byk-ruuter-private" 
 "component-byk-resql" "component-byk-ruuter" "component-byk-tim")
+components_charts=(
+  "component-byk-dmapper" "./Components/DataMapper"
+  "component-notification-node" "./Components/Notification-server"
+  "component-opensearch-node" "./Components/OpenSearch"
+  "component-byk-ruuter-private" "./Components/Private-Ruuter"
+  "component-byk-resql" "./Components/Resql"
+  "component-byk-ruuter" "./Components/Ruuter"
+  "component-byk-tim" "./Components/TIM")
 
 # Modules
 module_pod_names=("module-byk-analytics-gui" "module-byk-authentication-layer" "module-byk-backoffice-gui" "module-byk-services-gui" 
 "module-byk-training-gui" "module-byk-widget")
+module_charts=(
+  "module-byk-analytics-gui" "./Modules/Analytics-Module"
+  "module-byk-authentication-layer" "./Modules/Authentication-Layer"
+  "module-byk-backoffice-gui" "./Modules/Buerokratt-Chatbot"
+  "module-byk-services-gui" "./Modules/Service-Module"
+  "module-byk-training-gui" "./Modules/Training-Module"
+  "module-byk-widget" "./Modules/Widget")
 
 # Extract Components & Modules from selected pods
 selected_components=()
@@ -99,11 +134,29 @@ if [[ -z $selected_pods ]]; then
       fi
     done
 
-    if [[ -n $non_running_components ]]; then echo `helm install ${non_running_components[@]} ./Components --namespace ${selected_namespaces[@]}`; fi
-    if [[ -n $non_running_modules ]]; then echo `helm install ${non_running_modules[@]} ./Modules --namespace ${selected_namespaces[@]}`; fi
+    if [[ -n $non_running_components ]]; then 
+      for element in "${non_running_components[@]}"; do
+        echo `helm install ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
 
-    if [[ -n $running_components ]]; then echo `helm upgrade ${running_components[@]} ./Components --namespace ${selected_namespaces[@]}`; fi
-    if [[ -n $running_modules ]]; then echo `helm upgrade ${running_modules[@]} ./Modules --namespace ${selected_namespaces[@]}`; fi
+    if [[ -n $non_running_modules ]]; then 
+      for element in "${non_running_modules[@]}"; do
+        echo `helm install ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
+
+    if [[ -n $running_components ]]; then 
+      for element in "${running_components[@]}"; do
+        echo `helm upgrade ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
+
+    if [[ -n $running_modules ]]; then 
+      for element in "${running_modules[@]}"; do
+        echo `helm upgrade ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
 else
     # Deploy selected components
     non_existing_selected_components=()
@@ -120,8 +173,17 @@ else
       fi
     done
 
-    if [[ -n $non_existing_selected_components ]]; then echo `helm install ${non_existing_selected_components[@]} ./Components --namespace ${selected_namespaces[@]}`; fi
-    if [[ -n $existing_selected_components ]]; then echo `helm upgrade ${existing_selected_components[@]} ./Components --namespace ${selected_namespaces[@]}`; fi
+    if [[ -n $non_existing_selected_components ]]; then 
+      for element in "${non_existing_selected_components[@]}"; do
+        echo `helm install ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
+
+    if [[ -n $existing_selected_components ]]; then 
+      for element in "${existing_selected_components[@]}"; do
+        echo `helm upgrade ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
 
     # Deploy selected modules
     non_existing_selected_modules=()
@@ -138,6 +200,15 @@ else
       fi
     done
 
-    if [[ -n $non_existing_selected_modules ]]; then echo `helm install ${non_existing_selected_modules[@]} ./Modules --namespace ${selected_namespaces[@]}`; fi
-    if [[ -n $existing_selected_modules ]]; then echo `helm upgrade ${existing_selected_modules[@]} ./Modules --namespace ${selected_namespaces[@]}`; fi
+    if [[ -n $non_existing_selected_modules ]]; then 
+      for element in "${non_existing_selected_modules[@]}"; do
+        echo `helm install ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
+
+    if [[ -n $existing_selected_modules ]]; then 
+      for element in "${existing_selected_modules[@]}"; do
+        echo `helm upgrade ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
 fi

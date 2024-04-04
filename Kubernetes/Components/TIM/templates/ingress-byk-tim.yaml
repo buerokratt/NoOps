@@ -10,17 +10,17 @@ metadata:
     name: ruuter-byk-tim-ingress
 spec:
   rules:
-  - host: tim.{{ .Values.domain }}
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: byk-tim
-            port:
-              number: 8085
+    - host: tim.{{ .Values.domain }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: "{{ .Values.release_name }}"
+                port:
+                  number: 8085
   tls:
-  - hosts:
-    - tim.{{ .Values.domain }}
-    secretName: byk-tls-tim-secret 
+    - hosts:
+        - tim.{{ .Values.domain }}
+      secretName: byk-tls-tim-secret

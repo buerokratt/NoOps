@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Value.release_name }}"
+  name: "{{ .Values.release_name }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "{{ .Value.release_name }}"
+      app: "{{ .Values.release_name }}"
   template:
     metadata:
       labels:
-        app: "{{ .Value.release_name }}"
+        app: "{{ .Values.release_name }}"
     spec:
       containers:
-        - name: "{{ .Value.release_name }}"
+        - name: "{{ .Values.release_name }}"
           image: opensearchproject/opensearch:latest
           env:
             - name: cluster.name
