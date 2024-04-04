@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-training-gui
+  name: "{{ .Value.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-training-gui
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-training-gui
+        app: "{{ .Value.release_name }}"
     spec:
       initCointainers:
         - name: copy-dsl-to-shared-storage
@@ -36,7 +36,7 @@ spec:
             - "/data/DataMapper"
             - "byk-dmapper:/DSL/DataMapper/training"
       containers:
-        - name: byk-training-gui
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3001
@@ -116,4 +116,3 @@ spec:
         - name: dsl-volume
           persistentVolumeClaim:
             claimName: pvc-training-dsl
-

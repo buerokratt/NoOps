@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-widget
+  name: "{{ .Value.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-widget
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-widget
+        app: "{{ .Value.release_name }}"
     spec:
       containers:
-        - name: byk-widget
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3003

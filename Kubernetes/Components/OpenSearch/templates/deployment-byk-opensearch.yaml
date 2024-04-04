@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opensearch-node
+  name: "{{ .Value.release_name }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: opensearch-node
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: opensearch-node
+        app: "{{ .Value.release_name }}"
     spec:
       containers:
-        - name: opensearch-node
+        - name: "{{ .Value.release_name }}"
           image: opensearchproject/opensearch:latest
           env:
             - name: cluster.name
-              value: "{{ .Values.env.cluster.name }}"
+              value: "{{ .Values.env.CLUSTER_NAME }}"
             - name: node.name
-              value: "{{ .Values.env.node.name }}"
+              value: "{{ .Values.env.NODE_NAME }}"
             - name: discovery.type
-              value: "{{ .Values.env.discovery.type }}"
+              value: "{{ .Values.env.DISCOVERY_TYPE }}"
             - name: bootstrap.memory_lock
-              value: "{{ .Values.env.bootstrap.memory_lock }}"
+              value: "{{ .Values.env.BOOTSTRAP_MEMORY_LOCK }}"
             - name: OPENSEARCH_JAVA_OPTS
               value: "{{ .Values.env.OPENSEARCH_JAVA_OPTS }}"
             - name: DISABLE_INSTALL_DEMO_CONFIG

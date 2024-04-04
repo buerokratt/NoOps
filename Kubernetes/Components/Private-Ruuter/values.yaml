@@ -23,6 +23,8 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
+release_name: "component-byk-ruuter-private"
+
 # byk:
 #   dsl:
 #     image:
@@ -41,15 +43,9 @@ images:
     tag: "pre-alpha-2.4.1"
 
 env:
-  logging.level.root:
-    value: INFO
-  LOG_LEVEL_TIMING:
-    value: INFO
-  application.logging.displayRequestContent:
-    value: "true"
-  application.logging.displayResponseContent:
-    value: "true"
-  application.cors.allowedOrigins:
-    value: https://admin.test.buerokratt.ee
-  application.openSearchConfiguration.url:
-    value: http://opensearch-node:9200
+  LOGGIN_LEVEL_ROOT: "INFO"
+  LOG_LEVEL_TIMING: "INFO"
+  APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "true"
+  APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "true"
+  APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.test.buerokratt.ee
+  APPLICATION_OPENSEARCH_CONFIGURATION_URL: http://opensearch-node:9200

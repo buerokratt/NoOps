@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: notification-node
+  name: "{{ .Value.release_name }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: notification-node
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: notification-node
+        app: "{{ .Value.release_name }}"
     spec:
       containers:
-        - name: notification-node
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           image: riaee/byk:notification-server-1.0.6 ## To be deleted
           ports:

@@ -1,4 +1,3 @@
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -24,19 +23,14 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
-# byk:
-#   dsl:
-#     image:
-#       registry: "ghcr.io"
-#       repository: "buerokratt/buerokratt-dsl"
-#       tag: "pre-alpha-kube-1.12.33"
-#   dmapper:
-#     dsl:
-#       path: "/workspace/app/module"
-      
+release_name: "module-byk-authentication-layer"
 
 images:
-  scope:
+  gui:
     registry: "ghcr.io"
-    repository: "buerokratt/datamapper"
-    tag: "pre-alpha-2.3.1"
+    repository: "buerokratt/authentication-layer"
+    tag: "pre-alpha-1.1.0"
+  dsl:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "pre-alpha-1.1.0" # TODO: Change this to the correct tag

@@ -1,3 +1,4 @@
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -23,32 +24,21 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
+release_name: "component-byk-dmapper"
+
 # byk:
 #   dsl:
 #     image:
 #       registry: "ghcr.io"
 #       repository: "buerokratt/buerokratt-dsl"
 #       tag: "pre-alpha-kube-1.12.33"
-#   resql:
+#   dmapper:
 #     dsl:
-#       path: "/DSL/"
+#       path: "/workspace/app/module"
+      
 
 images:
   scope:
     registry: "ghcr.io"
-    repository: "buerokratt/resql"
-    tag: "re-alpha-2.4.0-27"
-
-env:
-  logging.level.root:
-    value: TRACE
-  SQLMS_DATASOURCES_0_NAME:
-    value: "byk"
-  SQLMS_DATASOURCES_0_JDBCURL:
-    value: "jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk"
-  SQLMS_DATASOURCES_0_USERNAME:
-    value: "byk"
-  SQLMS_DATASOURCES_0_PASSWORD:
-    value: "01234"
-  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT:
-    value: "DEBUG"
+    repository: "buerokratt/datamapper"
+    tag: "pre-alpha-2.3.1"

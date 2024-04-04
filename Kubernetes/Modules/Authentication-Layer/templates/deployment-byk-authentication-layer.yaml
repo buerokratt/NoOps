@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-backoffice-login
+  name: "{{ .Value.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-backoffice-login
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-backoffice-login
+        app: "{{ .Value.release_name }}"
     spec:
       containers:
-        - name: byk-backoffice-login
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           #command: ["/bin/sh"]
           #args: ["-c", "tail -f /dev/null"]

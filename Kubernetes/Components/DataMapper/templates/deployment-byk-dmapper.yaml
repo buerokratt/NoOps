@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-dmapper
+  name: "{{ .Value.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-dmapper
+      app: "{{ .Value.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-dmapper
+        app: "{{ .Value.release_name }}"
     spec:
       containers:
-        - name: byk-dmapper
+        - name: "{{ .Value.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           env:
             - name: EXTENSION

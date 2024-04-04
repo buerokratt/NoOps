@@ -11,17 +11,17 @@ metadata:
     name: byk-widget-ingress
 spec:
   rules:
-  - host: {{ .Values.domain }}
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: byk-widget
-            port:
-              number: 3003
+    - host: { { .Values.domain } }
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: "{{ .Value.release_name }}"
+                port:
+                  number: 3003
   tls:
-  - hosts:
-    - {{ .Values.domain }}
-    secretName: test.buerokratt.ee0503prod
+    - hosts:
+        - { { .Values.domain } }
+      secretName: test.buerokratt.ee0503prod

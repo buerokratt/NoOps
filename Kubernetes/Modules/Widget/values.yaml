@@ -23,6 +23,8 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
+release_name: "module-byk-widget"
+
 images:
   gui:
     registry: "ghcr.io"

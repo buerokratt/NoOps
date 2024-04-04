@@ -23,29 +23,28 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
-release_name: "component-opensearch-node"  
+release_name: "component-byk-resql"
 
 # byk:
 #   dsl:
 #     image:
 #       registry: "ghcr.io"
 #       repository: "buerokratt/buerokratt-dsl"
-#       tag: "pre-alpha-kube-1.13.64"
-#   ruuter:
+#       tag: "pre-alpha-kube-1.12.33"
+#   resql:
 #     dsl:
-#       path: "/script/"
+#       path: "/DSL/"
 
 images:
   scope:
-    registry: " "
-    repository: ""
-    tag: ""
+    registry: "ghcr.io"
+    repository: "buerokratt/resql"
+    tag: "re-alpha-2.4.0-27"
 
 env:
-  CLUSTER_NAME: "opensearch-cluster"
-  NODE_NAME: "opensearch-node"
-  DISCOVERY_TYPE: "single-node"
-  BOOTSTRAP_MEMORY_LOCK: "true"
-  OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
-  DISABLE_INSTALL_DEMO_CONFIG: "true"
-  DISABLE_SECURITY_PLUGIN: "true"
+  LOGGING_LEVEL_ROOT: "TRACE"
+  SQLMS_DATASOURCES_0_NAME: "byk"
+  SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk"
+  SQLMS_DATASOURCES_0_USERNAME: "byk"
+  SQLMS_DATASOURCES_0_PASSWORD: "01234"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
