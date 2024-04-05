@@ -103,7 +103,7 @@ for pod in "${selected_pods[@]}"; do
 done
 
 # Get all running pods
-running_pods=($(kubectl get pods -n byrokratt --no-headers -o custom-columns=":metadata.name"))
+running_pods=($(kubectl get pods --namespace ${selected_namespaces[@]} --no-headers -o custom-columns=":metadata.name"))
 
 # Extract Components & Modules from running pods
 running_components=()
@@ -122,14 +122,14 @@ if [[ -z $selected_pods ]]; then
     # deploy all pods
     non_running_components=()
     for element in "${components_pod_names[@]}"; do
-      if [[ ! " ${running_components[*]} " =~ " ${element} " ]]; then
+      if [[ ! " ${running_components[*]} " == *"${element}"* ]]; then
           non_running_components+=("$element")
       fi
     done
 
     non_running_modules=()
     for element in "${module_pod_names[@]}"; do
-      if [[ ! " ${running_modules[*]} " =~ " ${element} " ]]; then
+      if [[ ! " ${running_modules[*]} " == *"${element}"* ]]; then
           non_running_modules+=("$element")
       fi
     done
@@ -161,14 +161,14 @@ else
     # Deploy selected components
     non_existing_selected_components=()
     for element in "${selected_components[@]}"; do
-      if [[ ! " ${running_components[*]} " =~ " ${element} " ]]; then
+      if [[ ! " ${running_components[*]} " == *"${element}"* ]]; then
           non_existing_selected_components+=("$element")
       fi
     done
 
     existing_selected_components=()
     for element in "${selected_components[@]}"; do
-      if [[ ! " ${non_existing_selected_components[*]} " =~ " ${element} " ]]; then
+      if [[ ! " ${non_existing_selected_components[*]} " == *"${element}"* ]]; then
           existing_selected_components+=("$element")
       fi
     done
@@ -188,14 +188,14 @@ else
     # Deploy selected modules
     non_existing_selected_modules=()
     for element in "${selected_modules[@]}"; do
-      if [[ ! " ${running_modules[*]} " =~ " ${element} " ]]; then
+      if [[ ! " ${running_modules[*]} " == *"${element}"* ]]; then
           non_existing_selected_modules+=("$element")
       fi
     done
 
     existing_selected_modules=()
     for element in "${selected_modules[@]}"; do
-      if [[ ! " ${non_existing_selected_modules[*]} " =~ " ${element} " ]]; then
+      if [[ ! " ${non_existing_selected_modules[*]} " == *"${element}"* ]]; then
           existing_selected_modules+=("$element")
       fi
     done
