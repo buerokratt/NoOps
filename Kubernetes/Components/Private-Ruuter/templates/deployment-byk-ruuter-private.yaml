@@ -11,6 +11,60 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      initContainers:
+        - name: init-copy-files
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p Ruuter/DSL
+              echo test.yml
+              cp -r /app/DSL/private/backoffice /root/DSL/
+              ls -la
+          volumeMounts:
+            - name: buerokratt-dsl
+              mountPath: /app/DSL/
+            - name: privateruuter-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-analytics
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p Privateruuter
+              echo test.yml
+              cp -r /app/DSL/Ruuter/analytics/ /root/DSL/
+          volumeMounts:
+            - name: analytics-dsl
+              mountPath: /app/DSL
+            - name: privateruuter-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-training
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p Ruuter
+              echo test.yml
+              cp -r /app/DSL/Ruuter/training/ /root/DSL/
+          volumeMounts:
+            - name: training-dsl
+              mountPath: /app/DSL
+            - name: privateruuter-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-services
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p Ruuter
+              echo test.yml
+              cp -r /app/DSL/Ruuter/services/ /root/DSL/
+          volumeMounts:
+            - name: services-dsl
+              mountPath: /app/DSL
+            - name: privateruuter-volume
+              mountPath: /root/DSL/
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -19,49 +73,51 @@ spec:
               name: http
           env:
             - name: logging.level.root
-              value: "{{ .Values.env.LOGGIN_LEVEL_ROOT }}"
+              value: "{{ .Values.env.logging.level.root }}"
             - name: LOG_LEVEL_TIMING
               value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
             - name: application.logging.displayRequestContent
-              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT }}"
+              value: "{{ .Values.env.application.logging.displayRequestContent }}"
             - name: application.logging.displayResponseContent
-              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT }}"
+              value: "{{ .Values.env.application.logging.displayResponseContent }}"
             - name: application.cors.allowedOrigins
-              value: "{{ .Values.env.APPLICATION_CORS_ALLOWED_ORIGINS }}"
+              value: "{{ .Values.env.application.cors.allowedOrigins }}"
             - name: application.openSearchConfiguration.url
-              value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
+              value: "{{ .Values.env.application.openSearchConfiguration.url }}"
           volumeMounts:
-            - name: dsl
-              mountPath: {{ .Values.byk.ruuterPrivate.dsl.path }}
+            - name: privateruuter-volume
+              mountPath: /DSL/
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
             - name: byk-dsl-services
               mountPath: /opt/dsl
               readOnly: true
-#          livenessProbe:
-#            tcpSocket:
-#              port: 8080
-#            initialDelaySeconds: 10
-#            periodSeconds: 10
-#          readinessProbe:
-#            tcpSocket:
-#              port: 8080
-#            initialDelaySeconds: 15
-#            periodSeconds: 10
-      initContainers:
-        - name: dsl-installer
-          image: {{ .Values.byk.dsl.image.registry }}/{{ .Values.byk.dsl.image.repository }}:{{ .Values.byk.dsl.image.tag }}
-          volumeMounts:
-            - name: dsl
-              mountPath: /root/DSL/
-          command: ["/bin/sh"]
-          args:
-            - "-c"
-            - >
-              ls -l /Ruuter/private/v2/ && mv /Ruuter/private/v2/* /root/DSL/ && echo 'moved'
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
       volumes:
-        - name: dsl
+        - name: buerokratt-dsl
+          persistentVolumeClaim:
+            claimName: pvc-buerokratt-dsl
+        - name: analytics-dsl
+          persistentVolumeClaim:
+            claimName: pvc-analytics-dsl
+        - name: training-dsl
+          persistentVolumeClaim:
+            claimName: pvc-training-dsl
+        - name: services-dsl
+          persistentVolumeClaim:
+            claimName: pvc-services-dsl
+        - name: privateruuter-volume
           emptyDir: {}
         - name: urls-env
           configMap:

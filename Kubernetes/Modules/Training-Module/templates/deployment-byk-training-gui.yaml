@@ -11,30 +11,22 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initCointainers:
-        - name: copy-dsl-to-shared-storage
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["kubectl"]
-          args:
-            - "cp"
-            - "Ruuter/private/v2/training"
-            - "/data/Ruuter/training"
-            - "Resql/training"
-            - "/data/Resql/training"
-            - "DataMapper/v1/training"
-            - "/data/DataMapper/training"
       initContainers:
-        - name: copy-dsl-files-to-pods
-          image: bitnami/kubectl
-          command: ["kubectl"]
+        - name: init-copy-files
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["/bin/sh", "-c"]
           args:
-            - "cp"
-            - "/data/Ruuter/training" #todo - correct paths
-            - "byk-ruuter:/DSL/Ruuter/training" #todo - correct paths
-            - "/data/Resql"
-            - "byk-resql:/DSL/Resql/training"
-            - "/data/DataMapper"
-            - "byk-dmapper:/DSL/DataMapper/training"
+            - |
+              pwd
+              cp -r ../Ruuter/ /app/DSL
+              cp -r ../Resql/ /app/DSL
+              cp -r ../DataMapper/ /app/DSL
+              cp -r ../OpenSearch/ /app/DSL
+              cp -r ../Liquibase/ /app/DSL
+              ls -la 
+          volumeMounts:
+            - name: training-dsl
+              mountPath: /app/DSL
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -113,6 +105,7 @@ spec:
         - name: config-volume
           configMap:
             name: configmap-byk-training
-        - name: dsl-volume
+        - name: training-dsl
           persistentVolumeClaim:
             claimName: pvc-training-dsl
+

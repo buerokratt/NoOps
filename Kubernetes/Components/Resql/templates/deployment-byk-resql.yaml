@@ -11,6 +11,46 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      initContainers:
+        - name: init-copy-files-backoffice
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p Resql
+              echo test.yml
+              cp -r /app/DSL/Resql/backoffice/ /root/DSL/
+          volumeMounts:
+            - name: buerokratt-dsl
+              mountPath: /app/DSL
+            - name: resql-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-analytics
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p Resql
+              echo test.yml
+              cp -r /app/DSL/Resql/analytics/ /root/DSL/
+          volumeMounts:
+            - name: analytics-dsl
+              mountPath: /app/DSL
+            - name: resql-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-training
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p Resql
+              echo test.yml
+              cp -r /app/DSL/Resql/training/ /root/DSL/
+          volumeMounts:
+            - name: training-dsl
+              mountPath: /app/DSL
+            - name: resql-volume
+              mountPath: /root/DSL/
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -31,8 +71,8 @@ spec:
             - containerPort: 8082
               name: http
           volumeMounts:
-            - name: dsl
-              mountPath: {{ .Values.byk.resql.dsl.path }}
+            - name: resql-volume
+              mountPath: /DSL/
           livenessProbe:
             httpGet:
               path: /datasources
@@ -45,17 +85,17 @@ spec:
               port: 8082
             initialDelaySeconds: 70
             periodSeconds: 10
-      initContainers:
-        - name: dsl-installer
-          image: {{ .Values.byk.dsl.image.registry }}/{{ .Values.byk.dsl.image.repository }}:{{ .Values.byk.dsl.image.tag }}
-          volumeMounts:
-            - name: dsl
-              mountPath: /root/DSL/
-          command: ["/bin/sh"]
-          args:
-            - "-c"
-            - >
-              ls -l /Resql/ && mv /Resql/* /root/DSL/ && echo 'moved'
+
       volumes:
-        - name: dsl
+        - name: buerokratt-dsl
+          persistentVolumeClaim:
+            claimName: pvc-buerokratt-dsl
+        - name: analytics-dsl
+          persistentVolumeClaim:
+            claimName: pvc-analytics-dsl
+        - name: training-dsl
+          persistentVolumeClaim:
+            claimName: pvc-training-dsl
+        - name: resql-volume
           emptyDir: {}
+

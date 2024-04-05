@@ -11,40 +11,26 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initCointainers:
-        - name: copy-dsl-to-shared-storage
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["kubectl"]
-          args:
-            - "cp"
-            - "Ruuter/private/v2/analytics"
-            - "/data/Ruuter/analytics"
-            - "Resql/analytics"
-            - "/data/Resql/analytics"
-            - "DataMapper/v1/analytics"
-            - "/data/DataMapper/analytics"
       initContainers:
-        - name: copy-dsl-files-to-pods
-          image: bitnami/kubectl
-          command: ["kubectl"]
+        - name: init-copy-files
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["/bin/sh", "-c"]
           args:
-            - "cp"
-            - "/data/Ruuter/analytics" #todo - correct paths
-            - "byk-ruuter:/DSL/Ruuter/analytics" #todo - correct paths
-            - "/data/Resql"
-            - "byk-resql:/DSL/Resql/analytics"
-            - "/data/DataMapper"
-            - "byk-dmapper:/DSL/DataMapper/analytics"
+            - |
+              pwd
+              cp -r ../Ruuter/ /app/DSL
+              cp -r ../Resql/ /app/DSL
+              cp -r ../DataMapper/ /app/DSL
+              ls -la 
+          volumeMounts:
+            - name: analytics-dsl
+              mountPath: /app/DSL
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3001
               name: http
-          volumeMounts:
-            - name: config-volume
-              mountPath: /app/.env.development
-              subPath: env.development
           env:
             - name: REACT_APP_RUUTER_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_API_URL }}"
@@ -110,9 +96,6 @@ spec:
             periodSeconds: 11
 
       volumes:
-        - name: config-volume
-          configMap:
-            name: configmap-byk-analytics
-        - name: dsl-volume
+        - name: analytics-dsl
           persistentVolumeClaim:
             claimName: pvc-analytics-dsl

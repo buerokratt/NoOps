@@ -14,7 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/cors-expose-headers: "cs-exposed-header1, cs-exposed-header2"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    #cert-manager.io/cluster-issuer: {{ .Values.ingress.certIssuerName | quote }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.certIssuerName | quote }}
  
   labels:
     name: ruuter-ingress
@@ -24,7 +24,7 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/v2/public/(.*)"
         backend:
           service:
             name: "{{ .Values.release_name }}"
@@ -33,4 +33,4 @@ spec:
   tls:
   - hosts:
     - ruuter.{{ .Values.domain }}
-    secretName: byk-tls-ruuter-secret 
+    secretName: ruuter.test.buerokratt.ee0504prod

@@ -38,8 +38,8 @@ release_name: "component-notification-node"
 images:
   scope:
     registry: "ghcr.io"
-    repository: ""
-    tag: ""
+    repository: "buerokratt/buerokratt-chatbot"
+    tag: "notification-node-pre-alpha-1.1.1"
 
 env:
   OPENSEARCH_PROTOCOL: "http"
