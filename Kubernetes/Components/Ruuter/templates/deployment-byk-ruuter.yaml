@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-ruuter
+  name: "{{ .Values.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-ruuter
+      app: "{{ .Values.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-ruuter
+        app: "{{ .Values.release_name }}"
     spec:
       initContainers:
         - name: init-copy-files
@@ -27,7 +27,7 @@ spec:
             - name: ruuter-volume
               mountPath: /root/DSL/
       containers:
-        - name: byk-ruuter
+        - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           ports:
             - containerPort: 8080

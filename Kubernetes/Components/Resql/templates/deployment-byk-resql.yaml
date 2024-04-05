@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: byk-resql
+  name: "{{ .Values.release_name }}"
 spec:
   selector:
     matchLabels:
-      app: byk-resql
+      app: "{{ .Values.release_name }}"
   template:
     metadata:
       labels:
-        app: byk-resql
+        app: "{{ .Values.release_name }}"
     spec:
       initContainers:
         - name: init-copy-files-backoffice
@@ -52,7 +52,7 @@ spec:
             - name: resql-volume
               mountPath: /root/DSL/
       containers:
-        - name: byk-resql
+        - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           env:
             - name: logging.level.root
