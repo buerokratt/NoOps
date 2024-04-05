@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: services-dsl-pvc
+  name: pvc-services-dsl
 spec:
   storageClassName: dsl
   accessModes:

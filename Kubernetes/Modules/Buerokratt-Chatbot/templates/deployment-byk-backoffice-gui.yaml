@@ -1,42 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.release_name }}"
+  name: byk-backoffice-gui
 spec:
   selector:
     matchLabels:
-      app: "{{ .Values.release_name }}"
+      app: byk-backoffice-gui
   template:
     metadata:
       labels:
-        app: "{{ .Values.release_name }}"
+        app: byk-backoffice-gui
     spec:
-      initCointainers:
-        - name: copy-dsl-to-shared-storage
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["kubectl"]
-          args:
-            - "cp"
-            - "Ruuter/private/v2/backoffice"
-            - "/data/Ruuter/backoffice"
-            - "Resql/backoffice"
-            - "/data/Resql/backoffice"
-            - "DataMapper/v1/backoffice"
-            - "/data/DataMapper/backoffice"
       initContainers:
-        - name: copy-dsl-files-to-pods
-          image: bitnami/kubectl
-          command: ["kubectl"]
+        - name: init-copy-files
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["/bin/sh", "-c"]
           args:
-            - "cp"
-            - "/data/Ruuter/backoffice" #todo - correct paths
-            - "byk-ruuter:/DSL/Ruuter/backoffice" #todo - correct paths
-            - "/data/Resql"
-            - "byk-resql:/DSL/Resql/backoffice"
-            - "/data/DataMapper"
-            - "byk-dmapper:/DSL/DataMapper/backoffice"
+            - |
+              pwd
+              cp -r ../Ruuter/public/ /app/DSL
+              cp -r ../Resql/ /app/DSL
+              cp -r ../DataMapper/ /app/DSL
+              ls -la 
+          volumeMounts:
+            - name: buerokratt-dsl
+              mountPath: /app/DSL
       containers:
-        - name: "{{ .Values.release_name }}"
+        - name: byk-backoffice-gui
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3001
@@ -85,6 +75,8 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
           volumeMounts:
+            - name: buerokratt-dsl
+              mountPath: /app/DSL
             - name: menu-configmap-volume
               mountPath: /app/menu.json
               subPath: menu.json
@@ -93,6 +85,6 @@ spec:
         - name: menu-configmap-volume
           configMap:
             name: menu-configmap
-        - name: dsl-volume
+        - name: buerokratt-dsl
           persistentVolumeClaim:
-            claimName: pvc-backoffice-dsl
+            claimName: pvc-buerokratt-dsl

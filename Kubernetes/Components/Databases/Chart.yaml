@@ -1,6 +1,6 @@
 apiVersion: v2
-name: chat_backoffice
-description: A Helm chart for chat and backoffice services
+name: databases
+description: A Helm chart for databases, using the release name "byk"
 
 type: application
 version: 0.1.20

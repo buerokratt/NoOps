@@ -15,7 +15,6 @@ spec:
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
-          image: riaee/byk:notification-server-1.0.6 ## To be deleted
           ports:
             - containerPort: 4040
           env:

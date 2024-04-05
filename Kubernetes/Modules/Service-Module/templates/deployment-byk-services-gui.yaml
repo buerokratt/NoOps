@@ -1,42 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.release_name }}"
+  name: byk-services-gui
 spec:
   selector:
     matchLabels:
-      app: "{{ .Values.release_name }}"
+      app: byk-services-gui
   template:
     metadata:
       labels:
-        app: "{{ .Values.release_name }}"
+        app: byk-services-gui
     spec:
-      initCointainers:
-        - name: copy-dsl-to-shared-storage
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["kubectl"]
-          args:
-            - "cp"
-            - "Ruuter/private/v2/services"
-            - "/data/Ruuter/services"
-            - "Resql/services"
-            - "/data/Resql/services"
-            - "DataMapper/v1/services"
-            - "/data/DataMapper/services"
       initContainers:
-        - name: copy-dsl-files-to-pods
-          image: bitnami/kubectl
-          command: ["kubectl"]
+        - name: init-copy-files
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["/bin/sh", "-c"]
           args:
-            - "cp"
-            - "/data/Ruuter/services" #todo - correct paths
-            - "byk-ruuter:/DSL/Ruuter/services" #todo - correct paths
-            - "/data/Resql"
-            - "byk-resql:/DSL/Resql/services"
-            - "/data/DataMapper"
-            - "byk-dmapper:/DSL/DataMapper/services"
+            - |
+              pwd
+              cp -r ../Ruuter/ /app/DSL
+              cp -r ../Resql/ /app/DSL
+              cp -r ../DataMapper/ /app/DSL
+              ls -la 
+          volumeMounts:
+            - name: services-dsl
+              mountPath: /app/DSL
       containers:
-        - name: "{{ .Values.release_name }}"
+        - name: byk-services-gui
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
             - containerPort: 3001
@@ -93,28 +83,10 @@ spec:
             - name: REACT_APP_RUUTER_PRIVATE_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_API_URL }}"
           volumeMounts:
-            - name: dsl
-              mountPath: {{ .Values.byk.ruuter.dsl.path }}
-              subPath: public/
-            - name: dsl
-              mountPath: {{ .Values.byk.ruuterPrivate.dsl.path }}
-              subPath: private/
-      initContainers:
-        - name: dsl-installer
-          image: {{ .Values.byk.dsl.image.registry }}/{{ .Values.byk.dsl.image.repository }}:{{ .Values.byk.dsl.image.tag }}
-          volumeMounts:
-            - name: dsl
-              mountPath: /root/DSL/
-          command: ["/bin/sh"]
-          args:
-            - "-c"
-            - >
-              ls -l /Ruuter/public/v2/ && mkdir -p /root/DSL/public && mv /Ruuter/public/v2/* /root/DSL/public && echo 'Public DSL moved' &&
-              ls -l /Ruuter/private/v2/ && mkdir -p /root/DSL/private && mv /Ruuter/private/v2/* /root/DSL/private && echo 'Private DSL moved'
+            - name: services-dsl
+              mountPath: /DSL/
       volumes:
-        - name: dsl
-          emptyDir: {}
-        - name: dsl-volume
+        - name: services-dsl
           persistentVolumeClaim:
             claimName: pvc-services-dsl
 
