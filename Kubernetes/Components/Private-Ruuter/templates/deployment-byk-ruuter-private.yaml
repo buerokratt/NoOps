@@ -12,20 +12,17 @@ spec:
         app: "{{ .Values.release_name }}"
     spec:
       initContainers:
-        - name: init-copy-files
-          image: busybox
+        - name: init-copy-files-backoffice
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Ruuter/DSL
-              echo test.yml
-              cp -r /app/DSL/private/backoffice /root/DSL/
-              ls -la
+              pwd
+              cp -r ../Ruuter/private/backoffice /DSL
+              ls -la 
           volumeMounts:
-            - name: buerokratt-dsl
-              mountPath: /app/DSL/
             - name: privateruuter-volume
-              mountPath: /root/DSL/
+              mountPath: /DSL/
         - name: init-copy-files-analytics
           image: busybox
           command: ["/bin/sh", "-c"]
@@ -73,17 +70,17 @@ spec:
               name: http
           env:
             - name: logging.level.root
-              value: "{{ .Values.env.logging.level.root }}"
+              value: "{{ .Values.env.LOGGING_LEVEL_ROOT }}"
             - name: LOG_LEVEL_TIMING
               value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
             - name: application.logging.displayRequestContent
-              value: "{{ .Values.env.application.logging.displayRequestContent }}"
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT }}"
             - name: application.logging.displayResponseContent
-              value: "{{ .Values.env.application.logging.displayResponseContent }}"
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT }}"
             - name: application.cors.allowedOrigins
-              value: "{{ .Values.env.application.cors.allowedOrigins }}"
+              value: "{{ .Values.env.APPLICATION_CORS_ALLOWED_ORIGINS }}"
             - name: application.openSearchConfiguration.url
-              value: "{{ .Values.env.application.openSearchConfiguration.url }}"
+              value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
           volumeMounts:
             - name: privateruuter-volume
               mountPath: /DSL/
@@ -105,23 +102,11 @@ spec:
             periodSeconds: 10
 
       volumes:
-        - name: buerokratt-dsl
-          persistentVolumeClaim:
-            claimName: pvc-buerokratt-dsl
-        - name: analytics-dsl
-          persistentVolumeClaim:
-            claimName: pvc-analytics-dsl
-        - name: training-dsl
-          persistentVolumeClaim:
-            claimName: pvc-training-dsl
-        - name: services-dsl
-          persistentVolumeClaim:
-            claimName: pvc-services-dsl
         - name: privateruuter-volume
           emptyDir: {}
         - name: urls-env
           configMap:
-            name: urls-env-config
+            name: urls-env-config-private
         - name: byk-dsl-services
           persistentVolumeClaim:
             claimName: byk-dsl-services

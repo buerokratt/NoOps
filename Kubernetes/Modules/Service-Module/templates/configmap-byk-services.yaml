@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: configmap-byk-analytics
+  name: configmap-byk-services
 data:
   env.development: |-
     REACT_APP_RUUTER_API_URL=https://ruuter.test.buerokratt.ee/v2/public/backoffice

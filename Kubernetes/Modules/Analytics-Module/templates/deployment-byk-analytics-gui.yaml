@@ -21,6 +21,7 @@ spec:
               cp -r ../Ruuter/ /app/DSL
               cp -r ../Resql/ /app/DSL
               cp -r ../DataMapper/ /app/DSL
+              cp -r ../Liquibase/ /app/DSL
               ls -la 
           volumeMounts:
             - name: analytics-dsl

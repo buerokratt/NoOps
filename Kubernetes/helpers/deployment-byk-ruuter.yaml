@@ -13,16 +13,20 @@ spec:
     spec:
       initContainers:
         - name: init-copy-files
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          image: busybox
           command: ["/bin/sh", "-c"]
           args:
             - |
-              pwd
-              cp -r ../Ruuter/public/backoffice /DSL
-              ls -la 
+              mkdir -p /Ruuter/DSL
+              cp -r /app/DSL/public/backoffice /root/DSL/
+              ls -la /root/
+              ls -la /root/DSL/
+            
           volumeMounts:
+            - name: buerokratt-dsl
+              mountPath: /app/DSL/
             - name: ruuter-volume
-              mountPath: /DSL/
+              mountPath: /root/DSL/
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -41,6 +45,8 @@ spec:
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
+            - name: buerokratt-dsl
+              mountPath: /app/ruuter
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
@@ -55,6 +61,9 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
       volumes:
+        - name: buerokratt-dsl
+          persistentVolumeClaim:
+            claimName: pvc-buerokratt-dsl
         - name: ruuter-volume
           emptyDir: {}
         - name: urls-env

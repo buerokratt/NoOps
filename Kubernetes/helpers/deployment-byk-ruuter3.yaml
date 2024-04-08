@@ -1,43 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.release_name }}"
+  name: byk-ruuter
 spec:
   selector:
     matchLabels:
-      app: "{{ .Values.release_name }}"
+      app: byk-ruuter
   template:
     metadata:
       labels:
-        app: "{{ .Values.release_name }}"
+        app: byk-ruuter
     spec:
       initContainers:
         - name: init-copy-files
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          image: busybox
           command: ["/bin/sh", "-c"]
           args:
             - |
-              pwd
-              cp -r ../Ruuter/public/backoffice /DSL
-              ls -la 
+              mkdir -p Ruuter/DSL
+              echo test.yml
+              cp -r /app/DSL/backoffice /root/DSL/
+              
+              ls -la
           volumeMounts:
+            - name: buerokratt-dsl
+              mountPath: /app/DSL/
             - name: ruuter-volume
-              mountPath: /DSL/
+              mountPath: /root/DSL/
       containers:
-        - name: "{{ .Values.release_name }}"
+        - name: byk-ruuter
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           ports:
             - containerPort: 8080
               name: http
           env:
             - name: logging.level.root
-              value: "{{ .Values.env.LOGGING_LEVEL_ROOT }}"
+              value: "{{ .Values.env.logging_level_root }}"
             - name: LOG_LEVEL_TIMING
               value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
             - name: application.logging.displayRequestContent
-              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT }}"
+              value: "{{ .Values.env.application_logging_displayRequestContent }}"
             - name: application.logging_displayResponseContent
-              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT }}"
+              value: "{{ .Values.env.application_logging_displayResponseContent }}"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
@@ -47,7 +51,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 13
+            initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
@@ -55,6 +59,9 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
       volumes:
+        - name: buerokratt-dsl
+          persistentVolumeClaim:
+            claimName: pvc-buerokratt-dsl
         - name: ruuter-volume
           emptyDir: {}
         - name: urls-env

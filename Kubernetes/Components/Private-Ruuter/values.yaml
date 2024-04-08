@@ -41,9 +41,12 @@ images:
     registry: "ghcr.io"
     repository: "buerokratt/Ruuter"
     tag: "pre-alpha-2.4.1"
-
+  backoffice:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "backoffice-module-pre-alpha-1.1.2" # TODO: Change this to the correct tag
 env:
-  LOGGIN_LEVEL_ROOT: "INFO"
+  LOGGING_LEVEL_ROOT: "INFO"
   LOG_LEVEL_TIMING: "INFO"
   APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "true"
   APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "true"
