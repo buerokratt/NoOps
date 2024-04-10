@@ -25,42 +25,53 @@ ingress:
   certIssuerName: letsencrypt-prod-issuer
 
 release_name: "component-byk-tim"
+release_db: "databases"
 
-# byk:
-#   tim:
-#     env:
-#       security:
-#         allowlist:
-#           jwt: byk-ruuter,byk-ruuter-private,byk-dmapper,byk-widget,byk-backoffice-login,byk-resql,byk-tim
-#         oauth2:
-#           client:
-#             clientId: byk_public_test
-#             clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh
-#             scope: openid
-#             userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize
-#             accessTokenUri: https://tara-test.ria.ee/oidc/token
-#           resource:
-#             jwk:
-#               keySetUri: https://tara-test.ria.ee/oidc/jwks
-#       legacyPortalIntegration:
-#         legacyUrl: arendus.eesti.ee
-#         legacyPortalRefererMarker: https://arendus.eesti.ee/portaal
-#         sessionCookieDomain: buerokratt.ee
-#       jwtIntegration:
-#         signature:
-#           issuer: test.buerokratt.ee
-#           keyStorePassword: ppjjpp
-#           keyStore: classpath:jwtkeystore.jks
-#       spring:
-#         profiles:
-#           active: dev
-#       logging:
-#         level:
-#           root: INFO
+byk:
+  tim:
+    env:
+      security:
+        allowlist:
+          jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
+        oauth2:
+          client:
+            clientId: byk_public_test
+            clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh
+            scope: openid
+            userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize
+            accessTokenUri: https://tara-test.ria.ee/oidc/token
+          resource:
+            jwk:
+              keySetUri: https://tara-test.ria.ee/oidc/jwks
+      legacyPortalIntegration:
+        legacyUrl: arendus.eesti.ee
+        legacyPortalRefererMarker: https://arendus.eesti.ee/portaal
+        sessionCookieDomain: buerokratt.ee
+      jwtIntegration:
+        signature:
+          issuer: test.buerokratt.ee
+          keyStorePassword: ppjjpp
+          keyStore: classpath:jwtkeystore.jks
+      spring:
+        profiles:
+          active: dev
+      logging:
+        level:
+          root: INFO
       
+tim-postgresql:
+  image:
+    tag: 14.1.0
+  auth:
+    postgresPassword: postgres
+    username: tim
+    password: "123"
+    database: "tim"
+
+tim_postgresql: "123"
 
 images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/tim"
-    tag: "pre-apha-2.4.2"
+    tag: "pre-apha-2.3.1"

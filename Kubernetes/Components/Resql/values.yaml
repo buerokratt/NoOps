@@ -24,6 +24,7 @@ ingress:
   certIssuerName: letsencrypt-prod-issuer
 
 release_name: "component-byk-resql"
+release_db: "databases" # Release name - currently databases, replace wit your own release name for databases
 
 # byk:
 #   dsl:
@@ -44,7 +45,7 @@ images:
 env:
   LOGGING_LEVEL_ROOT: "TRACE"
   SQLMS_DATASOURCES_0_NAME: "byk"
-  SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://{{ .Release.Name }}-users-db:5432/byk"
+  SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://databases-users-db:5432/byk"
   SQLMS_DATASOURCES_0_USERNAME: "byk"
   SQLMS_DATASOURCES_0_PASSWORD: "01234"
   LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"

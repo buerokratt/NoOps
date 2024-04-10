@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: byk-resql
+  name: "{{ .Values.release_name }}"
 spec:
   selector:
-    app: byk-resql
+    app: "{{ .Values.release_name }}"
   ports:
     - port: 8082
       targetPort: http

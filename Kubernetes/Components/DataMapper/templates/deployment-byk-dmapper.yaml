@@ -19,14 +19,12 @@ spec:
             - |
               mkdir -p DataMapper
               echo test.yml
-              cp -r /app/DSL/DataMapper/backoffice/ /root/DSL/
-              
-              ls -la /root/*
+              cp -r /app/DSL/DataMapper/backoffice/ /workspace/app/module/
           volumeMounts:
             - name: buerokratt-dsl
               mountPath: /app/DSL
             - name: dmapper-volume
-              mountPath: /root/DSL/
+              mountPath: /workspace/app/module/
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -38,7 +36,7 @@ spec:
               name: http
           volumeMounts:
             - name: dmapper-volume
-              mountPath: /DSL/
+              mountPath: /workspace/app/module/
 
           livenessProbe:
             httpGet:

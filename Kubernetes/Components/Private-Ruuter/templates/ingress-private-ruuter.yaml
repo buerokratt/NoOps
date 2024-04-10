@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ruuter-private-ingress
+  name: "{{ .Values.release_name }}-ingress"
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/enable-cors: "true"
@@ -18,7 +18,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
   labels:
-    name: ruuter-private-ingress
+    name: "{{ .Values.release_name }}-ingress"
 spec:
   rules:
   - host: ruuter.{{ .Values.domain }}
@@ -28,7 +28,7 @@ spec:
         path: "/v2/private/(.*)"
         backend:
           service:
-            name: byk-ruuter-private
+            name: "{{ .Values.release_name }}"
             port:
               number: 8080
   tls:

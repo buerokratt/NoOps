@@ -34,7 +34,7 @@ spec:
 
       containers:
         - name: "{{ .Values.release_name }}"
-          image: "{{ .Values.images.tim.registry }}/{{ .Values.images.tim.repository }}:{{ .Values.images.tim.tag }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           ports:
             - containerPort: 8085
               name: "http"
@@ -42,7 +42,7 @@ spec:
             - name: "DB_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  name: "{{ .Release.Name }}-tim-postgresql"
+                  name: "byk-tim-env-secret"
                   key: password
             - name: "OAUTH2_CLIENT_SECRET"
               valueFrom:
@@ -64,7 +64,7 @@ spec:
             httpGet:
               path: /
               port: 8085
-            initialDelaySeconds: 45
+            initialDelaySeconds: 38
             periodSeconds: 10
           readinessProbe:
             httpGet:

@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ruuter-ingress
+  name: "{{ .Values.release_name }}-ingress"
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
@@ -17,7 +17,7 @@ metadata:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.certIssuerName | quote }}
  
   labels:
-    name: ruuter-ingress
+    name: "{{ .Values.release_name }}-ingress"
 spec:
   rules:
   - host: ruuter.{{ .Values.domain }}

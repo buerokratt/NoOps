@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: byk-analytics-gui
+  name: "{{ .Values.release_name }}"
 spec:
   selector:
-    app: byk-analytics-gui
+    app: "{{ .Values.release_name }}"
   ports:
     - port: 3001
       targetPort: http

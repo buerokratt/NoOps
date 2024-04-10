@@ -16,8 +16,8 @@ data:
     frontpage.redirect.url=https://admin.{{ .Values.domain }}/chat
 
     logging.level.root={{ .Values.byk.tim.env.logging.level.root }}
-    {{ $dbName := index .Values "tim-postgresql" "auth" "database" }}
-    spring.datasource.url=jdbc:postgresql://{{ .Release.Name }}-tim-postgresql:5432/{{ $dbName }}
+    {{ $dbName := "tim" }}
+    spring.datasource.url=jdbc:postgresql://{{ .Values.release_db }}-tim-postgresql:5432/{{ $dbName }}
     spring.datasource.username={{ index .Values "tim-postgresql" "auth" "username" }}
     spring.datasource.password=${DB_PASSWORD}
     spring.datasource.driver-class-name=org.postgresql.Driver

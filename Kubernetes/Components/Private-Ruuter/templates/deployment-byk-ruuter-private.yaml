@@ -24,44 +24,38 @@ spec:
             - name: privateruuter-volume
               mountPath: /DSL/
         - name: init-copy-files-analytics
-          image: busybox
+          image: "{{ .Values.images.analytics.registry }}/{{ .Values.images.analytics.repository }}:{{ .Values.images.analytics.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Privateruuter
-              echo test.yml
-              cp -r /app/DSL/Ruuter/analytics/ /root/DSL/
+              pwd
+              cp -r ../Ruuter/analytics /DSL
+              ls -la 
           volumeMounts:
-            - name: analytics-dsl
-              mountPath: /app/DSL
             - name: privateruuter-volume
-              mountPath: /root/DSL/
+              mountPath: /DSL/                            
         - name: init-copy-files-training
-          image: busybox
+          image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Ruuter
-              echo test.yml
-              cp -r /app/DSL/Ruuter/training/ /root/DSL/
+              pwd
+              cp -r ../Ruuter/training /DSL
+              ls -la 
           volumeMounts:
-            - name: training-dsl
-              mountPath: /app/DSL
             - name: privateruuter-volume
-              mountPath: /root/DSL/
+              mountPath: /DSL/             
         - name: init-copy-files-services
-          image: busybox
+          image: "{{ .Values.images.services.registry }}/{{ .Values.images.services.repository }}:{{ .Values.images.services.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Ruuter
-              echo test.yml
-              cp -r /app/DSL/Ruuter/services/ /root/DSL/
+              pwd
+              cp -r ../Ruuter/services /DSL
+              ls -la 
           volumeMounts:
-            - name: services-dsl
-              mountPath: /app/DSL
             - name: privateruuter-volume
-              mountPath: /root/DSL/
+              mountPath: /DSL/        
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -93,7 +87,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 10
+            initialDelaySeconds: 11
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
