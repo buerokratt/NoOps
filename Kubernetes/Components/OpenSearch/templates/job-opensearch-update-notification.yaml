@@ -1,7 +1,8 @@
+{{- if not .Release.IsUpgrade }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "job-{{ .Values.release_name }}-update"
+  name: "job-{{ .Values.release_name }}-notification"
   annotations:
     "helm.sh/hook": post-install, post-upgrade
     "helm.sh/hook-weight": "1"
@@ -9,10 +10,10 @@ metadata:
 spec:
   template:
     metadata:
-      name: "job-{{ .Values.release_name }}-update"
+      name: "job-{{ .Values.release_name }}-notification"
     spec:
       initContainers:
-       - name: opensearch-clone-backoffice
+       - name: opensearch-clone-notification
          image: alpine/git:2.36.3
          volumeMounts:
             - name: opensearch-repos
@@ -35,7 +36,7 @@ spec:
               value: {{ .Values.images.opensearch.backoffice.path }}
 
       containers:
-        - name: opensearch-update-backoffice
+        - name: opensearch-update-notification
           image: alpine
           command: ["/bin/sh"]
           args:
@@ -52,3 +53,4 @@ spec:
         - name: opensearch-repos
           emptyDir: {}
       restartPolicy: Never
+{{- end }}
