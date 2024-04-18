@@ -1,4 +1,3 @@
-#{{- if not .Release.IsUpgrade }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -52,4 +51,3 @@ spec:
       - name: pipelines
         emptyDir: {}
       restartPolicy: Never
-#{{- end }}

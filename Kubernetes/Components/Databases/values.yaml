@@ -32,6 +32,11 @@ tim-postgresql:
     username: tim
     password: "123"
     database: tim
+  statefulset:
+    enabled: true
+    replicaCount: 3
+    persistence:
+      enabled: true
 
 users-db:
   image:
@@ -41,6 +46,20 @@ users-db:
     username: byk
     password: "01234"
     database: byk
+  statefulset:
+    enabled: true
+    replicaCount: 3
+    persistence:
+      enabled: true
+
+module-db:
+  image:
+    tag: 14.1.0
+  auth:
+    postgresPassword: postgres
+    username: byk
+    password: "01234"
+    databases: services_db,training_db
   statefulset:
     enabled: true
     replicaCount: 3

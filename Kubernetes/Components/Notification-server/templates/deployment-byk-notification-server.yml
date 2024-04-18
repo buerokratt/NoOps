@@ -34,6 +34,10 @@ spec:
               value: "{{ .Values.env.REFRESH_INTERVAL }}"
             - name: CORS_WHITELIST_ORIGINS
               value: "{{ .Values.env.CORS_WHITELIST_ORIGINS }}"
+            - name: RUUTER_URL
+              value: "{{ .Values.env.RUUTER_URL }}"
+            - name: CHAT_TERMINATION_DELAY
+              value: "{{ .Values.env.CHAT_TERMINATION_DELAY }}"
           volumeMounts:
             - name: notification-server
               mountPath: /app/notification-server
@@ -51,4 +55,4 @@ spec:
               cp -r /app/Buerokratt-Chatbot/notification-server/* /app/notification-server/
           volumeMounts:
             - name: notification-server
-              mountPath: /app/notification-server
+              mountPath: /app/notification-server 

@@ -50,3 +50,5 @@ env:
   PORT: "4040"
   REFRESH_INTERVAL: "1000"
   CORS_WHITELIST_ORIGINS: "http://module-byk-widget:3001,http://module-byk-backoffice-gui:3000,http://component-byk-ruuter-private:8080,http://component-byk-ruuter:8080"
+  RUUTER_URL: http://component-byk-ruuter:8080
+  CHAT_TERMINATION_DELAY: "5000"

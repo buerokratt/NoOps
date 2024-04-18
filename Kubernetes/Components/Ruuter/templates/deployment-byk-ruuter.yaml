@@ -52,7 +52,7 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 13
+            initialDelaySeconds: 14
             periodSeconds: 10
       volumes:
         - name: ruuter-volume
