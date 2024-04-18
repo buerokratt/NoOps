@@ -88,11 +88,19 @@ spec:
               value: "{{ .Values.env.REACT_APP_SERVICE_ID }}"
             - name: REACT_APP_RUUTER_PRIVATE_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_API_URL }}"
+            - name: REACT_APP_BASE_URL
+              value: "{{ .Values.env.REACT_APP_BASE_URL }}"
+            - name: REACT_APP_SERVICE_MODULE_GUI_BASE_URL
+              value: "{{ .Values.env.REACT_APP_SERVICE_MODULE_GUI_BASE_URL }}"
+            - name: REACT_APP_NODE_ENV
+              value: "{{ .Values.env.REACT_APP_NODE_ENV }}"
+            - name: REACT_APP_RUUTER_URL
+              value: "{{ .Values.env.REACT_APP_RUUTER_URL }}"
           livenessProbe:
             httpGet:
               path: /
               port: 3001
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 11
           readinessProbe:
             httpGet:
@@ -100,6 +108,19 @@ spec:
               port: 3001
             initialDelaySeconds: 10
             periodSeconds: 11
+        - name: "{{ .Values.release_name }}-pipelines"
+          image: "{{ .Values.images.pipelines.registry }}/{{ .Values.images.pipelines.repository }}:{{ .Values.images.pipelines.tag }}"
+          ports:
+            - containerPort: 3010
+          env:
+            - name: OPENSEARCH_PROTOCOL
+              value: "http"
+            - name: OPENSEARCH_HOST
+              value: "component-opensearch-node"
+            - name: OPENSEARCH_PORT
+              value: "9200"
+            - name: OPENSEARCH_AUTH
+              value: "admin:admin"
 
       volumes:
         - name: config-volume

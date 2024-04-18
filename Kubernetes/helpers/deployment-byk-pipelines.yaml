@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: byk-pipelines
+spec:
+  selector:
+    matchLabels:
+      app: byk-pipelines
+  template:
+    metadata:
+      labels:
+        app: byk-pipelines
+    spec:
+      containers:
+
+        - name: byk-pipelines
+          image: "{{ .Values.images.pipelines.registry }}/{{ .Values.images.pipelines.repository }}:{{ .Values.images.pipelines.tag }}"
+          ports:
+            - containerPort: 3010
+          env:
+            - name: OPENSEARCH_PROTOCOL
+              value: "http"
+            - name: OPENSEARCH_HOST
+              value: "http://component-opensearch-node"
+            - name: OPENSEARCH_PORT
+              value: "9200"
+            - name: OPENSEARCH_AUTH
+              value: "admin:admin"
+

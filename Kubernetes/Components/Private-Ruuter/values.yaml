@@ -44,19 +44,19 @@ images:
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-pre-alpha-1.1.2" # TODO: Change this to the correct tag
+    tag: "backoffice-module-pre-alpha-1.3.13" # TODO: Change this to the correct tag
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-pre-alpha-1.3.2" # TODO: Change this to the correct tag
+    tag: "analytics-module-pre-alpha-1.4.7" # TODO: Change this to the correct tag
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-pre-alpha-1.2.2" # TODO: Change this to the correct tag
+    tag: "service-module-pre-alpha-1.4.4" # TODO: Change this to the correct tag
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.2.0" # TODO: Change this to the correct tag  
+    tag: "training-module-pre-alpha-1.4.28" # TODO: Change this to the correct tag  
 env:
   LOGGING_LEVEL_ROOT: "INFO"
   LOG_LEVEL_TIMING: "INFO"

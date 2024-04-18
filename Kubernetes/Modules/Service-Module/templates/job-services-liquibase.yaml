@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: services-liquibase
+  name: job-services-liquibase
   annotations:
     "helm.sh/hook": post-install, post-upgrade
     "helm.sh/hook-weight": "1"

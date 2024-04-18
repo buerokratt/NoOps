@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      initContainers:
+        - name: init-copy-files-backoffice
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Ruuter/private/backoffice /DSL
+              ls -la 
+          volumeMounts:
+            - name: privateruuter-volume
+              mountPath: /DSL/
+        - name: init-copy-files-analytics
+          image: "{{ .Values.images.analytics.registry }}/{{ .Values.images.analytics.repository }}:{{ .Values.images.analytics.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Ruuter/private/analytics /DSL
+              ls -la 
+          volumeMounts:
+            - name: privateruuter-volume
+              mountPath: /DSL/                            
+        - name: init-copy-files-training
+          image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Ruuter/private/training /DSL
+              ls -la 
+          volumeMounts:
+            - name: privateruuter-volume
+              mountPath: /DSL/             
+        - name: init-copy-files-services
+          image: "{{ .Values.images.services.registry }}/{{ .Values.images.services.repository }}:{{ .Values.images.services.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Ruuter/private/services /DSL
+              ls -la 
+          volumeMounts:
+            - name: privateruuter-volume
+              mountPath: /DSL/        
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: logging.level.root
+              value: "{{ .Values.env.LOGGING_LEVEL_ROOT }}"
+            - name: LOG_LEVEL_TIMING
+              value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
+            - name: application.logging.displayRequestContent
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT }}"
+            - name: application.logging.displayResponseContent
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT }}"
+            - name: application.cors.allowedOrigins
+              value: "{{ .Values.env.APPLICATION_CORS_ALLOWED_ORIGINS }}"
+            - name: application.openSearchConfiguration.url
+              value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
+          volumeMounts:
+            - name: privateruuter-volume
+              mountPath: /DSL/
+            - name: urls-env
+              mountPath: /app/constants.ini
+              subPath: constants.ini
+            - name: byk-dsl-services
+              mountPath: /opt/dsl
+              readOnly: true
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+      volumes:
+        - name: privateruuter-volume
+          emptyDir: {}
+        - name: urls-env
+          configMap:
+            name: urls-env-config-private
+        - name: byk-dsl-services
+          persistentVolumeClaim:
+            claimName: byk-dsl-services

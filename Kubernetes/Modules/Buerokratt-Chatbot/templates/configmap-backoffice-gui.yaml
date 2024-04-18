@@ -113,13 +113,6 @@ data:
                   "en": "Slots"
                 },
                 "path": "/training/slots"
-              },
-              {
-                "label": {
-                  "et": "Automatic Teenused",
-                  "en": "Automatic Services"
-                },
-                "path": "/auto-services"
               }
             ]
           },
@@ -175,6 +168,13 @@ data:
                 "path": "/analytics/testcases"
               }
             ]
+          },
+          {
+                "label": {
+                  "et": "Automatic Teenused",
+                  "en": "Automatic Services"
+                },
+                "path": "/auto-services"
           },
           {
             "label": {

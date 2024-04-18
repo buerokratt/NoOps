@@ -67,13 +67,13 @@ spec:
             httpGet:
               path: /
               port: 3001
-            initialDelaySeconds: 10
+            initialDelaySeconds: 11
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: 3001
-            initialDelaySeconds: 15
+            initialDelaySeconds: 18
             periodSeconds: 10
           volumeMounts:
             - name: buerokratt-dsl

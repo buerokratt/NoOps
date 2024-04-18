@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: training-liquibase
+  name: job-training-liquibase
   annotations:
     "helm.sh/hook": post-install, post-upgrade
     "helm.sh/hook-weight": "1"

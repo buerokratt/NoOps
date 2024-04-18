@@ -46,6 +46,7 @@ spec:
               mkdir -p Resql
               echo test.yml
               cp -r /app/DSL/Resql/training/ /root/DSL/
+              ls -l /root/DSL
           volumeMounts:
             - name: training-dsl
               mountPath: /app/DSL
@@ -77,13 +78,13 @@ spec:
             httpGet:
               path: /datasources
               port: 8082
-            initialDelaySeconds: 60
+            initialDelaySeconds: 70
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /datasources
               port: 8082
-            initialDelaySeconds: 70
+            initialDelaySeconds: 68
             periodSeconds: 10
 
       volumes:

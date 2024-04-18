@@ -23,14 +23,18 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
-release_name: "module-byk-widget"
+release_name: "byk-bot"  
+
+
 
 images:
-  gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/chat-widget"
-    tag: "pre-alpha-1.4.2"
-  dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "pre-alpha-1.3.2" # TODO: Change this to the correct tag
+  scope:
+    bot:
+      image: "riaee/byk:bot-20220728"
+    bot_action: 
+      image: "riaee/byk:bot-action-server-20220728"
+  bot:
+    dsl:
+      repo: https://github.com/buerokratt/Installation-Guides.git
+      path: default-setup/chatbot-and-training/bot
+

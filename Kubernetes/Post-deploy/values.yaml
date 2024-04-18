@@ -23,14 +23,21 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
-release_name: "module-byk-widget"
-
+#release_name: "postdeploy"
+release_name: "component-byk-dmapper-v1"
+  
 images:
-  gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/chat-widget"
-    tag: "pre-alpha-1.4.2"
+  scope:
+    image: opensearchproject/opensearch:latest
+  pipelines:
+    training:
+      repo: https://github.com/buerokratt/Training-Module.git
+      path: /
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "pre-alpha-1.3.2" # TODO: Change this to the correct tag
+    tag: "training-module-pre-alpha-1.4.25" # TODO: Change this to the correct tag
+
+liquibase:
+  jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
+  dbPassword: "01234"  

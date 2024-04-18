@@ -47,12 +47,12 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 14
+            initialDelaySeconds: 12
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 15
+            initialDelaySeconds: 13
             periodSeconds: 10
       volumes:
         - name: ruuter-volume

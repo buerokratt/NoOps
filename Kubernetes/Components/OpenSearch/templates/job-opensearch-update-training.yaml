@@ -1,4 +1,4 @@
-{{- if not .Release.IsUpgrade }}
+
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -53,4 +53,4 @@ spec:
         - name: opensearch-repos
           emptyDir: {}
       restartPolicy: Never
-{{- end }}
+

@@ -10,3 +10,18 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.release_name }}-pipelines"
+spec:
+  selector:
+    app: "{{ .Values.release_name }}"
+  ports:
+    - port: 3010
+      targetPort: 3010
+      protocol: TCP
+      name: pipelines
+
