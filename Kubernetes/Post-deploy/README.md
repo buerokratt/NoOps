@@ -10,3 +10,5 @@ helm install <RELEASE-NAME> ./Post-deploy/pipeline/ -n <NAMESPACE>
 ```
 
 Replace he RELEASE-NAME and NAMESPACE with the correct valus
+
+With other post-deloy charts, replace the folder where charts are in.
