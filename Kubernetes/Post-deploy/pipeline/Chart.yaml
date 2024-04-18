@@ -1,5 +1,5 @@
 apiVersion: v2
-name: Post-deploy
+name: Post-deploy-pipeline
 description: Post deployment actions (for example, running shell scripts)
 type: application
 
