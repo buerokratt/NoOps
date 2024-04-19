@@ -15,7 +15,7 @@ spec:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
-            - containerPort: 3003
+            - containerPort: 80
               name: http
           volumeMounts:
             - name: widget-index-volume

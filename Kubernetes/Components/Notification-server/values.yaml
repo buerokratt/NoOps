@@ -39,14 +39,16 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-chatbot"
-    tag: "notification-node-pre-alpha-1.1.1"
+    tag: "notification-node-pre-alpha-1.2.2"
 
 env:
   OPENSEARCH_PROTOCOL: "http"
-  OPENSEARCH_HOST: "opensearch-node"
+  OPENSEARCH_HOST: "component-opensearch-node"
   OPENSEARCH_PORT: "9200"
   OPENSEARCH_USERNAME: "admin"
   OPENSEARCH_PASSWORD: "admin"
   PORT: "4040"
   REFRESH_INTERVAL: "1000"
-  CORS_WHITELIST_ORIGINS: "http://byk-widget:3001,http://byk-backoffice-gui:3000,http://byk-ruuter-private:8080,http://byk-ruuter:8080"
+  CORS_WHITELIST_ORIGINS: "http://module-byk-widget:3001,http://module-byk-backoffice-gui:3000,http://component-byk-ruuter-private:8080,http://component-byk-ruuter:8080"
+  RUUTER_URL: http://component-byk-ruuter:8080
+  CHAT_TERMINATION_DELAY: "5000"

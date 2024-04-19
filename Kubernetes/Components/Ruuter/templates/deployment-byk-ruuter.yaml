@@ -13,19 +13,16 @@ spec:
     spec:
       initContainers:
         - name: init-copy-files
-          image: busybox
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Ruuter/DSL
-              echo test.yml
-              cp -r /app/DSL/public/backoffice /root/DSL/
-              ls -la
+              pwd
+              cp -r ../Ruuter/public/backoffice /DSL
+              ls -la 
           volumeMounts:
-            - name: buerokratt-dsl
-              mountPath: /app/DSL/
             - name: ruuter-volume
-              mountPath: /root/DSL/
+              mountPath: /DSL/
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -34,13 +31,13 @@ spec:
               name: http
           env:
             - name: logging.level.root
-              value: "{{ .Values.env.logging_level_root }}"
+              value: "{{ .Values.env.LOGGING_LEVEL_ROOT }}"
             - name: LOG_LEVEL_TIMING
               value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
             - name: application.logging.displayRequestContent
-              value: "{{ .Values.env.application_logging_displayRequestContent }}"
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT }}"
             - name: application.logging_displayResponseContent
-              value: "{{ .Values.env.application_logging_displayResponseContent }}"
+              value: "{{ .Values.env.APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT }}"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
@@ -50,17 +47,14 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 10
+            initialDelaySeconds: 12
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 15
+            initialDelaySeconds: 14
             periodSeconds: 10
       volumes:
-        - name: buerokratt-dsl
-          persistentVolumeClaim:
-            claimName: pvc-buerokratt-dsl
         - name: ruuter-volume
           emptyDir: {}
         - name: urls-env

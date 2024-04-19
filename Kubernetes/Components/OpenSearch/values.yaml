@@ -37,13 +37,22 @@ release_name: "component-opensearch-node"
 
 images:
   scope:
-    registry: " "
-    repository: ""
-    tag: ""
+    image: opensearchproject/opensearch:latest
+  opensearch:
+    backoffice:
+      repo: https://github.com/buerokratt/Buerokratt-Chatbot.git
+      path: DSL/OpenSearch
+    services:
+      repo: https://github.com/buerokratt/Service-Module.git
+      path: DSL/OpenSearch
+    training:
+      repo: https://github.com/buerokratt/Training-Module.git
+      path: DSL/OpenSearch
+
 
 env:
   CLUSTER_NAME: "opensearch-cluster"
-  NODE_NAME: "opensearch-node"
+  NODE_NAME: "component-opensearch-node"
   DISCOVERY_TYPE: "single-node"
   BOOTSTRAP_MEMORY_LOCK: "true"
   OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"

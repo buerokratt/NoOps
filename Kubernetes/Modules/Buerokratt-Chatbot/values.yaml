@@ -25,6 +25,7 @@ ingress:
 
 release_name: "module-byk-backoffice-gui"
 
+
 images:
   gui:
     registry: "ghcr.io"
@@ -33,7 +34,11 @@ images:
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-pre-alpha-1.1.2" # TODO: Change this to the correct tag
+    tag: "backoffice-module-pre-alpha-1.3.16" # TODO: Change this to the correct tag
+  liquibase:
+    dsl:
+      repo: https://github.com/buerokratt/Buerokratt-Chatbot.git
+      path: DSL/Liquibase
 
 env:
   REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"
@@ -51,3 +56,7 @@ env:
   REACT_APP_MONITORING_BASE_URL: "https://admin.test.buerokratt.ee/monitoring"
   REACT_APP_SERVICE_ID: "conversations,settings,monitoring"
   REACT_APP_NOTIFICATION_NODE_URL: "https://ruuter.test.buerokratt.ee"
+
+liquibase:
+  jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
+  dbPassword: "01234"  

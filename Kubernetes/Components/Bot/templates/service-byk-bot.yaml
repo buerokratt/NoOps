@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: byk-bot
+spec:
+  selector:
+    app: byk-bot
+  ports:
+    - port: 5005
+      targetPort: 5005
+      protocol: TCP
+      name: bot
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: byk-bot-action
+spec:
+  selector:
+    app: byk-bot
+  ports:
+    - port: 5055
+      targetPort: 5055
+      protocol: TCP
+      name: bot 

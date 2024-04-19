@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: byk-tim
+  name: "{{ .Values.release_name }}"
 spec:
   selector:
-    app: byk-tim
+    app: "{{ .Values.release_name }}"
   ports:
     - port: 8085
       targetPort: 8085

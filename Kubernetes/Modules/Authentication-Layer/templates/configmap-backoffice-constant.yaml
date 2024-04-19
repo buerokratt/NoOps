@@ -34,11 +34,10 @@ data:
       "RUUTER_API_URL": "https://ruuter.test.buerokratt.ee/v2/public/backoffice",
       "TIM_API_URL": "https://tim.test.buerokratt.ee",
       "TARA_REDIRECT_URL": "https://tim.test.buerokratt.ee/oauth2/authorization/tara?callback_url=https://admin.test.buerokratt.ee/auth/callback",
-      "NOTIFICATION_NODE_URL": "http://ruuter.test.buerokratt.ee",
       "MONITORING_URL": "https://MONITORING_URL",
       "PASSWORD_AUTH_ENABLED": true,
       "BACKOFFICE_URL": "https://admin.test.buerokratt.ee/chat",
       "INSTITUTION_FORWARDING_ENABLED": true,
-      "AUTHORITY_NAME": 'TEST',
+      "AUTHORITY_NAME": 'TEST BYK',
 
     };

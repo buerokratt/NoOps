@@ -1,0 +1,81 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-backoffice-liquibase
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      name: backoffice-liquibase
+    spec:
+      initContainers:
+        - name: init-copy-files-liquibase
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Liquibase/backoffice /app/DSL
+              ls -la /app/DSL/backoffice
+          volumeMounts:
+            - name: liquibase
+              mountPath: /app/DSL
+        - name: base-liquibase
+          image: alpine/git:2.36.3
+          volumeMounts:
+            - name: base-liquibase
+              mountPath: /root/DSL
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              git clone $DSL_REPO /tmp/dsl-source &&
+              echo 'downloaded' &&
+              cp -r /tmp/dsl-source/$DSL_PATH/master.yml /root/DSL/ &&
+              cp -r /tmp/dsl-source/$DSL_PATH/changelog /root/DSL/ &&
+              cp -r /tmp/dsl-source/$DSL_PATH/data /root/DSL/ &&
+              echo 'moved' &&
+              ls /root/DSL
+          env:
+            - name: DSL_REPO
+              value: {{ .Values.images.liquibase.dsl.repo }}
+            - name: DSL_PATH
+              value: {{ .Values.images.liquibase.dsl.path }}
+      containers:
+        - name: byk-liquibase-update
+          image: liquibase/liquibase:4.23.2
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              ls -l /DSL && cd /DSL && 
+              liquibase
+              --url={{ .Values.liquibase.jdbcUrl }}
+              --password={{ .Values.liquibase.dbPassword }} --changeLogFile=master.yml update
+          volumeMounts:
+            - name: base-liquibase
+              mountPath: /DSL
+        - name: backoffice-liquibase
+          image: liquibase/liquibase:4.23.2
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              ls -l /DSL && cd /DSL/backoffice &&
+              liquibase
+              --url={{ .Values.liquibase.jdbcUrl }}
+              --password={{ .Values.liquibase.dbPassword }} --changeLogFile=master.yml update
+          volumeMounts:
+            - name: liquibase
+              mountPath: /DSL/
+
+      volumes:
+      - name: base-liquibase
+        emptyDir: {}
+      - name: liquibase
+        emptyDir: {}
+      restartPolicy: Never
+

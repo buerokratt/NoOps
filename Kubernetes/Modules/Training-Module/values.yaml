@@ -29,11 +29,16 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/training-module"
-    tag: "pre-alpha-clean-1.15.2"
+    tag: "pre-alpha-clean-1.15.4"
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.2.0" # TODO: Change this to the correct tag
+    tag: "training-module-pre-alpha-1.4.30" # TODO: Change this to the correct tag
+  pipelines:
+    registry: "ghcr.io"
+    repository: "varmoh/training-module"
+    tag: "pipeline-pre-alpha-1.1.4" # TODO: Change this to the correct tag
+    
 
 env:
   REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
@@ -61,3 +66,12 @@ env:
   REACT_APP_MONITORING_BASE_URL: "https://admin.test.buerokratt.ee/monitoring"
   REACT_APP_SERVICE_ID: "training"
   REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
+  REACT_APP_BASE_URL: "byrokratt/"
+  REACT_APP_SERVICE_MODULE_GUI_BASE_URL: "https://admin.test.buerokratt.ee/services/"
+  REACT_APP_NODE_ENV: "development"
+  REACT_APP_RUUTER_URL: "https://ruuter.test.buerokratt.ee/v2/private/training/"
+
+
+liquibase:
+  jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
+  dbPassword: "01234"  

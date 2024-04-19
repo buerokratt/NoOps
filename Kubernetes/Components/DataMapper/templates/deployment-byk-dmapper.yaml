@@ -12,21 +12,51 @@ spec:
         app: "{{ .Values.release_name }}"
     spec:
       initContainers:
-        - name: init-copy-files
-          image: busybox
+        - name: init-copy-files-backoffice
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p DataMapper
-              echo test.yml
-              cp -r /app/DSL/DataMapper/backoffice/ /root/DSL/
+              pwd
+              cp -r ../DataMapper/backoffice/ /workspace/app/module/
               
-              ls -la /root/*
+              ls -la /workspace/app/module/
           volumeMounts:
-            - name: buerokratt-dsl
-              mountPath: /app/DSL
             - name: dmapper-volume
-              mountPath: /root/DSL/
+              mountPath: /workspace/app/module/
+        - name: init-copy-files-analytics
+          image: "{{ .Values.images.analytics.registry }}/{{ .Values.images.analytics.repository }}:{{ .Values.images.analytics.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../DataMapper/analytics /workspace/app/module/
+              ls -la /workspace/app/module/
+          volumeMounts:
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
+        - name: init-copy-files-training
+          image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../DataMapper/training /workspace/app/module/
+              ls -la /workspace/app/module/
+          volumeMounts:
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
+        - name: init-copy-files-services
+          image: "{{ .Values.images.services.registry }}/{{ .Values.images.services.repository }}:{{ .Values.images.services.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../DataMapper/services /workspace/app/module/
+              ls -la /workspace/app/module/
+          volumeMounts:
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -38,24 +68,20 @@ spec:
               name: http
           volumeMounts:
             - name: dmapper-volume
-              mountPath: /DSL/
+              mountPath: /workspace/app/module/
 
           livenessProbe:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 60
+            initialDelaySeconds: 25
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 70
+            initialDelaySeconds: 25
             periodSeconds: 10
       volumes:
-        - name: buerokratt-dsl
-          persistentVolumeClaim:
-            claimName: pvc-buerokratt-dsl
         - name: dmapper-volume
           emptyDir: {}
-

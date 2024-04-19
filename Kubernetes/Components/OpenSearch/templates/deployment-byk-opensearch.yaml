@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: "{{ .Values.release_name }}"
-          image: opensearchproject/opensearch:latest
+          image: {{ .Values.images.scope.image }}
           env:
             - name: cluster.name
               value: "{{ .Values.env.CLUSTER_NAME }}"

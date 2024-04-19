@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: notification-node-ingress
+  name: "{{ .Values.release_name }}-ingress"
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/enable-cors: "true"
@@ -14,7 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-headers: "Origin, X-Requested-With, Content-Type, Cache-Control, Connection, Accept"
     cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
   labels:
-    name: notification-node-ingress
+    name: "{{ .Values.release_name }}-ingress"
 spec:
   rules:
   - host: ruuter.{{ .Values.domain }}
@@ -24,7 +24,7 @@ spec:
         path: "/"
         backend:
           service:
-            name: notification-node
+            name: "{{ .Values.release_name }}"
             port:
               number: 4040
   tls:

@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: backoffice-gui-ingress
+  name: "{{ .Values.release_name }}-ingress"
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/enable-cors: "true"
@@ -14,7 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
   labels:
-    name: backoffice-gui-ingress
+    name: "{{ .Values.release_name }}-ingress"
 spec:
   rules:
     - host: admin.{{ .Values.domain }}

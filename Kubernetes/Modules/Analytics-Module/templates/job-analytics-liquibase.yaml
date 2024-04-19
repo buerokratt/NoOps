@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-analytics-liquibase
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      name: backoffice-liquibase
+    spec:
+      initContainers:
+        - name: init-copy-files-liquibase
+          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Liquibase/analytics /app/DSL
+              ls -la /app/DSL/analytics
+          volumeMounts:
+            - name: liquibase
+              mountPath: /app/DSL
+      containers:
+        - name: backoffice-liquibase
+          image: liquibase/liquibase:4.23.2
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              ls -l /DSL && cd /DSL/analytics &&
+              liquibase
+              --url={{ .Values.liquibase.jdbcUrl }}
+              --password={{ .Values.liquibase.dbPassword }} --changeLogFile=changelog.yaml update
+          volumeMounts:
+            - name: liquibase
+              mountPath: /DSL/
+
+      volumes:
+      - name: liquibase
+        emptyDir: {}
+      restartPolicy: Never
+

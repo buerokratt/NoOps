@@ -21,6 +21,7 @@ spec:
               cp -r ../Ruuter/ /app/DSL
               cp -r ../Resql/ /app/DSL
               cp -r ../DataMapper/ /app/DSL
+              cp -r ../Liquibase/ /app/DSL
               ls -la 
           volumeMounts:
             - name: analytics-dsl
@@ -86,7 +87,7 @@ spec:
             httpGet:
               path: /
               port: 3001
-            initialDelaySeconds: 5
+            initialDelaySeconds: 7
             periodSeconds: 11
           readinessProbe:
             httpGet:
