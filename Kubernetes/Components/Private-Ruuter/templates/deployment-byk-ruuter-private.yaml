@@ -87,7 +87,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 20
+            initialDelaySeconds: 21
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
@@ -101,6 +101,6 @@ spec:
         - name: urls-env
           configMap:
             name: urls-env-config-private
-        - name: byk-dsl-services
+z        - name: byk-dsl-services
           persistentVolumeClaim:
             claimName: byk-dsl-services

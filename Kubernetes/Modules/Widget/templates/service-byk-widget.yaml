@@ -6,7 +6,7 @@ spec:
   selector:
     app: "{{ .Values.release_name }}"
   ports:
-    - port: 3003
+    - port: 80
       targetPort: http
       protocol: TCP
       name: http

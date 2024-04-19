@@ -1,37 +1,37 @@
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: byk-resql
+  name: component-byk-resql
 spec:
-  host: byk-resql
+  host: component-byk-resql
   subsets:
-  - name: byk-resql
+  - name: component-byk-resql
     labels:
-      app: byk-resql
+      app: component-byk-resql
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: byk-resql
+  name: component-byk-resql
 spec:
   hosts:
-  - byk-resql
+  - component-byk-resql
   http:
   - name: allow
     match:
     - sourceLabels:
-        app: byk-ruuter
+        app: component-byk-ruuter
     - sourceLabels:
-        app: byk-ruuter-private
+        app: component-byk-ruuter-private
     route:
     - destination:
-        host: byk-resql
-        subset: byk-resql
+        host: component-byk-resql
+        subset: component-byk-resql
   - name: reject
     route:
     - destination:
-        host: byk-resql
-        subset: byk-resql
+        host: component-byk-resql
+        subset: component-byk-resql
     fault:
       abort:
         percentage:

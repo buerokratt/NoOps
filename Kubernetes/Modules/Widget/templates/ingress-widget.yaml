@@ -20,7 +20,7 @@ spec:
               service:
                 name: "{{ .Values.release_name }}"
                 port:
-                  number: 3003
+                  number: 80
   tls:
     - hosts:
         - {{ .Values.domain }}

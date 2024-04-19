@@ -51,17 +51,4 @@ users-db:
     replicaCount: 3
     persistence:
       enabled: true
-
-module-db:
-  image:
-    tag: 14.1.0
-  auth:
-    postgresPassword: postgres
-    username: byk
-    password: "01234"
-    databases: services_db,training_db
-  statefulset:
-    enabled: true
-    replicaCount: 3
-    persistence:
-      enabled: true
+      

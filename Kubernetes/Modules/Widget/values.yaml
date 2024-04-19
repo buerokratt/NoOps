@@ -29,7 +29,7 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/chat-widget"
-    tag: "pre-alpha-1.5.2"
+    tag: "pre-alpha-1.5.3"
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"

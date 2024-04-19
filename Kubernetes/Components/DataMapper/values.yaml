@@ -41,7 +41,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/datamapper"
-    tag: "pre-alpha-19-2.2.14"
+    tag: "pre-alpha-19-2.6.15"
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"

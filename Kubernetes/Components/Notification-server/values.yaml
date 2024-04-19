@@ -39,7 +39,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-chatbot"
-    tag: "notification-node-pre-alpha-1.2.1"
+    tag: "notification-node-pre-alpha-1.2.2"
 
 env:
   OPENSEARCH_PROTOCOL: "http"

@@ -39,7 +39,7 @@ env:
   REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
   NODE_ENV: "development"
   CHOKIDAR_USEPOLLING: "true"
-  REACT_APP_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/analytics"
+  REACT_APP_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/services"
   REACT_APP_BUEROKRATT_CHATBOT_URL: "http://byk-bot:5005"
   REACT_APP_OPENSEARCH_DASHBOARD_URL: "https://opensearch.org/"
   REACT_APP_OPENDATAPORT_URL: "https://avaandmed.eesti.ee"
