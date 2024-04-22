@@ -33,4 +33,4 @@ spec:
   tls:
   - hosts:
     - ruuter.{{ .Values.domain }}
-    secretName: ruuter.test.buerokratt.ee0504prod
+    secretName: ruuter.test.buerokratt.ee1904prod

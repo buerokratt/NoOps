@@ -81,18 +81,18 @@ spec:
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
-            - name: byk-dsl-services
-              mountPath: /opt/dsl
-              readOnly: true
+#            - name: byk-dsl-services
+#              mountPath: /opt/dsl
+#              readOnly: true
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 21
+            initialDelaySeconds: 20
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 21
+            initialDelaySeconds: 20
             periodSeconds: 10
 
       volumes:
@@ -101,6 +101,6 @@ spec:
         - name: urls-env
           configMap:
             name: urls-env-config-private
-z        - name: byk-dsl-services
-          persistentVolumeClaim:
-            claimName: byk-dsl-services
+#        - name: byk-dsl-services
+#          persistentVolumeClaim:
+#            claimName: byk-dsl-services

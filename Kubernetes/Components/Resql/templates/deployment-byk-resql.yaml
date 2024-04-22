@@ -13,43 +13,48 @@ spec:
     spec:
       initContainers:
         - name: init-copy-files-backoffice
-          image: busybox
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Resql
-              echo test.yml
-              cp -r /app/DSL/Resql/backoffice/ /root/DSL/
+              pwd
+              cp -r ../Resql/backoffice/ /root/DSL/
+              
+              ls -la /root/DSL/
           volumeMounts:
-            - name: buerokratt-dsl
-              mountPath: /app/DSL
             - name: resql-volume
               mountPath: /root/DSL/
         - name: init-copy-files-analytics
-          image: busybox
+          image: "{{ .Values.images.analytics.registry }}/{{ .Values.images.analytics.repository }}:{{ .Values.images.analytics.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Resql
-              echo test.yml
-              cp -r /app/DSL/Resql/analytics/ /root/DSL/
+              pwd
+              cp -r ../Resql/analytics /root/DSL/
+              ls -la /root/DSL/
           volumeMounts:
-            - name: analytics-dsl
-              mountPath: /app/DSL
             - name: resql-volume
               mountPath: /root/DSL/
         - name: init-copy-files-training
-          image: busybox
+          image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p Resql
-              echo test.yml
-              cp -r /app/DSL/Resql/training/ /root/DSL/
-              ls -l /root/DSL
+              pwd
+              cp -r ../Resql/training /root/DSL/
+              ls -la /root/DSL/
           volumeMounts:
-            - name: training-dsl
-              mountPath: /app/DSL
+            - name: resql-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-services
+          image: "{{ .Values.images.services.registry }}/{{ .Values.images.services.repository }}:{{ .Values.images.services.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Resql/services /root/DSL/
+              ls -la /root/DSL/
+          volumeMounts:
             - name: resql-volume
               mountPath: /root/DSL/
       containers:
@@ -88,15 +93,6 @@ spec:
             periodSeconds: 10
 
       volumes:
-        - name: buerokratt-dsl
-          persistentVolumeClaim:
-            claimName: pvc-buerokratt-dsl
-        - name: analytics-dsl
-          persistentVolumeClaim:
-            claimName: pvc-analytics-dsl
-        - name: training-dsl
-          persistentVolumeClaim:
-            claimName: pvc-training-dsl
         - name: resql-volume
           emptyDir: {}
 
