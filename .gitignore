@@ -1,5 +1,6 @@
 /Kubernetes/helpers
 /Kubernetes/Post-deploy/centops
+/Kubernetes/Train-bot
 /tmp
 rit-tst-1.yaml
 /Kubernetes/__pycache__
