@@ -24,4 +24,4 @@ spec:
   tls:
     - hosts:
         - {{ .Values.domain }}
-      secretName: test.buerokratt.ee1904prod
+      secretName: {{ .Values.secretname }}
