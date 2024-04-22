@@ -134,27 +134,27 @@ if [[ -z $selected_pods ]]; then
       fi
     done
 
-    if [[ -n $non_running_components ]]; then 
-      for element in "${non_running_components[@]}"; do
-        echo `helm install ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
-      done
-    fi
-
     if [[ -n $non_running_modules ]]; then 
       for element in "${non_running_modules[@]}"; do
         echo `helm install ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
       done
     fi
 
-    if [[ -n $running_components ]]; then 
-      for element in "${running_components[@]}"; do
-        echo `helm upgrade ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+     if [[ -n $running_modules ]]; then 
+      for element in "${running_modules[@]}"; do
+        echo `helm upgrade ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
       done
     fi
 
-    if [[ -n $running_modules ]]; then 
-      for element in "${running_modules[@]}"; do
-        echo `helm upgrade ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
+    if [[ -n $non_running_components ]]; then 
+      for element in "${non_running_components[@]}"; do
+        echo `helm install ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+      done
+    fi
+
+    if [[ -n $running_components ]]; then 
+      for element in "${running_components[@]}"; do
+        echo `helm upgrade ${element} $(get_chart $element "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
       done
     fi
 else
