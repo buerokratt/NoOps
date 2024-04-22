@@ -46,7 +46,7 @@ if [[ -z $running_pods ]]; then
     exit 1
 fi
 
-# Check if there are selected pods
+# Check if there are no selected pods
 if [[ -z $selected_pods ]]; then
     # Uninstall all running pods
     for element in "${running_pods[@]}"; do
