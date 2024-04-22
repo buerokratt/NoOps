@@ -53,7 +53,7 @@ images:
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-pre-alpha-1.4.3" # TODO: Change this to the correct tag
+    tag: "service-module-pre-alpha-1.4.6" # TODO: Change this to the correct tag
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"

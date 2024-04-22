@@ -40,7 +40,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/resql"
-    tag: "pre-alpha-2.4.0-27"
+    tag: "pre-alpha-2.10.0-27"
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"

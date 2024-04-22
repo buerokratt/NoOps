@@ -63,6 +63,8 @@ spec:
           env:
             - name: EXTENSION
               value: .hbs
+            - name: CONTENT_FOLDER
+              value: /workspace/app/module/services
           ports:
             - containerPort: 3000
               name: http
