@@ -2,5 +2,5 @@
 /Kubernetes/Post-deploy/centops
 /tmp
 rit-tst-1.yaml
-/Kubernetes/_pycache_
+/Kubernetes/__pycache__
 /Kubernetes/deploy-kube.sh
