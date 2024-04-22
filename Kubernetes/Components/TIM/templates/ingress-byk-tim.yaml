@@ -24,4 +24,4 @@ spec:
   tls:
     - hosts:
         - tim.{{ .Values.domain }}
-      secretName: tim.test.buerokratt.ee0504prod 
+      secretName: tim.test.buerokratt.ee1904prod 

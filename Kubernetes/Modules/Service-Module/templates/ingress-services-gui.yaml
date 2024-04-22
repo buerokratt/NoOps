@@ -11,7 +11,7 @@ metadata:
     # nginx.ingress.kubernetes.io/proxy-set-header: "Content-Type: application/json"
     # nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   labels:
     name: "{{ .Values.release_name }}-ingress"
 spec:
@@ -29,4 +29,4 @@ spec:
   tls:
     - hosts:
         - admin.{{ .Values.domain }}
-      secretName: admin.test.buerokratt.ee0504prod
+      secretName: admin.test.buerokratt.ee1904prod

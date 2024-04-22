@@ -21,7 +21,7 @@ domain: test.buerokratt.ee # byk.buerokratt.ee
 #  tlsConfigMapName: byk-tls-configmap
 
 ingress:
-  certIssuerName: letsencrypt-prod-issuer
+  certIssuerName: letsencrypt-prod
 #  certIssuerName: letsencrypt-staging 
 
 tim-postgresql:

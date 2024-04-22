@@ -25,5 +25,6 @@ data:
     SERVICE_DMAPPER=http://component-byk-dmapper:3000
     SERVICE_RUUTER=http://component-byk-ruuter-private:8080/services
     SERVICE_RESQL=http://component-byk-resql:8082/services
+    SERVICE_TRAINING_RESQL=http://component-byk-resql:8082/training/training
     TRAINING_OPENSEARCH=http://component-opensearch-node:9200
     DOMAIN=test.buerokratt.ee

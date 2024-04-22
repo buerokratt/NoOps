@@ -11,7 +11,7 @@ metadata:
     # nginx.ingress.kubernetes.io/cors-allow-headers: "content-type"
     # nginx.ingress.kubernetes.io/configuration-snippet: |
     #   add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ruuter.test.buerokratt.ee/v1/public https://tim.test.buerokratt.ee https://admin.test.buerokratt.ee https://ruuter.test.buerokratt.ee/v1/private;";
-    cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   labels:
     name: "{{ .Values.release_name }}-ingress"
 spec:
@@ -29,4 +29,4 @@ spec:
   tls:
     - hosts:
         - admin.{{ .Values.domain }}
-      secretName: admin.test.buerokratt.ee0504prod
+      secretName: admin.test.buerokratt.ee1904prod

@@ -6,7 +6,7 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   labels:
     name: byk-widget-ingress
 spec:
@@ -24,4 +24,4 @@ spec:
   tls:
     - hosts:
         - {{ .Values.domain }}
-      secretName: test.buerokratt.ee0504prod
+      secretName: test.buerokratt.ee1904prod

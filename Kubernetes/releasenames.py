@@ -1,0 +1,20 @@
+releasenames = {
+    "Bot": "./Components/Bot",
+    "Databases": "./Components/Databases",
+    "DataMapper": "./Components/DataMapper",
+    "Notification-server": "./Components/Notification-server",
+    "Opensearch": "./Components/Opensearch",
+    "Private-Ruuter": "./Components/Private-Ruuter",
+    "Ruuter": "./Components/Ruuter",
+    "Resql": "./Components/Resql",
+    "TIM": "./Components/TIM",
+    "Train-bot": "./Components/Train-bot",
+    "Buerokratt-Chatbot": "./Modules/Buerokratt-Chatbot",
+    "Analytics-Module": "./Modules/Analytics-module",
+    "Authentication-Layer": "./Modules/Authentication-Layer",
+    "Service-Module": "./Modules/Service-Module",
+    "Training-Module": "./Modules/Training-Module",
+    "Widget": "./Modules/Widget",
+    "datamapperv1": "./Post-deploy/dmapperv1",
+    "pipeline": "./Post-deploy/pipeline"
+}

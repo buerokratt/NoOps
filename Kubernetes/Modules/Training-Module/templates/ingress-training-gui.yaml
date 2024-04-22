@@ -12,7 +12,7 @@ metadata:
     #    nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type"
     nginx.ingress.kubernetes.io/add-response-header: "Content-Type: application/javascript"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod-issuer
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   labels:
     name: "{{ .Values.release_name }}-ingress"
 spec:
@@ -30,4 +30,4 @@ spec:
   tls:
     - hosts:
         - admin.{{ .Values.domain }}
-      secretName: admin.test.buerokratt.ee0504prod
+      secretName: admin.test.buerokratt.ee1904prod

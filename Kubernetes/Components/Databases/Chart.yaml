@@ -18,9 +18,3 @@ dependencies:
     tags:
       - users-db
     alias: users-db
-  - name: postgresql
-    version: 12.2.2
-    repository: https://charts.bitnami.com/bitnami
-    tags:
-      - module-db
-    alias: module-db
