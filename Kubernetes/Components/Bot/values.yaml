@@ -24,7 +24,7 @@ ingress:
   certIssuerName: letsencrypt-prod
 
 release_name: "byk-bot"  
-
+releaseName: "byk-bot"
 
 
 images:

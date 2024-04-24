@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: test.buerokratt.ee # byk.buerokratt.ee
-
+releaseName: component-databases
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 

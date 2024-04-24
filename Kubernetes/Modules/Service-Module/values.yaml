@@ -63,5 +63,5 @@ env:
   REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"
 
 liquibase:
-  jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
+  jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
   dbPassword: "01234"  
