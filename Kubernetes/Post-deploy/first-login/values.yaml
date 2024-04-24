@@ -24,20 +24,23 @@ ingress:
   certIssuerName: letsencrypt-prod-issuer
 
 #release_name: "postdeploy"
-release_name: "job-postdeploy"
+release_name: "job-postdeploy-first-login"
   
-images:
-  scope:
-    image: opensearchproject/opensearch:latest
-  pipelines:
-    training:
-      repo: https://github.com/buerokratt/Training-Module.git
-      path: /
-  dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.25" # TODO: Change this to the correct tag
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
   dbPassword: "01234"  
+
+user:
+  login: "EE38101010001" # In production replace with real ID code 
+  first_name: "Kustuta"
+  last_name: "Kasutaja"
+  id_code: "EE30303039914" # In production replace with real ID code 
+  display_name: "Kustutamiseks"
+  csa_title: "Kustutamiseks" 
+  csa_email: "kustutamind@mail.ee"
+
+db:
+  db_host: databases-users-db:5432
+  db_user: byk
+  db_password: "01234"

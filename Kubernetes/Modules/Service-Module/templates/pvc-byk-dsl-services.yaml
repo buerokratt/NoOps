@@ -3,9 +3,11 @@ kind: PersistentVolumeClaim
 metadata:
   name: byk-dsl-services
 spec:
+  storageClassName: longhorn
   resources:
     requests:
       storage: 1Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
+

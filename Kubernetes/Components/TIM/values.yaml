@@ -17,7 +17,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: test.buerokratt.ee # Domain name
-
+secretname: tim.test.buerokratt.ee1904prod  # Cert name value, change this as suited to environment
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 
@@ -44,8 +44,8 @@ byk:
             jwk:
               keySetUri: https://tara-test.ria.ee/oidc/jwks
       legacyPortalIntegration:
-        legacyUrl: arendus.eesti.ee
-        legacyPortalRefererMarker: https://arendus.eesti.ee/portaal
+        legacyUrl: NA
+        legacyPortalRefererMarker: NA
         sessionCookieDomain: buerokratt.ee
       jwtIntegration:
         signature:
