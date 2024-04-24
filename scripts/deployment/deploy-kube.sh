@@ -71,24 +71,24 @@ done
 components_pod_names=("component-byk-dmapper" "component-notification-node" "component-opensearch-node" "component-byk-ruuter-private" 
 "component-byk-resql" "component-byk-ruuter" "component-byk-tim")
 components_charts=(
-  "component-byk-dmapper" "./Components/DataMapper"
-  "component-notification-node" "./Components/Notification-server"
-  "component-opensearch-node" "./Components/OpenSearch"
-  "component-byk-ruuter-private" "./Components/Private-Ruuter"
-  "component-byk-resql" "./Components/Resql"
-  "component-byk-ruuter" "./Components/Ruuter"
-  "component-byk-tim" "./Components/TIM")
+  "component-byk-dmapper" "../../Kubernetes/Components/DataMapper"
+  "component-notification-node" "../../Kubernetes/Components/Notification-server"
+  "component-opensearch-node" "../../Kubernetes/Components/OpenSearch"
+  "component-byk-ruuter-private" "../../Kubernetes/Components/Private-Ruuter"
+  "component-byk-resql" "../../Kubernetes/Components/Resql"
+  "component-byk-ruuter" "../../Kubernetes/Components/Ruuter"
+  "component-byk-tim" "../../Kubernetes/Components/TIM")
 
 # Modules
 module_pod_names=("module-byk-analytics-gui" "module-byk-authentication-layer" "module-byk-backoffice-gui" "module-byk-services-gui" 
 "module-byk-training-gui" "module-byk-widget")
 module_charts=(
-  "module-byk-analytics-gui" "./Modules/Analytics-Module"
-  "module-byk-authentication-layer" "./Modules/Authentication-Layer"
-  "module-byk-backoffice-gui" "./Modules/Buerokratt-Chatbot"
-  "module-byk-services-gui" "./Modules/Service-Module"
-  "module-byk-training-gui" "./Modules/Training-Module"
-  "module-byk-widget" "./Modules/Widget")
+  "module-byk-analytics-gui" "../../Kubernetes/Modules/Analytics-Module"
+  "module-byk-authentication-layer" "../../Kubernetes/Modules/Authentication-Layer"
+  "module-byk-backoffice-gui" "../../Kubernetes/Modules/Buerokratt-Chatbot"
+  "module-byk-services-gui" "../../Kubernetes/Modules/Service-Module"
+  "module-byk-training-gui" "../../Kubernetes/Modules/Training-Module"
+  "module-byk-widget" "../../Kubernetes/Modules/Widget")
 
 # Extract Components & Modules from selected pods
 selected_components=()
