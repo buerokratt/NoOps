@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: test.buerokratt.ee # Domain name
-
+secretname: admin.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 
@@ -62,7 +62,7 @@ env:
   REACT_APP_TRAINING_BASE_URL: "https://admin.test.buerokratt.ee/training"
   REACT_APP_ANALYTICS_BASE_URL: "https://admin.test.buerokratt.ee/analytics"
   REACT_APP_SERVICES_BASE_URL: "https://admin.test.buerokratt.ee/services"
-  REACT_APP_SETTINGS_BASE_URL: "https://admin.test.buerokratt.ee/settings"
+  REACT_APP_SETTINGS_BASE_URL: "https://admin.test.buerokratt.ee/chat"
   REACT_APP_MONITORING_BASE_URL: "https://admin.test.buerokratt.ee/monitoring"
   REACT_APP_SERVICE_ID: "training"
   REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/backoffice"

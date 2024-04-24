@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: test.buerokratt.ee # Domain name
-
+secretname: admin.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 

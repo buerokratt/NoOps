@@ -29,4 +29,4 @@ spec:
   tls:
     - hosts:
         - admin.{{ .Values.domain }}
-      secretName: admin.test.buerokratt.ee1904prod
+      secretName: {{ .Values.secretname }}

@@ -55,7 +55,8 @@ spec:
               ls -la 
           volumeMounts:
             - name: privateruuter-volume
-              mountPath: /DSL/        
+              mountPath: /DSL/    
+                
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -81,18 +82,18 @@ spec:
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
-#            - name: byk-dsl-services
-#              mountPath: /opt/dsl
-#              readOnly: true
+            - name: byk-dsl-services
+              mountPath: /data
+              readOnly: false
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 20
+            initialDelaySeconds: 21
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 20
+            initialDelaySeconds: 22
             periodSeconds: 10
 
       volumes:
@@ -101,6 +102,6 @@ spec:
         - name: urls-env
           configMap:
             name: urls-env-config-private
-#        - name: byk-dsl-services
-#          persistentVolumeClaim:
-#            claimName: byk-dsl-services
+        - name: byk-dsl-services
+          persistentVolumeClaim:
+            claimName: byk-dsl-services
