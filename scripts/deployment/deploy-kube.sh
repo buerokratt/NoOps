@@ -69,7 +69,7 @@ done
 
 # Components
 components_pod_names=("component-byk-dmapper" "component-notification-node" "component-opensearch-node" "component-byk-ruuter-private" 
-"component-byk-resql" "component-byk-ruuter" "component-byk-tim")
+"component-byk-resql" "component-byk-ruuter" "component-byk-tim" "component-databases")
 components_charts=(
   "component-byk-dmapper" "../../Kubernetes/Components/DataMapper"
   "component-notification-node" "../../Kubernetes/Components/Notification-server"
@@ -77,10 +77,11 @@ components_charts=(
   "component-byk-ruuter-private" "../../Kubernetes/Components/Private-Ruuter"
   "component-byk-resql" "../../Kubernetes/Components/Resql"
   "component-byk-ruuter" "../../Kubernetes/Components/Ruuter"
-  "component-byk-tim" "../../Kubernetes/Components/TIM")
+  "component-byk-tim" "../../Kubernetes/Components/TIM"
+  "component-databases" "../../Kubernetes/Components/Databases")
 
 # Modules
-module_pod_names=("module-byk-analytics-gui" "module-byk-authentication-layer" "module-byk-backoffice-gui" "module-byk-services-gui" 
+module_pod_names=("module-byk-backoffice-gui" "module-byk-authentication-layer" "module-byk-analytics-gui" "module-byk-services-gui" 
 "module-byk-training-gui" "module-byk-widget")
 module_charts=(
   "module-byk-analytics-gui" "../../Kubernetes/Modules/Analytics-Module"
@@ -103,7 +104,7 @@ for pod in "${selected_pods[@]}"; do
 done
 
 # Get all running pods
-running_pods=($(kubectl get pods --namespace ${selected_namespaces[@]} --no-headers -o custom-columns=":metadata.name"))
+running_pods=($(helm ls --short --namespace ${selected_namespaces[@]}))
 
 # Extract Components & Modules from running pods
 running_components=()
@@ -134,6 +135,10 @@ if [[ -z $selected_pods ]]; then
       fi
     done
 
+    if [[ "${non_running_components[*]}"  =~ "component-databases" ]]; then
+       echo `helm install component-databases $(get_chart component-databases "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+    fi
+    
     if [[ -n $non_running_modules ]]; then 
       for element in "${non_running_modules[@]}"; do
         echo `helm install ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
