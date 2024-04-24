@@ -39,7 +39,11 @@ selected_pods=($(echo "${selected_pods[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' 
 
 # Get all running pods
 running_pods=($(helm ls --short --namespace ${selected_namespaces[@]}))
+
+# Delete jobs
 jobs=($(kubectl get jobs --namespace ${selected_namespaces[@]} --no-headers -o custom-columns=":metadata.name"))
+echo `kubectl delete jobs ${jobs}` 
+
 
 # Check if there are running pods
 if [[ -z $running_pods ]]; then
@@ -71,6 +75,3 @@ else
         echo `helm uninstall ${element} --namespace ${selected_namespaces[@]}`;
     done
 fi
-
-# Delete jobs
-echo `kubectl delete jobs ${jobs}` 
