@@ -69,26 +69,27 @@ done
 
 # Components
 components_pod_names=("component-byk-dmapper" "component-notification-node" "component-opensearch-node" "component-byk-ruuter-private" 
-"component-byk-resql" "component-byk-ruuter" "component-byk-tim")
+"component-byk-resql" "component-byk-ruuter" "component-byk-tim" "component-databases")
 components_charts=(
-  "component-byk-dmapper" "./Components/DataMapper"
-  "component-notification-node" "./Components/Notification-server"
-  "component-opensearch-node" "./Components/OpenSearch"
-  "component-byk-ruuter-private" "./Components/Private-Ruuter"
-  "component-byk-resql" "./Components/Resql"
-  "component-byk-ruuter" "./Components/Ruuter"
-  "component-byk-tim" "./Components/TIM")
+  "component-byk-dmapper" "../../Kubernetes/Components/DataMapper"
+  "component-notification-node" "../../Kubernetes/Components/Notification-server"
+  "component-opensearch-node" "../../Kubernetes/Components/OpenSearch"
+  "component-byk-ruuter-private" "../../Kubernetes/Components/Private-Ruuter"
+  "component-byk-resql" "../../Kubernetes/Components/Resql"
+  "component-byk-ruuter" "../../Kubernetes/Components/Ruuter"
+  "component-byk-tim" "../../Kubernetes/Components/TIM"
+  "component-databases" "../../Kubernetes/Components/Databases")
 
 # Modules
-module_pod_names=("module-byk-analytics-gui" "module-byk-authentication-layer" "module-byk-backoffice-gui" "module-byk-services-gui" 
+module_pod_names=("module-byk-backoffice-gui" "module-byk-authentication-layer" "module-byk-analytics-gui" "module-byk-services-gui" 
 "module-byk-training-gui" "module-byk-widget")
 module_charts=(
-  "module-byk-analytics-gui" "./Modules/Analytics-Module"
-  "module-byk-authentication-layer" "./Modules/Authentication-Layer"
-  "module-byk-backoffice-gui" "./Modules/Buerokratt-Chatbot"
-  "module-byk-services-gui" "./Modules/Service-Module"
-  "module-byk-training-gui" "./Modules/Training-Module"
-  "module-byk-widget" "./Modules/Widget")
+  "module-byk-analytics-gui" "../../Kubernetes/Modules/Analytics-Module"
+  "module-byk-authentication-layer" "../../Kubernetes/Modules/Authentication-Layer"
+  "module-byk-backoffice-gui" "../../Kubernetes/Modules/Buerokratt-Chatbot"
+  "module-byk-services-gui" "../../Kubernetes/Modules/Service-Module"
+  "module-byk-training-gui" "../../Kubernetes/Modules/Training-Module"
+  "module-byk-widget" "../../Kubernetes/Modules/Widget")
 
 # Extract Components & Modules from selected pods
 selected_components=()
@@ -134,6 +135,10 @@ if [[ -z $selected_pods ]]; then
       fi
     done
 
+    if [[ "${non_running_components[*]}"  =~ "component-databases" ]]; then
+       echo `helm install component-databases $(get_chart component-databases "${components_charts[@]}") --namespace ${selected_namespaces[@]}`;
+    fi
+    
     if [[ -n $non_running_modules ]]; then 
       for element in "${non_running_modules[@]}"; do
         echo `helm install ${element} $(get_chart $element "${module_charts[@]}") --namespace ${selected_namespaces[@]}`;
