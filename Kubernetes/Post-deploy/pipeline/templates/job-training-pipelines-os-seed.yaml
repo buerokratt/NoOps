@@ -9,7 +9,7 @@ metadata:
 spec:
   template:
     metadata:
-      name: "{{ .Values.release_name }}-training-pipelines-os-seed"
+      name: "{{ .Values.release_name }}"
     spec:
       initContainers:
        - name: pipelines-copy-files

@@ -7,6 +7,8 @@ Scripts
 | Script        | Description             | Options |
 | ------------- | ----------------------- | :-----: |
 | `deploy-kube` | Automates K8 Deployment |  -n (NameSpaces) -p (Pods)  |
+| `post-deploy-kube` | Automates K8 Deployment post deployment | -r (Releasename)  -n (NameSpaces)  |
+| `remove-kube` | Automates K8 Deployment uninstalling | -r (Releasename)  -n (NameSpaces)  |
 
 Important Notes:
 
@@ -14,3 +16,6 @@ Important Notes:
 - Notification node must be deployed before open search 
 - if you didn't pass -n to `deploy-kube` then it will try to deploy all components and modules
 - example `./deploy-kube.sh -n testNamespace1 -p component-byk-dmapper component-byk-ruuter module-byk-widget`
+- `post-deploy-kube.sh` is for deploying the standalone singular deployments, that do not fit under components or modules. They are to be run as singular k8s jobs.
+- `./remove-kube.sh` will uninstall all the running pods under the given namespace
+- Scripts have to be run from `Kubernetes` folder

@@ -55,7 +55,8 @@ spec:
               ls -la 
           volumeMounts:
             - name: privateruuter-volume
-              mountPath: /DSL/        
+              mountPath: /DSL/    
+                
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -82,8 +83,8 @@ spec:
               mountPath: /app/constants.ini
               subPath: constants.ini
             - name: byk-dsl-services
-              mountPath: /opt/dsl
-              readOnly: true
+              mountPath: /data
+              readOnly: false
           livenessProbe:
             tcpSocket:
               port: 8080
@@ -92,7 +93,7 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 21
+            initialDelaySeconds: 22
             periodSeconds: 10
 
       volumes:

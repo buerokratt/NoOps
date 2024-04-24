@@ -57,6 +57,27 @@ spec:
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
+        - name: datamapper-service-dsl
+          image: alpine/git:2.36.3
+          volumeMounts:
+             - name: byk-dsl-services
+               mountPath: /data
+          command: ["/bin/sh"]
+          args:
+             - "-c"
+             - >
+               git clone $DSL_REPO /tmp/dsl-source &&
+               echo 'downloaded' &&
+               cp -r /tmp/dsl-source/$DSL_PATH/* /data/ &&
+               cp -r /tmp/dsl-source/secrets /data/ &&
+              
+               echo 'moved' &&
+               ls /data/
+          env:
+             - name: DSL_REPO
+               value: {{ .Values.images.pipelines.service.repo }}
+             - name: DSL_PATH
+               value: {{ .Values.images.pipelines.service.path }}
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -64,20 +85,24 @@ spec:
             - name: EXTENSION
               value: .hbs
             - name: CONTENT_FOLDER
-              value: /workspace/app/module/services
+              value: /data
           ports:
             - containerPort: 3000
               name: http
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
-
+#            - name: dmapper-service-dsl
+#              mountPath: /opt/dsl-services
+            - name: byk-dsl-services
+              mountPath: /data
+              readOnly: false
           livenessProbe:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 25
-            periodSeconds: 10
+            initialDelaySeconds: 26
+            periodSeconds: 11
           readinessProbe:
             httpGet:
               path: /
@@ -87,3 +112,6 @@ spec:
       volumes:
         - name: dmapper-volume
           emptyDir: {}
+        - name: byk-dsl-services
+          persistentVolumeClaim:
+            claimName: byk-dsl-services
