@@ -38,12 +38,7 @@ selected_namespaces=($(echo "${selected_namespaces[@]}" | tr ' ' '\n' | sort -u 
 selected_pods=($(echo "${selected_pods[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
 
 # Get all running pods
-running_pods=($(helm ls --short --namespace ${selected_namespaces[@]}))
-
-# Delete jobs
-jobs=($(kubectl get jobs --namespace ${selected_namespaces[@]} --no-headers -o custom-columns=":metadata.name"))
-echo `kubectl delete jobs ${jobs}` 
-
+running_pods=($(helm ls --short --namespace ${selected_namespaces[@]})) 
 
 # Check if there are running pods
 if [[ -z $running_pods ]]; then
