@@ -37,6 +37,6 @@ if [ -z "$NAMESPACE" ] || [ -z "$RELEASE_NAME" ]; then
 fi
 
 
-helm install "$RELEASE_NAME" ./Post-deploy/pipelines -n "$NAMESPACE"
-helm install "$RELEASE_NAME" ./Post-deploy/first-login -n "$NAMESPACE"
-helm install "$RELEASE_NAME" ./Post-deploy/dmapperv1 -n "$NAMESPACE"
+helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/pipelines -n "$NAMESPACE"
+helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/first-login -n "$NAMESPACE"
+helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/dmapperv1 -n "$NAMESPACE"
