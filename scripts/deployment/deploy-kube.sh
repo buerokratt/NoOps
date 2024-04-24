@@ -104,7 +104,7 @@ for pod in "${selected_pods[@]}"; do
 done
 
 # Get all running pods
-running_pods=($(kubectl get pods --namespace ${selected_namespaces[@]} --no-headers -o custom-columns=":metadata.name"))
+running_pods=($(helm ls --short --namespace ${selected_namespaces[@]}))
 
 # Extract Components & Modules from running pods
 running_components=()
