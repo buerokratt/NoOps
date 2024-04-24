@@ -24,7 +24,7 @@ ingress:
   certIssuerName: letsencrypt-prod-issuer
 
 #release_name: "postdeploy"
-release_name: "job-postdeploy-pipeline-seeding"
+release_name: "job-postdeploy"
   
 images:
   scope:
