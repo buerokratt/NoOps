@@ -2,10 +2,10 @@
 
 NAMESPACE=""
 RELEASE_NAME=""
-CHART=""
+CHARTS=()
 
 usage() {
-  echo "Usage: $0 -n <namespace> -r <release_name> -c <chart>" >&2
+  echo "Usage: $0 -n <namespace> -r <release_name> -c <chart> [-c <chart> ...]" >&2
   exit 1
 }
 
@@ -18,7 +18,7 @@ while getopts ":n:r:c:" option; do
       RELEASE_NAME=$OPTARG
       ;;
     c)
-      CHART=$OPTARG
+      CHARTS+=("$OPTARG")
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -31,26 +31,32 @@ while getopts ":n:r:c:" option; do
   esac
 done
 
-if [ -z "$NAMESPACE" ] || [ -z "$RELEASE_NAME" ] || [ -z "$CHART" ]; then
-  echo "Namespace, release name, and chart are required."
+if [ -z "$NAMESPACE" ] || [ -z "$RELEASE_NAME" ] || [ ${#CHARTS[@]} -eq 0 ]; then
+  echo "Namespace, release name, and at least one chart are required."
   usage
 fi
 
-case $CHART in
-  pipeline)
-    helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/pipeline -n "$NAMESPACE"
-    ;;
-  first-login)
-    helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/first-login -n "$NAMESPACE"
-    ;;
-  dmapperv1)
-    helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/dmapperv1 -n "$NAMESPACE"
-    ;;
-  byk-bot)
-    helm install "$RELEASE_NAME" ../../Kubernetes/Components/Bot -n "$NAMESPACE"
-    ;;
-  *)
-    echo "Invalid chart specified: $CHART" >&2
-    usage
-    ;;
-esac
+for CHART in "${CHARTS[@]}"; do
+  case $CHART in
+    pipeline)
+      echo "Installing pipeline chart"
+       helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/pipeline -n "$NAMESPACE"
+      ;;
+    first-login)
+      echo "Installing first-login chart"
+       helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/first-login -n "$NAMESPACE"
+      ;;
+    dmapperv1)
+      echo "Installing dmapperv1 chart"
+       helm install "$RELEASE_NAME" ../../Kubernetes/Post-deploy/dmapperv1 -n "$NAMESPACE"
+      ;;
+    byk-bot)
+      echo "Installing byk-bot chart"
+       helm install "$RELEASE_NAME" ../../Kubernetes/Components/Bot -n "$NAMESPACE"
+      ;;
+    *)
+      echo "Invalid chart specified: $CHART" >&2
+      usage
+      ;;
+  esac
+done
