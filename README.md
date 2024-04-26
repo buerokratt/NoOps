@@ -2,7 +2,7 @@
 
 #### Bürokratt deployment scripts, automated tests, etc  
 
-#### Deploying Bürokratt on K8s using helm
+#### Deploy Bürokratt on K8s using helm
 
 ##### Pre-deployment - Cloning the repo
 
@@ -27,10 +27,11 @@ To run the deployment scripts, change directory into
 
 ##### Pre-deployment - changing the values    
 
-- Every values.yam has a `comment` to help you with changes.
+- Every values.yaml has a `comment` to help you with changes.
 - To deploy, some changes inside values.yaml 's must be done.    
-  - `domain: test.buerokratt.ee` - change domain accordingly 
-  - Change the `component-databases-users-db` and `tim-postgresql` passwords. ##### Important: your created databases passwords, must be used in values.yaml where the DB connection are marked. There is a `# Comment` behind he line to help
+  - `domain: test.buerokratt.ee` - change domain according your domain name 
+  - Change the `component-databases-users-db` and `tim-postgresql` passwords. 
+    - Important: your created databases passwords, must be used in values.yaml where the DB connection are marked. There is a `# Comment` behind he line to help
   - env values under module and component, change according to your domain.   
   For example   
   `REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"`   
