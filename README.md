@@ -4,12 +4,33 @@
 
 #### Deploying Bürokratt on K8s using helm
 
-##### Pre-deployment    
+##### Pre-deployment - Cloning the repo
+
+To get the needed scripts, component and module charts, you need to clone Buerokratt-NoOps repo  
+
+```
+git clone https://github.com/buerokratt/NoOps.git
+```  
+
+Change directory  
+`cd Buerokratt-NoOps`  
+
+Change into `dev` branch  
+`git checkout dev`  
+
+To change `values.yaml's`, change directory into   
+`cd Kubernetes`   
+Here look `values.yaml's` under `Components/` `Modules/` `Post-deploy/` folders.   
+
+To run the deployment scripts, change directory into  
+`cd scripts/deployment`
+
+##### Pre-deployment - changing the values    
 
 - Every values.yam has a `comment` to help you with changes.
 - To deploy, some changes inside values.yaml 's must be done.    
   - `domain: test.buerokratt.ee` - change domain accordingly 
-  - Change the `component-databases-users-db` and `tim-postgresql` passwords. ##### Important: your created databases passords, must be used in values.yaml where the DB connection are marked. There is a `# Comment` behind he line to help
+  - Change the `component-databases-users-db` and `tim-postgresql` passwords. ##### Important: your created databases passwords, must be used in values.yaml where the DB connection are marked. There is a `# Comment` behind he line to help
   - env values under module and component, change according to your domain.   
   For example   
   `REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"`   
