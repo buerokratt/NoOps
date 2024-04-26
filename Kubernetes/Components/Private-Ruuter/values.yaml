@@ -17,50 +17,37 @@ securityContext: {}
 
 domain: test.buerokratt.ee # Domain name
 secretname: ruuter.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
 
 ingress:
-  certIssuerName: letsencrypt-prod
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-ruuter-private"
-
-# byk:
-#   dsl:
-#     image:
-#       registry: "ghcr.io"
-#       repository: "buerokratt/buerokratt-dsl"
-#       tag: "pre-alpha-kube-1.12.33"
-#   ruuterPrivate:
-#     dsl:
-#       path: "/DSL/"
-      
 
 images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/ruuter"
-    tag: "pre-alpha-2.4.1"
+    tag: "pre-alpha-2.4.1" # Images (tags) are up to date, currently no changes needed
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-pre-alpha-1.3.13" # TODO: Change this to the correct tag
+    tag: "backoffice-module-pre-alpha-1.3.13" # Images (tags) are up to date, currently no changes needed
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-pre-alpha-1.4.7" # TODO: Change this to the correct tag
+    tag: "analytics-module-pre-alpha-1.4.7" # Images (tags) are up to date, currently no changes needed
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-pre-alpha-1.4.6" # TODO: Change this to the correct tag
+    tag: "service-module-pre-alpha-1.4.6" # Images (tags) are up to date, currently no changes needed
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.28" # TODO: Change this to the correct tag  
+    tag: "training-module-pre-alpha-1.4.28" # Images (tags) are up to date, currently no changes needed 
 env:
   LOGGING_LEVEL_ROOT: "INFO"
   LOG_LEVEL_TIMING: "INFO"
   APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "true"
   APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "true"
-  APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.test.buerokratt.ee
+  APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.test.buerokratt.ee # Change the domain name, leave subdomain and subpath same
   APPLICATION_OPENSEARCH_CONFIGURATION_URL: http://component-opensearch-node:9200

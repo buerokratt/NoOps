@@ -17,11 +17,8 @@ securityContext: {}
 
 domain: test.buerokratt.ee # Domain name
 
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
-
 ingress:
-  certIssuerName: letsencrypt-prod
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 release_name: "byk-bot"  
 releaseName: "byk-bot"

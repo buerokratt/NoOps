@@ -18,46 +18,33 @@ securityContext: {}
 
 domain: test.buerokratt.ee # Domain name
 
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
-
 ingress:
-  certIssuerName: letsencrypt-prod
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-dmapper"
-
-# byk:
-#   dsl:
-#     image:
-#       registry: "ghcr.io"
-#       repository: "buerokratt/buerokratt-dsl"
-#       tag: "pre-alpha-kube-1.12.33"
-#   dmapper:
-#     dsl:
-#       path: "/workspace/app/module"
       
 
 images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/datamapper"
-    tag: "pre-alpha-19-2.6.18"
+    tag: "pre-alpha-19-2.6.18" # Images (tags) are up to date, currently no changes needed
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-pre-alpha-1.3.13" # TODO: Change this to the correct tag
+    tag: "backoffice-module-pre-alpha-1.3.13" # Images (tags) are up to date, currently no changes needed
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-pre-alpha-1.4.5" # TODO: Change this to the correct tag
+    tag: "analytics-module-pre-alpha-1.4.5" # Images (tags) are up to date, currently no changes needed
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-pre-alpha-1.4.6" # TODO: Change this to the correct tag
+    tag: "service-module-pre-alpha-1.4.6" # Images (tags) are up to date, currently no changes needed
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.11" # TODO: Change this to the correct tag  
+    tag: "training-module-pre-alpha-1.4.11" # Images (tags) are up to date, currently no changes needed  
   pipelines:
     service:
       repo: https://github.com/buerokratt/Service-Module.git

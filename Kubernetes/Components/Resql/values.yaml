@@ -21,47 +21,36 @@ domain: test.buerokratt.ee # Domain name
 #  tlsConfigMapName: byk-tls-configmap
 
 ingress:
-  certIssuerName: letsencrypt-prod
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-resql"
-release_db: "databases" # Release name - currently databases, replace wit your own release name for databases
-
-# byk:
-#   dsl:
-#     image:
-#       registry: "ghcr.io"
-#       repository: "buerokratt/buerokratt-dsl"
-#       tag: "pre-alpha-kube-1.12.33"
-#   resql:
-#     dsl:
-#       path: "/DSL/"
-
+release_db: "component-databases" 
 images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/resql"
-    tag: "pre-alpha-2.10.0-27"
+    tag: "pre-alpha-2.10.0-27" # Images (tags) are up to date, currently no changes needed
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-pre-alpha-1.3.13" # TODO: Change this to the correct tag
+    tag: "backoffice-module-pre-alpha-1.3.13" # Images (tags) are up to date, currently no changes needed
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-pre-alpha-1.4.5" # TODO: Change this to the correct tag
+    tag: "analytics-module-pre-alpha-1.4.5" # Images (tags) are up to date, currently no changes needed
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-pre-alpha-1.4.5" # TODO: Change this to the correct tag
+    tag: "service-module-pre-alpha-1.4.5" # Images (tags) are up to date, currently no changes needed
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.34" # TODO: Change this to the correct tag  
+    tag: "training-module-pre-alpha-1.4.34" # Images (tags) are up to date, currently no changes needed  
     
 env:
   LOGGING_LEVEL_ROOT: "TRACE"
   SQLMS_DATASOURCES_0_NAME: "byk"
   SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
   SQLMS_DATASOURCES_0_USERNAME: "byk"
-  SQLMS_DATASOURCES_0_PASSWORD: "01234"
+  SQLMS_DATASOURCES_0_PASSWORD: "01234" # Change password accordingly
   LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"

@@ -24,6 +24,7 @@ spec:
           volumeMounts:
             - name: liquibase
               mountPath: /app/DSL
+        
       containers:
         - name: backoffice-liquibase
           image: liquibase/liquibase:4.23.2

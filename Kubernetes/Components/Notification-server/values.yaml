@@ -18,29 +18,16 @@ securityContext: {}
 domain: test.buerokratt.ee # Domain name
 secretname: ruuter.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
 
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
-
 ingress:
-  certIssuerName: letsencrypt-prod
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 release_name: "component-notification-node"  
-
-# byk:
-#   dsl:
-#     image:
-#       registry: "ghcr.io"
-#       repository: "buerokratt/buerokratt-dsl"
-#       tag: "pre-alpha-kube-1.13.64"
-#   ruuter:
-#     dsl:
-#       path: "/script/"
 
 images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-chatbot"
-    tag: "notification-node-pre-alpha-1.2.2"
+    tag: "notification-node-pre-alpha-1.2.2" # Images (tags) are up to date, currently no changes needed
 
 env:
   OPENSEARCH_PROTOCOL: "http"

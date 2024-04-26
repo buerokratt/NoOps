@@ -22,10 +22,10 @@ secretname: tim.test.buerokratt.ee1904prod  # Cert name value, change this as su
 #  tlsConfigMapName: byk-tls-configmap
 
 ingress:
-  certIssuerName: letsencrypt-prod
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-tim"
-release_db: "databases"
+release_db: "component-databases"
 
 byk:
   tim:
@@ -35,21 +35,21 @@ byk:
           jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
         oauth2:
           client:
-            clientId: byk_public_test
-            clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh
+            clientId: byk_public_test # Change the domain name, leave subdomain and subpath same
+            clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh # Change the domain name, leave subdomain and subpath same
             scope: openid
-            userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize
-            accessTokenUri: https://tara-test.ria.ee/oidc/token
+            userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
+            accessTokenUri: https://tara-test.ria.ee/oidc/token # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
           resource:
             jwk:
-              keySetUri: https://tara-test.ria.ee/oidc/jwks
+              keySetUri: https://tara-test.ria.ee/oidc/jwks # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
       legacyPortalIntegration:
         legacyUrl: NA
         legacyPortalRefererMarker: NA
         sessionCookieDomain: buerokratt.ee
       jwtIntegration:
         signature:
-          issuer: test.buerokratt.ee
+          issuer: test.buerokratt.ee # Change the domain name, leave subdomain and subpath same
           keyStorePassword: ppjjpp
           keyStore: classpath:jwtkeystore.jks
       spring:
@@ -65,7 +65,7 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "123"
+    password: "123" # Change password accordingly
     database: "tim"
 
 tim_postgresql: "123"
@@ -74,4 +74,4 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/tim"
-    tag: "pre-apha-2.3.1"
+    tag: "pre-apha-2.3.1" # Images (tags) are up to date, currently no changes needed

@@ -17,23 +17,10 @@ securityContext: {}
 
 domain: test.buerokratt.ee # Domain name
 
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
-
 ingress:
-  certIssuerName: letsencrypt-prod
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 release_name: "component-opensearch-node"  
-
-# byk:
-#   dsl:
-#     image:
-#       registry: "ghcr.io"
-#       repository: "buerokratt/buerokratt-dsl"
-#       tag: "pre-alpha-kube-1.13.64"
-#   ruuter:
-#     dsl:
-#       path: "/script/"
 
 images:
   scope:

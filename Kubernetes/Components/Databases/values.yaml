@@ -15,14 +15,11 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # byk.buerokratt.ee
-releaseName: component-databases
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
+domain: test.buerokratt.ee # Domain name
+releaseName: "component-databases"
 
 ingress:
-  certIssuerName: letsencrypt-prod
-#  certIssuerName: letsencrypt-staging 
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up differents
 
 tim-postgresql:
   image:
@@ -30,7 +27,7 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "123"
+    password: "123" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml under component TIM values.yaml
     database: tim
   statefulset:
     enabled: true
@@ -44,7 +41,7 @@ users-db:
   auth:
     postgresPassword: postgres
     username: byk
-    password: "01234"
+    password: "01234" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml in components and modules, where necessary.
     database: byk
   statefulset:
     enabled: true
