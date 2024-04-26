@@ -17,13 +17,9 @@ securityContext: {}
 
 domain: test.buerokratt.ee # Domain name
 
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
-
 ingress:
-  certIssuerName: letsencrypt-prod-issuer
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
-#release_name: "postdeploy"
 release_name: "component-byk-dmapper-v1"
   
 images:
@@ -36,8 +32,8 @@ images:
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.25" 
+    tag: "training-module-pre-alpha-1.4.25" # Images (tags) are up to date, currently no changes needed
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
-  dbPassword: "01234"  
+  dbPassword: "01234"  # Change password accordingly

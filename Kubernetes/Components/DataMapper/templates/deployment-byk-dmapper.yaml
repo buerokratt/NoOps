@@ -92,8 +92,6 @@ spec:
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
-#            - name: dmapper-service-dsl
-#              mountPath: /opt/dsl-services
             - name: byk-dsl-services
               mountPath: /data
               readOnly: false

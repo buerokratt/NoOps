@@ -17,31 +17,22 @@ securityContext: {}
 
 domain: test.buerokratt.ee # Domain name
 
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
-
 ingress:
-  certIssuerName: letsencrypt-prod-issuer
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
-#release_name: "postdeploy"
 release_name: "job-postdeploy-first-login"
-  
-
-liquibase:
-  jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
-  dbPassword: "01234"  
 
 user:
-  login: "" # Use a test ID cde. In production replace with real ID code 
+  login: "EE" # Use a test ID cde. In production replace with real ID code "Every login value must contain EE"
   first_name: "Kustuta"
   last_name: "Kasutaja"
-  id_code: "" # Use a test ID cde. In production replace with real ID code  
+  id_code: "EE" # Use a test ID cde. In production replace with real ID code  "Every ID code value must contain EE"
   display_name: "Kustutamiseks"
-  csa_title: "Kustutamiseks" 
+#  csa_title: ""  # can be  removed
   csa_email: "kustutamind@mail.ee"
 
 db:
   db_host: component-databases-users-db
   db_port: "5432"
   db_user: byk
-  db_password: "01234"
+  db_password: "01234" # Change password accordingly
