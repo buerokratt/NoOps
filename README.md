@@ -16,7 +16,7 @@ Change directory
 `cd Buerokratt-NoOps`  
 
 Change into `dev` branch  
-`git checkout dev`  
+`git checkout stage`  
 
 To change `values.yaml's`, change directory into   
 `cd Kubernetes`   
