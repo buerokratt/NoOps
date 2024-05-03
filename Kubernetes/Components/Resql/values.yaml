@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
+domain: stage.buerokratt.ee # Domain name
 
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
@@ -52,5 +52,5 @@ env:
   SQLMS_DATASOURCES_0_NAME: "byk"
   SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
   SQLMS_DATASOURCES_0_USERNAME: "byk"
-  SQLMS_DATASOURCES_0_PASSWORD: "01234" # Change password accordingly
+  SQLMS_DATASOURCES_0_PASSWORD: "PASSWORD" # Change password accordingly
   LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"

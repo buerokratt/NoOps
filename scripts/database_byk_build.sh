@@ -34,8 +34,8 @@ fi
 
 
 echo -e "[+] \x1b[1;32mreplace in files placeholders with config values\x1b[0m"
-sed -i "s|POSTGRES_PASSWORD=123|POSTGRES_PASSWORD=$safe_tim_db|g;
-  s|POSTGRES_PASSWORD=01234|POSTGRES_PASSWORD=$safe_byk_db|g" $sqlcompose
+sed -i "s|POSTGRES_PASSWORD=t9n5Kmm7vP9|POSTGRES_PASSWORD=$safe_tim_db|g;
+  s|POSTGRES_PASSWORD=PASSWORD|POSTGRES_PASSWORD=$safe_byk_db|g" $sqlcompose
 sed -i "s|users-db|$timdb|g" $backofficompose
 cd "$bykstack_dir/sql-db/"
 

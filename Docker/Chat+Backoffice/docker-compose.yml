@@ -19,7 +19,7 @@ services:
       context: .
       network: host
     environment:
-      - ruuter.cors.allowedOrigins=http://test.buerokratt.ee:3000
+      - ruuter.cors.allowedOrigins=http://stage.buerokratt.ee:3000
     volumes:
       - ./private.DSL:/DSL
     ports:
@@ -87,7 +87,7 @@ services:
 #    command: ["postgres", "-c", "ssl=on", "-c", "ssl_cert_file=/etc/tls/tls.crt", "-c", "ssl_key_file=/etc/tls/tls.key"]
     environment:
       - POSTGRES_USER=tim
-      - POSTGRES_PASSWORD=123
+      - POSTGRES_PASSWORD=t9n5Kmm7vP9
       - POSTGRES_DB=tim
     volumes:
 #      - ./tim-db/cert.crt:/etc/tls/tls.crt
@@ -104,7 +104,7 @@ services:
 #    command: ["postgres", "-c", "ssl=on", "-c", "ssl_cert_file=/etc/tls/tls.crt", "-c", "ssl_key_file=/etc/tls/tls.key"]
     environment:
       - POSTGRES_USER=byk
-      - POSTGRES_PASSWORD=01234
+      - POSTGRES_PASSWORD=PASSWORD
       - POSTGRES_DB=byk
     volumes:
 #      - ./users-db/cert.crt:/etc/tls/tls.crt

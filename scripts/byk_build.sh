@@ -50,7 +50,7 @@ sed -i "s|http://BOT_IP:5005|http://$bot_url|g;
     s|TRAINIG_BOT|$training_url|g;
     s|TRAINING_BOT_USERNAME|$username|g;
     s|TRAINING_DATA_DIRECTORY|$training_bot_dir|g" $privateurls
-sed -i "s|https://ruuter.test.buerokratt.ee|https://ruuter.buerokratt.$organization.ee|g;
+sed -i "s|https://ruuter.stage.buerokratt.ee|https://ruuter.buerokratt.$organization.ee|g;
     s|https://TIM_URL|https://tim.buerokratt.$organization.ee|g;
     s|https://URL_WHERE_TO_WIDGET_IS_INSTALLED|https://$organization.buerokratt.ee|g" $index
 sed -i "s|https://URL_WHERE_TO_WIDGET_IS_INSTALLED|https://$organization.buerokratt.ee|g" $chatnginx
@@ -61,9 +61,9 @@ sed -i "s|https://RUUTER_URL|https://ruuter.buerokratt.$organization.ee|g;
     s|https://TIM_URL|https://tim.buerokratt.$organization.ee|g;
     s|https://CUSTOMER_SERVICE_URL|https://admin.buerokratt.$organization.ee|g;
     s|https://PRIV-RUUTER_URL|https://priv-ruuter.buerokratt.$organization.ee|g" $customernginx
-sed -i "s|spring.datasource.password=123|spring.datasource.password=$safe_tim_db|g;
-    s|POSTGRES_PASSWORD=123|POSTGRES_PASSWORD=$safe_byk_db|g" $timdockercompose
-sed -i "s|spring.datasource.password=123|spring.datasource.password=$safe_tim_db|g;
+sed -i "s|spring.datasource.password=t9n5Kmm7vP9|spring.datasource.password=$safe_tim_db|g;
+    s|POSTGRES_PASSWORD=t9n5Kmm7vP9|POSTGRES_PASSWORD=$safe_byk_db|g" $timdockercompose
+sed -i "s|spring.datasource.password=t9n5Kmm7vP9|spring.datasource.password=$safe_tim_db|g;
     s|https://buerokratt.ee|https://$organization.buerokratt.ee|g;
     s|https://admin.buerokratt.ee|https://admin.buerokratt.$organization.ee|g;
     s|https://tim.buerokratt.ee|https://tim.buerokratt.$organization.ee|g;
@@ -79,7 +79,7 @@ sed -i "s|spring.datasource.password=123|spring.datasource.password=$safe_tim_db
     s|jwt-integration.signature.issuer=byk.buerokratt.ee|jwt-integration.signature.issuer=$organization.buerokratt.ee|g;
     s|safe_keystore_password|$keytoolpass|g;
     s|users-db|$timdb|g;
-    s|password=01234|password=$safe_byk_db|g" $backofficompose
+    s|password=PASSWORD|password=$safe_byk_db|g" $backofficompose
 
 echo -e "[+] \x1b[1;32mtim keys\x1b[0m"
 cd "$bykstack_dir/tim"

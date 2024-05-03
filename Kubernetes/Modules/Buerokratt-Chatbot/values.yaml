@@ -15,8 +15,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
-secretname: admin.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
+domain: stage.buerokratt.ee # Domain name
+secretname: admin.stage.buerokratt.ee3004prod # Cert name value, change this as suited to environment
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
@@ -39,22 +39,22 @@ images:
       path: DSL/Liquibase
 
 env:
-  REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/public/backoffice" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.test.buerokratt.ee/v2/private/backoffice" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_BUEROKRATT_CHATBOT_URL: "https://admin.test.buerokratt.ee/chat" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_MENU_URL: "https://admin.test.buerokratt.ee" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_RUUTER_API_URL: "https://ruuter.stage.buerokratt.ee/v2/public/backoffice" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.stage.buerokratt.ee/v2/private/backoffice" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_BUEROKRATT_CHATBOT_URL: "https://admin.stage.buerokratt.ee/chat" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_MENU_URL: "https://admin.stage.buerokratt.ee" # Change the domain name, leave subdomain and subpath same
   REACT_APP_MENU_PATH: "/chat/menu.json"
-  REACT_APP_CUSTOMER_SERVICE_LOGIN: "http://admin.test.buerokratt.ee/et/log-in" # Change the domain name, leave subdomain and subpath same
-  DOMAIN: "test.buerokratt.ee"
-  REACT_APP_CONVERSATIONS_BASE_URL: "https://admin.test.buerokratt.ee/chat" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_TRAINING_BASE_URL: "https://admin.test.buerokratt.ee/training" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_ANALYTICS_BASE_URL: "https://admin.test.buerokratt.ee/analytics" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_SERVICES_BASE_URL: "https://admin.test.buerokratt.ee/services" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_SETTINGS_BASE_URL: "https://admin.test.buerokratt.ee/settings" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_MONITORING_BASE_URL: "https://admin.test.buerokratt.ee/monitoring" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_CUSTOMER_SERVICE_LOGIN: "http://admin.stage.buerokratt.ee/et/log-in" # Change the domain name, leave subdomain and subpath same
+  DOMAIN: "stage.buerokratt.ee"
+  REACT_APP_CONVERSATIONS_BASE_URL: "https://admin.stage.buerokratt.ee/chat" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_TRAINING_BASE_URL: "https://admin.stage.buerokratt.ee/training" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_ANALYTICS_BASE_URL: "https://admin.stage.buerokratt.ee/analytics" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_SERVICES_BASE_URL: "https://admin.stage.buerokratt.ee/services" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_SETTINGS_BASE_URL: "https://admin.stage.buerokratt.ee/settings" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_MONITORING_BASE_URL: "https://admin.stage.buerokratt.ee/monitoring" # Change the domain name, leave subdomain and subpath same
   REACT_APP_SERVICE_ID: "conversations,settings,monitoring"
-  REACT_APP_NOTIFICATION_NODE_URL: "https://ruuter.test.buerokratt.ee" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_NOTIFICATION_NODE_URL: "https://ruuter.stage.buerokratt.ee" # Change the domain name, leave subdomain and subpath same
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
-  dbPassword: "01234"   # Change password accordingly
+  dbPassword: "PASSWORD"   # Change password accordingly

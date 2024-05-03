@@ -15,7 +15,7 @@ data:
     ANALYTICS_TIM=http://component-byk-tim:8085
     ANALYTICS_DMAPPER=http://component-byk-dmapper:3000
     ANALYTICS_RUUTER=http://component-byk-ruuter-private:8080
-    ANALYTICS_RESQL=http://component-byk-resql:8082
+    ANALYTICS_RESQL=http://component-byk-resql:8082/analytics
     TRAINING_TIM=http://component-byk-tim:8085
     TRAINING_DMAPPER=http://component-byk-dmapper-v1:3000
     TRAINING_RUUTER=http://component-byk-ruuter-private:8080/training
@@ -28,4 +28,4 @@ data:
     SERVICE_RESQL=http://component-byk-resql:8082/services
     SERVICE_TRAINING_RESQL=http://component-byk-resql:8082/services/training
     TRAINING_OPENSEARCH=http://component-opensearch-node:9200
-    DOMAIN=test.buerokratt.ee
+    DOMAIN=stage.buerokratt.ee

@@ -19,8 +19,8 @@ spec:
             - "-c"
             - |
               if [ ! -e "/workspace/app-shared/keystore.jwt" ]; then
-                keytool -delete -alias jwtsign -keystore '/workspace/app-shared/jwtkeystore.jks' -storepass 123456
-                keytool -genkeypair -alias jwtsign -keyalg RSA -keysize 2048 -keystore 'jwtkeystore.jks' -validity 3650 -noprompt -dname "CN=test.buerokratt.ee" -storepass ppjjpp
+                keytool -delete -alias jwtsign -keystore '/workspace/app-shared/jwtkeystore.jks' -storepass t9n5Kmm7vP9456
+                keytool -genkeypair -alias jwtsign -keyalg RSA -keysize 2048 -keystore 'jwtkeystore.jks' -validity 3650 -noprompt -dname "CN=stage.buerokratt.ee" -storepass ppjjpp
                 touch /workspace/app-shared/keystore.jwt
                 echo "Initialization successful: keystore.jwt created."
               else
@@ -64,13 +64,13 @@ spec:
             httpGet:
               path: /
               port: 8085
-            initialDelaySeconds: 30
+            initialDelaySeconds: 35
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: 8085
-            initialDelaySeconds: 45
+            initialDelaySeconds: 40
             periodSeconds: 10
 
       volumes:

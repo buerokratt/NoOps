@@ -5,9 +5,9 @@ metadata:
 data:
   constants.ini: |
     CHATBOT_RUUTER_PUBLIC=http://component-byk-ruuter:8080/backoffice
-    CHATBOT_RUUTER_PRIVATE=http://component-byk-ruuter-private:8080
+    CHATBOT_RUUTER_PRIVATE=http://component-byk-ruuter-private:8080 
     CHATBOT_RUUTER=http://component-byk-ruuter:8080
-    CHATBOT_RESQL=http://component-byk-resql:8082
+    CHATBOT_RESQL=http://component-byk-resql:8082/backoffice
     CHATBOT_DMAPPER=http://component-byk-dmapper:3000
     CHATBOT_TIM=http://component-byk-tim:8085
     CHATBOT_OPENSEARCH=http://component-opensearch-node:9200
@@ -25,5 +25,5 @@ data:
     SERVICE_DMAPPER=http://component-byk-dmapper:3000
     SERVICE_RUUTER=http://component-byk-ruuter-private:8080
     SERVICE_RESQL=http://component-byk-resql:8082
-    DOMAIN=test.buerokratt.ee
+    DOMAIN=stage.buerokratt.ee
       

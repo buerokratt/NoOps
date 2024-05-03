@@ -16,8 +16,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
-secretname: tim.test.buerokratt.ee1904prod  # Cert name value, change this as suited to environment
+domain: stage.buerokratt.ee # Domain name
+secretname: tim.stage.buerokratt.ee3004prod  # Cert name value, change this as suited to environment
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 
@@ -32,11 +32,11 @@ byk:
     env:
       security:
         allowlist:
-          jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
+          jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16,10.43.198.207,10.42.2.35
         oauth2:
           client:
-            clientId: byk_public_test # Change the domain name, leave subdomain and subpath same
-            clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh # Change the domain name, leave subdomain and subpath same
+            clientId: TARA_ID # TARA client information
+            clientSecret: TARA_PASSWORD # TARA client password
             scope: openid
             userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
             accessTokenUri: https://tara-test.ria.ee/oidc/token # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
@@ -49,7 +49,7 @@ byk:
         sessionCookieDomain: buerokratt.ee
       jwtIntegration:
         signature:
-          issuer: test.buerokratt.ee # Change the domain name, leave subdomain and subpath same
+          issuer: stage.buerokratt.ee # Change the domain name, leave subdomain and subpath same
           keyStorePassword: ppjjpp
           keyStore: classpath:jwtkeystore.jks
       spring:
@@ -57,7 +57,7 @@ byk:
           active: dev
       logging:
         level:
-          root: INFO
+          root: TRACE
       
 tim-postgresql:
   image:
@@ -65,10 +65,10 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "123" # Change password accordingly
+    password: "t9n5Kmm7vP9" # Change password accordingly
     database: "tim"
 
-tim_postgresql: "123"
+tim_postgresql: "t9n5Kmm7vP9"
 
 images:
   scope:

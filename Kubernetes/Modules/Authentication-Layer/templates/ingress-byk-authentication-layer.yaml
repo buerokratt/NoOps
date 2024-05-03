@@ -10,7 +10,7 @@ metadata:
     # nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type"
     # nginx.ingress.kubernetes.io/cors-allow-headers: "content-type"
     # nginx.ingress.kubernetes.io/configuration-snippet: |
-    #   add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ruuter.test.buerokratt.ee/v1/public https://tim.test.buerokratt.ee https://admin.test.buerokratt.ee https://ruuter.test.buerokratt.ee/v1/private;";
+    #   add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ruuter.stage.buerokratt.ee/v1/public https://tim.stage.buerokratt.ee https://admin.stage.buerokratt.ee https://ruuter.stage.buerokratt.ee/v1/private;";
     cert-manager.io/cluster-issuer: letsencrypt-prod
   labels:
     name: "{{ .Values.release_name }}-ingress"

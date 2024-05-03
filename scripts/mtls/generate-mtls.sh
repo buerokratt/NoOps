@@ -86,10 +86,10 @@ for element in "${pods[@]}"; do
     openssl verify -CAfile ../ca.pem ${element}-cert.pem
 
     # Create a PKCS12 file for the pod
-    openssl pkcs12 -export -in ${element}-cert.pem -inkey ${element}-key.pem -out ${element}.p12 -passin pass:12345678 -password pass:12345678
+    openssl pkcs12 -export -in ${element}-cert.pem -inkey ${element}-key.pem -out ${element}.p12 -passin pass:t9n5Kmm7vP945678 -password pass:t9n5Kmm7vP945678
 
     # Create a KeyStore file for the pod
-    keytool -import -noprompt -trustcacerts -alias ${element}-trust -file ${element}-cert.pem -keystore ${element}-truststore.jks --srcstorepass 12345678 -deststorepass 12345678
+    keytool -import -noprompt -trustcacerts -alias ${element}-trust -file ${element}-cert.pem -keystore ${element}-truststore.jks --srcstorepass t9n5Kmm7vP945678 -deststorepass t9n5Kmm7vP945678
 
     # Navigate back to the certs directory
     cd ..

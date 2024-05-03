@@ -88,12 +88,12 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 21
+            initialDelaySeconds: 25
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 22
+            initialDelaySeconds: 23
             periodSeconds: 10
 
       volumes:

@@ -89,7 +89,7 @@ spec:
             httpGet:
               path: /datasources
               port: 8082
-            initialDelaySeconds: 68
+            initialDelaySeconds: 70
             periodSeconds: 10
 
       volumes:

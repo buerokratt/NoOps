@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
+domain: stage.buerokratt.ee # Domain name
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
@@ -23,10 +23,10 @@ ingress:
 release_name: "job-postdeploy-first-login"
 
 user:
-  login: "EE" # Use a test ID cde. In production replace with real ID code "Every login value must contain EE"
+  login: "EE12345678910" # Use a test ID cde. In production replace with real ID code "Every login value must contain EE"
   first_name: "Kustuta"
   last_name: "Kasutaja"
-  id_code: "EE" # Use a test ID cde. In production replace with real ID code  "Every ID code value must contain EE"
+  id_code: "EE12345678910" # Use a test ID cde. In production replace with real ID code  "Every ID code value must contain EE"
   display_name: "Kustutamiseks"
 #  csa_title: ""  # can be  removed
   csa_email: "kustutamind@mail.ee"
@@ -35,4 +35,4 @@ db:
   db_host: component-databases-users-db
   db_port: "5432"
   db_user: byk
-  db_password: "01234" # Change password accordingly
+  db_password: "PASSWORD" # Change password accordingly

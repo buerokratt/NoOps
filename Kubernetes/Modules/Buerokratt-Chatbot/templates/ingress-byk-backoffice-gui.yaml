@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     #    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST"
     #    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
-    #    nginx.ingress.kubernetes.io/cors-allow-origin: "https://test.buerokratt.ee"
+    #    nginx.ingress.kubernetes.io/cors-allow-origin: "https://stage.buerokratt.ee"
     #    nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
     #    nginx.ingress.kubernetes.io/proxy-set-header: "Content-Type: application/json"
     #    nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type, Cache-Control"

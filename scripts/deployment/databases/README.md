@@ -7,7 +7,7 @@ config.ini example:
 ```
 [PostgreSQL]
 username = test
-password = test123
+password = testt9n5Kmm7vP9
 postgres_db = test_db
 postgres_port = 5555
 postgres_container = test_postgre_db

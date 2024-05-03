@@ -16,7 +16,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
+domain: stage.buerokratt.ee # Domain name
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different

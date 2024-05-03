@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
+domain: stage.buerokratt.ee # Domain name
 
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
@@ -41,4 +41,4 @@ images:
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
-  dbPassword: "01234"   # Change password accordingly
+  dbPassword: "PASSWORD"   # Change password accordingly
