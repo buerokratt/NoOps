@@ -13,7 +13,7 @@ git clone https://github.com/buerokratt/NoOps.git
 ```  
 
 Change directory  
-`cd Buerokratt-NoOps`  
+`cd NoOps`  
 
 Change into `dev` branch  
 `git checkout stage`  
