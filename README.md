@@ -89,5 +89,5 @@ Within the `deployment` charts, under `metadata` we added the following annotati
 ```
 
 Now, when trying to access pods from any pod (except when starting point is ruuter or ruuter-private pods) you will get a `403 forbidden` error  
-![alt text](/NoOps/docs/images/pod-curl.png)
+![alt text](docs/images/pod-curl.png)
 
