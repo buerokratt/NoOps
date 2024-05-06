@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "true"
 spec:
   selector:
     matchLabels:
@@ -49,7 +51,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 13
+            initialDelaySeconds: 15
             periodSeconds: 10
           readinessProbe:
             tcpSocket:

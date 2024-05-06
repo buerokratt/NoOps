@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "true"
 spec:
   replicas: 1
   selector:

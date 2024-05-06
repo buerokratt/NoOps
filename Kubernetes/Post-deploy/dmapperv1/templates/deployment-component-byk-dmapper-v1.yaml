@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "true"
 spec:
   selector:
     matchLabels:
@@ -22,7 +24,7 @@ spec:
               cp -r ../DataMapper/training/hbs/views/ /workspace/app/views
               cp -r ../DataMapper/training/hbs/js/  /workspace/app/js
               cp -r ../DataMapper/training/hbs/locations/ /workspace/app/locations
-              ls -la /rasa
+              ls -la
 
           volumeMounts:
             - name: dmapper-v1-volume

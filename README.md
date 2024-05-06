@@ -51,7 +51,7 @@ To run the deployment scripts, change directory into
 | Script        | Description             | Options |
 | ------------- | ----------------------- | :-----: |
 | `deploy-kube` | Automates K8 Deployment |  -n (NameSpaces) -p (Pods)  |
-| `post-deploy-kube` | Automates K8 Deployment post deployment | -n (Namespace) -r (releasename) -c (Chartname) -c (Chartname) |
+| `post-deploy-kube` | Automates K8 Deployment post deployment | -n (Namespace) -r (releasename) -c (Chartname) |
 | `remove-kube` | Automates K8 Deployment uninstalling | -p (Releasename)  -n (NameSpaces)  |
 
 Important Notes:  
@@ -72,5 +72,22 @@ Example - new Post-deployment chart `test` path `../../Kubernetes/Post-deploy/te
       ;;
 ```  
 
+#### Enabling the sidecar for proxying networking between pods    
+Pods have restricted networking. Meaning, that only `ruuter` and `ruuter-private` pods have accessibility to other pods.   
+Other pods, for example `resql` should not have access to either `ruuter` or, for example `data-mapper`  
+For this purpose, we use `Istio sidecar` with `Istio destination rules` (for reference, look at the `istio-setup` charts under templates folders in `components`)  
+After the `Istio` has been deployed in your K8s, enable sidecar for the `namespace` you run `byrokratt` in  
 
+```
+kubectl label namespace <YOUR PROJECT NAMESPACE> istio-injection=enabled
+```
+
+Within the `deployment` charts, under `metadata` we added the following annotation
+```
+  annotations:
+    sidecar.istio.io/inject: "true"
+```
+
+Now, when trying to access pods from any pod (except when starting point is ruuter or ruuter-private pods) you will get a `403 forbidden` error  
+![alt text](/NoOps/docs/images/pod-curl.png)
 
