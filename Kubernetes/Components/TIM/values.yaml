@@ -75,3 +75,8 @@ images:
     registry: "ghcr.io"
     repository: "buerokratt/tim"
     tag: "pre-apha-2.3.1" # Images (tags) are up to date, currently no changes needed
+
+ingress:
+  annotations:
+    cors_origin: "https://admin.<namespace>.buerokratt.ee, https://<namespace>.buerokratt.ee, https://tim.<namespace>.buerokratt.ee, https://admin.dev.buerokratt.ee, https://ruuter.<namespace>.buerokratt.ee/, https://ruuter.<namespace>.buerokratt.ee/v2/private/, https://ruuter.<namespace>.buerokratt.ee/v2/public" 
+

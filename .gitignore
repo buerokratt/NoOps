@@ -5,4 +5,3 @@ rit-tst-1.yaml
 rit-byrokratt-stage(1).yaml
 /Kubernetes/__pycache__
 /Kubernetes/deploy-kube.sh
-/Kubernetes/Components/TIM/values.yaml

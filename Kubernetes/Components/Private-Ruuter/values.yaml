@@ -15,8 +15,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: stage.buerokratt.ee # Domain name
-secretname: ruuter.stage.buerokratt.ee3004prod # Cert name value, change this as suited to environment
+domain: <namespace>.buerokratt.ee # Domain name
+secretname: ruuter.<namespace>.buerokratt.ee3004prod # Cert name value, change this as suited to environment
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
@@ -49,5 +49,9 @@ env:
   LOG_LEVEL_TIMING: "INFO"
   APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "true"
   APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "true"
-  APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.stage.buerokratt.ee, https://stage.buerokratt.ee, https://tim.stage.buerokratt.ee, https://ruuter.stage.buerokratt.ee # Change the domain name, leave subdomain and subpath same
+  APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.<namespace>.buerokratt.ee, https://<namespace>.buerokratt.ee, https://tim.<namespace>.buerokratt.ee, https://ruuter.<namespace>.buerokratt.ee # Change the domain name, leave subdomain and subpath same
   APPLICATION_OPENSEARCH_CONFIGURATION_URL: http://component-opensearch-node:9200
+
+ingress:
+  annotations:
+    cors_origin: "https://admin.<namespace>.buerokratt.ee, https://<namespace>.buerokratt.ee, https://tim.<namespace>.buerokratt.ee, https://admin.dev.buerokratt.ee, https://ruuter.<namespace>.buerokratt.ee/, https://ruuter.<namespace>.buerokratt.ee/v2/private/, https://ruuter.<namespace>.buerokratt.ee/v2/public" 

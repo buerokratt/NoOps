@@ -73,3 +73,6 @@ env:
 liquibase:
   jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
   dbPassword: "PASSWORD"  # Change password accordingly
+
+csp:
+  connect_src: https://ruuter.<namespace>.buerokratt.ee/v2/public https://tim.<namespace>.buerokratt.ee https://ruuter.<namespace>.buerokratt.ee https://admin.<namespace>.buerokratt.ee https://ruuter.<namespace>.buerokratt.ee/v2/private # Change the <namespace> accordingly 

@@ -99,3 +99,66 @@ Within the `deployment` charts, under `metadata` we added the following annotati
 ```
   annotations:
     sidecar.istio.io/inject: "true"
+```
+
+#### Enable CSP using K8s nginx-ingress-controller
+
+In `Modules` we currently use K8s nginx-ingress-controller to add and control CSP
+
+By default, `configuration-snippet` is disabled in nginx-ingress. To enable it you have to change ingress configuration
+
+```
+kubectl edit configmap -n ingress-nginx ingress-nginx-controller  
+```
+
+Add a line to configuration under `data:` block
+```
+allow-snippet-annotations: "true"
+```
+After the changes, redeploy the ingress controller, so changes would take effect
+
+
+Inside `ingress-<module-name>.yaml` we add
+
+```
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+       add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none'; style-src 'self' 'unsafe-inline'; connect-src 'self' {{ .Values.csp.connect_src }};";
+```
+Values are taken from values.yaml 
+```
+csp:
+  connect_src: https://ruuter.<namespace>.buerokratt.ee/v2/public https://tim.<namespace>.buerokratt.ee https://ruuter.<namespace>.buerokratt.ee https://admin.<namespace>.buerokratt.ee https://ruuter.<namespace>.buerokratt.ee/v2/private 
+``` 
+
+#### CORS controlling
+
+Cors is enabled and controlled using k8s ingress-controller.
+
+Cors will be enabled by default with this line:
+
+`nginx.ingress.kubernetes.io/enable-cors: "true"`
+
+Inside `tim` and `backoffice` we add
+```
+    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, GET, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "{{ .Values.ingress.annotations.cors_origin }}"
+```
+Inside `ruuter` and `ruuter-private` we add
+
+```
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "{{ .Values.ingress.annotations.cors_origin }}"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "content-type"
+    nginx.ingress.kubernetes.io/cors-expose-headers: "cs-exposed-header1, cs-exposed-header2"
+```
+
+Values will be taken from the values.yaml
+```
+ingress:
+  annotations:
+    cors_origin: "https://admin.<namespace>.buerokratt.ee, https://<namespace>.buerokratt.ee, https://tim.<namespace>.buerokratt.ee, https://admin.dev.buerokratt.ee, https://ruuter.<namespace>.buerokratt.ee/, https://ruuter.<namespace>.buerokratt.ee/v2/private/, https://ruuter.<namespace>.buerokratt.ee/v2/public" 
+```

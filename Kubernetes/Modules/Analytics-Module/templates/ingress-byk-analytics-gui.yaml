@@ -13,6 +13,8 @@ metadata:
     nginx.ingress.kubernetes.io/add-response-header: "Content-Type: application/javascript"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+       add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none'; style-src 'self' 'unsafe-inline'; connect-src 'self' {{ .Values.csp.connect_src }};";
   labels:
     name: "{{ .Values.release_name }}-ingress"
 spec:
