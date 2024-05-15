@@ -42,10 +42,6 @@ spec:
         - name: backoffice-liquibase
           image: liquibase/liquibase:4.23.2
           command: ["/bin/sh"]
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "100m"
           args:
             - "-c"
             - >
