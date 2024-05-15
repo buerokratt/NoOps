@@ -24,11 +24,28 @@ spec:
           volumeMounts:
             - name: liquibase
               mountPath: /app/DSL
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add: ["NET_ADMIN", "SYS_TIME", "NET_RAW"]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"       
         
       containers:
         - name: backoffice-liquibase
           image: liquibase/liquibase:4.23.2
           command: ["/bin/sh"]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
           args:
             - "-c"
             - >
@@ -38,8 +55,21 @@ spec:
               --password={{ .Values.liquibase.dbPassword }} --changeLogFile=changelog.yaml update
           volumeMounts:
             - name: liquibase
-              mountPath: /DSL/
-
+              mountPath: /DSL/   
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add: ["NET_ADMIN", "SYS_TIME", "NET_RAW"]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+              
       volumes:
       - name: liquibase
         emptyDir: {}
