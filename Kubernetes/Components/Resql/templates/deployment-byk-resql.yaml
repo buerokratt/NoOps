@@ -11,6 +11,7 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: init-copy-files-backoffice
           image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
@@ -19,11 +20,24 @@ spec:
             - |
               pwd
               cp -r ../Resql/backoffice/ /root/DSL/
-              
+
               ls -la /root/DSL/
           volumeMounts:
             - name: resql-volume
               mountPath: /root/DSL/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: init-copy-files-analytics
           image: "{{ .Values.images.analytics.registry }}/{{ .Values.images.analytics.repository }}:{{ .Values.images.analytics.tag }}"
           command: ["/bin/sh", "-c"]
@@ -35,6 +49,19 @@ spec:
           volumeMounts:
             - name: resql-volume
               mountPath: /root/DSL/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: init-copy-files-training
           image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
           command: ["/bin/sh", "-c"]
@@ -46,6 +73,19 @@ spec:
           volumeMounts:
             - name: resql-volume
               mountPath: /root/DSL/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: init-copy-files-services
           image: "{{ .Values.images.services.registry }}/{{ .Values.images.services.repository }}:{{ .Values.images.services.tag }}"
           command: ["/bin/sh", "-c"]
@@ -57,6 +97,19 @@ spec:
           volumeMounts:
             - name: resql-volume
               mountPath: /root/DSL/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -79,6 +132,19 @@ spec:
           volumeMounts:
             - name: resql-volume
               mountPath: /DSL/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /datasources
@@ -95,4 +161,3 @@ spec:
       volumes:
         - name: resql-volume
           emptyDir: {}
-
