@@ -12,7 +12,8 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initContainers: 
+      automountServiceAccountToken: false
+      initContainers:
         - name: bring-loba-folder-for-init-train
           image: alpine/git:2.36.3
           volumeMounts:
@@ -29,9 +30,22 @@ spec:
               ls /app
           env:
             - name: DSL_REPO
-              value: {{ .Values.images.bot.dsl.repo }}
+              value: "{{ .Values.images.bot.dsl.repo }}"
             - name: DSL_PATH
-              value: {{ .Values.images.bot.dsl.path }}
+              value: "{{ .Values.images.bot.dsl.path }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
 
       containers:
         - name: byk-bot
@@ -41,31 +55,57 @@ spec:
             - "-c"
             - >
               rasa train --fixed-model-name loba-model &&
-              rasa run 
+              rasa run
           ports:
             - containerPort: 5005
           volumeMounts:
             - name: loba-volume
               mountPath: /app/
-#          resources:
-#            limits:
-#              memory: "1Gi"
-#              cpu: "500m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: byk-bot-action
           image: "{{ .Values.images.scope.bot_action.image }}"
           command: ["python", "-m", "rasa_sdk.endpoint", "--actions", "actions"]
-
           ports:
             - containerPort: 5055
           volumeMounts:
             - name: loba-volume
               mountPath: /app/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
           resources:
             limits:
-              memory: "512Mi"
               cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 23
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 22
+            periodSeconds: 10
       volumes:
         - name: loba-volume
           persistentVolumeClaim:
             claimName: pvc-loba
-  
