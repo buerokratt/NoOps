@@ -12,65 +12,120 @@ spec:
       labels:
         app: train-test-pod
     spec:
+      automountServiceAccountToken: false
       containers:
-      - name: train-bot
-        image: "{{ .Values.images.scope.image }}"
-        env:
-        - name: RASA_MAX_CACHE_SIZE
-          value: "0"
-        command: ["train", "--fixed-model-name", "rasa_1_0", "--force"]
-        ports:
-        - containerPort: 5005
-        volumeMounts:
-        - name: mock1-volume
-          mountPath: /app
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-      - name: test-bot
-        image: "{{ .Values.images.scope.image }}"
-        env:
-        - name: RASA_MAX_CACHE_SIZE
-          value: "0"
-        command: ["test", "--out", "results/rasa_1_0"]
-        ports:
-        - containerPort: 5006
-        volumeMounts:
-        - name: mock1-volume
-          mountPath: /app
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-      - name: test-bot-cv
-        image: "{{ .Values.images.scope.image }}"
-        env:
-        - name: RASA_MAX_CACHE_SIZE
-          value: "0"
-        command: ["test", "--cross-validation", "--folds", "2", "--out", "results/cross-rasa_1_0"]
-        ports:
-        - containerPort: 5007
-        volumeMounts:
-        - name: mock1-volume
-          mountPath: /app
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
+        - name: train-bot
+          image: "{{ .Values.images.scope.image }}"
+          env:
+            - name: RASA_MAX_CACHE_SIZE
+              value: "0"
+          command: ["train", "--fixed-model-name", "rasa_1_0", "--force"]
+          ports:
+            - containerPort: 5005
+          volumeMounts:
+            - name: mock1-volume
+              mountPath: /app
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 23
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 22
+            periodSeconds: 10
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+        - name: test-bot
+          image: "{{ .Values.images.scope.image }}"
+          env:
+            - name: RASA_MAX_CACHE_SIZE
+              value: "0"
+          command: ["test", "--out", "results/rasa_1_0"]
+          ports:
+            - containerPort: 5006
+          volumeMounts:
+            - name: mock1-volume
+              mountPath: /app
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 23
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 22
+            periodSeconds: 10
+        - name: test-bot-cv
+          image: "{{ .Values.images.scope.image }}"
+          env:
+            - name: RASA_MAX_CACHE_SIZE
+              value: "0"
+          command: ["test", "--cross-validation", "--folds", "2", "--out", "results/cross-rasa_1_0"]
+          ports:
+            - containerPort: 5007
+          volumeMounts:
+            - name: mock1-volume
+              mountPath: /app
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 23
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 22
+            periodSeconds: 10
       volumes:
-      - name: mock1-volume
-        hostPath:
-          path: /path/to/mock1
-
-
-
+        - name: mock1-volume
+          hostPath:
+            path: /path/to/mock1
