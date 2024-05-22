@@ -24,6 +24,19 @@ spec:
           volumeMounts:
             - name: liquibase
               mountPath: /app/DSL
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: base-liquibase
           image: alpine/git:2.36.3
           volumeMounts:
@@ -42,9 +55,22 @@ spec:
               ls /root/DSL
           env:
             - name: DSL_REPO
-              value: {{ .Values.images.liquibase.dsl.repo }}
+              value: "{{ .Values.images.liquibase.dsl.repo }}"
             - name: DSL_PATH
-              value: {{ .Values.images.liquibase.dsl.path }}
+              value: "{{ .Values.images.liquibase.dsl.path }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
       containers:
         - name: byk-liquibase-update
           image: liquibase/liquibase:4.23.2
@@ -59,6 +85,19 @@ spec:
           volumeMounts:
             - name: base-liquibase
               mountPath: /DSL
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: backoffice-liquibase
           image: liquibase/liquibase:4.23.2
           command: ["/bin/sh"]
@@ -72,11 +111,23 @@ spec:
           volumeMounts:
             - name: liquibase
               mountPath: /DSL/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
 
       volumes:
-      - name: base-liquibase
-        emptyDir: {}
-      - name: liquibase
-        emptyDir: {}
+        - name: base-liquibase
+          emptyDir: {}
+        - name: liquibase
+          emptyDir: {}
       restartPolicy: Never
-
