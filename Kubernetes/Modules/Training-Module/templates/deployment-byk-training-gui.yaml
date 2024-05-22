@@ -11,6 +11,7 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: init-copy-files
           image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
@@ -23,10 +24,23 @@ spec:
               cp -r ../DataMapper/ /app/DSL
               cp -r ../OpenSearch/ /app/DSL
               cp -r ../Liquibase/ /app/DSL
-              ls -la 
+              ls -la
           volumeMounts:
             - name: training-dsl
               mountPath: /app/DSL
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -37,6 +51,12 @@ spec:
             - name: config-volume
               mountPath: /app/.env.development
               subPath: env.development
+            - name: run
+              mountPath: /var/run
+            - name: log
+              mountPath: /var/log/nginx
+            - name: cache
+              mountPath: /var/cache/nginx
           env:
             - name: REACT_APP_RUUTER_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_API_URL }}"
@@ -96,6 +116,21 @@ spec:
               value: "{{ .Values.env.REACT_APP_NODE_ENV }}"
             - name: REACT_APP_RUUTER_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_URL }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - CHOWN
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /
@@ -121,6 +156,29 @@ spec:
               value: "9200"
             - name: OPENSEARCH_AUTH
               value: "admin:admin"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 23
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 22
+            periodSeconds: 10
 
       volumes:
         - name: config-volume
@@ -129,4 +187,12 @@ spec:
         - name: training-dsl
           persistentVolumeClaim:
             claimName: pvc-training-dsl
-
+        - name: run
+          emptyDir:
+            medium: ""
+        - name: log
+          emptyDir:
+            medium: ""
+        - name: cache
+          emptyDir:
+            medium: ""
