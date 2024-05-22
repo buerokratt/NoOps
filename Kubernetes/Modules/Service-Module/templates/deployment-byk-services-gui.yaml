@@ -11,6 +11,7 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: init-copy-files
           image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
@@ -24,12 +25,25 @@ spec:
               cp -r ../Ruuter/ /opt/dsl
               cp -r ../Resql/ /opt/dsl
               cp -r ../DataMapper/ /opt/dsl
-              ls -la 
+              ls -la
           volumeMounts:
             - name: services-dsl
               mountPath: /app/DSL
             - name: dsl
               mountPath: /data
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -90,12 +104,50 @@ spec:
           volumeMounts:
             - name: services-dsl
               mountPath: /DSL/
+            - name: run
+              mountPath: /var/run
+            - name: log
+              mountPath: /var/log/nginx
+            - name: cache
+              mountPath: /var/cache/nginx
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - CHOWN
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 23
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 22
+            periodSeconds: 10
       volumes:
         - name: services-dsl
           emptyDir: {}
-#          persistentVolumeClaim:
-#            claimName: pvc-services-dsl
+        #          persistentVolumeClaim:
+        #            claimName: pvc-services-dsl
         - name: dsl
           emptyDir: {}
-
-
+        - name: run
+          emptyDir:
+            medium: ""
+        - name: log
+          emptyDir:
+            medium: ""
+        - name: cache
+          emptyDir:
+            medium: ""
