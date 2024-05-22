@@ -11,6 +11,7 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: init-copy-files-backoffice
           image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
@@ -19,11 +20,24 @@ spec:
             - |
               pwd
               cp -r ../DataMapper/backoffice/ /workspace/app/module/
-              
+
               ls -la /workspace/app/module/
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: init-copy-files-analytics
           image: "{{ .Values.images.analytics.registry }}/{{ .Values.images.analytics.repository }}:{{ .Values.images.analytics.tag }}"
           command: ["/bin/sh", "-c"]
@@ -35,6 +49,19 @@ spec:
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: init-copy-files-training
           image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
           command: ["/bin/sh", "-c"]
@@ -46,6 +73,19 @@ spec:
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: init-copy-files-services
           image: "{{ .Values.images.services.registry }}/{{ .Values.images.services.repository }}:{{ .Values.images.services.tag }}"
           command: ["/bin/sh", "-c"]
@@ -57,27 +97,53 @@ spec:
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
         - name: datamapper-service-dsl
           image: alpine/git:2.36.3
           volumeMounts:
-             - name: byk-dsl-services
-               mountPath: /data
+            - name: byk-dsl-services
+              mountPath: /data
           command: ["/bin/sh"]
           args:
-             - "-c"
-             - >
-               git clone $DSL_REPO /tmp/dsl-source &&
-               echo 'downloaded' &&
-               cp -r /tmp/dsl-source/$DSL_PATH/* /data/ &&
-               cp -r /tmp/dsl-source/secrets /data/ &&
-              
-               echo 'moved' &&
-               ls /data/
+            - "-c"
+            - >
+              git clone $DSL_REPO /tmp/dsl-source &&
+              echo 'downloaded' &&
+              cp -r /tmp/dsl-source/$DSL_PATH/* /data/ &&
+              cp -r /tmp/dsl-source/secrets /data/ &&
+
+              echo 'moved' &&
+              ls /data/
           env:
-             - name: DSL_REPO
-               value: {{ .Values.images.pipelines.service.repo }}
-             - name: DSL_PATH
-               value: {{ .Values.images.pipelines.service.path }}
+            - name: DSL_REPO
+              value: "{{ .Values.images.pipelines.service.repo }}"
+            - name: DSL_PATH
+              value: "{{ .Values.images.pipelines.service.path }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -95,6 +161,19 @@ spec:
             - name: byk-dsl-services
               mountPath: /data
               readOnly: false
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /
