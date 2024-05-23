@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "true"
 spec:
   selector:
     matchLabels:
@@ -128,6 +130,8 @@ spec:
               value: "{{ .Values.env.APPLICATION_CORS_ALLOWED_ORIGINS }}"
             - name: application.openSearchConfiguration.url
               value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
+            - name: application.httpCodesAllowList
+              value: "{{ .Values.env.APPLICATION_HTTPCODESALLOWLIST }}"
           volumeMounts:
             - name: privateruuter-volume
               mountPath: /DSL/
@@ -153,7 +157,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 21
+            initialDelaySeconds: 23
             periodSeconds: 10
           readinessProbe:
             tcpSocket:

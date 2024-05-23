@@ -17,21 +17,22 @@ securityContext: {}
 
 domain: test.buerokratt.ee # Domain name
 
-ingress:
-  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+#ingress:
+#  tlsConfigMapName: byk-tls-configmap
 
-release_name: "byk-bot"  
-releaseName: "byk-bot"
+ingress:
+  certIssuerName: letsencrypt-prod-issuer
+
+release_name: "component-byk-bot"  
 
 
 images:
   scope:
-    bot:
-      image: "riaee/byk:bot-20220728"
-    bot_action: 
-      image: "riaee/byk:bot-action-server-20220728"
-  bot:
-    dsl:
-      repo: https://github.com/buerokratt/Installation-Guides.git
-      path: default-setup/chatbot-and-training/bot
+    registry: "ghcr.io"
+    repository: "varmoh/rasa-for-buerokratt"
+    tag: "pre-alpha-1.1.0" # Images (tags) are up to date, currently no changes needed
 
+bot:
+  dsl:
+    repo: https://github.com/buerokratt/Installation-Guides.git
+    path: default-setup/chatbot-and-training/bot
