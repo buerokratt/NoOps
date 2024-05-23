@@ -33,22 +33,22 @@ images:
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-pre-alpha-1.3.13" # Images (tags) are up to date, currently no changes needed
+    tag: "backoffice-module-pre-alpha-1.3.21" # Images (tags) are up to date, currently no changes needed
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-pre-alpha-1.4.5" # Images (tags) are up to date, currently no changes needed
+    tag: "analytics-module-pre-alpha-1.4.10" # Images (tags) are up to date, currently no changes needed
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-pre-alpha-1.4.5" # Images (tags) are up to date, currently no changes needed
+    tag: "service-module-pre-alpha-1.4.7" # Images (tags) are up to date, currently no changes needed
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.34" # Images (tags) are up to date, currently no changes needed  
+    tag: "training-module-pre-alpha-1.4.47" # Images (tags) are up to date, currently no changes needed  
     
 env:
-  LOGGING_LEVEL_ROOT: "TRACE"
+  LOGGING_LEVEL_ROOT: "INFO"
   SQLMS_DATASOURCES_0_NAME: "byk"
   SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
   SQLMS_DATASOURCES_0_USERNAME: "byk"
