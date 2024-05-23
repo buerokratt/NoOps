@@ -36,7 +36,7 @@ spec:
           resources:
             limits:
               cpu: "250m"
-              memory: "256Mi"
+              memory: "512Mi"
         - name: base-liquibase
           image: alpine/git:2.36.3
           volumeMounts:
@@ -61,18 +61,16 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
-              add:
-                - CHOWN
               drop:
                 - ALL
             privileged: false
-            readOnlyRootFilesystem: false
-            # runAsNonRoot: true
-            # runAsUser: 10001
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
           resources:
             limits:
               cpu: "250m"
-              memory: "256Mi"
+              memory: "512Mi"
       containers:
         - name: byk-liquibase-update
           image: liquibase/liquibase:4.23.2
@@ -99,7 +97,7 @@ spec:
           resources:
             limits:
               cpu: "250m"
-              memory: "256Mi"
+              memory: "512Mi"
         - name: backoffice-liquibase
           image: liquibase/liquibase:4.23.2
           command: ["/bin/sh"]
@@ -125,7 +123,7 @@ spec:
           resources:
             limits:
               cpu: "250m"
-              memory: "256Mi"
+              memory: "512Mi"
 
       volumes:
         - name: base-liquibase

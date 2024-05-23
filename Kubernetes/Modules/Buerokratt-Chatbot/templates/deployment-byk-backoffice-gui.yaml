@@ -11,6 +11,7 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: init-copy-files
           image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
@@ -22,10 +23,23 @@ spec:
               cp -r ../Resql/ /app/DSL
               cp -r ../DataMapper/ /app/DSL
               cp -r ../Liquibase/ /app/DSL
-              ls -la 
+              ls -la
           volumeMounts:
             - name: buerokratt-dsl
               mountPath: /app/DSL
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -65,6 +79,21 @@ spec:
               value: "{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}"
 #            - name: REACT_APP_CSP
 #              value: "{{ .Values.env.REACT_APP_CSP }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - CHOWN
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /
@@ -84,6 +113,12 @@ spec:
               mountPath: /app/menu.json
               subPath: menu.json
               readOnly: true
+            - name: run
+              mountPath: /var/run
+            - name: log
+              mountPath: /var/log/nginx
+            - name: cache
+              mountPath: /var/cache/nginx
       volumes:
         - name: menu-configmap-volume
           configMap:
@@ -91,3 +126,12 @@ spec:
         - name: buerokratt-dsl
           persistentVolumeClaim:
             claimName: pvc-buerokratt-dsl
+        - name: run
+          emptyDir:
+            medium: ""
+        - name: log
+          emptyDir:
+            medium: ""
+        - name: cache
+          emptyDir:
+            medium: ""
