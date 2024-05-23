@@ -98,6 +98,8 @@ spec:
             - name: REACT_APP_RUUTER_PRIVATE_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_API_URL }}"
           volumeMounts:
+            - mountPath: /tmp
+              name: tmp
             - name: run
               mountPath: /var/run
             - name: log
@@ -131,11 +133,12 @@ spec:
               port: 3001
             initialDelaySeconds: 10
             periodSeconds: 11
-
       volumes:
         - name: analytics-dsl
           persistentVolumeClaim:
             claimName: pvc-analytics-dsl
+        - emptyDir: {}
+          name: tmp
         - name: run
           emptyDir:
             medium: ""
