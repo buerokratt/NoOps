@@ -23,12 +23,16 @@ domain: test.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod-issuer
 
-release_name: "component-train-bot"  
-
+release_name: "component-byk-train-bot"  
 
 
 images:
   scope:
-    image: "riaee/byk:loba-bot-v0.2"
+    registry: "ghcr.io"
+    repository: "varmoh/rasa-for-buerokratt"
+    tag: "pre-alpha-1.1.0" # Images (tags) are up to date, currently no changes needed
 
-
+bot:
+  dsl:
+    repo: https://github.com/buerokratt/Installation-Guides.git
+    path: default-setup/chatbot-and-training/bot

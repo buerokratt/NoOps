@@ -77,6 +77,8 @@ spec:
               value: "{{ .Values.env.REACT_APP_SERVICE_ID }}"
             - name: REACT_APP_NOTIFICATION_NODE_URL
               value: "{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}"
+#            - name: REACT_APP_CSP
+#              value: "{{ .Values.env.REACT_APP_CSP }}"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -102,7 +104,7 @@ spec:
             httpGet:
               path: /
               port: 3001
-            initialDelaySeconds: 18
+            initialDelaySeconds: 19
             periodSeconds: 10
           volumeMounts:
             - name: buerokratt-dsl
