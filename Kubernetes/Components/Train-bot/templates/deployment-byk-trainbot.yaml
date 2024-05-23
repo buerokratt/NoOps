@@ -12,33 +12,43 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       nodeSelector:
         kubernetes.io/hostname: rke-worker03
       containers:
-      - name: "{{ .Values.release_name }}"
-        image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
-        env:
-        - name: RASA_MAX_CACHE_SIZE
-          value: "0"
-        command: ["/bin/sh"]
-        args:
-          - "-c"
-          - >
-            rasa run --enable-api
-              
-        ports:
-        - containerPort: 5005
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          env:
+            - name: RASA_MAX_CACHE_SIZE
+              value: "0"
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              rasa run --enable-api
+
+          ports:
+            - containerPort: 5005
+              resources:
+                limits:
+                  cpu: "1000m"
+                  memory: "4Gi"
+          volumeMounts:
+            - name: trainbot-rasa-models
+              mountPath: /app/models
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           resources:
             limits:
-              cpu: "1000m"
-              memory: "4Gi"
-        volumeMounts:
-          - name: trainbot-rasa-models
-            mountPath: /app/models
+              memory: "512Mi"
+              cpu: "250m"
       volumes:
-      - name: trainbot-rasa-models
-        persistentVolumeClaim:
-          claimName: pvc-trainbot-models
-
-
-
+        - name: trainbot-rasa-models
+          persistentVolumeClaim:
+            claimName: pvc-trainbot-models
