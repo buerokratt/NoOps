@@ -1,8 +1,9 @@
 apiVersion: v2
 name: Bot
-description: A Helm chart for Bot
+description: A Helm chart for Train-bot
 
 type: application
 
 version: 0.1.0
 appVersion: 2.0.0
+

@@ -149,13 +149,13 @@ spec:
             httpGet:
               path: /datasources
               port: 8082
-            initialDelaySeconds: 70
+            initialDelaySeconds: 71
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /datasources
               port: 8082
-            initialDelaySeconds: 68
+            initialDelaySeconds: 70
             periodSeconds: 10
 
       volumes:
