@@ -11,6 +11,7 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: init-copy-files
           image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
@@ -22,10 +23,24 @@ spec:
               cp -r ../Resql/ /app/DSL
               cp -r ../DataMapper/ /app/DSL
               cp -r ../Liquibase/ /app/DSL
-              ls -la 
+              ls -la
           volumeMounts:
             - name: analytics-dsl
               mountPath: /app/DSL
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 20000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -83,6 +98,9 @@ spec:
               value: "{{ .Values.env.REACT_APP_SERVICE_ID }}"
             - name: REACT_APP_RUUTER_PRIVATE_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_API_URL }}"
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
           livenessProbe:
             httpGet:
               path: /
@@ -95,8 +113,24 @@ spec:
               port: 3001
             initialDelaySeconds: 10
             periodSeconds: 11
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 20000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+#          resources:
+#            limits:
+#              memory: "512Mi"
+#              cpu: "250m"
 
       volumes:
         - name: analytics-dsl
           persistentVolumeClaim:
             claimName: pvc-analytics-dsl
+        - emptyDir: {}
+          name: tmp
