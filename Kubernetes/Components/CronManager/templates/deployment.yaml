@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      containers:
+      - name: "{{ .Values.release_name }}"
+        image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+        ports:
+        - containerPort: 9010
+        env:
+        - name: TRAINING_PUBLIC_RUUTER
+          value: "{{ .Values.contstants.TRAINING_PUBLIC_RUUTER }}"
+        - name: TRAINING_DMAPPER
+          value: "{{ .Values.contstants.TRAINING_DMAPPER }}"
+        - name: TRAINING_OPENSEARCH
+          value: "{{ .Values.contstants.TRAINING_OPENSEARCH }}"
+        - name: TRAINING_TIM
+          value: "{{ .Values.contstants.TRAINING_TIM }}"
+        - name: TRAINING_RESQL
+          value: "{{ .Values.contstants.TRAINING_RESQL }}"
+        - name: TRAINING_USERS_RESQL
+          value: "{{ .Values.contstants.TRAINING_USERS_RESQL }}"
+        - name: TRAINING_PIPELINE
+          value: "{{ .Values.contstants.TRAINING_PIPELINE }}"
+        - name: TRAINING_RASA
+          value: "{{ .Values.contstants.TRAINING_RASA }}"
+        - name: S3_FERRY
+          value: "{{ .Values.contstants.S3_FERRY }}"
+        - name: SERVICES_RESQL
+          value: "{{ .Values.contstants.SERVICES_RESQL }}"
+        - name: CRON_INSTANCE
+          value: "{{ .Values.contstants.CRON_INSTANCE }}"
+        - name: CRON_MANAGER
+          value: "{{ .Values.contstants.CRON_MANAGER }}"
+        - name: TRAINING_FILES_PATH
+          value: "{{ .Values.contstants.TRAINING_FILES_PATH }}"
+        - name: TESTING_FILES_PATH
+          value: "{{ .Values.contstants.TESTING_FILES_PATH }}"
+        - name: CROSS_VALIDATION_FILES_PATH
+          value: "{{ .Values.contstants.CROSS_VALIDATION_FILES_PATH }}"
+
+        volumeMounts:
+        - name: trainbot-rasa-models
+          mountPath: /data
+        - name: cronconst
+          mountPath: /app/constants.ini
+          subPath: constants.ini
+      volumes:
+      - name: trainbot-rasa-models
+        persistentVolumeClaim:
+          claimName: pvc-trainbot-models
+      - name: cronconst
+        configMap:
+          name: cronconst

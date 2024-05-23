@@ -30,10 +30,12 @@ images:
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-pre-alpha-1.3.16" # Images (tags) are up to date, currently no changes needed
+    tag: "backoffice-module-pre-alpha-1.3.33" # Images (tags) are up to date, currently no changes needed
 
 env:
   LOGGING_LEVEL_ROOT: "INFO"
   LOG_LEVEL_TIMING: "INFO"
-  APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "true"
-  APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "true"
+  APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "false"
+  APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "false"
+  APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.test.buerokratt.ee, https://test.buerokratt.ee, https://tim.test.buerokratt.ee, https://ruuter.test.buerokratt.ee # Change the domain name, leave subdomain and subpath same
+
