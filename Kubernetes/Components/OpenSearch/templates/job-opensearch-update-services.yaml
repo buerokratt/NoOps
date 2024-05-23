@@ -33,9 +33,22 @@ spec:
               ls /root/services
          env:
             - name: DSL_REPO
-              value: {{ .Values.images.opensearch.services.repo }}
+              value: "{{ .Values.images.opensearch.services.repo }}"
             - name: DSL_PATH
-              value: {{ .Values.images.opensearch.services.path }}
+              value: "{{ .Values.images.opensearch.services.path }}"
+         securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"     
       containers:      
        - name: opensearch-update-services
          image: alpine
@@ -49,6 +62,19 @@ spec:
          volumeMounts:
             - name: opensearch-repos
               mountPath: /services
+         securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"     
 
       volumes:
         - name: opensearch-repos

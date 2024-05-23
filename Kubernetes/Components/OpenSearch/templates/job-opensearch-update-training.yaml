@@ -33,9 +33,22 @@ spec:
               ls /root/training
          env:
             - name: DSL_REPO
-              value: {{ .Values.images.opensearch.training.repo }}
+              value: "{{ .Values.images.opensearch.training.repo }}"
             - name: DSL_PATH
-              value: {{ .Values.images.opensearch.training.path }}
+              value: "{{ .Values.images.opensearch.training.path }}"
+         securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"     
       containers:
         - name: opensearch-update-training
           image: alpine
@@ -49,6 +62,19 @@ spec:
           volumeMounts:
             - name: opensearch-repos
               mountPath: /training
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"    
 
       volumes:
         - name: opensearch-repos

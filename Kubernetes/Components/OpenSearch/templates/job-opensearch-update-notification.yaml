@@ -32,9 +32,22 @@ spec:
               ls /root/backoffice
          env:
             - name: DSL_REPO
-              value: {{ .Values.images.opensearch.backoffice.repo }}
+              value: "{{ .Values.images.opensearch.backoffice.repo }}"
             - name: DSL_PATH
-              value: {{ .Values.images.opensearch.backoffice.path }}
+              value: "{{ .Values.images.opensearch.backoffice.path }}"
+         securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"     
 
       containers:
         - name: opensearch-update-notification
@@ -49,6 +62,19 @@ spec:
           volumeMounts:
             - name: opensearch-repos
               mountPath: /backoffice
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"    
 
       volumes:
         - name: opensearch-repos
