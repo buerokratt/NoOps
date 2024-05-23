@@ -35,7 +35,7 @@ images:
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-pre-alpha-1.4.7" # Images (tags) are up to date, currently no changes needed
+    tag: "analytics-module-pre-alpha-1.4.9" # Images (tags) are up to date, currently no changes needed
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
@@ -43,11 +43,16 @@ images:
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.28" # Images (tags) are up to date, currently no changes needed 
+    tag: "training-module-pre-alpha-1.4.49" # Images (tags) are up to date, currently no changes needed 
 env:
   LOGGING_LEVEL_ROOT: "INFO"
   LOG_LEVEL_TIMING: "INFO"
   APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "false"
   APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "false"
+<<<<<<< Updated upstream
   APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.test.buerokratt.ee # Change the domain name, leave subdomain and subpath same
+=======
+  APPLICATION_HTTPCODESALLOWLIST: "200,201,202,204,400,401,403,500"
+  APPLICATION_CORS_ALLOWED_ORIGINS: https://admin.test.buerokratt.ee, https://test.buerokratt.ee, https://tim.test.buerokratt.ee, https://ruuter.test.buerokratt.ee # Change the domain name, leave subdomain and subpath same
+>>>>>>> Stashed changes
   APPLICATION_OPENSEARCH_CONFIGURATION_URL: http://component-opensearch-node:9200
