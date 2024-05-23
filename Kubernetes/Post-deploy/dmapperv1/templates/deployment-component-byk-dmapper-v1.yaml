@@ -11,7 +11,8 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initContainers:      
+      automountServiceAccountToken: false
+      initContainers:
         - name: copy-training-files
           image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
           command: ["/bin/sh", "-c"]
@@ -27,6 +28,21 @@ spec:
           volumeMounts:
             - name: dmapper-v1-volume
               mountPath: /workspace/app/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - CHOWN
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
 
       containers:
         - name: "{{ .Values.release_name }}"
@@ -34,12 +50,37 @@ spec:
           env:
             - name: PORT
               value: "3000"
-          ports: 
+          ports:
             - containerPort: 3000
               name: http
           volumeMounts:
             - name: dmapper-v1-volume
               mountPath: /workspace/app
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - CHOWN
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 23
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 22
+            periodSeconds: 10
       volumes:
         - name: dmapper-v1-volume
           emptyDir: {}
