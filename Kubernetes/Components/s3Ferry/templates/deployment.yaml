@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      containers:
+      - name: "{{ .Values.release_name }}-ferry"
+        image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+        ports:
+        - containerPort: 3000
+        env:
+        - name: S3_ENDPOINT_URL
+          value: "{{ .Values.config.S3_ENDPOINT_URL }}"
+        - name: API_CORS_ORIGIN
+          value: "{{ .Values.config.API_CORS_ORIGIN }}"
+        - name: API_DOCUMENTATION_ENABLED
+          value: "true"
+        - name: S3_REGION
+          value: "{{ .Values.config.S3_REGION }}"
+        - name: S3_ACCESS_KEY_ID
+          value: "{{ .Values.config.S3_ACCESS_KEY_ID }}"
+        - name: S3_SECRET_ACCESS_KEY
+          value: "{{ .Values.config.S3_SECRET_ACCESS_KEY }}"
+        - name: S3_DATA_BUCKET_NAME
+          value: "{{ .Values.config.S3_DATA_BUCKET_NAME }}"
+        - name: S3_DATA_BUCKET_PATH
+          value: "{{ .Values.config.S3_DATA_BUCKET_PATH }}"
+        - name: FS_DATA_DIRECTORY_PATH
+          value: "{{ .Values.config.FS_DATA_DIRECTORY_PATH }}"
+        envFrom:
+        - configMapRef:
+            name: "{{ .Values.release_name }}-config"
+        volumeMounts:
+        - name: trainbot-rasa-models
+          mountPath: /api/data
+      volumes:
+      - name: trainbot-rasa-models
+        persistentVolumeClaim:
+          claimName: pvc-trainbot-models
