@@ -24,6 +24,19 @@ spec:
           volumeMounts:
             - name: liquibase
               mountPath: /app/DSL
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
       containers:
         - name: training-liquibase
           image: liquibase/liquibase:4.23.2
@@ -38,8 +51,21 @@ spec:
           volumeMounts:
             - name: liquibase
               mountPath: /DSL/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
 
       volumes:
-      - name: liquibase
-        emptyDir: {}
+        - name: liquibase
+          emptyDir: {}
       restartPolicy: Never
