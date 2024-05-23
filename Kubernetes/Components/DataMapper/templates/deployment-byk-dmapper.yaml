@@ -13,6 +13,26 @@ spec:
     spec:
       automountServiceAccountToken: false
       initContainers:
+        - name: bring-train-data
+          image: alpine/git:2.36.3
+          volumeMounts:
+            - name: trainbot-rasa-locations
+              mountPath: /rasa/locations
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              git clone $DSL_REPO /tmp/dsl-source &&
+              echo 'downloaded' &&
+              cp -r /tmp/dsl-source/$DSL_PATH/* /rasa/locations/ &&
+              echo 'moved' &&
+              ls /rasa/locations/
+          env:
+            - name: DSL_REPO
+              value: {{ .Values.images.bot.dsl.repo }}
+            - name: DSL_PATH
+              value: {{ .Values.images.bot.dsl.path }}
+
         - name: init-copy-files-backoffice
           image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
           command: ["/bin/sh", "-c"]
@@ -161,6 +181,8 @@ spec:
             - name: byk-dsl-services
               mountPath: /data
               readOnly: false
+            - name: trainbot-rasa-locations
+              mountPath: /rasa/locations
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -178,7 +200,7 @@ spec:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 26
+            initialDelaySeconds: 24
             periodSeconds: 11
           readinessProbe:
             httpGet:
@@ -192,3 +214,6 @@ spec:
         - name: byk-dsl-services
           persistentVolumeClaim:
             claimName: byk-dsl-services
+        - name: trainbot-rasa-locations
+          persistentVolumeClaim:
+            claimName: pvc-trainbot

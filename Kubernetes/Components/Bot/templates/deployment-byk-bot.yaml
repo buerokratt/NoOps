@@ -13,59 +13,50 @@ spec:
         app: "{{ .Values.release_name }}"
     spec:
       initContainers: 
-        - name: bring-loba-folder-for-init-train
-          image: alpine/git:2.36.3
-          volumeMounts:
-            - name: loba-volume
-              mountPath: /app
-          command: ["/bin/sh"]
-          args:
-            - "-c"
-            - >
-              git clone $DSL_REPO /tmp/dsl-source &&
-              echo 'downloaded' &&
-              cp -r /tmp/dsl-source/$DSL_PATH/loba/* /app/ &&
-              echo 'moved' &&
-              ls /app
-          env:
-            - name: DSL_REPO
-              value: {{ .Values.images.bot.dsl.repo }}
-            - name: DSL_PATH
-              value: {{ .Values.images.bot.dsl.path }}
+        # - name: bring-loba-folder-for-init-train
+        #   image: alpine/git:2.36.3
+        #   volumeMounts:
+          #   - name: rasa-training-data
+          #     mountPath: /app
+          # command: ["/bin/sh"]
+          # args:
+          #   - "-c"
+          #   - >
+          #     git clone $DSL_REPO /tmp/dsl-source &&
+          #     echo 'downloaded' &&
+          #     cp -r /tmp/dsl-source/$DSL_PATH/loba/* /app/ &&
+          #     echo 'moved' &&
+          #     adduser --no-create-home --disabled-password rasa &&
+          #     chown -R rasa:rasa /app &&
+          #     ls /app
+              
+          # env:
+          #   - name: DSL_REPO
+          #     value: {{ .Values.bot.dsl.repo }}
+          #   - name: DSL_PATH
+          #     value: {{ .Values.bot.dsl.path }}
 
       containers:
-        - name: byk-bot
-          image: riaee/byk:bot-20220728
-          command: ["/bin/sh"]
-          args:
-            - "-c"
-            - >
-              rasa train --fixed-model-name loba-model &&
-              rasa run 
-          ports:
-            - containerPort: 5005
-          volumeMounts:
-            - name: loba-volume
-              mountPath: /app/
-#          resources:
-#            limits:
-#              memory: "1Gi"
-#              cpu: "500m"
-        - name: byk-bot-action
-          image: "{{ .Values.images.scope.bot_action.image }}"
-          command: ["python", "-m", "rasa_sdk.endpoint", "--actions", "actions"]
-
-          ports:
-            - containerPort: 5055
-          volumeMounts:
-            - name: loba-volume
-              mountPath: /app/
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
+      - name: "{{ .Values.release_name }}"
+        image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+        env:
+        - name: RASA_MAX_CACHE_SIZE
+          value: "0"
+        command: ["/bin/sh"]
+        args:
+          - "-c"
+          - >
+            rasa run --enable-api
+              
+        ports:
+        - containerPort: 5005
+        volumeMounts:
+          - name: bot-rasa-models
+            mountPath: /app/models
       volumes:
-        - name: loba-volume
-          persistentVolumeClaim:
-            claimName: pvc-loba
-  
+      - name: bot-rasa-models
+        persistentVolumeClaim:
+          claimName: pvc-bot-models
+
+
+
