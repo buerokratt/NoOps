@@ -27,8 +27,8 @@ release_name: "component-byk-dmapper"
 images:
   scope:
     registry: "ghcr.io"
-    repository: "buerokratt/datamapper"
-    tag: "pre-alpha-19-2.6.18" # Images (tags) are up to date, currently no changes needed
+    repository: "varmoh/buerokratt-data-mapper"
+    tag: "pre-alpha-2.7.0" # Images (tags) are up to date, currently no changes needed
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
@@ -44,8 +44,12 @@ images:
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.11" # Images (tags) are up to date, currently no changes needed  
+    tag: "training-module-pre-alpha-1.4.48" # Images (tags) are up to date, currently no changes needed  
   pipelines:
     service:
       repo: https://github.com/buerokratt/Service-Module.git
       path: /DSL
+  bot:
+    dsl:
+      repo: https://github.com/buerokratt/Training-Module.git
+      path: DSL/DMapper/locations

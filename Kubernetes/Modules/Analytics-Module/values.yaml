@@ -27,11 +27,12 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/analytics-module"
-    tag: "pre-alpha-1.4.10" # Images (tags) are up to date, currently no changes needed
+    tag: "v1-alpha-1-1.1.9" # Images (tags) are up to date, currently no changes needed
+#    tag: "pre-alpha-1.4.10"
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-pre-alpha-1.4.7" # Images (tags) are up to date, currently no changes needed
+    tag: "analytics-module-pre-alpha-1.4.8" # Images (tags) are up to date, currently no changes needed
 env:
   REACT_APP_RUUTER_API_URL: "https://ruuter.test.buerokratt.ee/v2/public/backoffice"
   NODE_ENV: "development"

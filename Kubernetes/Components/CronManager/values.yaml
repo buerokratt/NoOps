@@ -1,0 +1,48 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: test.buerokratt.ee # Domain name
+#secretname: ruuter.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
+#ingress:
+#  certIssuerName: letsencrypt-prod  # Change this if your certIssuerName has set up different
+
+release_name: "component-byk-cronmanager"    
+
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: "varmoh/cronmanager"
+    tag: "pre-alpha-1.2.0" # Images (tags) are up to date, currently no changes needed
+
+
+contstants:
+  TRAINING_PUBLIC_RUUTER: "http://component-byk-ruuter-private:8080"
+  TRAINING_DMAPPER: "http://component-byk-dmapper-v1:3000" # Vaata üle täpselt mi siia läks
+  TRAINING_OPENSEARCH: "http://component-opensearch-node:9200"
+  TRAINING_TIM: "http://component-byk-tim:8085"
+  TRAINING_RESQL: "http://component-byk-resql:8082"
+  TRAINING_USERS_RESQL: http://component-byk-resql:8082
+  TRAINING_PIPELINE: "http://module-byk-training-gui-pipelines:3010"
+  TRAINING_RASA: "http://component-byk-train-bot:5005" # ehita training rasa image, muuda trin-bot? deploy kausta, midagi seal all juba valmis kah
+  S3_FERRY: "http://component-byk-s3:3000"
+  SERVICES_RESQL: "http://component-byk-resql:8082"
+  CRON_INSTANCE: "http://component-byk-cronmanager:9010"
+  CRON_MANAGER: "http://component-byk-cronmanager:9010"
+
+  TRAINING_FILES_PATH: "/rasa/locations/data/"
+  TESTING_FILES_PATH: "/rasa/locations/tests/"
+  CROSS_VALIDATION_FILES_PATH: "/rasa/locations/data/nlu/"
