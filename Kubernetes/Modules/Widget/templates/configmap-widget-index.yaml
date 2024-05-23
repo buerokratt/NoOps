@@ -21,7 +21,7 @@ data:
           TIMEZONE: 'Europe/Tallinn',
           BEGIN: 0,
           END: 24,
-          DAYS: [1, 2, 3, 4, 5],
+          DAYS: [1, 2, 3, 4, 5, 6, 7],
         },
       };
     </script>
@@ -44,6 +44,6 @@ data:
           TIMEZONE: 'Europe/Tallinn',
           BEGIN: 0,
           END: 24,
-          DAYS: [1, 2, 3, 4, 5],
+          DAYS: [1, 2, 3, 4, 5, 6, 7],
         },
       };
