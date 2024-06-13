@@ -35,4 +35,4 @@ db:
   db_host: component-databases-users-db
   db_port: "5432"
   db_user: byk
-  db_password: "01234" # Change password accordingly
+  db_password: "" # Change password accordingly

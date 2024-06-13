@@ -37,7 +37,7 @@ images:
     image: opensearchproject/opensearch:latest
   pipelines:
     training:
-      repo: https://github.com/varmoh/Training-Module.git
+      repo: https://github.com/varmoh/Training-Module.git # Change it from varmoh repo into buerokratt
       path: /
   dsl:
     registry: "ghcr.io"
@@ -46,4 +46,4 @@ images:
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
-  dbPassword: "01234"   # Change password accordingly
+  dbPassword: ""   # Change password accordingly
