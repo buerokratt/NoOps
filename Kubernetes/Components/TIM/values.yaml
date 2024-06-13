@@ -16,8 +16,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
-secretname: tim.test.buerokratt.ee1904prod  # Cert name value, change this as suited to environment
+domain: DOMAIN.buerokratt.ee # Domain name
+secretname: tim.DOMAIN.buerokratt.ee1904prod  # Cert name value, change this as suited to environment
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 
@@ -49,15 +49,15 @@ byk:
         sessionCookieDomain: buerokratt.ee
       jwtIntegration:
         signature:
-          issuer: test.buerokratt.ee # Change the domain name, leave subdomain and subpath same
-          keyStorePassword: ppjjpp
+          issuer: DOMAIN.buerokratt.ee # Change the domain name, leave subdomain and subpath same
+          keyStorePassword:      # Change password
           keyStore: classpath:jwtkeystore.jks
       spring:
         profiles:
           active: dev
       logging:
         level:
-          root: INFO
+          root: TRACE
       
 tim-postgresql:
   image:
@@ -65,7 +65,7 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "123" # Change password accordingly
+    password: "" # Change password accordingly
     database: "tim"
 
 tim_postgresql: "123"
@@ -74,4 +74,5 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/tim"
-    tag: "pre-apha-2.3.1" # Images (tags) are up to date, currently no changes needed
+#    tag: "pre-apha-2.3.1" # Images (tags) are up to date, currently no changes needed
+    tag: "pre-apha-2.5.3"

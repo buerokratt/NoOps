@@ -19,6 +19,9 @@ spec:
           ports:
             - containerPort: 80
               name: http
+          # env:
+          #   - name: ENABLE_HIDDEN_FEATURES
+          #     value: "true"
           volumeMounts:
             - name: widget-index-volume
               mountPath: /usr/share/nginx/html/widget/index.html
@@ -54,7 +57,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 80
-            initialDelaySeconds: 23
+            initialDelaySeconds: 24
             periodSeconds: 10
           readinessProbe:
             tcpSocket:

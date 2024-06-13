@@ -8,7 +8,7 @@ metadata:
     "helm.sh/hook-weight": "1"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-  ttlSecondsAfterFinished: 120
+#  ttlSecondsAfterFinished: 120
   template:
     metadata:
       name: "job-{{ .Values.release_name }}-notification"

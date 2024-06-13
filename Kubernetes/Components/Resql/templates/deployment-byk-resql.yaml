@@ -11,6 +11,8 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: rke-worker03
       initContainers:
         - name: init-copy-files-backoffice
           image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
@@ -83,7 +85,7 @@ spec:
             httpGet:
               path: /datasources
               port: 8082
-            initialDelaySeconds: 71
+            initialDelaySeconds: 70
             periodSeconds: 10
           readinessProbe:
             httpGet:

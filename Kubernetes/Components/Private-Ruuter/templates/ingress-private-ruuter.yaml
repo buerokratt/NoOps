@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
 #    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, GET, OPTIONS"
 #    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://admin.test.buerokratt.ee, https://test.buerokratt.ee, https://tim.test.buerokratt.ee, https://admin.dev.buerokratt.ee, https://ruuter.test.buerokratt.ee/, https://ruuter.test.buerokratt.ee/v1/private/"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://admin.DOMAIN.buerokratt.ee, https://DOMAIN.buerokratt.ee, https://tim.DOMAIN.buerokratt.ee, https://admin.dev.buerokratt.ee, https://ruuter.DOMAIN.buerokratt.ee/, https://ruuter.DOMAIN.buerokratt.ee/v2/private/, https://ruuter.DOMAIN.buerokratt.ee/sse"
 #    nginx.ingress.kubernetes.io/session-cookie-domain: "buerokratt.ee"
 #    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
 #    nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type"

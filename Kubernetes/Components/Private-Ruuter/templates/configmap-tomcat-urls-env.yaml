@@ -7,7 +7,7 @@ data:
     CHATBOT_RUUTER_PUBLIC=http://component-byk-ruuter:8080
     CHATBOT_RUUTER_PRIVATE=http://component-byk-ruuter-private:8080
     CHATBOT_RUUTER=http://component-byk-ruuter:8080
-    CHATBOT_RESQL=http://component-byk-resql:8082
+    CHATBOT_RESQL=http://component-byk-resql:8082/backoffice
     CHATBOT_DMAPPER=http://component-byk-dmapper:3000
     CHATBOT_TIM=http://component-byk-tim:8085
     CHATBOT_OPENSEARCH=http://component-opensearch-node:9200
@@ -16,14 +16,16 @@ data:
     ANALYTICS_DMAPPER=http://component-byk-dmapper:3000
     ANALYTICS_RUUTER=http://component-byk-ruuter-private:8080/analytics
     ANALYTICS_RESQL=http://component-byk-resql:8082/analytics
+    ANALYTICS_OPEN_DATA_SERVICE=https://avaandmedtest.eesti.ee
     TRAINING_TIM=http://component-byk-tim:8085
     TRAINING_DMAPPER=http://component-byk-dmapper:3000
     TRAINING_RUUTER=http://component-byk-ruuter-private:8080/training
     TRAINING_PUBLIC_RUUTER=http://component-byk-ruuter-private:8080/training
     TRAINING_RESQL=http://component-byk-resql:8082/training
-    TRAINING_USERS_RESQL=http://component-byk-resql:8082
+    TRAINING_USERS_RESQL=http://component-byk-resql:/training
     TRAINING_PIPELINE=http://module-byk-training-gui-pipelines:3010
     TRAINING_RASA=http://component-byk-train-bot:5005
+    TRAINING_PUBLIC_RUUTER_INTERNAL=http://component-byk-ruuter-private:8080/training
     S3_FERRY=http://component-byk-s3-ferry-publish:3000
     SERVICES_RESQL=http://component-byk-resql:8082
     CRON_INSTANCE=http://component-byk-cronmanager:9010
@@ -38,5 +40,5 @@ data:
     SERVICE_RESQL=http://component-byk-resql:8082/services
     SERVICE_TRAINING_RESQL=http://component-byk-resql:8082/services/training
     TRAINING_OPENSEARCH=http://component-opensearch-node:9200
-    DOMAIN=test.buerokratt.ee
+    DOMAIN=DOMAIN.buerokratt.ee
     CHATBOT_BOT=http://component-byk-bot:5005

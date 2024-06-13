@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
+domain: DOMAIN.buerokratt.ee # Domain name
 
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
@@ -30,7 +30,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "varmoh/rasa-for-buerokratt"
-    tag: "pre-alpha-1.1.0" # Images (tags) are up to date, currently no changes needed
+    tag: "pre-alpha-1.2.0" # Images (tags) are up to date, currently no changes needed
 
 bot:
   dsl:

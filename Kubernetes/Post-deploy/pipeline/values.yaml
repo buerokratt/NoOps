@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
+domain: DOMAIN.buerokratt.ee # Domain name
 
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
@@ -26,13 +26,18 @@ ingress:
 #release_name: "postdeploy"
 release_name: "job-postdeploy"
 releaseName: post-deploy-pipeline
-  
+
+dslRepo: "https://github.com/buerokratt/Training-Module.git"
+dslPath: "/"
+dslBranch: "varmoh-patch-2"
+
+
 images:
   scope:
     image: opensearchproject/opensearch:latest
   pipelines:
     training:
-      repo: https://github.com/buerokratt/Training-Module.git
+      repo: https://github.com/varmoh/Training-Module.git
       path: /
   dsl:
     registry: "ghcr.io"
