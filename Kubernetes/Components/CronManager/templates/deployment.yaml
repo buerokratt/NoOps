@@ -48,6 +48,8 @@ spec:
           value: "{{ .Values.contstants.TESTING_FILES_PATH }}"
         - name: CROSS_VALIDATION_FILES_PATH
           value: "{{ .Values.contstants.CROSS_VALIDATION_FILES_PATH }}"
+        - name: CHATBOT_BOT
+          value: "{{ .Values.contstants.CHATBOT_BOT }}"
 
         volumeMounts:
         - name: trainbot-rasa-models

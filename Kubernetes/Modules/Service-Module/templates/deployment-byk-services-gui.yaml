@@ -34,7 +34,7 @@ spec:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
           ports:
-            - containerPort: 3001
+            - containerPort: 3006
               name: http
           env:
             - name: REACT_APP_RUUTER_API_URL
@@ -87,6 +87,10 @@ spec:
               value: "{{ .Values.env.REACT_APP_SERVICE_ID }}"
             - name: REACT_APP_RUUTER_PRIVATE_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_API_URL }}"
+            - name: REACT_APP_ENABLE_HIDDEN_FEATURES
+              value: "TRUE"
+            - name: REACT_APP_MENU_JSON
+              value: ""{{ .Values.env.REACT_APP_MENU_JSON }}""
           volumeMounts:
             - name: services-dsl
               mountPath: /DSL/

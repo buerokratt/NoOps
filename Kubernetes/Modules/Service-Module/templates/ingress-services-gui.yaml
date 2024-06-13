@@ -25,7 +25,7 @@ spec:
               service:
                 name: "{{ .Values.release_name }}"
                 port:
-                  number: 3001
+                  number: 3006
   tls:
     - hosts:
         - admin.{{ .Values.domain }}

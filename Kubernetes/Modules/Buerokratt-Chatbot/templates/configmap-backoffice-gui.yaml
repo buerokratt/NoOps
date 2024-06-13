@@ -66,6 +66,7 @@ data:
                 "path": "/training/intents"
               },
               {
+                "hiddenMode": "production",
                 "label": {
                   "et": "Avalikud teemad",
                   "en": "Public themes"
@@ -94,6 +95,7 @@ data:
                 "path": "/training/stories"
               },
               {
+                "hiddenMode": "production",
                 "label": {
                   "et": "Konfiguratsioon",
                   "en": "Configuration"
@@ -113,6 +115,14 @@ data:
                   "en": "Slots"
                 },
                 "path": "/training/slots"
+              },
+              {
+                "hiddenMode": "production",
+                "label": {
+                  "et": "Automatic Teenused",
+                  "en": "Automatic Services"
+                },
+                "path": "/auto-services"
               }
             ]
           },
@@ -131,6 +141,7 @@ data:
                 "path": "/history/history"
               },
               {
+                "hiddenMode": "production",
                 "label": {
                   "et": "Pöördumised",
                   "en": "Appeals"
@@ -161,6 +172,7 @@ data:
                 "path": "/analytics/models"
               },
               {
+                "hiddenMode": "production",
                 "label": {
                   "et": "Testlood",
                   "en": "testTracks"
@@ -168,13 +180,6 @@ data:
                 "path": "/analytics/testcases"
               }
             ]
-          },
-          {
-                "label": {
-                  "et": "Automatic Teenused",
-                  "en": "Automatic Services"
-                },
-                "path": "/auto-services"
           },
           {
             "label": {
@@ -232,6 +237,7 @@ data:
       },
       {
         "id": "services",
+        "hiddenMode": "production",
         "label": {
           "et": "Teenused",
           "en": "Services"
@@ -338,6 +344,7 @@ data:
       },
       {
         "id": "monitoring",
+        "hiddenMode": "production",
         "label": {
           "et": "Seire",
           "en": "Monitoring"
@@ -352,5 +359,14 @@ data:
             "path": "/uptime"
           }
         ]
+      },
+      {
+        "id":"hidden-item",
+        "label": {
+          "et": "Peidetud",
+          "en": "Hidden"
+        },
+        "path": "/hidden",
+        "hidden": false
       }
     ]

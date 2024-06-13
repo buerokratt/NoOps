@@ -15,8 +15,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: test.buerokratt.ee # Domain name
-#secretname: ruuter.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
+domain: DOMAIN.buerokratt.ee # Domain name
+#secretname: ruuter.DOMAIN.buerokratt.ee1904prod # Cert name value, change this as suited to environment
 #ingress:
 #  certIssuerName: letsencrypt-prod  # Change this if your certIssuerName has set up different
 
@@ -25,20 +25,22 @@ release_name: "component-byk-s3-ferry-publish"
 images:
   scope:
     registry: "ghcr.io"
-    repository: "varmoh/buerokratt-s3-ferry"
-    tag: "pre-alpha-s3-1.1.1" # Images (tags) are up to date, currently no changes needed
+    repository: "buerokratt/s3-ferry"
+    tag: "pre-alpha-1.1.1" # Images (tags) are up to date, currently no changes needed
 
+
+# Enter your S2 information below between doubequotes
 
 env:
-  S3_ENDPOINT_URL: s3.riigipilv.ee:443
+  S3_ENDPOINT_URL: 
 
 config:
   API_CORS_ORIGIN: "*"
-  API_DOCUMENTATION_ENABLED: "true"
-  S3_REGION: 
-  S3_ENDPOINT_URL: 
-  S3_ACCESS_KEY_ID: 
-  S3_SECRET_ACCESS_KEY: 
-  S3_DATA_BUCKET_NAME: 
+  API_DOCUMENTATION_ENABLED: "true" # Change it to false if you dont need it
+  S3_REGION: ""
+  S3_ENDPOINT_URL: ""
+  S3_ACCESS_KEY_ID: ""
+  S3_SECRET_ACCESS_KEY: ""
+  S3_DATA_BUCKET_NAME: ""
   S3_DATA_BUCKET_PATH: ""
   FS_DATA_DIRECTORY_PATH: "./data"

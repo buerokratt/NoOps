@@ -80,24 +80,32 @@ spec:
               value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
             - name: application.httpCodesAllowList
               value: "{{ .Values.env.APPLICATION_HTTPCODESALLOWLIST }}"
+            - name: application.DSL.allowedFiletypes
+              value: .yml,.yaml,.md,.tmp
+            - name: application.internalRequests.allowedIPs
+              value: "192.168.42.124, 192.168.42.110"
+            - name: application.internalRequests.disabled
+              value: "true"
+            - name: application.logging.printStackTrace
+              value: "true"
           volumeMounts:
             - name: privateruuter-volume
               mountPath: /DSL/
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
-            - name: byk-dsl-services
-              mountPath: /data
-              readOnly: false
+#            - name: byk-dsl-services
+#              mountPath: /data
+#              readOnly: false
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 23
+            initialDelaySeconds: 25
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 22
+            initialDelaySeconds: 23
             periodSeconds: 10
 
       volumes:
@@ -106,6 +114,6 @@ spec:
         - name: urls-env
           configMap:
             name: urls-env-config-private
-        - name: byk-dsl-services
-          persistentVolumeClaim:
-            claimName: byk-dsl-services
+#        - name: byk-dsl-services
+#          persistentVolumeClaim:
+#            claimName: byk-dsl-services
