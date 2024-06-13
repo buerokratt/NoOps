@@ -27,7 +27,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-chatbot"
-    tag: "notification-node-pre-alpha-1.2.2" # Images (tags) are up to date, currently no changes needed
+    tag: "notification-node-pre-alpha-1.3.4" # Images (tags) are up to date, currently no changes needed
 
 env:
   OPENSEARCH_PROTOCOL: "http"

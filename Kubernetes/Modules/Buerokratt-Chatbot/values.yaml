@@ -28,7 +28,7 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-chatbot"
-    tag: "pre-alpha-test-2.3.4" # Images (tags) are up to date, currently no changes needed
+    tag: "pre-alpha-test-2.3.5" # Images (tags) are up to date, currently no changes needed
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
