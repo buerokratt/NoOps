@@ -35,8 +35,8 @@ byk:
           jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
         oauth2:
           client:
-            clientId: byk_prod  # Change the domain name, leave subdomain and subpath same
-            clientSecret: a5zzFqnhOiMH7A8ynLc8kGpBfHwQmpGg  # Change the domain name, leave subdomain and subpath same
+            clientId:   # Change the domain name, leave subdomain and subpath same
+            clientSecret:   # Change the domain name, leave subdomain and subpath same
             scope: openid
             userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
             accessTokenUri: https://tara-test.ria.ee/oidc/token # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
