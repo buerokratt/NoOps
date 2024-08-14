@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
+domain: test.buerokratt.ee # Domain name
 
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
@@ -24,12 +24,12 @@ ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
 #release_name: "postdeploy"
-release_name: "job-postdeploy"
-releaseName: post-deploy-pipeline
+release_name: "job-postdeploy-seed"
+releaseName: post-deploy-pipeline-seed
 
 dslRepo: "https://github.com/buerokratt/Training-Module.git"
 dslPath: "/"
-dslBranch: "varmoh-patch-2"
+dslBranch: "dev"
 
 
 images:
@@ -46,4 +46,4 @@ images:
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
-  dbPassword: "1234"   # Change password accordingly
+  dbPassword: "01234"   # Change password accordingly

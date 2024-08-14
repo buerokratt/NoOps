@@ -13,7 +13,7 @@ spec:
         app: "{{ .Values.release_name }}"
     spec:
       nodeSelector:
-        kubernetes.io/hostname: rke-worker03
+        kubernetes.io/hostname: rke-3-worker03
       containers:
       - name: "{{ .Values.release_name }}"
         image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -31,7 +31,7 @@ spec:
         resources:
           limits:
              cpu: "1000m"
-             memory: "3Gi"
+             memory: "4Gi"
         volumeMounts:
           - name: trainbot-rasa-models
             mountPath: /app/models

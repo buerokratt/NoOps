@@ -28,25 +28,25 @@ images:
   scope:
     registry: "ghcr.io"
     repository: buerokratt/datamapper
-    tag: pre-alpha-test-2.1.5
+    tag: pre-alpha-test-2.1.13
 #    repository: "varmoh/buerokratt-data-mapper"
 #    tag: "pre-alpha-test-2.5.1" # Images (tags) are up to date, currently no changes needed
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-test-1.1.66" # Images (tags) are up to date, currently no changes needed
+    tag: "backoffice-module-test-1.1.241" # Images (tags) are up to date, currently no changes needed
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-test-1.1.66" # Images (tags) are up to date, currently no changes needed
+    tag: "analytics-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-test-1.1.66" # Images (tags) are up to date, currently no changes needed
+    tag: "service-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-test-1.1.66" # Images (tags) are up to date, currently no changes needed 
+    tag: "training-module-test-1.1.79" # Images (tags) are up to date, currently no changes needed 
   pipelines:
     service:
       repo: https://github.com/buerokratt/Service-Module.git
@@ -55,3 +55,7 @@ images:
     dsl:
       repo: https://github.com/buerokratt/Training-Module.git
       path: DSL/DMapper/locations
+  commonservice:
+    dsl:
+      repo: https://github.com/buerokratt/Common-Services.git
+      path: /

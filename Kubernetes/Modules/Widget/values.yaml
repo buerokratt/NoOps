@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: DOMAIN.buerokratt.ee # Domain name
-secretname: # Cert name value, change this as suited to environment
+secretname: DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
@@ -27,7 +27,7 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/chat-widget"
-    tag: "pre-alpha-test-1.1.5" # Images (tags) are up to date, currently no changes needed
+    tag: "pre-alpha-test-1.1.8" # Images (tags) are up to date, currently no changes needed
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"

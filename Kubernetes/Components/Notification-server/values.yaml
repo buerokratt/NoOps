@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: DOMAIN.buerokratt.ee # Domain name
-secretname:  # Cert name value, change this as suited to environment
+secretname: ruuter.DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different

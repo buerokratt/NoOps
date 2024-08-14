@@ -21,6 +21,7 @@ spec:
             - |
               pwd
               cp -r ../Ruuter/public/backoffice /DSL
+              cp -r ../Ruuter/public/Common-Services/DSL /DSL && mv /DSL/DSL /DSL/Common-Services
               ls -la 
           volumeMounts:
             - name: ruuter-volume

@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: DOMAIN.buerokratt.ee # Domain name
-secretname:  # Cert name value, change this as suited to environment
+secretname: admin.DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
@@ -27,11 +27,11 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/training-module"
-    tag: "pre-alpha-test-1.5.4" # Images (tags) are up to date, currently no changes needed
+    tag: "pre-alpha-test-1.5.9" # Images (tags) are up to date, currently no changes needed
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-test-1.1.47" # Images (tags) are up to date, currently no changes needed
+    tag: "training-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
   pipelines:
     registry: "ghcr.io"
     repository: "buerokratt/training-module"
@@ -73,4 +73,4 @@ env:
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
-  dbPassword: "01234"  # Change password accordingly
+  dbPassword: "1234"  # Change password accordingly

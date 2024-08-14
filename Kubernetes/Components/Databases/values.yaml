@@ -27,7 +27,7 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml under component TIM values.yaml
+    password: "45eR!ggbA50" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml under component TIM values.yaml
     database: tim
   statefulset:
     enabled: true
@@ -41,7 +41,7 @@ users-db:
   auth:
     postgresPassword: postgres
     username: byk
-    password: "" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml in components and modules, where necessary.
+    password: "1234" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml in components and modules, where necessary.
     database: byk
   statefulset:
     enabled: true

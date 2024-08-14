@@ -27,7 +27,7 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 80
-            initialDelaySeconds: 34
+            initialDelaySeconds: 33
             periodSeconds: 10
           volumeMounts:
             - name: nginx-config-volume

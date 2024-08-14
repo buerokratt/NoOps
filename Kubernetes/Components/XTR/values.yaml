@@ -1,0 +1,37 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: DOMAIN.buerokratt.ee # Domain name
+
+#ingress:
+#  tlsConfigMapName: byk-tls-configmap
+
+ingress:
+  certIssuerName: letsencrypt-prod-issuer
+
+release_name: "component-byk-xtr"  
+
+
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: "buerokratt/xtr"
+    tag: "pre-alpha-test-1.1.0" # Images (tags) are up to date, currently no changes needed
+xtr:
+  xtr:
+    repo: https://github.com/buerokratt/xtr.git
+    path: DSL/

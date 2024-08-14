@@ -17,7 +17,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: DOMAIN.buerokratt.ee # Domain name
-secretname: tim.DOMAIN.buerokratt.ee1904prod  # Cert name value, change this as suited to environment
+secretname: tim.DOMAIN.buerokratt.ee1707  # Cert name value, change this as suited to environment
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 
@@ -35,8 +35,8 @@ byk:
           jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
         oauth2:
           client:
-            clientId: byk_public_test # Change the domain name, leave subdomain and subpath same
-            clientSecret: tI6eiKVjASEnKpGBKWSHI1y63Zv69fvh # Change the domain name, leave subdomain and subpath same
+            clientId:   # Change the domain name, leave subdomain and subpath same
+            clientSecret:   # Change the domain name, leave subdomain and subpath same
             scope: openid
             userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
             accessTokenUri: https://tara-test.ria.ee/oidc/token # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
@@ -50,7 +50,7 @@ byk:
       jwtIntegration:
         signature:
           issuer: DOMAIN.buerokratt.ee # Change the domain name, leave subdomain and subpath same
-          keyStorePassword:      # Change password
+          keyStorePassword: ppjjpp
           keyStore: classpath:jwtkeystore.jks
       spring:
         profiles:
@@ -65,10 +65,10 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "" # Change password accordingly
+    password: "45eR!ggbA50" # Change password accordingly
     database: "tim"
 
-tim_postgresql: "123"
+tim_postgresql: "45eR!ggbA50"
 
 images:
   scope:

@@ -12,18 +12,6 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initContainers:
-        # - name: sysctl
-        #   image: busybox
-        #   command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
-        #   securityContext:
-        #     privileged: true
-        - name: init-permissions
-          image: busybox
-          command: ["sh", "-c", "chmod -R 777 /usr/share/opensearch/data"]
-          volumeMounts:
-            - name: opensearch-data
-              mountPath: /usr/share/opensearch/data
       containers:
         - name: "{{ .Values.release_name }}"
           image: {{ .Values.images.scope.image }}
@@ -49,7 +37,7 @@ spec:
               name: opensearch
           resources:
             limits:
-              memory: 1Gi
+              memory: 2Gi
             requests:
               memory: 512Mi
           volumeMounts:

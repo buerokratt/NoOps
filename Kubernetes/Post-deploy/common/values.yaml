@@ -20,7 +20,7 @@ domain: DOMAIN.buerokratt.ee # Domain name
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
 
-release_name: "component-opensearch-node"  
+release_name: "post-deploy-common-service"  
 
 images:
   scope:
@@ -36,7 +36,7 @@ images:
       repo: https://github.com/buerokratt/Training-Module.git
       path: DSL/OpenSearch
     common:
-      repo: https://github.com/buerokratt/Common-Services
+      repo: https://github.com/varmoh/Common-Services
       path: DSL/OpenSearch
 
 env:

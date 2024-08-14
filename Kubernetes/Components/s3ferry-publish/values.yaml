@@ -15,8 +15,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
-#secretname: ruuter.DOMAIN.buerokratt.ee1904prod # Cert name value, change this as suited to environment
+domain: test.buerokratt.ee # Domain name
+#secretname: ruuter.test.buerokratt.ee1904prod # Cert name value, change this as suited to environment
 #ingress:
 #  certIssuerName: letsencrypt-prod  # Change this if your certIssuerName has set up different
 
@@ -29,14 +29,12 @@ images:
     tag: "pre-alpha-1.1.1" # Images (tags) are up to date, currently no changes needed
 
 
-# Enter your S2 information below between doubequotes
-
 env:
-  S3_ENDPOINT_URL: 
+  S3_ENDPOINT_URL: s3.riigipilv.ee:443
 
 config:
   API_CORS_ORIGIN: "*"
-  API_DOCUMENTATION_ENABLED: "true" # Change it to false if you dont need it
+  API_DOCUMENTATION_ENABLED: "true"
   S3_REGION: ""
   S3_ENDPOINT_URL: ""
   S3_ACCESS_KEY_ID: ""
@@ -44,3 +42,6 @@ config:
   S3_DATA_BUCKET_NAME: ""
   S3_DATA_BUCKET_PATH: ""
   FS_DATA_DIRECTORY_PATH: "./data"
+
+
+

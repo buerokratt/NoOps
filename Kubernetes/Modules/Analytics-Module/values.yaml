@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: DOMAIN.buerokratt.ee # Domain name
-secretname:  # Cert name value, change this as suited to environment
+secretname: admin.DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
@@ -32,7 +32,7 @@ images:
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-test-1.1.50" # Images (tags) are up to date, currently no changes needed
+    tag: "analytics-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
 env:
   REACT_APP_RUUTER_API_URL: "https://ruuter.DOMAIN.buerokratt.ee/v2/public/backoffice"
   NODE_ENV: "development"
@@ -65,4 +65,4 @@ env:
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
-  dbPassword: ""   # Change password accordingly
+  dbPassword: "1234"   # Change password accordingly

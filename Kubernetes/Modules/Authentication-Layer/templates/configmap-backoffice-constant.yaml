@@ -38,6 +38,6 @@ data:
       "PASSWORD_AUTH_ENABLED": true,
       "BACKOFFICE_URL": "https://admin.DOMAIN.buerokratt.ee/chat",
       "INSTITUTION_FORWARDING_ENABLED": true,
-      "AUTHORITY_NAME": 'TEST BYK',
+      "AUTHORITY_NAME": 'PROD BYK',
 
     };

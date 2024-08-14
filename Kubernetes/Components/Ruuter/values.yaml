@@ -15,8 +15,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain:  # Domain name
-secretname:  # Cert name value, change this as suited to environment
+domain: DOMAIN.buerokratt.ee # Domain name
+secretname: ruuter.DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
 ingress:
   certIssuerName: letsencrypt-prod  # Change this if your certIssuerName has set up different
 
@@ -30,7 +30,7 @@ images:
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-test-1.1.62" # Images (tags) are up to date, currently no changes needed
+    tag: "backoffice-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
 
 env:
   LOGGING_LEVEL_ROOT: "INFO"

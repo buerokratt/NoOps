@@ -31,3 +31,7 @@ data:
     CHATBOT_EXTERNAL_KEY=
     CHATBOT_RUUTER_PUBLIC_INTERNAL=http://component-byk-ruuter:8080/backoffice
     S3_FERRY=http://component-byk-s3-ferry-publish:3000
+    CHATBOT_RUUTER_PUBLIC_INTERNAL_CS=http://component-byk-ruuter:8080/Common-Services
+    DMAPPER=http://component-byk-dmapper:3000
+    CRON_MANAGER=http://component-byk-cronmanager:9010
+    OPENSEARCH=http://component-opensearch-node:9200

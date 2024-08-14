@@ -33,24 +33,24 @@ images:
   backoffice:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-test-1.1.67" # Images (tags) are up to date, currently no changes needed
+    tag: "backoffice-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
   analytics:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "analytics-module-test-1.1.67" # Images (tags) are up to date, currently no changes needed
+    tag: "analytics-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
   services:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "service-module-test-1.1.67" # Images (tags) are up to date, currently no changes needed
+    tag: "service-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
   training:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-test-1.1.67" # Images (tags) are up to date, currently no changes needed  
+    tag: "training-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed  
     
 env:
   LOGGING_LEVEL_ROOT: "INFO"
   SQLMS_DATASOURCES_0_NAME: "byk"
   SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
   SQLMS_DATASOURCES_0_USERNAME: "byk"
-  SQLMS_DATASOURCES_0_PASSWORD: "" # Change password accordingly
+  SQLMS_DATASOURCES_0_PASSWORD: "1234" # Change password accordingly
   LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
