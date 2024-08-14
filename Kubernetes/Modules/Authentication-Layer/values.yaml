@@ -15,11 +15,11 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
-secretname: admin.DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
+domain: {{ domain.name }} # Domain name
+secretname: {{ admin.cert.Name.value }} # Cert name value, change this as suited to environment
 
 ingress:
-  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
 
 release_name: "module-byk-authentication-layer"
 
@@ -27,8 +27,8 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/authentication-layer"
-    tag: "pre-alpha-test-1.2.0" # Images (tags) are up to date, currently no changes needed
-  dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "pre-alpha-1.1.0" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ module.authlayer.gui.version }}" # Images (tags) are up to date, currently no changes needed
+#  dsl:
+#    registry: "ghcr.io"
+#    repository: "buerokratt/buerokratt-dsl"
+#    tag: "pre-alpha-1.1.0" # Images (tags) are up to date, currently no changes needed
