@@ -15,11 +15,11 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
+domain: {{ domain.name }} # Domain name
 releaseName: "component-databases"
 
 ingress:
-  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up differents
+  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up differents
 
 tim-postgresql:
   image:
@@ -27,7 +27,7 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "45eR!ggbA50" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml under component TIM values.yaml
+    password: "{{ TIMDB.password }}" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml under component TIM values.yaml
     database: tim
   statefulset:
     enabled: true
@@ -41,7 +41,7 @@ users-db:
   auth:
     postgresPassword: postgres
     username: byk
-    password: "1234" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml in components and modules, where necessary.
+    password: "{{ usersDB.password }}" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml in components and modules, where necessary.
     database: byk
   statefulset:
     enabled: true
