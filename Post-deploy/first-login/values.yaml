@@ -1,0 +1,38 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: DOMAIN.buerokratt.ee # Domain name
+
+ingress:
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+
+release_name: "job-postdeploy-first-login"
+
+user:
+  login: "EE30303039914" # Use a test ID cde. In production replace with real ID code "Every login value must contain EE"
+  first_name: "Kustuta"
+  last_name: "Kasutaja"
+  id_code: "EE30303039914" # Use a test ID cde. In production replace with real ID code  "Every ID code value must contain EE"
+  display_name: "Kustutamiseks"
+#  csa_title: ""  # can be  removed
+  csa_email: "kustutamind@mail.ee"
+
+db:
+  db_host: component-databases-users-db
+  db_port: "5432"
+  db_user: byk
+  db_password: "1234" # Change password accordingly

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: Post-deploy-pipeline-seed
+description: Post deployment actions (for example, running shell scripts)
+type: application
+
+version: 0.1.0
+appVersion: 2.0.0

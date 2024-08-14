@@ -1,0 +1,56 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: DOMAIN.buerokratt.ee # Domain name
+
+#ingress:
+#  tlsConfigMapName: byk-tls-configmap
+
+ingress:
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+
+release_name: "component-byk-resql"
+release_db: "component-databases" 
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: "buerokratt/resql"
+    tag: "pre-alpha-test-2.1.0" # Images (tags) are up to date, currently no changes needed
+  backoffice:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "backoffice-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
+  analytics:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "analytics-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
+  services:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "service-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
+  training:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "training-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed  
+    
+env:
+  LOGGING_LEVEL_ROOT: "INFO"
+  SQLMS_DATASOURCES_0_NAME: "byk"
+  SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
+  SQLMS_DATASOURCES_0_USERNAME: "byk"
+  SQLMS_DATASOURCES_0_PASSWORD: "1234" # Change password accordingly
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"

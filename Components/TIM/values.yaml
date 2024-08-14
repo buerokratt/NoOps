@@ -1,0 +1,78 @@
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+domain: DOMAIN.buerokratt.ee # Domain name
+secretname: tim.DOMAIN.buerokratt.ee1707  # Cert name value, change this as suited to environment
+#ingress:
+#  tlsConfigMapName: byk-tls-configmap
+
+ingress:
+  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+
+release_name: "component-byk-tim"
+release_db: "component-databases"
+
+byk:
+  tim:
+    env:
+      security:
+        allowlist:
+          jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
+        oauth2:
+          client:
+            clientId: byk_prod  # Change the domain name, leave subdomain and subpath same
+            clientSecret: a5zzFqnhOiMH7A8ynLc8kGpBfHwQmpGg  # Change the domain name, leave subdomain and subpath same
+            scope: openid
+            userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
+            accessTokenUri: https://tara-test.ria.ee/oidc/token # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
+          resource:
+            jwk:
+              keySetUri: https://tara-test.ria.ee/oidc/jwks # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
+      legacyPortalIntegration:
+        legacyUrl: NA
+        legacyPortalRefererMarker: NA
+        sessionCookieDomain: buerokratt.ee
+      jwtIntegration:
+        signature:
+          issuer: DOMAIN.buerokratt.ee # Change the domain name, leave subdomain and subpath same
+          keyStorePassword: ppjjpp
+          keyStore: classpath:jwtkeystore.jks
+      spring:
+        profiles:
+          active: dev
+      logging:
+        level:
+          root: TRACE
+      
+tim-postgresql:
+  image:
+    tag: 14.1.0
+  auth:
+    postgresPassword: postgres
+    username: tim
+    password: "45eR!ggbA50" # Change password accordingly
+    database: "tim"
+
+tim_postgresql: "45eR!ggbA50"
+
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: "buerokratt/tim"
+#    tag: "pre-apha-2.3.1" # Images (tags) are up to date, currently no changes needed
+    tag: "pre-apha-2.5.3"

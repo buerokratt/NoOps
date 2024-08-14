@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: {{ .Values.images.scope.image }}
+          env:
+            - name: cluster.name
+              value: "{{ .Values.env.CLUSTER_NAME }}"
+            - name: node.name
+              value: "{{ .Values.env.NODE_NAME }}"
+            - name: discovery.type
+              value: "{{ .Values.env.DISCOVERY_TYPE }}"
+            - name: bootstrap.memory_lock
+              value: "{{ .Values.env.BOOTSTRAP_MEMORY_LOCK }}"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: "{{ .Values.env.OPENSEARCH_JAVA_OPTS }}"
+            - name: DISABLE_INSTALL_DEMO_CONFIG
+              value: "{{ .Values.env.DISABLE_INSTALL_DEMO_CONFIG }}"
+            - name: DISABLE_SECURITY_PLUGIN
+              value: "{{ .Values.env.DISABLE_SECURITY_PLUGIN }}"
+          ports:
+            - containerPort: 9200
+              name: http
+            - containerPort: 9600
+              name: opensearch
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 512Mi
+          volumeMounts:
+            - name: opensearch-data
+              mountPath: /usr/share/opensearch/data
+      volumes:
+        - name: opensearch-data
+          persistentVolumeClaim:
+            claimName: opensearch-data
