@@ -40,5 +40,5 @@ data:
     SERVICE_RESQL=http://component-byk-resql:8082/services
     SERVICE_TRAINING_RESQL=http://component-byk-resql:8082/services/training
     TRAINING_OPENSEARCH=http://component-opensearch-node:9200
-    DOMAIN=DOMAIN.buerokratt.ee
+    DOMAIN=prod.buerokratt.ee
     CHATBOT_BOT=http://component-byk-bot:5005

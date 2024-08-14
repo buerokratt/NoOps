@@ -12,7 +12,7 @@ spec:
         app: "{{ .Values.release_name }}"
     spec:
       nodeSelector:
-        kubernetes.io/hostname: rke-worker03
+        kubernetes.io/hostname: rke-3-worker03
       initContainers:
         - name: init-copy-files-backoffice
           image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"

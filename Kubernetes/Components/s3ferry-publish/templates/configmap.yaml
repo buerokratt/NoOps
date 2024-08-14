@@ -9,9 +9,9 @@ data:
 
     S3_REGION=us-east-1
     S3_ENDPOINT_URL=s3.riigipilv.ee:443
-    S3_ACCESS_KEY_ID=ria-byk-test
-    S3_SECRET_ACCESS_KEY=aP2NlK23P22SUpCreIxCA0hG+SaFPuHiA0eWpMcm
-    S3_DATA_BUCKET_NAME=buerokratt
+    S3_ACCESS_KEY_ID=ria-byk-prd
+    S3_SECRET_ACCESS_KEY=UjdDYc1z+NqKRu0RCHVV0LoiOzmDcpjE21raor9h
+    S3_DATA_BUCKET_NAME=prod-bucket-01
     S3_DATA_BUCKET_PATH=
 
     FS_DATA_DIRECTORY_PATH=./data

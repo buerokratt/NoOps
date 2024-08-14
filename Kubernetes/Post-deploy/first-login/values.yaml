@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
+domain: prod.buerokratt.ee # Domain name
 
 ingress:
   certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
@@ -35,4 +35,4 @@ db:
   db_host: component-databases-users-db
   db_port: "5432"
   db_user: byk
-  db_password: "" # Change password accordingly
+  db_password: "M7tv9EmG2!" # Change password accordingly

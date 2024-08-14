@@ -9,7 +9,7 @@ data:
       listen 443;
 
       server_tokens off;
-      add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ruuter.DOMAIN.buerokratt.ee/v2/public/ https://tim.DOMAIN.buerokratt.ee/ https://admin.DOMAIN.buerokratt.ee/ https://ruuter.DOMAIN.buerokratt.ee/v2/private/;";
+      add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ruuter.prod.buerokratt.ee/v2/public/ https://tim.prod.buerokratt.ee/ https://admin.prod.buerokratt.ee/ https://ruuter.prod.buerokratt.ee/v2/private/;";
 
       location / {
         root /usr/share/nginx/html/customer-service;
@@ -31,13 +31,13 @@ data:
 
   env-config.js: |
     window._env_ = {
-      "RUUTER_API_URL": "https://ruuter.DOMAIN.buerokratt.ee/v2/public/backoffice",
-      "TIM_API_URL": "https://tim.DOMAIN.buerokratt.ee",
-      "TARA_REDIRECT_URL": "https://tim.DOMAIN.buerokratt.ee/oauth2/authorization/tara?callback_url=https://admin.DOMAIN.buerokratt.ee/auth/callback",
+      "RUUTER_API_URL": "https://ruuter.prod.buerokratt.ee/v2/public/backoffice",
+      "TIM_API_URL": "https://tim.prod.buerokratt.ee",
+      "TARA_REDIRECT_URL": "https://tim.prod.buerokratt.ee/oauth2/authorization/tara?callback_url=https://admin.prod.buerokratt.ee/auth/callback",
       "MONITORING_URL": "https://MONITORING_URL",
       "PASSWORD_AUTH_ENABLED": true,
-      "BACKOFFICE_URL": "https://admin.DOMAIN.buerokratt.ee/chat",
+      "BACKOFFICE_URL": "https://admin.prod.buerokratt.ee/chat",
       "INSTITUTION_FORWARDING_ENABLED": true,
-      "AUTHORITY_NAME": 'TEST BYK',
+      "AUTHORITY_NAME": 'PROD BYK',
 
     };

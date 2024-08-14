@@ -14,9 +14,9 @@ data:
     <div id="byk-va"></div>
     <script>
       window._env_ = {
-        RUUTER_API_URL: 'https://ruuter.DOMAIN.buerokratt.ee/v2/public/backoffice',
-        NOTIFICATION_NODE_URL: 'https://ruuter.DOMAIN.buerokratt.ee',
-        TIM_AUTHENTICATION_URL: 'https://tim.DOMAIN.buerokratt.ee/oauth2/authorization/tara?callback_url=https://DOMAIN.buerokratt.ee',
+        RUUTER_API_URL: 'https://ruuter.prod.buerokratt.ee/v2/public/backoffice',
+        NOTIFICATION_NODE_URL: 'https://ruuter.prod.buerokratt.ee',
+        TIM_AUTHENTICATION_URL: 'https://tim.prod.buerokratt.ee/oauth2/authorization/tara?callback_url=https://prod.buerokratt.ee',
         OFFICE_HOURS: {
           TIMEZONE: 'Europe/Tallinn',
           BEGIN: 0,
@@ -38,9 +38,9 @@ data:
     </html>
   env-config.js: |2
       window._env_ = {
-        RUUTER_API_URL: 'https://ruuter.DOMAIN.buerokratt.ee/v2/public/backoffice',
-        NOTIFICATION_NODE_URL: 'https://ruuter.DOMAIN.buerokratt.ee',
-        TIM_AUTHENTICATION_URL: 'https://tim.DOMAIN.buerokratt.ee/oauth2/authorization/tara?callback_url=https://DOMAIN.buerokratt.ee',
+        RUUTER_API_URL: 'https://ruuter.prod.buerokratt.ee/v2/public/backoffice',
+        NOTIFICATION_NODE_URL: 'https://ruuter.prod.buerokratt.ee',
+        TIM_AUTHENTICATION_URL: 'https://tim.prod.buerokratt.ee/oauth2/authorization/tara?callback_url=https://prod.buerokratt.ee',
         OFFICE_HOURS: {
           TIMEZONE: 'Europe/Tallinn',
           BEGIN: 0,

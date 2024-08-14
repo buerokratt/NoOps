@@ -23,11 +23,15 @@ data:
     TRAINING_RESQL=http://component-byk-resql:8082/training
     SERVICE_TIM=http://component-byk-tim:8085
     SERVICE_DMAPPER=http://component-byk-dmapper:3000
-    SERVICE_RUUTER=http://component-byk-ruuter-private:8080
+    SERVICE_RUUTER=http://component-byk-ruuter-private:8080git
     SERVICE_RESQL=http://component-byk-resql:8082
-    DOMAIN=DOMAIN.buerokratt.ee
+    DOMAIN=prod.buerokratt.ee
     CHATBOT_EXTERNAL_BOT_URL=
     CHATBOT_EXTERNAL_API_KEY=
     CHATBOT_EXTERNAL_KEY=
     CHATBOT_RUUTER_PUBLIC_INTERNAL=http://component-byk-ruuter:8080/backoffice
     S3_FERRY=http://component-byk-s3-ferry-publish:3000
+    CHATBOT_RUUTER_PUBLIC_INTERNAL_CS=http://component-byk-ruuter:8080/Common-Services
+    DMAPPER=http://component-byk-dmapper:3000
+    CRON_MANAGER=http://component-byk-cronmanager:9010
+    OPENSEARCH=http://component-opensearch-node:9200

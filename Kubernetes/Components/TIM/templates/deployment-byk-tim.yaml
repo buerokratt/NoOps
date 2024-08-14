@@ -20,7 +20,7 @@ spec:
             - |
               if [ ! -e "/workspace/app-shared/keystore.jwt" ]; then
                 keytool -delete -alias jwtsign -keystore '/workspace/app-shared/jwtkeystore.jks' -storepass 123456
-                keytool -genkeypair -alias jwtsign -keyalg RSA -keysize 2048 -keystore 'jwtkeystore.jks' -validity 3650 -noprompt -dname "CN=DOMAIN.buerokratt.ee" -storepass ppjjpp
+                keytool -genkeypair -alias jwtsign -keyalg RSA -keysize 2048 -keystore 'jwtkeystore.jks' -validity 3650 -noprompt -dname "CN=prod.buerokratt.ee" -storepass ppjjpp
                 touch /workspace/app-shared/keystore.jwt
                 echo "Initialization successful: keystore.jwt created."
               else
