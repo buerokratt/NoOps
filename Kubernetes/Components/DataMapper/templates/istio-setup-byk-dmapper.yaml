@@ -1,3 +1,4 @@
+{{- if .Values.istio.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
@@ -37,3 +38,4 @@ spec:
         percentage:
           value: 100.0
         httpStatus: 403
+{{- end }}
