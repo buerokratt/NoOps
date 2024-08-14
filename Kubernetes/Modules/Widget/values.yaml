@@ -15,11 +15,11 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
-secretname: DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
+domain: {{ domain.name }} # Domain name
+secretname: {{ widget.cert.Name.value }} # Cert name value, change this as suited to environment
 
 ingress:
-  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
 
 release_name: "module-byk-widget"
 
@@ -27,11 +27,11 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/chat-widget"
-    tag: "pre-alpha-test-1.1.8" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ component.widget.gui.version }}" # Images (tags) are up to date, currently no changes needed
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "pre-alpha-1.3.2"  # Images (tags) are up to date, currently no changes needed
+    tag: "{{ module.backoffice.gui.version }}"  # Images (tags) are up to date, currently no changes needed
 
 config: 
-  header_origin: "https://DOMAIN.buerokratt.ee" # Change the domain name, leave subdomain and subpath same
+  header_origin: "{{ url.name.domain }}" # Change the domain name, leave subdomain and subpath same
