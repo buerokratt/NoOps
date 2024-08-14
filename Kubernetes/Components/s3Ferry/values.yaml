@@ -15,10 +15,10 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
-#secretname: ruuter.DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
+domain: {{ domain.name }} # Domain name
+#secretname: {{ cert.Name.value }} # Cert name value, change this as suited to environment
 #ingress:
-#  certIssuerName: letsencrypt-prod  # Change this if your certIssuerName has set up different
+#  certIssuerName: {{ cert.Issuer.Name }}  # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-s3"    
 
@@ -26,7 +26,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/s3-ferry"
-    tag: "pre-alpha-1.1.1" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ component.s3.ferry.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 
 env:
