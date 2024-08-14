@@ -15,16 +15,16 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
+domain: {{ domain.name }}# Domain name
 
 ingress:
-  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
 
 release_name: "component-opensearch-node"  
 
 images:
   scope:
-    image: opensearchproject/opensearch:1.3.16
+    image: {{ component.opensearch.node.image.version }}
   opensearch:
     backoffice:
       repo: https://github.com/buerokratt/Buerokratt-Chatbot.git

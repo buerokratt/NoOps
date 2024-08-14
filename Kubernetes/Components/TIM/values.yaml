@@ -16,13 +16,13 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
-secretname: tim.DOMAIN.buerokratt.ee1707  # Cert name value, change this as suited to environment
+domain: {{ domain.name }} # Domain name
+secretname: {{ tim.cert.Name.value }}  # Cert name value, change this as suited to environment
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 
 ingress:
-  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-tim"
 release_db: "component-databases"
@@ -35,8 +35,8 @@ byk:
           jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
         oauth2:
           client:
-            clientId:   # Change the domain name, leave subdomain and subpath same
-            clientSecret:   # Change the domain name, leave subdomain and subpath same
+            clientId: {{ TIM.clientid }}  # Change the domain name, leave subdomain and subpath same
+            clientSecret: {{ TIM.clientSecret }}  # Change the domain name, leave subdomain and subpath same
             scope: openid
             userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
             accessTokenUri: https://tara-test.ria.ee/oidc/token # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
@@ -49,8 +49,8 @@ byk:
         sessionCookieDomain: buerokratt.ee
       jwtIntegration:
         signature:
-          issuer: DOMAIN.buerokratt.ee # Change the domain name, leave subdomain and subpath same
-          keyStorePassword: ppjjpp
+          issuer: {{ domain.name }} # Change the domain name, leave subdomain and subpath same
+          keyStorePassword: {{ TIM.keystore.password }}
           keyStore: classpath:jwtkeystore.jks
       spring:
         profiles:
@@ -65,14 +65,13 @@ tim-postgresql:
   auth:
     postgresPassword: postgres
     username: tim
-    password: "45eR!ggbA50" # Change password accordingly
+    password: "{{ TIMDB.password }}" # Change password accordingly
     database: "tim"
 
-tim_postgresql: "45eR!ggbA50"
+tim_postgresql: "{{ TIMDB.password }}"
 
 images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/tim"
-#    tag: "pre-apha-2.3.1" # Images (tags) are up to date, currently no changes needed
-    tag: "pre-apha-2.5.3"
+    tag: "{{ component.tim.image.version }}"

@@ -15,13 +15,13 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
+domain: {{ domain.name }} # Domain name
 
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
 
 ingress:
-  certIssuerName: letsencrypt-prod-issuer
+  certIssuerName: {{ cert.Issuer.Name }}
 
 release_name: "component-byk-bot"  
 
@@ -30,7 +30,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "varmoh/rasa-for-buerokratt"
-    tag: "pre-alpha-1.1.0" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ component.bot.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 bot:
   dsl:
