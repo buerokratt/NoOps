@@ -15,11 +15,11 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
-secretname: admin.DOMAIN.buerokratt.ee1707 # Cert name value, change this as suited to environment
+domain: {{ domain.name }} # Domain name
+secretname: {{ url.name.admin }} # Cert name value, change this as suited to environment
 
 ingress:
-  certIssuerName: letsencrypt-prod # Change this if your certIssuerName has set up different
+  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
 
 release_name: "module-byk-backoffice-gui"
 
@@ -28,34 +28,34 @@ images:
   gui:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-chatbot"
-    tag: "pre-alpha-test-2.3.8" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ module.backoffice.gui.version }}" # Images (tags) are up to date, currently no changes needed
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "backoffice-module-test-1.2.3" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ module.backoffice.image.version }}" # Images (tags) are up to date, currently no changes needed
   liquibase:
     dsl:
       repo: https://github.com/buerokratt/Buerokratt-Chatbot.git
       path: DSL/Liquibase
 
 env:
-  REACT_APP_RUUTER_API_URL: "https://ruuter.DOMAIN.buerokratt.ee/v2/public/backoffice" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.DOMAIN.buerokratt.ee/v2/private/backoffice" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_BUEROKRATT_CHATBOT_URL: "https://admin.DOMAIN.buerokratt.ee/chat" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_MENU_URL: "https://admin.DOMAIN.buerokratt.ee" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_RUUTER_API_URL: "{{ url.name.ruuter }}/v2/public/backoffice" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_RUUTER_PRIVATE_API_URL: "{{ url.name.ruuter }}/v2/private/backoffice" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_BUEROKRATT_CHATBOT_URL: "{{ url.name.admin }}/chat" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_MENU_URL: "{{ url.name.admin }}" # Change the domain name, leave subdomain and subpath same
   REACT_APP_MENU_PATH: "/chat/menu.json"
-  REACT_APP_CUSTOMER_SERVICE_LOGIN: "http://admin.DOMAIN.buerokratt.ee/et/log-in" # Change the domain name, leave subdomain and subpath same
-  DOMAIN: "DOMAIN.buerokratt.ee"
-  REACT_APP_CONVERSATIONS_BASE_URL: "https://admin.DOMAIN.buerokratt.ee/chat" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_TRAINING_BASE_URL: "https://admin.DOMAIN.buerokratt.ee/training" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_ANALYTICS_BASE_URL: "https://admin.DOMAIN.buerokratt.ee/analytics" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_SERVICES_BASE_URL: "https://admin.DOMAIN.buerokratt.ee/services" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_SETTINGS_BASE_URL: "https://admin.DOMAIN.buerokratt.ee/settings" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_MONITORING_BASE_URL: "https://admin.DOMAIN.buerokratt.ee/monitoring" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_CUSTOMER_SERVICE_LOGIN: "{{ url.name.admin }}/et/log-in" # Change the domain name, leave subdomain and subpath same
+  DOMAIN: "{{ domain.name }}"
+  REACT_APP_CONVERSATIONS_BASE_URL: "{{ url.name.admin }}/chat" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_TRAINING_BASE_URL: "{{ url.name.admin }}/training" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_ANALYTICS_BASE_URL: "{{ url.name.admin }}/analytics" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_SERVICES_BASE_URL: "{{ url.name.admin }}/services" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_SETTINGS_BASE_URL: "{{ url.name.admin }}/settings" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_MONITORING_BASE_URL: "{{ url.name.admin }}/monitoring" # Change the domain name, leave subdomain and subpath same
   REACT_APP_SERVICE_ID: "conversations,settings,monitoring"
-  REACT_APP_NOTIFICATION_NODE_URL: "https://ruuter.DOMAIN.buerokratt.ee" # Change the domain name, leave subdomain and subpath same
+  REACT_APP_NOTIFICATION_NODE_URL: "{{ url.name.ruuter }}" # Change the domain name, leave subdomain and subpath same
 
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
-  dbPassword: "1234"   # Change password accordingly
+  dbPassword: "{{ usersDB.password }}"   # Change password accordingly
