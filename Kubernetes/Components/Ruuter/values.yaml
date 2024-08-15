@@ -20,6 +20,9 @@ secretname: {{ cert.Name.value }} # Cert name value, change this as suited to en
 ingress:
   certIssuerName: {{ cert.Issuer.Name }}  # Change this if your certIssuerName has set up different
 
+istio:
+  enabled: {{ istio.enabled }}
+
 release_name: "component-byk-ruuter"    
 
 images:
