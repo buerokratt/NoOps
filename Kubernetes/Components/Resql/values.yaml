@@ -4,6 +4,9 @@ fullnameOverride: ""
 
 podAnnotations: {}
 
+istio:
+  enabled: {{ istio.enabled }}
+
 podSecurityContext: {}
   # fsGroup: 2000
 

@@ -18,6 +18,9 @@ securityContext: {}
 domain: {{ domain.name }} # Domain name
 secretname: {{ cert.Name.value }} # Cert name value, change this as suited to environment
 
+istio:
+  enabled: {{ istio.enabled }}
+
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
 

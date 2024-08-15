@@ -15,7 +15,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-domain: DOMAIN.buerokratt.ee # Domain name
+domain: {{ domain.name }} # Domain name
 
 #ingress:
 #  tlsConfigMapName: byk-tls-configmap
@@ -42,8 +42,8 @@ images:
   dsl:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "training-module-pre-alpha-1.4.25" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ module.training.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 liquibase:
   jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
-  dbPassword: "1234"   # Change password accordingly
+  dbPassword: "{{ usersDB.password }}"   # Change password accordingly

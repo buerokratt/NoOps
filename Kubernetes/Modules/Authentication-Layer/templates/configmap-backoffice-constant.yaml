@@ -31,12 +31,12 @@ data:
 
   env-config.js: |
     window._env_ = {
-      "RUUTER_API_URL": "https://ruuter.DOMAIN.buerokratt.ee/v2/public/backoffice",
-      "TIM_API_URL": "https://tim.DOMAIN.buerokratt.ee",
-      "TARA_REDIRECT_URL": "https://tim.DOMAIN.buerokratt.ee/oauth2/authorization/tara?callback_url=https://admin.DOMAIN.buerokratt.ee/auth/callback",
+      "RUUTER_API_URL": "{{ url.name.ruuter }}/v2/public/backoffice",
+      "TIM_API_URL": "{{ url.name.tim }}",
+      "TARA_REDIRECT_URL": "{{ url.name.tim }}/oauth2/authorization/tara?callback_url=https://{{ url.name.admin }}/auth/callback",
       "MONITORING_URL": "https://MONITORING_URL",
       "PASSWORD_AUTH_ENABLED": true,
-      "BACKOFFICE_URL": "https://admin.DOMAIN.buerokratt.ee/chat",
+      "BACKOFFICE_URL": "{{ url.name.admin }}/chat",
       "INSTITUTION_FORWARDING_ENABLED": true,
       "AUTHORITY_NAME": 'PROD BYK',
 

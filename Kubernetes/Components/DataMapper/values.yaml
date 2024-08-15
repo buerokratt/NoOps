@@ -16,6 +16,9 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+istio:
+  enabled: {{ istio.enabled }}
+
 domain: {{ domain.name }} # Domain name
 
 ingress:
