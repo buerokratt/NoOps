@@ -1,0 +1,57 @@
+# Change values accordingly.
+deployments:
+  - name: component-databases
+    chart_path: ./NoOps/Kubernetes/Components/Databases
+    namespace: BYKTEST
+
+  - name: component-byk-ruuter
+    chart_path: ./NoOps/Kubernetes/Components/Ruuter
+    namespace: BYKTEST
+
+  - name: component-byk-ruuter-private
+    chart_path: ./NoOps/Kubernetes/Components/Private-Ruuter
+    namespace: BYKTEST
+
+  - name: component-byk-tim
+    chart_path: ./NoOps/Kubernetes/Components/Tim
+    namespace: BYKTEST
+
+  - name: component-byk-resql
+    chart_path: ./NoOps/Kubernetes/Components/Resql
+    namespace: BYKTEST
+
+  - name: component-byk-dmapper
+    chart_path: ./NoOps/Kubernetes/Components/DataMapper
+    namespace: BYKTEST
+
+  - name: component-opensearch-node
+    chart_path: ./NoOps/Kubernetes/Components/Opensearch
+    namespace: BYKTEST
+
+  - name: component-byk-trainbot
+    chart_path: ./NoOps/Kubernetes/Components/Train-bot
+    namespace: BYKTEST
+
+  - name: component-byk-bot
+    chart_path: ./NoOps/Kubernetes/Components/Bot
+    namespace: BYKTEST
+
+  - name: component-byk-cronmanager
+    chart_path: ./NoOps/Kubernetes/Components/CronManager
+    namespace: BYKTEST
+
+  - name: component-byk-s3ferry
+    chart_path: ./NoOps/Kubernetes/Components/s3Ferry
+    namespace: BYKTEST
+
+  - name: component-byk-s3ferry-publish
+    chart_path: ./NoOps/Kubernetes/Components/s3ferry-publish
+    namespace: BYKTEST
+
+  - name: component-byk-notificationns-node
+    chart_path: ./NoOps/Kubernetes/Components/Notifications
+    namespace: BYKTEST
+
+  - name: component-byk-xtr
+    chart_path: ./NoOps/Kubernetes/Components/Notifications
+    namespace: BYKTEST

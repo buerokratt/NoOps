@@ -1,0 +1,8 @@
+{
+    "libraries": [
+      "pyyaml",
+      "requests"
+      
+    ]
+  }
+  
