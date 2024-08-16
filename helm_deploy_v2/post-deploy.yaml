@@ -1,0 +1,17 @@
+# Change values accordingly.
+deployments:
+  - name: post-deploy-first-login
+    chart_path: ./NoOps/Kubernetes/Post-deploy/first-login
+    namespace: BYKTEST
+
+  - name: post-deploy-pipeline
+    chart_path: ./NoOps/Kubernetes/Post-deploy/pipeline
+    namespace: BYKTEST
+
+  - name: post-deploy-pipelie-seed
+    chart_path: ./NoOps/Kubernetes/Post-deploy/pipeline-seed
+    namespace: BYKTEST
+
+  - name: post-deploy-common-service
+    chart_path: ./NoOps/Kubernetes/Post-deploy/common
+    namespace: BYKTEST
