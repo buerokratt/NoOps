@@ -24,10 +24,6 @@ deployments:
     chart_path: ./NoOps/Kubernetes/Components/DataMapper
     namespace: BYKTEST
 
-  - name: component-opensearch-node
-    chart_path: ./NoOps/Kubernetes/Components/OpenSearch
-    namespace: BYKTEST
-
   - name: component-byk-trainbot
     chart_path: ./NoOps/Kubernetes/Components/Train-bot
     namespace: BYKTEST
@@ -54,4 +50,8 @@ deployments:
 
   - name: component-byk-xtr
     chart_path: ./NoOps/Kubernetes/Components/XTR
+    namespace: BYKTEST
+
+  - name: component-opensearch-node
+    chart_path: ./NoOps/Kubernetes/Components/OpenSearch
     namespace: BYKTEST
