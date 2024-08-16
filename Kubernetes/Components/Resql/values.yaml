@@ -55,5 +55,5 @@ env:
   SQLMS_DATASOURCES_0_NAME: "byk"
   SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
   SQLMS_DATASOURCES_0_USERNAME: "byk"
-  SQLMS_DATASOURCES_0_PASSWORD: "{{ TIMDB.password }}" # Change password accordingly
+  SQLMS_DATASOURCES_0_PASSWORD: "{{ usersDB.password }}" # Change password accordingly
   LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
