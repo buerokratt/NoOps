@@ -1,4 +1,4 @@
-# This is a temporary branch for testing a Buerokratt helm deployment
+# Helm deployment v2
 
 ### How to run as a test 
 
