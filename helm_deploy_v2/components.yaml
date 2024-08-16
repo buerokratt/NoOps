@@ -25,7 +25,7 @@ deployments:
     namespace: BYKTEST
 
   - name: component-opensearch-node
-    chart_path: ./NoOps/Kubernetes/Components/Opensearch
+    chart_path: ./NoOps/Kubernetes/Components/OpenSearch
     namespace: BYKTEST
 
   - name: component-byk-trainbot
