@@ -67,11 +67,12 @@ Consult [this part](#Python-libraries) of readme, if you need to install librari
 ## IMPORTANT  
 To run this test, clone this repo:  
 ```
-git clone https://github.com/varmoh/k8s_helm_deployment.git
+git clone https://github.com/buerokratt/NoOps.git
 ```
 then  
 ```
-cd k8s_helm_deployment
+cd NoOps/helm_deploy_v2
+
 ```
 
 #### Cloning the  `No-Ops` repo
