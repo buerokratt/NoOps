@@ -49,9 +49,9 @@ deployments:
     namespace: BYKTEST
 
   - name: component-byk-notificationns-node
-    chart_path: ./NoOps/Kubernetes/Components/Notifications
+    chart_path: ./NoOps/Kubernetes/Components/Notification-server
     namespace: BYKTEST
 
   - name: component-byk-xtr
-    chart_path: ./NoOps/Kubernetes/Components/Notifications
+    chart_path: ./NoOps/Kubernetes/Components/XTR
     namespace: BYKTEST
