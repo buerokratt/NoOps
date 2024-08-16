@@ -16,7 +16,7 @@ securityContext: {}
   # runAsUser: 1000
 
 domain: {{ domain.name }} # Domain name
-secretname: {{ url.name.admin }} # Cert name value, change this as suited to environment
+secretname: {{ admin.cert.Name.value }} # Cert name value, change this as suited to environment
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
