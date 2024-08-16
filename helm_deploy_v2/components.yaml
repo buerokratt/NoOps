@@ -13,7 +13,7 @@ deployments:
     namespace: BYKTEST
 
   - name: component-byk-tim
-    chart_path: ./NoOps/Kubernetes/Components/Tim
+    chart_path: ./NoOps/Kubernetes/Components/TIM
     namespace: BYKTEST
 
   - name: component-byk-resql
