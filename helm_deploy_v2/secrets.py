@@ -60,6 +60,8 @@ def find_files(directories):
                     target_files.append(os.path.join(root, file))
                 if "deployment-byk-tim" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
                     target_files.append(os.path.join(root, file))
+                if "ingress" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
+                    target_files.append(os.path.join(root, file))
     return target_files
 
 def main():
