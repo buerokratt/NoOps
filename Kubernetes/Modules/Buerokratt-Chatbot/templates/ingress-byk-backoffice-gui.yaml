@@ -13,7 +13,7 @@ metadata:
     #    nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type, Cache-Control"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; connect-src 'self' https://ruuter.DOMAIN.buerokratt.ee/v2/public https://tim.DOMAIN.buerokratt.ee https://admin.DOMAIN.buerokratt.ee https://ruuter.DOMAIN.buerokratt.ee/v2/private https://ruuter.DOMAIN.buerokratt.ee;";
+      add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; connect-src 'self' {{ url.name.ruuter }}/v2/public {{ url.name.tim }} {{ url.name.admin }} {{ url.name.ruuter }}/v2/private {{ url.name.ruuter }};";
     cert-manager.io/cluster-issuer: letsencrypt-prod
   labels:
     name: "{{ .Values.release_name }}-ingress"
