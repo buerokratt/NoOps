@@ -171,10 +171,10 @@ for example:
 deployments:
   - name: test
     chart_path: ./
-    namespace: BYKTEST
+    namespace: buerokratt
   - name: test2
     chart_path: ./
-    namespace: BYKTEST
+    namespace: buerokratt
 ```
 
 ## Current issues
