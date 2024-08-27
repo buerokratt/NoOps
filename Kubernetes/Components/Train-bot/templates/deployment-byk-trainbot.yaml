@@ -13,7 +13,7 @@ spec:
         app: "{{ .Values.release_name }}"
     spec:
       nodeSelector:
-        kubernetes.io/hostname: rke-3-worker03
+        kubernetes.io/hostname: rke-2-worker03
       containers:
       - name: "{{ .Values.release_name }}"
         image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
