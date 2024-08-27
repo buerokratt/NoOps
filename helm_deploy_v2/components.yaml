@@ -2,56 +2,56 @@
 deployments:
   - name: component-databases
     chart_path: ./NoOps/Kubernetes/Components/Databases
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-ruuter
     chart_path: ./NoOps/Kubernetes/Components/Ruuter
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-ruuter-private
     chart_path: ./NoOps/Kubernetes/Components/Private-Ruuter
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-tim
     chart_path: ./NoOps/Kubernetes/Components/TIM
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-resql
     chart_path: ./NoOps/Kubernetes/Components/Resql
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-dmapper
     chart_path: ./NoOps/Kubernetes/Components/DataMapper
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-trainbot
     chart_path: ./NoOps/Kubernetes/Components/Train-bot
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-bot
     chart_path: ./NoOps/Kubernetes/Components/Bot
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-cronmanager
     chart_path: ./NoOps/Kubernetes/Components/CronManager
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-s3ferry
     chart_path: ./NoOps/Kubernetes/Components/s3Ferry
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-s3ferry-publish
     chart_path: ./NoOps/Kubernetes/Components/s3ferry-publish
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-notificationns-node
     chart_path: ./NoOps/Kubernetes/Components/Notification-server
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-byk-xtr
     chart_path: ./NoOps/Kubernetes/Components/XTR
-    namespace: BYKTEST
+    namespace: buerokratt
 
   - name: component-opensearch-node
     chart_path: ./NoOps/Kubernetes/Components/OpenSearch
-    namespace: BYKTEST
+    namespace: buerokratt
