@@ -50,7 +50,7 @@ byk:
       jwtIntegration:
         signature:
           issuer: {{ domain.name }} # Change the domain name, leave subdomain and subpath same
-          keyStorePassword: {{ TIM.keystore.password }}
+          keyStorePassword: {{ TIM.keystore }}
           keyStore: classpath:jwtkeystore.jks
       spring:
         profiles:
