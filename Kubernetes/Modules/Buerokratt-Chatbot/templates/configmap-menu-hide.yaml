@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: configmap-byk-backoffice
-data:
-  env.development: |-
-    REACT_APP_ENABLE_HIDDEN_FEATURES=TRUE

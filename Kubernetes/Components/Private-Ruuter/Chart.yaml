@@ -1,7 +1,0 @@
-apiVersion: v2
-name: Private-Ruuter
-description: A Helm chart for Private-Ruuter
-type: application
-
-version: 0.1.0
-appVersion: 2.0.0

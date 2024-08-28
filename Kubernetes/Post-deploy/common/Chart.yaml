@@ -1,7 +1,0 @@
-apiVersion: v2
-name: Post-deploy-common-table
-description: Post deployment actions (for example, running shell scripts)
-type: application
-
-version: 0.1.0
-appVersion: 2.0.0
