@@ -19,8 +19,10 @@ else
     git clone https://github.com/buerokratt/NoOps.git
 fi
 
-cd NoOps/helm_deploy_v2
-rm secrets.yaml && cp ../../secrets.yaml .
+cd NoOps || { echo "Repo did not get cloned correctly. Aborting."; exit 1; }
+git checkout dev || { echo "did not find dev branch. Aborting."; exit 1; }
+cd helm_deploy_v2
+cp ../../secrets.yaml .
 python3 git_clone.py git.yaml
 python3 libraries/install_libraries.py requirements.json
 python3 secrets.py secrets.yaml
