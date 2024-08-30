@@ -6,28 +6,9 @@
 
 ##### Pre-deployment - Cloning the repo
 
-To get the needed scripts, component and module charts, you need to clone Buerokratt-NoOps repo  
+#### In depth readme is here: https://github.com/buerokratt/NoOps/tree/dev/helm_deploy_v2
 
-```
-git clone https://github.com/buerokratt/NoOps.git
-```  
-
-Change directory  
-`cd Buerokratt-NoOps`  
-
-Change into `<git branch you are using>` branch    
-`git checkout <branch name`  
-Change into `<git branch you are using>` branch    
-`git checkout <branch name`  
-
-To change `values.yaml's`, change directory into   
-`cd Kubernetes`   
-Here look `values.yaml's` under `Components/` `Modules/` `Post-deploy/` folders.   
-
-To run the deployment scripts, change directory into  
-`cd scripts/deployment`
-
-##### Pre-deployment - changing the values    
+##### Pre-deployment - changing the secrets.yaml    
 
 - Every values.yaml has a `comment` to help you with changes.
 - To deploy, some changes inside values.yaml 's must be done.    
