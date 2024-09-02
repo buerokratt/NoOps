@@ -38,6 +38,6 @@ data:
       "PASSWORD_AUTH_ENABLED": true,
       "BACKOFFICE_URL": "{{ url.name.admin }}/chat",
       "INSTITUTION_FORWARDING_ENABLED": true,
-      "AUTHORITY_NAME": 'PROD BYK',
+      "AUTHORITY_NAME": 'BYK',
 
     };
