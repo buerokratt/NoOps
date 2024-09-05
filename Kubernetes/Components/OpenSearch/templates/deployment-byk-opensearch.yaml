@@ -39,11 +39,19 @@ spec:
             limits:
               memory: 2Gi
             requests:
-              memory: 512Mi
+              memory: 512Mi              
           volumeMounts:
             - name: opensearch-data
               mountPath: /usr/share/opensearch/data
+          livenessProbe:
+              httpGet:
+                path: /
+                port: 9200
+          readinessProbe:
+              httpGet:
+                path: /
+                port: 9200
       volumes:
         - name: opensearch-data
           persistentVolumeClaim:
-            claimName: opensearch-data
+            claimName: opensearch-data  
