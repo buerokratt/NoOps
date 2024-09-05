@@ -12,6 +12,15 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      initContainers:
+        - name: fix-permissions
+          image: busybox     # Using a lightweight container to execute permission commands
+          command: ["sh", "-c"]
+          args:
+            - chown -R 1000:1000 /usr/share/opensearch/data && chmod -R 755 /usr/share/opensearch/data
+          volumeMounts:
+            - name: opensearch-data
+              mountPath: /usr/share/opensearch/data
       containers:
         - name: "{{ .Values.release_name }}"
           image: {{ .Values.images.scope.image }}
