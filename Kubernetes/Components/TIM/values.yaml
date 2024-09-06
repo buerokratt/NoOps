@@ -46,7 +46,7 @@ byk:
       legacyPortalIntegration:
         legacyUrl: NA
         legacyPortalRefererMarker: NA
-        sessionCookieDomain: buerokratt.ee
+        sessionCookieDomain: {{ domain.name }}
       jwtIntegration:
         signature:
           issuer: {{ domain.name }} # Change the domain name, leave subdomain and subpath same
