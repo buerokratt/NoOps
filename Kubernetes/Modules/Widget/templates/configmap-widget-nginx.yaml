@@ -9,7 +9,7 @@ data:
         server_name localhost;
 
             server_tokens off;
-            add_header 'Access-Control-Allow-Origin' '"{{ .Values.config.header_origin }}' always;
+            add_header 'Access-Control-Allow-Origin' '{{ .Values.config.header_origin }}' always;
 
         location / {
             root /usr/share/nginx/html/widget;
