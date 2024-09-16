@@ -35,14 +35,14 @@ byk:
           jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
         oauth2:
           client:
-            clientId: {{ TIM.clientid }}  # Change the domain name, leave subdomain and subpath same
-            clientSecret: {{ TIM.clientSecret }}  # Change the domain name, leave subdomain and subpath same
+            clientId: {{ TIM.clientid }} 
+            clientSecret: {{ TIM.clientSecret }}
             scope: openid
-            userAuthorizationUri: https://tara-test.ria.ee/oidc/authorize # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
-            accessTokenUri: https://tara-test.ria.ee/oidc/token # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
+            userAuthorizationUri: {{ TIM.tara }}/oidc/authorize
+            accessTokenUri: {{ TIM.tara }}/oidc/token
           resource:
             jwk:
-              keySetUri: https://tara-test.ria.ee/oidc/jwks # Change according to enviorment you deploy. Prod = tara.ria.ee Test = tara-test.ria.ee
+              keySetUri: {{ TIM.tara }}/oidc/jwks
       legacyPortalIntegration:
         legacyUrl: NA
         legacyPortalRefererMarker: NA
