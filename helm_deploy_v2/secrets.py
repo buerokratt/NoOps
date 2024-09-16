@@ -62,6 +62,12 @@ def find_files(directories):
                     target_files.append(os.path.join(root, file))
                 if "ingress" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
                     target_files.append(os.path.join(root, file))
+                if "modules" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
+                    target_files.append(os.path.join(root, file))
+                if "components" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
+                    target_files.append(os.path.join(root, file))
+                if "post-deploy" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
+                    target_files.append(os.path.join(root, file))
     return target_files
 
 def main():
@@ -76,7 +82,8 @@ def main():
     directories = [
         "./NoOps/Kubernetes/Components", 
         "./NoOps/Kubernetes/Modules", 
-        "./NoOps/Kubernetes/Post-deploy"
+        "./NoOps/Kubernetes/Post-deploy",
+        "./NoOps/helm_deploy_v2"
     ]
 
     target_files = find_files(directories)
