@@ -2,16 +2,16 @@
 deployments:
   - name: post-deploy-first-login
     chart_path: ./NoOps/Kubernetes/Post-deploy/first-login
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: post-deploy-pipeline
     chart_path: ./NoOps/Kubernetes/Post-deploy/pipeline
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: post-deploy-pipelie-seed
     chart_path: ./NoOps/Kubernetes/Post-deploy/pipeline-seed
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: post-deploy-common-service
     chart_path: ./NoOps/Kubernetes/Post-deploy/common
-    namespace: buerokratt
+    namespace: {{ namespace }}

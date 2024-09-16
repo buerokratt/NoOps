@@ -2,24 +2,24 @@
 deployments:
   - name: module-byk-widget
     chart_path: ./NoOps/Kubernetes/Modules/Widget
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: module-byk-authentication-layer
     chart_path: ./NoOps/Kubernetes/Modules/Authentication-Layer
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: module-byk-backoffice-gui
     chart_path: ./NoOps/Kubernetes/Modules/Buerokratt-Chatbot
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: module-byk-analytics-gui
     chart_path: ./NoOps/Kubernetes/Modules/Analytics-Module
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: module-byk-training-module-gui
     chart_path: ./NoOps/Kubernetes/Modules/Training-Module
-    namespace: buerokratt
+    namespace: {{ namespace }}
 
   - name: module-byk-service-gui
     chart_path: ./NoOps/Kubernetes/Modules/Service-Module
-    namespace: buerokratt
+    namespace: {{ namespace }}
