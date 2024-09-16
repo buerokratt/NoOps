@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for cmd in git kubectl helm python3; do
+for cmd in git kubectl helm python3 pip; do
     if ( ! which "$cmd" > /dev/null 2>&1 ); then
         echo "Command '$cmd' is required, but not installed! Aborting."
         exit 1
@@ -15,6 +15,7 @@ fi
 echo "pulling Noops from https://github.com/buerokratt/NoOps"
 if [ -d "NoOps" ]; then
     echo "NoOps repo already exists"
+    exit 1
 else
     git clone https://github.com/buerokratt/NoOps.git
 fi
