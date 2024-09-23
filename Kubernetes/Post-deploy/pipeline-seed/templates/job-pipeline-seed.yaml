@@ -33,7 +33,7 @@ spec:
       volumes:
         - name: trainbot-rasa-locations
           persistentVolumeClaim:
-            claimName: pvc-trainbot
+            claimName: pvc-{{ namespace }}-trainbot
         - name: script-volume
           configMap:
             name: init-script-config2
