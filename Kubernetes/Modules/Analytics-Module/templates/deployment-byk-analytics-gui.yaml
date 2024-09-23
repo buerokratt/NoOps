@@ -148,7 +148,7 @@ spec:
       volumes:
         - name: analytics-dsl
           persistentVolumeClaim:
-            claimName: pvc-analytics-dsl
+            claimName: pvc-{{ namespace }}-analytics-dsl
         - emptyDir: {}
           name: tmp
         - name: run
