@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: byk-dsl-services
+  name: byk-{{ namespace }}-dsl-services
 spec:
   storageClassName: longhorn
   resources:
