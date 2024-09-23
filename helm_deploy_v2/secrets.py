@@ -58,9 +58,11 @@ def find_files(directories):
                 # Look for files containing 'configmap' in their filename inside the /templates folder
                 if "configmap" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
                     target_files.append(os.path.join(root, file))
-                if "deployment-byk-tim" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
+                if "deployment" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
                     target_files.append(os.path.join(root, file))
                 if "ingress" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
+                    target_files.append(os.path.join(root, file))
+                if "pv" in file.lower() and file.endswith(".yaml") and "templates" in root.lower():
                     target_files.append(os.path.join(root, file))
                 if "modules" in file.lower() and file.endswith(".yaml"):
                     target_files.append(os.path.join(root, file))
