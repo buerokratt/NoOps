@@ -138,7 +138,7 @@ spec:
             name: configmap-byk-training
         - name: training-dsl
           persistentVolumeClaim:
-            claimName: pvc-training-dsl
+            claimName: pvc-{{ namespace }}-training-dsl
         # - name: rasa-training-data
         #   persistentVolumeClaim:
         #     claimName: rasa-training-data
