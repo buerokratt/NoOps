@@ -19,7 +19,7 @@ spec:
           args:
             - chown -R 1000:1000 /usr/share/opensearch/data && chmod -R 755 /usr/share/opensearch/data
           volumeMounts:
-            - name: opensearch-data
+            - name: opensearch-{{ namespace }}-data
               mountPath: /usr/share/opensearch/data
       containers:
         - name: "{{ .Values.release_name }}"
@@ -50,7 +50,7 @@ spec:
             requests:
               memory: 512Mi              
           volumeMounts:
-            - name: opensearch-data
+            - name: opensearch-{{ namespace }}-data
               mountPath: /usr/share/opensearch/data
           livenessProbe:
               httpGet:
@@ -61,6 +61,6 @@ spec:
                 path: /
                 port: 9200
       volumes:
-        - name: opensearch-data
+        - name: opensearch-{{ namespace }}-data
           persistentVolumeClaim:
-            claimName: opensearch-data  
+            claimName: opensearch-{{ namespace }}-data  
