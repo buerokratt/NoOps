@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-trainbot
+  name: pvc-{{ namespace }}-trainbot
 spec:
   accessModes:
     - ReadWriteMany
