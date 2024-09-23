@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: opensearch-{{ namespace }}-data
+  name: opensearch-data
 spec:
   accessModes:
     - ReadWriteMany
