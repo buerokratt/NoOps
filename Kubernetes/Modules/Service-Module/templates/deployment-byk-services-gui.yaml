@@ -108,7 +108,7 @@ spec:
         - name: services-dsl
           emptyDir: {}
 #          persistentVolumeClaim:
-#            claimName: pvc-services-dsl
+#            claimName: pvc-{{ namespace }}-services-dsl
         - name: dsl
           emptyDir: {}
 
