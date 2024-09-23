@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-training-dsl
+  name: pvc-{{ namespace }}-training-dsl
 spec:
   storageClassName: dsl
   accessModes:
