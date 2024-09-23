@@ -39,6 +39,8 @@ spec:
               value: "{{ .Values.env.DISABLE_INSTALL_DEMO_CONFIG }}"
             - name: DISABLE_SECURITY_PLUGIN
               value: "{{ .Values.env.DISABLE_SECURITY_PLUGIN }}"
+            - name: node.max_local_storage_nodes
+              value: "{{ nr_client }}"
           ports:
             - containerPort: 9200
               name: http
