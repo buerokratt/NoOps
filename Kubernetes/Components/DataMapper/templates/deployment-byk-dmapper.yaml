@@ -107,7 +107,7 @@ spec:
         - name: datamapper-service-dsl
           image: alpine/git:2.36.3
           volumeMounts:
-             - name: byk-dsl-services
+             - name: byk-{{ namespace }}-dsl-services
                mountPath: /data
           command: ["/bin/sh"]
           args:
@@ -139,7 +139,7 @@ spec:
           volumeMounts:
             - name: dmapper-volume
               mountPath: /workspace/app/module/
-            - name: byk-dsl-services
+            - name: byk-{{ namespace }}-dsl-services
               mountPath: /data
               readOnly: false
             - name: trainbot-rasa-locations
@@ -161,9 +161,9 @@ spec:
       volumes:
         - name: dmapper-volume
           emptyDir: {}
-        - name: byk-dsl-services
+        - name: byk-{{ namespace }}-dsl-services
           persistentVolumeClaim:
-            claimName: byk-dsl-services
+            claimName: byk-{{ namespace }}-dsl-services
         - name: trainbot-rasa-locations
           persistentVolumeClaim:
             claimName: pvc-{{ namespace }}-trainbot
