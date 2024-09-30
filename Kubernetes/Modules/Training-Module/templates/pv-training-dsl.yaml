@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: dsl
   capacity:
-    storage: 1Gi
+    storage: 500Mi
   accessModes:
     - ReadWriteOnce
   hostPath:
