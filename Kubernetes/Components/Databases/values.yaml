@@ -34,6 +34,7 @@ tim-postgresql:
     replicaCount: 3
     persistence:
       enabled: true
+      size: 1Gi
 
 users-db:
   image:
@@ -48,4 +49,5 @@ users-db:
     replicaCount: 3
     persistence:
       enabled: true
+      size: 1Gi
       
