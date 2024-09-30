@@ -5,7 +5,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 1Gi
+      storage: 500Mi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
