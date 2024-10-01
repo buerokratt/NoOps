@@ -31,7 +31,7 @@ tim-postgresql:
     database: tim
   statefulset:
     enabled: true
-    replicaCount: 3
+    replicaCount: 1
     persistence:
       storageClass: longhorn
       enabled: true
@@ -47,7 +47,7 @@ users-db:
     database: byk
   statefulset:
     enabled: true
-    replicaCount: 3
+    replicaCount: 1
     persistence:
       storageClass: longhorn
       enabled: true
