@@ -33,6 +33,7 @@ tim-postgresql:
     enabled: true
     replicaCount: 3
     persistence:
+      storageClass: longhorn
       enabled: true
       size: 1Gi
 
@@ -48,6 +49,7 @@ users-db:
     enabled: true
     replicaCount: 3
     persistence:
+      storageClass: longhorn
       enabled: true
       size: 1Gi
       
