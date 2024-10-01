@@ -118,6 +118,13 @@ spec:
               port: 3001
             initialDelaySeconds: 10
             periodSeconds: 11
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
         - name: "{{ .Values.release_name }}-pipelines"
           image: "{{ .Values.images.pipelines.registry }}/{{ .Values.images.pipelines.repository }}:{{ .Values.images.pipelines.tag }}"
           ports:
@@ -131,7 +138,13 @@ spec:
               value: "9200"
             - name: OPENSEARCH_AUTH
               value: "admin:admin"
-
+          resources:
+            requests:
+              memory: "{{ .Values.resources.pipeline.requests.memory }}"
+              cpu: "{{ .Values.resources.pipeline.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.pipeline.limits.memory }}"
+              cpu: "{{ .Values.resources.pipeline.limits.cpu }}"
       volumes:
         - name: config-volume
           configMap:

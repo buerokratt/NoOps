@@ -74,3 +74,20 @@ env:
 liquibase:
   jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
   dbPassword: "{{ usersDB.password }}"  # Change password accordingly
+
+resources:
+  requests:
+    memory: "100Mi"
+    cpu: "1m"
+  limits:
+    memory: "125Mi"
+    cpu: "5m"
+
+resources:
+  pipeline:
+    requests:Updt
+      memory: "100Mi"
+      cpu: "1m"
+    limits:
+      memory: "256Mi"
+      cpu: "5m"

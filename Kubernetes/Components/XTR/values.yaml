@@ -35,3 +35,11 @@ xtr:
   xtr:
     repo: https://github.com/buerokratt/xtr.git
     path: DSL/
+
+resources:
+  requests:
+    memory: "260Mi"
+    cpu: "2m"
+  limits:
+    memory: "300Mi"
+    cpu: "10m"

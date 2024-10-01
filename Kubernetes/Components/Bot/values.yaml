@@ -36,3 +36,10 @@ bot:
   dsl:
     repo: https://github.com/buerokratt/Installation-Guides.git
     path: default-setup/chatbot-and-training/bot
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "1m"
+  limits:
+    memory: "4Gi"
+    cpu: "10m"

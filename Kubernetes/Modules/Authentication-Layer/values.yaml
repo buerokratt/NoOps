@@ -32,3 +32,11 @@ images:
 #    registry: "ghcr.io"
 #    repository: "buerokratt/buerokratt-dsl"
 #    tag: "pre-alpha-1.1.0" # Images (tags) are up to date, currently no changes needed
+
+resources:
+  requests:
+    memory: "10Mi"
+    cpu: "1m"
+  limits:
+    memory: "50Mi"
+    cpu: "5m"

@@ -51,3 +51,11 @@ contstants:
   TRAINING_FILES_PATH: "/rasa/locations/data/"
   TESTING_FILES_PATH: "/rasa/locations/tests/"
   CROSS_VALIDATION_FILES_PATH: "/rasa/locations/data/"
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "2m"
+  limits:
+    memory: "512Mi"
+    cpu: "20m"

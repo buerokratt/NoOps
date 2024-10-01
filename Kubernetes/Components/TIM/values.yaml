@@ -75,3 +75,11 @@ images:
     registry: "ghcr.io"
     repository: "buerokratt/tim"
     tag: "{{ component.tim.image.version }}"
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "4m"
+  limits:
+    memory: "2Gi"
+    cpu: "100m"

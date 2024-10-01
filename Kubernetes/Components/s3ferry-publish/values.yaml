@@ -44,4 +44,10 @@ config:
   FS_DATA_DIRECTORY_PATH: "./data"
 
 
-
+resources:
+  requests:
+    memory: "60Mi"
+    cpu: "1m"
+  limits:
+    memory: "100Mi"
+    cpu: "5m"

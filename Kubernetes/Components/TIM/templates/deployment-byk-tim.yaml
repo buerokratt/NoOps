@@ -72,6 +72,13 @@ spec:
               port: 8085
             initialDelaySeconds: 45
             periodSeconds: 10
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
 
       volumes:
         - name: tomcat-config

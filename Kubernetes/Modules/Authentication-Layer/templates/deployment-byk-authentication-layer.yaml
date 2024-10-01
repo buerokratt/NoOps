@@ -74,10 +74,13 @@ spec:
           #   readOnlyRootFilesystem: true
           #   runAsNonRoot: true
           #   runAsUser: 10001
-          # resources:
-          #   limits:
-          #     cpu: "250m"
-          #     memory: "512Mi"
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
       volumes:
         - name: nginx-config-volume
           configMap:

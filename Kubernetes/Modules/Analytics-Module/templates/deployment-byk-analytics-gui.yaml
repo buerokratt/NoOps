@@ -132,9 +132,12 @@ spec:
           #   runAsNonRoot: true
           #   runAsUser: 10001
           resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
             limits:
-              cpu: "250m"
-              memory: "512Mi"
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
           # livenessProbe:
           #   tcpSocket:
           #     port: 3001
