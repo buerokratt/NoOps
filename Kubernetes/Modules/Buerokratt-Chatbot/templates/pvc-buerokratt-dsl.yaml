@@ -6,6 +6,7 @@ spec:
   storageClassName: dsl
   accessModes:
     - ReadWriteOnce
+  storageClassName: longhorn
   resources:
     requests:
       storage: 200Mi
