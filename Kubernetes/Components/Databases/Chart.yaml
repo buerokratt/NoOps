@@ -7,13 +7,13 @@ version: 0.1.20
 
 dependencies:
   - name: postgresql
-    version: 12.2.2
+    version: 12.2.3
     repository: https://charts.bitnami.com/bitnami
     tags:
       - tim-postgresql
     alias: tim-postgresql
   - name: postgresql
-    version: 12.2.2
+    version: 12.2.3
     repository: https://charts.bitnami.com/bitnami
     tags:
       - users-db
