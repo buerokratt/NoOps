@@ -79,7 +79,7 @@ images:
 resources:
   requests:
     memory: "512Mi"
-    cpu: "4m"
+    cpu: "256m"
   limits:
     memory: "2Gi"
-    cpu: "100m"
+    cpu: "512m"
