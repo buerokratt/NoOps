@@ -13,6 +13,9 @@ spec:
       name: "job-{{ .Values.release_name }}-services"
     spec:
       initContainers:
+       - name: wait-for-opensearch
+         image: curlimages/curl:7.85.0
+         command: ['sh', '-c', 'until curl -s http://component-opensearch-node:9200; do echo waiting for opensearch; sleep 5; done']
        - name: opensearch-clone-services
          image: alpine/git:2.36.3
          volumeMounts:

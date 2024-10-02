@@ -62,16 +62,20 @@ spec:
               mountPath: /workspace/app-shared
           livenessProbe:
             httpGet:
-              path: /
               port: 8085
-            initialDelaySeconds: 45
+              path: /workspace/app/src/main/resources/heartbeat.properties
+            initialDelaySeconds: 120
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /
               port: 8085
-            initialDelaySeconds: 45
+              path: /workspace/app/src/main/resources/heartbeat.properties
+            initialDelaySeconds: 120
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"

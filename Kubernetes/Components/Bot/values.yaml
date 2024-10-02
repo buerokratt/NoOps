@@ -39,7 +39,7 @@ bot:
 resources:
   requests:
     memory: "2Gi"
-    cpu: "50m"
+    cpu: "150m"
   limits:
     memory: "4Gi"
-    cpu: "250m"
+    cpu: "300m"

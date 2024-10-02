@@ -86,18 +86,6 @@ spec:
             limits:
               memory: "{{ .Values.resources.limits.memory }}"
               cpu: "{{ .Values.resources.limits.cpu }}"
-          livenessProbe:
-            httpGet:
-              path: /datasources
-              port: 8082
-            initialDelaySeconds: 70
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /datasources
-              port: 8082
-            initialDelaySeconds: 70
-            periodSeconds: 10
 
       volumes:
         - name: resql-volume

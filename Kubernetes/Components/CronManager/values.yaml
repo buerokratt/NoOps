@@ -55,7 +55,7 @@ contstants:
 resources:
   requests:
     memory: "512Mi"
-    cpu: "100m"
+    cpu: "256m"
   limits:
     memory: "512Mi"
-    cpu: "400m"
+    cpu: "512m"
