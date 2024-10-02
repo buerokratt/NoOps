@@ -19,16 +19,16 @@ spec:
           ports:
             - containerPort: 443
               name: http
-          livenessProbe:
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 32
-            periodSeconds: 10
-          readinessProbe:
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 33
-            periodSeconds: 10
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 80
+          #   initialDelaySeconds: 32
+          #   periodSeconds: 10
+          # readinessProbe:
+          #   tcpSocket:
+          #     port: 80
+          #   initialDelaySeconds: 33
+          #   periodSeconds: 10
           volumeMounts:
             - name: nginx-config-volume
               mountPath: /etc/nginx/conf.d

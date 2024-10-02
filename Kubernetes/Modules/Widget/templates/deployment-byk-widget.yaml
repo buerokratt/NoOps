@@ -54,16 +54,16 @@ spec:
               cpu: "250m"
               memory: "512Mi"
 
-          livenessProbe:
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 24
-            periodSeconds: 10
-          readinessProbe:
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 22
-            periodSeconds: 10
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 80
+          #   initialDelaySeconds: 24
+          #   periodSeconds: 10
+          # readinessProbe:
+          #   tcpSocket:
+          #     port: 80
+          #   initialDelaySeconds: 22
+          #   periodSeconds: 10
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"
