@@ -41,6 +41,16 @@ spec:
           volumeMounts:
             - name: notification-server
               mountPath: /app/notification-server
+          livenessProbe:
+            httpGet:
+              port: 4040
+            initialDelaySeconds: 26
+            periodSeconds: 11
+          readinessProbe:
+            httpGet:
+              port: 4040
+            initialDelaySeconds: 25
+            periodSeconds: 10
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"

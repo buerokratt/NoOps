@@ -148,13 +148,11 @@ spec:
               mountPath: /rasa/OpenSearch
           livenessProbe:
             httpGet:
-              path: /
               port: 3000
             initialDelaySeconds: 26
             periodSeconds: 11
           readinessProbe:
             httpGet:
-              path: /
               port: 3000
             initialDelaySeconds: 25
             periodSeconds: 10

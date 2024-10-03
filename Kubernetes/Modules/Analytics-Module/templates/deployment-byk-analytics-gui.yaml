@@ -138,16 +138,20 @@ spec:
             limits:
               memory: "{{ .Values.resources.limits.memory }}"
               cpu: "{{ .Values.resources.limits.cpu }}"
-          # livenessProbe:
-          #   tcpSocket:
-          #     port: 3001
-          #   initialDelaySeconds: 23
-          #   periodSeconds: 10
-          # readinessProbe:
-          #   tcpSocket:
-          #     port: 3001
-          #   initialDelaySeconds: 22
-          #   periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              port: 3001
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              port: 3001
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       volumes:
         - name: analytics-dsl
           persistentVolumeClaim:
