@@ -85,7 +85,7 @@ resources:
 
 resources:
   pipeline:
-    requests:Updt
+    requests:
       memory: "100Mi"
       cpu: "1m"
     limits:
