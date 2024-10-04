@@ -12,6 +12,10 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      initContainers:
+        - name: wait-for-pipeline
+          image: curlimages/curl:7.85.0
+          command: ['sh', '-c', 'until curl -s http://module-byk-training-gui-pipelines:3010; do echo waiting for opensearch; sleep 5; done']
       containers:
         - name: init-run-script
           image: curlimages/curl:7.79.1

@@ -32,7 +32,9 @@ spec:
               value: {{ .Values.images.pipelines.training.repo }}
             - name: DSL_PATH
               value: {{ .Values.images.pipelines.training.path }}
-              
+       - name: wait-for-pipeline
+         image: curlimages/curl:7.85.0
+         command: ['sh', '-c', 'until curl -s http://module-byk-training-gui-pipelines:3010; do echo waiting for opensearch; sleep 5; done']
       containers:
         - name: training-pipelines-os-seed
           image: curlimages/curl:7.79.1
