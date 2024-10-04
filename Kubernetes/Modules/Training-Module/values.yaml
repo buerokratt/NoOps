@@ -76,14 +76,13 @@ liquibase:
   dbPassword: "{{ usersDB.password }}"  # Change password accordingly
 
 resources:
-  requests:
-    memory: "100Mi"
-    cpu: "1m"
-  limits:
-    memory: "125Mi"
-    cpu: "5m"
-
-resources:
+  training:
+    requests:
+      memory: "100Mi"
+      cpu: "1m"
+    limits:
+      memory: "125Mi"
+      cpu: "5m"
   pipeline:
     requests:
       memory: "100Mi"
