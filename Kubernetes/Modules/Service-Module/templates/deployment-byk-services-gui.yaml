@@ -104,6 +104,27 @@ spec:
           volumeMounts:
             - name: services-dsl
               mountPath: /DSL/
+          # livenessProbe:
+          #   httpGet:
+          #     port: 3006
+          #   initialDelaySeconds: 20
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
+          # readinessProbe:
+          #   httpGet:
+          #     port: 3006
+          #   initialDelaySeconds: 20
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
       volumes:
         - name: services-dsl
           emptyDir: {}

@@ -39,6 +39,27 @@ spec:
           volumeMounts:
             - name: xtr
               mountPath: /DSL
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+          # livenessProbe:
+          #   httpGet:
+          #     port: 8080
+          #   initialDelaySeconds: 20
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
+          # readinessProbe:
+          #   httpGet:
+          #     port: 8080
+          #   initialDelaySeconds: 20
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
       volumes:
         - name: xtr
           emptyDir: {}

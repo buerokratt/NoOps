@@ -57,3 +57,11 @@ env:
   SQLMS_DATASOURCES_0_USERNAME: "byk"
   SQLMS_DATASOURCES_0_PASSWORD: "{{ usersDB.password }}" # Change password accordingly
   LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "256m"
+  limits:
+    memory: "512Mi"
+    cpu: "512m"

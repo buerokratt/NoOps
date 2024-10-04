@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: pvc-{{ namespace }}-training-dsl
 spec:
-  storageClassName: dsl
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:

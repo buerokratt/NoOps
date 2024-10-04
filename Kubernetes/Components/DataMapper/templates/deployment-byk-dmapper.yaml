@@ -148,16 +148,21 @@ spec:
               mountPath: /rasa/OpenSearch
           livenessProbe:
             httpGet:
-              path: /
               port: 3000
             initialDelaySeconds: 26
             periodSeconds: 11
           readinessProbe:
             httpGet:
-              path: /
               port: 3000
             initialDelaySeconds: 25
             periodSeconds: 10
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
       volumes:
         - name: dmapper-volume
           emptyDir: {}

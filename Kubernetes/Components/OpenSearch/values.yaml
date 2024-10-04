@@ -47,3 +47,11 @@ env:
   OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
   DISABLE_INSTALL_DEMO_CONFIG: "true"
   DISABLE_SECURITY_PLUGIN: "true"
+
+resources:
+  requests:
+    memory: "1Gi"
+    cpu: "1000m"
+  limits:
+    memory: "3Gi"
+    cpu: "2000m"

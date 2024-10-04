@@ -60,3 +60,11 @@ images:
     dsl:
       repo: https://github.com/buerokratt/Common-Services.git
       path: /
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "256m"
+  limits:
+    memory: "512Mi"
+    cpu: "512m"

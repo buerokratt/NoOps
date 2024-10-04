@@ -35,3 +35,11 @@ images:
 
 config: 
   header_origin: "{{ url.name.domain }}" # Change the domain name, leave subdomain and subpath same
+
+resources:
+  requests:
+    memory: "10Mi"
+    cpu: "1m"
+  limits:
+    memory: "50Mi"
+    cpu: "5m"

@@ -55,6 +55,13 @@ spec:
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
           livenessProbe:
             tcpSocket:
               port: 8080

@@ -31,8 +31,9 @@ tim-postgresql:
     database: tim
   statefulset:
     enabled: true
-    replicaCount: 3
+    replicaCount: 1
     persistence:
+      storageClass: longhorn
       enabled: true
       size: 1Gi
 
@@ -46,8 +47,9 @@ users-db:
     database: byk
   statefulset:
     enabled: true
-    replicaCount: 3
+    replicaCount: 1
     persistence:
+      storageClass: longhorn
       enabled: true
       size: 1Gi
       

@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: byk-{{ namespace }}-dsl-training
 spec:
+  storageClassName: longhorn
   resources:
     requests:
       storage: 500Mi

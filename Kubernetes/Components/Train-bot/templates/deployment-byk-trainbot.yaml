@@ -26,13 +26,16 @@ spec:
               
         ports:
         - containerPort: 5005
-        resources:
-          limits:
-             cpu: "1000m"
-             memory: "4Gi"
         volumeMounts:
           - name: trainbot-rasa-models
             mountPath: /app/models
+        resources:
+          requests:
+            memory: "{{ .Values.resources.requests.memory }}"
+            cpu: "{{ .Values.resources.requests.cpu }}"
+          limits:
+            memory: "{{ .Values.resources.limits.memory }}"
+            cpu: "{{ .Values.resources.limits.cpu }}"
       volumes:
       - name: trainbot-rasa-models
         persistentVolumeClaim:
