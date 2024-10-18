@@ -37,7 +37,7 @@ images:
     image: opensearchproject/opensearch:latest
   pipelines:
     training:
-      repo: https://github.com/Devtailor/buerokratt-training-module
+      repo: https://github.com/buerokratt/Training-Module.git
       path: /
   dsl:
     registry: "ghcr.io"
