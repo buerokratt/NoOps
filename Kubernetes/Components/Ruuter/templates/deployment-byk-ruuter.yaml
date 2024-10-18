@@ -5,6 +5,7 @@ metadata:
   annotations:
     sidecar.istio.io/inject: "true"
 spec:
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: "{{ .Values.release_name }}"
