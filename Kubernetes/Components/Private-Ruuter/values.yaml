@@ -57,7 +57,11 @@ env:
   APPLICATION_CORS_ALLOWED_ORIGINS: {{ url.name.admin }}, {{ url.name.domain }}, {{ url.name.tim }}, {{ url.name.ruuter }} # Change the domain name, leave subdomain and subpath same
 
   APPLICATION_OPENSEARCH_CONFIGURATION_URL: http://component-opensearch-node:9200
-
+  REACT_APP_RUUTER_SERVICES_GET_PATH: /shared-data/services/GET/services
+  REACT_APP_RUUTER_SERVICES_POST_PATH: /shared-data/services/POST/services
+  REACT_APP_RUUTER_SERVICES_PATH: /shared-data/services
+  REACT_APP_RUUTER_SERVICES_DIR_PATH: services
+  
 resources:
   requests:
     memory: "385Mi"

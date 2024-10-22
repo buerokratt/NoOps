@@ -3,9 +3,8 @@ kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
   annotations:
-    sidecar.istio.io/inject: "false"
+    sidecar.istio.io/inject: "true"
 spec:
-  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: "{{ .Values.release_name }}"
@@ -54,12 +53,44 @@ spec:
           args:
             - |
               pwd
-              cp -r ../Ruuter/services /DSL
+              cp -r ../Ruuter/services /shared-data
               ls -la 
           volumeMounts:
+            - name: shared-volume
+              mountPath: /shared-data/    
+        - name: setup-symlink
+          image: busybox
+          securityContext:
+            runAsUser: 1000     
+            runAsGroup: 1000     
+               
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Log directory permissions before attempting changes
+              echo "Initial permissions for /shared-data:"
+              ls -ld /shared-data
+              
+              # Try to change ownership and permissions
+              echo "Attempting to change ownership and permissions..."
+              chown -R 1000:1000 /shared-data || echo "Failed to change ownership"
+              chmod -R 777 /shared-data/services || echo "Failed to change permissions"
+              
+              # Log directory permissions after changes
+              echo "Permissions for /shared-data after attempting change:"
+              ls -ld /shared-data/services
+
+              # Create symlink
+              ln -s /shared-data/services/ /DSL/
+          volumeMounts:
             - name: privateruuter-volume
-              mountPath: /DSL/    
-                
+              mountPath: /DSL/
+            - name: shared-volume
+              mountPath: /shared-data/
+      # securityContext:
+      #   runAsUser: 0     
+      #   runAsGroup: 0     
+      #   fsGroup: 1000            
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -89,31 +120,35 @@ spec:
               value: "true"
             - name: application.logging.printStackTrace
               value: "true"
+            - name: REACT_APP_RUUTER_SERVICES_GET_PATH
+              value: "{{ .Values.env.REACT_APP_RUUTER_SERVICES_GET_PATH }}"
+            - name: REACT_APP_RUUTER_SERVICES_POST_PATH
+              value: "{{ .Values.env.REACT_APP_RUUTER_SERVICES_POST_PATH }}"
+            - name: REACT_APP_RUUTER_SERVICES_PATH
+              value: "{{ .Values.env.REACT_APP_RUUTER_SERVICES_PATH }}"
+            - name: REACT_APP_RUUTER_SERVICES_DIR_PATH
+              value: "{{ .Values.env.REACT_APP_RUUTER_SERVICES_DIR_PATH }}"
           volumeMounts:
             - name: privateruuter-volume
               mountPath: /DSL/
             - name: urls-env
               mountPath: /app/constants.ini
               subPath: constants.ini
+            - name: shared-volume
+              mountPath: /shared-data/
+              readOnly: false
 #            - name: byk-dsl-services
 #              mountPath: /data
 #              readOnly: false
-          resources:
-            requests:
-              memory: "{{ .Values.resources.requests.memory }}"
-              cpu: "{{ .Values.resources.requests.cpu }}"
-            limits:
-              memory: "{{ .Values.resources.limits.memory }}"
-              cpu: "{{ .Values.resources.limits.cpu }}"
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 25
+            initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 23
+            initialDelaySeconds: 10
             periodSeconds: 10
 
       volumes:
@@ -122,6 +157,9 @@ spec:
         - name: urls-env
           configMap:
             name: urls-env-config-private
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: privateruuter-pvc 
 #        - name: byk-dsl-services
 #          persistentVolumeClaim:
 #            claimName: byk-dsl-services

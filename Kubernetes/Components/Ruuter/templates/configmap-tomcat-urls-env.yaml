@@ -35,3 +35,9 @@ data:
     DMAPPER=http://component-byk-dmapper:3000
     CRON_MANAGER=http://component-byk-cronmanager:9010
     OPENSEARCH=http://component-opensearch-node:9200
+    XTR=http://component-byk-xtr:8080
+    XTR_AR_USERNAME:{{ xtr.user }}
+    XTR_AR_PASSWORD:{{ xtr.password }}
+    SEARCH_INDEX_NAME=X
+    EMBEDDED_ENDPOINT_AZURE=X
+    SEARCH_ENDPOINT=X

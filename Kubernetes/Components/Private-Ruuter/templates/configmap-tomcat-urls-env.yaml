@@ -42,3 +42,12 @@ data:
     TRAINING_OPENSEARCH=http://component-opensearch-node:9200
     DOMAIN={{ domain.name }}
     CHATBOT_BOT=http://component-byk-bot:5005
+    CHATBOT_RUUTER_PRIVATE_INTERNAL=http://component-byk-ruuter-private:8080
+    CHATBOT_RUUTER_PUBLIC_INTERNAL=http://component-byk-ruuter:8080
+    PASSWORD_AUTH_ENABLED=TRUE
+    XTR_AR_USERNAME:{{ xtr.user }}
+    XTR_AR_PASSWORD:{{ xtr.password }}
+    RUUTER_SERVICES_GET_PATH=/shared-data/services/GET/services
+    RUUTER_SERVICES_POST_PATH=/shared-data/services/POST/services
+    RUUTER_SERVICES_PATH=/shared-data
+    RUUTER_SERVICES_DIR_PATH=services
