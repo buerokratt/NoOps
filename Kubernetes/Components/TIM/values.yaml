@@ -2,7 +2,7 @@
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-replicas: 2
+replicas: 1
 podAnnotations: {}
 
 podSecurityContext: {}
@@ -79,7 +79,7 @@ images:
 resources:
   requests:
     memory: "512Mi"
-    cpu: "50m"
+    cpu: "100m"
   limits:
     memory: "2Gi"
-    cpu: "60m"
+    cpu: "100m"
