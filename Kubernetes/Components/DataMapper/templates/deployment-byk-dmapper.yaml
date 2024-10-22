@@ -212,13 +212,13 @@ spec:
           emptyDir: {}
         - name: byk-dsl-services
           persistentVolumeClaim:
-            claimName: byk-dsl-services
+            claimName: byk-{{ namespace }}-dsl-services
         - name: trainbot-rasa-locations
           persistentVolumeClaim:
             claimName: pvc-trainbot
-        - name: dmapper-commonservice
+        - name: dmapper-{{ namespace }}-commonservice
           persistentVolumeClaim:
-            claimName: pvc-commonservice
+            claimName: pvc-{{ namespace }}-commonservice
         - name: service-sec
           persistentVolumeClaim:
             claimName: pvc-service-secrets
