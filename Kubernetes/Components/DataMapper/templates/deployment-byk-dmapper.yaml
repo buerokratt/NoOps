@@ -215,8 +215,8 @@ spec:
             claimName: byk-{{ namespace }}-dsl-services
         - name: trainbot-rasa-locations
           persistentVolumeClaim:
-            claimName: pvc-trainbot
-        - name: dmapper-{{ namespace }}-commonservice
+            claimName: pvc-{{ namespace }}-trainbot
+        - name: dmapper-commonservice
           persistentVolumeClaim:
             claimName: pvc-{{ namespace }}-commonservice
         - name: service-sec
