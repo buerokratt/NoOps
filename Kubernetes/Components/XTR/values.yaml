@@ -39,7 +39,7 @@ xtr:
 resources:
   requests:
     memory: "260Mi"
-    cpu: "100m"
+    cpu: "40m"
   limits:
     memory: "300Mi"
-    cpu: "400m"
+    cpu: "50m"

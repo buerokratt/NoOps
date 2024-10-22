@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-{{ namespace }}-services-dsl
+  name: privateruuter-pvc
 spec:
-  storageClassName: dsl
   accessModes:
     - ReadWriteMany
-  storageClassName: longhorn
   resources:
     requests:
-      storage: 200Mi
+      storage: 100Mi
+  storageClassName: longhorn

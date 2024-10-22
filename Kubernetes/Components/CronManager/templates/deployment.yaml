@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       app: "{{ .Values.release_name }}"
@@ -28,13 +28,51 @@ spec:
               cp -r /tmp/dsl-source/$DSL_PATH/* /app/services &&
               echo 'moved' &&
               chmod 777 -R /app/services &&
-              ls /app/services/
-              
+              ls /app/services/              
           env:
             - name: DSL_REPO
               value: {{ .Values.images.commonservice.dsl.repo }}
             - name: DSL_PATH
               value: {{ .Values.images.commonservice.dsl.path }}
+        - name: init-copy-cron-files
+          image: "{{ .Values.images.cron.registry }}/{{ .Values.images.cron.repository }}:{{ .Values.images.cron.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../DSL /shared-data
+              ls -la 
+          volumeMounts:
+            - name: shared-cron-volume
+              mountPath: /cron-data/    
+        - name: cron-dsl-symlink
+          image: busybox
+          securityContext:
+            runAsUser: 0     
+            runAsGroup: 0                    
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Log directory permissions before attempting changes
+              echo "Initial permissions for /cron-data:"
+              ls -ld /cron-data
+              
+              # Try to change ownership and permissions
+              echo "Attempting to change ownership and permissions..."
+              chown -R 1000:1000 /cron-data || echo "Failed to change ownership"
+              chmod -R 777 /cron-data/DSL || echo "Failed to change permissions"
+              
+              # Log directory permissions after changes
+              echo "Permissions for /cron-data after attempting change:"
+              ls -ld /cron-data/DSL
+
+              # Create symlink
+              ln -s /cron-data/DSL/* /DSL/
+          volumeMounts:
+            - name: cron-dsl
+              mountPath: /DSL/
+            - name: shared-cron-volume
+              mountPath: /cron-data/
       containers:
       - name: "{{ .Values.release_name }}"
         image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -73,7 +111,20 @@ spec:
           value: "{{ .Values.contstants.CROSS_VALIDATION_FILES_PATH }}"
         - name: CHATBOT_BOT
           value: "{{ .Values.contstants.CHATBOT_BOT }}"
-
+      livenessProbe:
+        httpGet:
+          port: 8080
+        initialDelaySeconds: 360
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          port: 8080
+        initialDelaySeconds: 360
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
         volumeMounts:
         - name: trainbot-rasa-models
           mountPath: /data
@@ -82,28 +133,16 @@ spec:
         - name: cronconst
           mountPath: /app/constants.ini
           subPath: constants.ini
-        resources:
-          requests:
-            memory: "{{ .Values.resources.requests.memory }}"
-            cpu: "{{ .Values.resources.requests.cpu }}"
-          limits:
-            memory: "{{ .Values.resources.limits.memory }}"
-            cpu: "{{ .Values.resources.limits.cpu }}"
-        livenessProbe:
-          httpGet:
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+        - name: shared-cron-volume
+          mountPath: /cron-data/
+        - name: cron-dsl
+          mountPath: /DSL
       volumes:
+      - name: cron-dsl
+        emptyDir: {}
+      - name: shared-cron-volume
+        persistentVolumeClaim:
+          claimName: cron-pvc 
       - name: trainbot-rasa-models
         persistentVolumeClaim:
           claimName: pvc-trainbot-models
@@ -112,4 +151,3 @@ spec:
           name: cronconst
       - name: cron-commonservice
         emptyDir: {}
-

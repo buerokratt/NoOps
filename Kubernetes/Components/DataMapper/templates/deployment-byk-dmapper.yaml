@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
 spec:
-  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: "{{ .Values.release_name }}"
@@ -23,7 +22,7 @@ spec:
             - "-c"
             - >
               git clone $DSL_REPO /tmp/dsl-source &&
-              echo 'downloaded' &&
+              echo 'downloaded' && cd /tmp/dsl-source && git checkout v2.0.1 &&
               cp -r /tmp/dsl-source/$DSL_PATH/* /rasa/locations/ &&
               echo 'moved' &&
               chmod 777 -R /rasa &&
@@ -108,7 +107,7 @@ spec:
         - name: datamapper-service-dsl
           image: alpine/git:2.36.3
           volumeMounts:
-             - name: byk-{{ namespace }}-dsl-services
+             - name: byk-dsl-services
                mountPath: /data
           command: ["/bin/sh"]
           args:
@@ -126,6 +125,33 @@ spec:
                value: {{ .Values.images.pipelines.service.repo }}
              - name: DSL_PATH
                value: {{ .Values.images.pipelines.service.path }}
+
+
+        - name: service-sec
+          image: alpine/git:2.36.3
+          volumeMounts:
+            - name: service-sec
+              mountPath: /rasa/secrets
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              git clone $DSL_REPO /tmp/dsl-source &&
+              echo 'downloaded' &&
+              cp -r /tmp/dsl-source/$DSL_PATH/* /rasa/secrets/ &&
+              echo 'moved' &&
+              ls /rasa
+          env:
+            - name: DSL_REPO
+              value: {{ .Values.images.sec.service.repo }}
+            - name: DSL_PATH
+              value: {{ .Values.images.sec.service.path }}               
+          # securityContext:
+          #  runAsUser: 0     
+          #  runAsGroup: 0         
+      securityContext:
+        runAsUser: 0     
+        runAsGroup: 0         
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -138,41 +164,52 @@ spec:
             - containerPort: 3000
               name: http
           volumeMounts:
+            - name: shared-volume
+              mountPath: /rasa/shared-data
+            - name: shared-cron-volume
+              mountPath: /rasa/cron-data
             - name: dmapper-volume
               mountPath: /workspace/app/module/
-            - name: byk-{{ namespace }}-dsl-services
+            - name: byk-dsl-services
               mountPath: /data
               readOnly: false
             - name: trainbot-rasa-locations
               mountPath: /rasa/locations
             - name: dmapper-commonservice
               mountPath: /rasa/OpenSearch
+            - name: service-sec
+              mountPath: /rasa/secrets
           livenessProbe:
             httpGet:
+              path: /
               port: 3000
-            initialDelaySeconds: 26
-            periodSeconds: 11
+            initialDelaySeconds: 120
+            periodSeconds: 15
           readinessProbe:
             httpGet:
+              path: /
               port: 3000
-            initialDelaySeconds: 25
-            periodSeconds: 10
-          resources:
-            requests:
-              memory: "{{ .Values.resources.requests.memory }}"
-              cpu: "{{ .Values.resources.requests.cpu }}"
-            limits:
-              memory: "{{ .Values.resources.limits.memory }}"
-              cpu: "{{ .Values.resources.limits.cpu }}"
+            initialDelaySeconds: 120
+            periodSeconds: 15
+
       volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: privateruuter-pvc
+        - name: shared-cron-volume
+          persistentVolumeClaim:
+            claimName: cron-pvc
         - name: dmapper-volume
           emptyDir: {}
-        - name: byk-{{ namespace }}-dsl-services
+        - name: byk-dsl-services
           persistentVolumeClaim:
-            claimName: byk-{{ namespace }}-dsl-services
+            claimName: byk-dsl-services
         - name: trainbot-rasa-locations
           persistentVolumeClaim:
-            claimName: pvc-{{ namespace }}-trainbot
+            claimName: pvc-trainbot
         - name: dmapper-commonservice
           persistentVolumeClaim:
-            claimName: pvc-{{ namespace }}-commonservice
+            claimName: pvc-commonservice
+        - name: service-sec
+          persistentVolumeClaim:
+            claimName: pvc-service-secrets

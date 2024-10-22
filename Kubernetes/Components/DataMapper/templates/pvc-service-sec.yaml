@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-{{ namespace }}-services-dsl
+  name: pvc-service-secrets
 spec:
-  storageClassName: dsl
   accessModes:
     - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:
-      storage: 200Mi
+      storage: 50Mi  

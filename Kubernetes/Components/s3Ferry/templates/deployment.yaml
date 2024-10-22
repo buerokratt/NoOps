@@ -45,14 +45,14 @@ spec:
         livenessProbe:
           httpGet:
             port: 3000
-          initialDelaySeconds: 15
+          initialDelaySeconds: 180
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
         readinessProbe:
           httpGet:
             port: 3000
-          initialDelaySeconds: 15
+          initialDelaySeconds: 180
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
