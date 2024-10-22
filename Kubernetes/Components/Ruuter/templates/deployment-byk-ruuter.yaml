@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
   annotations:
-    sidecar.istio.io/inject: "true"
+    sidecar.istio.io/inject: "{{ .Valus.istio.enabled }}"
 spec:
   replicas: {{ .Values.replicas }}
   selector:

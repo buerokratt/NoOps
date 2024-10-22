@@ -2,7 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "{{ .Valus.istio.enabled }}" 
 spec:
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: "{{ .Values.release_name }}"
@@ -191,7 +194,13 @@ spec:
               port: 3000
             initialDelaySeconds: 120
             periodSeconds: 15
-
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
       volumes:
         - name: shared-volume
           persistentVolumeClaim:

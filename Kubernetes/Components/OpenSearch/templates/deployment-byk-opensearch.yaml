@@ -45,12 +45,7 @@ spec:
             - containerPort: 9200
               name: http
             - containerPort: 9600
-              name: opensearch
-          # resources:
-          #   limits:
-          #     memory: 4Gi
-          #   requests:
-          #     memory: 512Mi              
+              name: opensearch            
           volumeMounts:
             - name: opensearch-{{ namespace }}-data
               mountPath: /usr/share/opensearch/data
