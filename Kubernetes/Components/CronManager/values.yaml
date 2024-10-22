@@ -14,7 +14,8 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
+istio:
+  enabled: {{ istio.enabled }}
 domain: {{ domain.name }} # Domain name
 #secretname: {{ cert.Name.value }} # Cert name value, change this as suited to environment
 #ingress:
