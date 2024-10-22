@@ -64,14 +64,14 @@ spec:
           livenessProbe:
             httpGet:
               port: 8085
-            initialDelaySeconds: 1200
+            initialDelaySeconds: 360
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
             httpGet:
               port: 8085
-            initialDelaySeconds: 1200
+            initialDelaySeconds: 360
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
