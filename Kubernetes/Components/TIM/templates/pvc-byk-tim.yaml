@@ -4,7 +4,7 @@ metadata:
   name: byk-tim-workspace-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:
@@ -16,7 +16,7 @@ metadata:
   name: byk-tim-workspace-shared-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:

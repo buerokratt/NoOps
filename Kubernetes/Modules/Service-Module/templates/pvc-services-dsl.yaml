@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: dsl
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:
