@@ -28,6 +28,10 @@ images:
     registry: "ghcr.io"
     repository: "buerokratt/cronmanager"
     tag: "{{ component.cronmanager.image.version }}" # Images (tags) are up to date, currently no changes needed
+  cron:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "cronmanager-test-1.1.0" 
   commonservice:
     dsl:
       repo: https://github.com/buerokratt/Common-Services.git
