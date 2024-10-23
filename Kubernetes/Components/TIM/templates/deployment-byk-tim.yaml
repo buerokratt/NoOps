@@ -12,6 +12,7 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      automountServiceAccountToken: false
       initContainers:
         - name: init-keytool
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
@@ -32,6 +33,19 @@ spec:
               mountPath: /workspace/app
             - name: workspace-shared
               mountPath: /workspace/app-shared
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
 
       containers:
         - name: "{{ .Values.release_name }}"
@@ -61,6 +75,19 @@ spec:
               subPath: application.properties
             - name: workspace-shared
               mountPath: /workspace/app-shared
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               port: 8085
