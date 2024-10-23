@@ -169,7 +169,7 @@ spec:
           volumeMounts:
             - name: shared-volume
               mountPath: /rasa/shared-data
-            - name: shared-cron-volume
+            #- name: shared-cron-volume
             #   mountPath: /rasa/cron-data
             # - name: dmapper-volume
               mountPath: /workspace/app/module/
