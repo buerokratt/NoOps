@@ -16,7 +16,7 @@ data:
       window._env_ = {
         RUUTER_API_URL: '{{ url.name.ruuter }}/v2/public/backoffice',
         NOTIFICATION_NODE_URL: '{{ url.name.ruuter }}',
-        TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara?callback_url={{ domain.name }}',
+        TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara?callback_url=https://{{ domain.name }}',
         OFFICE_HOURS: {
           TIMEZONE: 'Europe/Tallinn',
           BEGIN: 0,
@@ -40,7 +40,7 @@ data:
       window._env_ = {
         RUUTER_API_URL: '{{ url.name.ruuter }}/v2/public/backoffice',
         NOTIFICATION_NODE_URL: '{{ url.name.ruuter }}',
-        TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara?callback_url={{ domain.name }}',
+        TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara?callback_url=https://{{ domain.name }}',
         OFFICE_HOURS: {
           TIMEZONE: 'Europe/Tallinn',
           BEGIN: 0,
