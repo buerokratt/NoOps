@@ -69,6 +69,7 @@ env:
   REACT_APP_RUUTER_URL: "{{ url.name.ruuter }}/v2/private/training/" # Change the domain name, leave subdomain and subpath same
   REACT_APP_RUUTER_URL: "{{ url.name.ruuter }}/v2/private/training/"
   REACT_APP_SERVICE_MODULE_GUI_BASE_URL: "http://module-byk-services-gui:3006"
+  REACT_APP_NOTIFICATION_NODE_URL: "{{ url.name.ruuter }}"
 
 
 liquibase:
