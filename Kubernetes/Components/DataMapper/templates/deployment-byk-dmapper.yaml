@@ -171,7 +171,7 @@ spec:
               mountPath: /rasa/shared-data
             #- name: shared-cron-volume
             #   mountPath: /rasa/cron-data
-            # - name: dmapper-volume
+            - name: dmapper-volume
               mountPath: /workspace/app/module/
             - name: byk-dsl-services
               mountPath: /data
