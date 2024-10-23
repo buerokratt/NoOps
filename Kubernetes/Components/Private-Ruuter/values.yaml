@@ -65,7 +65,7 @@ env:
 resources:
   requests:
     memory: "385Mi"
-    cpu: "150m"
+    cpu: "250m"
   limits:
     memory: "512Mi"
-    cpu: "150m"
+    cpu: "250m"
