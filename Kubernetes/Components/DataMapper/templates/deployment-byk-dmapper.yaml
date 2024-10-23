@@ -170,8 +170,8 @@ spec:
             - name: shared-volume
               mountPath: /rasa/shared-data
             - name: shared-cron-volume
-              mountPath: /rasa/cron-data
-            - name: dmapper-volume
+            #   mountPath: /rasa/cron-data
+            # - name: dmapper-volume
               mountPath: /workspace/app/module/
             - name: byk-dsl-services
               mountPath: /data
@@ -205,9 +205,9 @@ spec:
         - name: shared-volume
           persistentVolumeClaim:
             claimName: privateruuter-pvc
-        - name: shared-cron-volume
-          persistentVolumeClaim:
-            claimName: cron-pvc
+        # - name: shared-cron-volume
+        #   persistentVolumeClaim:
+        #     claimName: cron-pvc
         - name: dmapper-volume
           emptyDir: {}
         - name: byk-dsl-services
