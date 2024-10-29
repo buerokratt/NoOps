@@ -40,6 +40,8 @@ spec:
             - containerPort: 8085
               name: "http"
           env:
+            - name: KEY_PASS
+              value: {{ TIM.keystore }}
             - name: "DB_PASSWORD"
               valueFrom:
                 secretKeyRef:
