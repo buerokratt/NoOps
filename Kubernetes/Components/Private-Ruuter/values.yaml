@@ -1,7 +1,7 @@
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-replicas: 2
+replicas: 1
 podAnnotations: {}
 
 podSecurityContext: {}
