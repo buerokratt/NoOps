@@ -20,6 +20,7 @@ secretname: {{ admin.cert.Name.value }} # Cert name value, change this as suited
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
+  whitelistSourceRange: "" # Client based IP if the whitelisting is needed, if not, leave as it is
 
 release_name: "module-byk-training-gui"
   
@@ -69,7 +70,6 @@ env:
   REACT_APP_RUUTER_URL: "{{ url.name.ruuter }}/v2/private/training/" # Change the domain name, leave subdomain and subpath same
   REACT_APP_RUUTER_URL: "{{ url.name.ruuter }}/v2/private/training/"
   REACT_APP_SERVICE_MODULE_GUI_BASE_URL: "http://module-byk-services-gui:3006"
-  REACT_APP_NOTIFICATION_NODE_URL: "{{ url.name.ruuter }}"
 
 
 liquibase:

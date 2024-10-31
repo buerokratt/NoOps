@@ -1,7 +1,7 @@
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-replicas: 1
+replicas: 2
 podAnnotations: {}
 
 podSecurityContext: {}
@@ -23,6 +23,7 @@ istio:
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
+  whitelistSourceRange: "" # Client based IP if the whitelisting is needed, if not, leave as it is
 
 release_name: "component-byk-ruuter-private"
 
@@ -65,7 +66,7 @@ env:
 resources:
   requests:
     memory: "385Mi"
-    cpu: "250m"
+    cpu: "80m"
   limits:
     memory: "512Mi"
-    cpu: "250m"
+    cpu: "100m"
