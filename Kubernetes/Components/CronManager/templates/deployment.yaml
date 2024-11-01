@@ -42,7 +42,7 @@ spec:
           args:
             - |
               pwd
-              cp -r ../DSL /shared-data
+              cp -r ../DSL /cron-data
               ls -la 
           volumeMounts:
             - name: shared-cron-volume
