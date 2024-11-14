@@ -57,7 +57,8 @@ byk:
           active: dev
       logging:
         level:
-          root: TRACE
+          root: INFO
+  key_pass: {{ TIM.keystore }}
       
 tim-postgresql:
   image:
