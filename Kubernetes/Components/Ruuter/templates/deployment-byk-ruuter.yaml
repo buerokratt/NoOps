@@ -50,6 +50,8 @@ spec:
               value: "true"
             - name: application.logging.printStackTrace
               value: "true"
+            - name: application.httpResponseSizeLimit
+              value: "2000"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
