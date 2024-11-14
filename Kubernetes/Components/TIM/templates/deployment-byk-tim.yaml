@@ -41,7 +41,10 @@ spec:
               name: "http"
           env:
             - name: KEY_PASS
-              value: {{ TIM.keystore }}
+              valueFrom:
+                secretKeyRef:
+                  name: "byk-tim-env-secret"
+                  key: key_pass
             - name: "DB_PASSWORD"
               valueFrom:
                 secretKeyRef:
