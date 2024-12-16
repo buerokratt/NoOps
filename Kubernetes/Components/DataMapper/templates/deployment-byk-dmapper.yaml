@@ -26,7 +26,6 @@ spec:
             - >
               git clone $DSL_REPO /tmp/dsl-source &&
               echo 'downloaded' && cd /tmp/dsl-source &&
-              cp -r /tmp/dsl-source/$DSL_PATH/* /rasa/locations/ &&
               echo 'moved' &&
               chmod 777 -R /rasa &&
               ls /rasa/locations/
