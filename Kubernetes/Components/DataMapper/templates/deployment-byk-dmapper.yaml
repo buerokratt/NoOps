@@ -162,6 +162,8 @@ spec:
 #              value: .handlebars
             - name: CONTENT_FOLDER
               value: /rasa
+            - name: SYNC_INTERVAL_MINUTES
+              value: "10"
           ports:
             - containerPort: 3000
               name: http
