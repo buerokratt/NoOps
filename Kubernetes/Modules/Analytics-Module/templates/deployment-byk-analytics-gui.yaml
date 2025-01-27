@@ -111,7 +111,7 @@ spec:
             - name: RATE_LIMIT_PER_MINUTE
               value: "1000"
             - name: REACT_APP_NOTIFICATION_NODE_URL
-              value: ""{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}""
+              value: "{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}"
               
           volumeMounts:
             - mountPath: /tmp
