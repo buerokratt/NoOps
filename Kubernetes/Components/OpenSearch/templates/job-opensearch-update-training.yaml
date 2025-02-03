@@ -27,7 +27,7 @@ spec:
             - "-c"
             - >
               git clone $DSL_REPO /tmp/dsl-source &&
-              echo 'downloaded' && cd /tmp/dsl-source && git checkout v2.0.2 &&
+              echo 'downloaded' &&
               cp -r /tmp/dsl-source/$DSL_PATH/fieldMappings /root/training/ &&
               cp -r /tmp/dsl-source/$DSL_PATH/mock /root/training/ &&
               cp -r /tmp/dsl-source/$DSL_PATH/deploy-opensearch.sh /root/training/ &&
