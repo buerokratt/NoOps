@@ -26,7 +26,7 @@ spec:
          args:
             - "-c"
             - >
-              git clone $DSL_REPO /tmp/dsl-source &&
+              git clone $DSL_REPO /tmp/dsl-source && cd /tmp/dsl-source && git checkout dev &&
               echo 'downloaded' &&
               cp -r /tmp/dsl-source/$DSL_PATH/fieldMappings /root/training/ &&
               cp -r /tmp/dsl-source/$DSL_PATH/mock /root/training/ &&
