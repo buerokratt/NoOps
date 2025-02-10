@@ -129,6 +129,10 @@ spec:
               value: "{{ .Values.env.REACT_APP_RUUTER_SERVICES_PATH }}"
             - name: REACT_APP_RUUTER_SERVICES_DIR_PATH
               value: "{{ .Values.env.REACT_APP_RUUTER_SERVICES_DIR_PATH }}"
+            - name: application.externalAuthAllowed
+              value: rasa/model/add-new-model-processing,rasa/model/add-new-model-testing,rasa/model/add-new-model-cross-validating,rasa/model/add-new-model-ready,rasa/model/add-new-model-already-trained,rasa/model/add-new-model-error
+            - name: application.httpResponseSizeLimit
+              value: "2000"
           volumeMounts:
             - name: privateruuter-volume
               mountPath: /DSL/
