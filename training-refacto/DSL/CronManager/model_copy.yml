@@ -1,0 +1,5 @@
+move_model:
+  trigger: off
+  type: exec
+  command: "./scripts/model_copy.py"
+  # allowedEnvs: ["namespace", "pending"]

@@ -1,0 +1,61 @@
+declaration:
+  call: declare
+  version: 0.1
+  description: "Rasa training flow - Cross validating"
+  method: post
+  accepts: json
+  returns: json
+  namespace: training
+  allowlist:
+    body:
+      - field: job_name
+        type: string
+        description: "Job name for training step"
+      - field: namespace
+        type: string
+        description: "Namespace requesting the training"
+
+extractRequestData:
+  assign:
+    status: ${incoming.body}
+
+postCrossValidationStatus:
+  call: http.get
+  args:
+    url: "[#TRAINING_RUUTER]/rasa/model/add-new-model-cross-validating"
+  result: crossvalidating
+
+getTestbotCVJobTemplate:
+  call: http.post
+  args:
+    url: "[#TRAINING_RESQL]/get-cv-job"
+    body:
+      job_name: test-bot
+  result: cvJobTemplate
+
+startTestBotCV:
+  call: http.post
+  args:
+    url: "[#CRON_MANAGER]/process-job"
+    body:
+      namespace: ${incoming.body.namespace}
+      job: ${cvJobTemplate.response.body}
+      job_type: "cv"
+  result: cvStart
+
+trainJob:
+  switch:
+    - condition: ${cvStart.response.statusCodeValue === 200}
+      next: returnSuccess
+    - condition: ${cvStart.response.statusCodeValue !== 200}
+      next: returnError
+
+returnSuccess:
+  status: 200
+  return: "Cross Validation is running"
+  next: end
+
+returnError:
+  status: 500
+  return: "Cross Validating did not start"
+  next: end

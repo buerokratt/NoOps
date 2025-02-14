@@ -1,0 +1,71 @@
+declaration:
+  call: declare
+  version: 0.1
+  description: "Rasa training flow - Cross validate status"
+  method: post
+  accepts: json
+  returns: json
+  namespace: training
+  allowlist:
+    body:
+      - field: status
+        type: string
+        description: "Training status"
+
+extractRequestData:
+  assign:
+    status: ${incoming.body.status}
+
+CrossValidateStatus:
+  switch:
+    - condition: ${status === 'IN_PROGRESS'}
+      next: returncvInPr
+    - condition: ${status === 'CROSS_VALIDATING'}
+      next: returncv
+    - condition: ${status === 'COMPLETED'}
+      next: moveModel
+    - condition: ${status !== 'COMPLETED'}
+      next: trainingError
+
+trainingError:
+  call: http.post
+  args:
+    url: "[#TRAINING_RUUTER]/training/rasa/model/add-new-model-error"
+  next: returnError
+
+moveModel:
+  call: http.post
+  args:
+    url: "[#CRON_MANAGER]/model_copy"
+  result: modelMoved
+  next: modelIsReady
+
+returncvInPr:
+  status: 200
+  return: "Cross validation started"
+  next: end
+
+returncv:
+  status: 200
+  return: "Cross validating"
+  next: end
+
+modelIsReady:
+  status: 200
+  return: "Model moved"
+  next: end
+
+modelMovedFail:
+  status: 500
+  return: "Model moving failed"
+  next: end
+
+returnSuccess:
+  status: 200
+  return: "Cross-validated."
+  next: end
+
+returnError:
+  status: 500
+  return: "Something went wrong."
+  next: end
