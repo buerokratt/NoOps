@@ -1,0 +1,68 @@
+declaration:
+  call: declare
+  version: 0.1
+  description: "Rasa training flow - Training status"
+  method: post
+  accepts: json
+  returns: json
+  namespace: training
+  allowlist:
+    body:
+      - field: namespace
+        type: string
+        description: "Namespace requesting the training"
+      - field: status
+        type: string
+        description: "Training status"
+
+extractRequestData:
+  assign:
+    status: ${incoming.body.status}
+
+trainingStatus:
+  switch:
+    - condition: ${status === 'IN_PROGRESS'}
+      next: returnInPr
+    - condition: ${status === 'BOT_TRAINING'}
+      next: returnTraining
+    - condition: ${status === 'COMPLETED'}
+      next: startTest
+    - condition: ${status !== 'COMPLETED'}
+      next: trainingError
+
+trainingError:
+  call: http.post
+  args:
+    url: "[#TRAINING_RUUTER]/rasa/model/add-new-model-error"
+  next: returnError
+
+startTest:
+  call: http.post
+  args:
+    url: "http://localhost:8086/rasa/test-bot"
+    body:
+      job_name: "test_bot"
+      namespace: ${incoming.body.namespace}
+  result: testStart
+  next: returnSuccess
+
+
+returnInPr:
+  status: 200
+  return: "Training started"
+  next: end
+
+returnTraining:
+  status: 200
+  return: "Model is in training"
+  next: end
+
+returnSuccess:
+  status: 200
+  return: "Training finshed"
+  next: end
+
+returnError:
+  status: 500
+  return: "Something went wrong."
+  next: end

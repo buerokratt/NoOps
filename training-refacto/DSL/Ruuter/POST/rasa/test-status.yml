@@ -1,0 +1,67 @@
+declaration:
+  call: declare
+  version: 0.1
+  description: "Rasa training flow - Test status"
+  method: post
+  accepts: json
+  returns: json
+  namespace: training
+  allowlist:
+    body:
+      - field: namespace
+        type: string
+        description: "Namespace requesting the training"
+      - field: status
+        type: string
+        description: "Training status"
+
+extractRequestData:
+  assign:
+    status: ${incoming.body.status}
+
+testStatus:
+  switch:
+    - condition: ${status === 'IN_PROGRESS'}
+      next: returnTestInPr
+    - condition: ${status === 'TESTING'}
+      next: returnTesting
+    - condition: ${status === 'COMPLETED'}
+      next: startCrossvalidating
+    - condition: ${status !== 'COMPLETED'}
+      next: trainingError
+
+trainingError:
+  call: http.post
+  args:
+    url: "[#TRAINING_RUUTER]/rasa/model/add-new-model-error"
+  next: returnError
+
+startCrossvalidating:
+  call: http.post
+  args:
+    url: "http://localhost:8086/rasa/test-bot-cv"
+    body:
+      job_name: "test_cv_bot"
+      namespace: ${incoming.body.namespace}
+  result: testStart
+  next: returnSuccess
+
+returnTestInPr:
+  status: 200
+  return: "Testing started"
+  next: end
+
+returnTesting:
+  status: 200
+  return: "Testing"
+  next: end
+
+returnSuccess:
+  status: 200
+  return: "Testing is done."
+  next: end
+
+returnError:
+  status: 500
+  return: "All BAD."
+  next: end

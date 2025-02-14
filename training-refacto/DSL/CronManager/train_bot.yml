@@ -1,0 +1,5 @@
+train_now:
+  trigger: off
+  type: exec
+  command: "./scripts/train_bot.py"
+  allowedEnvs: ["namespace", "job_name"]

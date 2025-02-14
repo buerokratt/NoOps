@@ -1,0 +1,65 @@
+declaration:
+  call: declare
+  version: 0.1
+  description: "Rasa training flow - Train-bot"
+  method: post
+  accepts: json
+  returns: json
+  namespace: training
+  allowlist:
+    body:
+      - field: job_name
+        type: string
+        description: "Job name for training step"
+      - field: namespace
+        type: string
+        description: "Namespace where training takes place"
+
+extractRequestData:
+  assign:
+    job_name: ${incoming.body.job_name}
+    namespace: ${incoming.body.namespace}
+
+logstepTRB:
+  log: ${incoming.body}
+
+postInitialStatus:
+  call: http.get
+  args:
+    url: "[#TRAINING_RUUTER]/rasa/model/add-new-model-processing"
+  result: processing
+
+getTrainbotJobTemplate:
+  call: http.post
+  args:
+    url: "[#TRAINING_RESQL]/get-train-job"
+    body:
+      job_name: ${incoming.body.job_name}
+  result: trainbotJobTemplate
+
+startTrainBot:
+  call: http.post
+  args:
+    url: "[#CRON_MANAGER]/process-job"
+    body:
+      namespace: ${incoming.body.namespace}
+      job: ${trainbotJobTemplate.response.body}
+      job_type: "train"
+  result: trainStart
+
+trainJob:
+  switch:
+    - condition: ${trainStart.response.statusCodeValue === 200}
+      next: returnSuccess
+    - condition: ${trainStart.response.statusCodeValue !== 200}
+      next: returnError
+
+returnSuccess:
+  status: 200
+  return: "Training started."
+  next: end
+
+returnError:
+  status: 500
+  return: "Training did not start"
+  next: end

@@ -1,0 +1,56 @@
+declaration:
+  call: declare
+  version: 0.1
+  description: "Rasa training flow - Cross validate status"
+  method: post
+  accepts: json
+  returns: json
+  namespace: training
+  allowlist:
+    body:
+      - field: status
+        type: string
+        description: "Training status"
+
+extractRequestData:
+  assign:
+    status: ${incoming.body}
+
+logstepM:
+  log: ${incoming.body}
+
+movedStatus:
+  switch:
+    - condition: ${status === 'success'}
+      next: returnSuccess
+    - condition: ${status !== 'success'}
+      next: movingError
+
+modelReady:
+  call: http.get
+  args:
+    url: "[#TRAINING_RUUTER]/rasa/model/add-new-model-ready"
+    body:
+      fileName: "${incming.body.misiganes}"
+      testReport: "{}"
+      crossValidationReport: "{}" 
+      trainingDataChecksum: "${incoming.body.model}"
+  result: modelIsReady
+  next: returnSuccess
+
+
+movingError:
+  call: http.post
+  args:
+    url: "[#TRAINING_RUUTER]/rasa/model/add-new-model-error"
+  next: returnError
+
+returnSuccess:
+  status: 200
+  return: "Done."
+  next: end
+
+returnError:
+  status: 500
+  return: "Error."
+  next: end

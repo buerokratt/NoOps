@@ -1,0 +1,61 @@
+declaration:
+  call: declare
+  version: 0.1
+  description: "Rasa training flow - Testing"
+  method: post
+  accepts: json
+  returns: json
+  namespace: training
+  allowlist:
+    body:
+      - field: job_name
+        type: string
+        description: "Job name for training step"
+      - field: namespace
+        type: string
+        description: "Namespace requesting the training"
+
+extractRequestData:
+  assign:
+    status: ${incoming.body}
+
+postTestStatus:
+  call: http.get
+  args:
+    url: "[#TRAINING_RUUTER]/rasa/model/add-new-model-testing"
+  result: testing
+
+getTestbotJobTemplate:
+  call: http.post
+  args:
+    url: "[#TRAINING_RESQL]/get-test-job"
+    body:
+      job_name: test-bot
+  result: testbotJobTemplate
+
+startTestBot:
+  call: http.post
+  args:
+    url: "[#CRON_MANAGER]/process-job" 
+    body:
+      namespace: ${incoming.body.namespace}
+      job: ${testbotJobTemplate.response.body}
+      job_type: "test"
+  result: testStart
+
+trainJob:
+  switch:
+    - condition: ${testStart.response.statusCodeValue === 200}
+      next: returnSuccess
+    - condition: ${testStart.response.statusCodeValue !== 200}
+      next: returnError
+
+returnSuccess:
+  status: 200
+  return: "Test-Bot is running"
+  next: end
+
+returnError:
+  status: 500
+  return: "Testing did not start"
+  next: end
