@@ -1,0 +1,101 @@
+version: "3.9"
+
+services:
+  ruuter-public:
+    container_name: ruuter-public
+    image: ruutertrain
+    environment:
+      - application.cors.allowedOrigins=http://localhost:8086,http://localhost:3001,http://localhost:3003,http://localhost:3004,http://localhost:8080
+      - application.httpCodesAllowList=200,201,202,400,401,403,500
+      - application.internalRequests.allowedIPs=127.0.0.1
+      - application.logging.displayRequestContent=true
+      - application.logging.displayResponseContent=true
+      - application.logging.printStackTrace=true
+      - application.internalRequests.disabled=true
+      - logging.level.root=INFO
+      - server.port=8086
+    volumes:
+      - ./Ruuter:/DSL
+      - ./constants.ini:/app/constants.ini
+    ports:
+      - 8086:8086
+    networks:
+      - bykstack
+
+  # cron-manager:
+  #   container_name: cron-manager
+  #   image: cron-manager
+  #   # user: root # This root user is only for local development due to multi container mounted volume permissions
+  #   volumes:
+  #     - ./CronManager:/DSL
+  #   environment:
+  #     - server.port=9010
+  #   ports:
+  #     - 9010:9010
+  #   networks:
+  #     - bykstack
+
+  resql:
+    container_name: resql
+    image: resqltrain
+    depends_on:
+      - users_db
+    environment:
+      - sqlms.datasources.[0].name=byk
+      - sqlms.datasources.[0].jdbcUrl=jdbc:postgresql://users_db:5432/byk
+      - sqlms.datasources.[0].username=byk
+      - sqlms.datasources.[0].password=
+      - logging.level.org.springframework.boot=DEBUG
+    ports:
+      - 8082:8082
+    volumes:
+      - ./Resql:/workspace/app/templates/byk
+    networks:
+      - bykstack
+
+  users_db:
+    container_name: users_db
+    image: postgres:14.1
+    environment:
+      - POSTGRES_USER=byk
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=byk
+    ports:
+      - 5433:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - bykstack
+
+  s3-ferry:
+    container_name: s3-ferry
+    image: ghcr.io/buerokratt/s3-ferry:pre-alpha-1.1.1
+    # user: root # This root user is only for local development due to multi container mounted volume permissions
+    volumes:
+      - /home/varmoh/workfiles/REFACTO-TRAINING/CronManager/mock-test:/api/data
+    environment:
+      - API_CORS_ORIGIN=*
+      - API_DOCUMENTATION_ENABLED=true
+      - S3_REGION=us-east-1
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_ACCESS_KEY_ID=123456789
+      - S3_SECRET_ACCESS_KEY=0123456789
+      - S3_DATA_BUCKET_NAME=my-new-bucket
+      - S3_DATA_BUCKET_PATH=
+      - FS_DATA_DIRECTORY_PATH=./data
+    ports:
+      - 3005:3000
+    networks:
+      - bykstack
+
+
+volumes:
+  data:
+  data2:
+
+networks:
+  bykstack:
+    name: bykstack
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
