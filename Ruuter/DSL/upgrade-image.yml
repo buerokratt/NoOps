@@ -1,0 +1,38 @@
+extractRequestData:
+  assign:
+    image: ${incoming.body}
+  next: update_image
+
+update_image:
+  call: http.post
+  args:
+    url: "[#DEPLOY_CRON]/execute/update-image/run"
+    body:
+      image: ${image}
+  result: update_image_status
+
+checkIfImageUpdated:
+  switch:
+    - condition: "${update_image_status != 200}"
+      next: returnFailed
+  next: deploy_image
+
+deploy_image:
+  call: http.post
+  args:
+    url: "[#DEPLOY_CRON]/execute/deploy-image/run"
+  result: deploy_image_status
+
+checkIfImageDepolyed:
+  switch:
+    - condition: "${deploy_image_status != 200}"
+      next: returnFailed
+  next: returnSuccess
+
+returnSuccess:
+  return: "Successfully executed command"
+  next: end
+
+returnFailed:
+  return: "Failed executing command"
+  next: end
