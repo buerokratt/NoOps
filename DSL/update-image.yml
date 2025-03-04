@@ -1,0 +1,5 @@
+update_image:
+  trigger: off
+  type: exec
+  command: "./scripts/update-image.sh"
+  allowedEnvs: ["versionNumber"]
