@@ -14,7 +14,7 @@ update_image:
 logstep:
   log: ${update_image_status}
 logstep2:
-  log: ${update_image_status.response.body.response}
+  log: ${update_image_status.response}
 
 checkIfImageUpdated:
   switch:
