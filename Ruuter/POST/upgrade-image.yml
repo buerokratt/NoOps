@@ -16,7 +16,7 @@ logstep:
 
 checkIfImageUpdated:
   switch:
-    - condition: "${update_image_status != 200}"
+    - condition: "${update_image_status.response != 200}"
       next: returnFailed
   next: deploy_image
 
