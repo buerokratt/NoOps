@@ -6,10 +6,13 @@ extractRequestData:
 update_image:
   call: http.post
   args:
-    url: "[#DEPLOY_CRON]/execute/update-image/run"
+    url: "[#DEPLOY_CRON]/execute/update-image/update_image"
     body:
       image: ${image}
   result: update_image_status
+
+logstep:
+  log: ${update_image_status}
 
 checkIfImageUpdated:
   switch:
@@ -20,7 +23,7 @@ checkIfImageUpdated:
 deploy_image:
   call: http.post
   args:
-    url: "[#DEPLOY_CRON]/execute/deploy-image/run"
+    url: "[#DEPLOY_CRON]/execute/deploy-image/deploy_image"
   result: deploy_image_status
 
 checkIfImageDepolyed:
