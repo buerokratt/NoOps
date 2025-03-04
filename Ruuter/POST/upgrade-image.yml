@@ -26,7 +26,7 @@ deploy_image:
 
 checkIfImageDepolyed:
   switch:
-    - condition: "${deploy_image_status.response..statusCodeValue != 200}"
+    - condition: "${deploy_image_status.response.statusCodeValue != 200}"
       next: returnFailed
   next: returnSuccess
 
