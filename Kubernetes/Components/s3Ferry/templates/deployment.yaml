@@ -47,14 +47,14 @@ spec:
             port: 3000
           initialDelaySeconds: 180
           periodSeconds: 10
-          timeoutSeconds: 5
+          timeoutSeconds: 15
           failureThreshold: 3
         readinessProbe:
           httpGet:
             port: 3000
           initialDelaySeconds: 180
           periodSeconds: 10
-          timeoutSeconds: 5
+          timeoutSeconds: 15
           failureThreshold: 3
         resources:
           requests:
