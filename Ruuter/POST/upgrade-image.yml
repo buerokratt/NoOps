@@ -11,9 +11,6 @@ update_image:
       image: ${image}
   result: update_image_status
 
-logstep:
-  log: ${update_image_status}
-
 checkIfImageUpdated:
   switch:
     - condition: "${update_image_status != 200}"
@@ -25,6 +22,9 @@ deploy_image:
   args:
     url: "[#DEPLOY_CRON]/execute/deploy-image/deploy_image"
   result: deploy_image_status
+
+logstep:
+  log: ${deploy_image_status}
 
 checkIfImageDepolyed:
   switch:
