@@ -14,11 +14,11 @@ update_image:
 logstep:
   log: ${update_image_status}
 logstep2:
-  log: ${update_image_status.body.response}
+  log: ${update_image_status.response.body.response}
 
 checkIfImageUpdated:
   switch:
-    - condition: "${update_image_status.body.response != 200}"
+    - condition: "${update_image_status.response.body.response != 200}"
       next: returnFailed
   next: deploy_image
 
