@@ -25,10 +25,7 @@ git checkout dev || { echo "did not find dev branch. Aborting."; exit 1; }
 cd helm_deploy_v2
 cp ../../secrets.yaml .
 python3 git_clone.py git.yaml
-python3 libraries/install_libraries.py requirements.json
-python3 secrets.py secrets.yaml
-python3 deploy.py components.yaml
-python3 deploy.py modules.yaml
-python3 deploy.py post-deploy.yaml
+python3 libraries/install_libraries.py requirements.json || { echo "Libraries not installed. Aborting."; cd ../../ && exit 1; }
+python3 secrets.py secrets.yaml || { echo "Secrets not replaced Aborting."; cd ../../ && exit 1; }
 cd ../../
 echo "Done"
