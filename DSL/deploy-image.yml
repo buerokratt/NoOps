@@ -1,0 +1,5 @@
+deploy_image:
+  trigger: off
+  type: exec
+  command: "./scripts/deploy-image.sh"
+  allowedEnvs: ["versionNumber"]
