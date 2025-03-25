@@ -23,6 +23,7 @@ spec:
               -- Your SQL commands here
               INSERT INTO public.user (login, first_name, last_name, id_code, display_name, status, created, csa_title, csa_email) VALUES ('{{ .Values.user.login }}', '{{ .Values.user.first_name }}', '{{ .Values.user.last_name }}', '{{ .Values.user.id_code }}', '{{ .Values.user.display_name }}', 'active', now(), '{{ .Values.user.csa_title }}', '{{ .Values.user.csa_email }}');
               INSERT INTO user_authority (user_id, authority_name, created) VALUES ((SELECT id_code FROM public.user WHERE login = '{{ .Values.user.login }}'), ARRAY['ROLE_ADMINISTRATOR'], now());
+              INSERT INTO user_profile_settings (user_id, forwarded_chat_popup_notifications, forwarded_chat_sound_notifications, forwarded_chat_email_notifications,  new_chat_popup_notifications, new_chat_sound_notifications, new_chat_email_notifications, use_autocorrect) VALUES ('{{ .Values.user.login }}', false, true, false, false, true, false, true);
               -- End of SQL commands
               EOF
           env:
