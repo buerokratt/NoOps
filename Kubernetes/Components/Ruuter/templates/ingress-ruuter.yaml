@@ -10,7 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "content-type"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "content-type, Cache-Control"
     nginx.ingress.kubernetes.io/cors-expose-headers: "cs-exposed-header1, cs-exposed-header2"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
