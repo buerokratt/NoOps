@@ -76,6 +76,8 @@ spec:
               value: "{{ .Values.env.SQLMS_DATASOURCES_0_PASSWORD }}"
             - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT
               value: "{{ .Values.env.LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT }}"
+            - name: SQLMS_SAVED_QUERIES_DIR
+              value: "/DSL/"
           ports:
             - containerPort: 8082
               name: http
