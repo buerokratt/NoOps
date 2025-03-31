@@ -1,11 +1,7 @@
 extractRequestData:
   assign:
     image: ${incoming.body}
-#  next: update_image
-
-logstep:
-  log: ${image}
-
+  next: update_image
 
 update_image:
   call: http.post
