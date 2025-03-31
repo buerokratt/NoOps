@@ -5,8 +5,8 @@ extractRequestData:
 
 logstep:
   log: ${image}
-logstep2:
-  log: ${image.tag}
+# logstep2:
+#   log: ${image.tag}
 
 update_image:
   call: http.post
