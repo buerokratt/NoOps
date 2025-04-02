@@ -146,6 +146,8 @@ spec:
           mountPath: /cron-data/
         - name: cron-dsl
           mountPath: /DSL
+        - name: bot-rasa-models
+          mountPath: /bot/models
       volumes:
       - name: cron-dsl
         emptyDir: {}
@@ -160,3 +162,6 @@ spec:
           name: cronconst
       - name: cron-commonservice
         emptyDir: {}
+      - name: bot-rasa-models
+        persistentVolumeClaim:
+          claimName: pvc-bot-models
