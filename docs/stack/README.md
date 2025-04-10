@@ -17,11 +17,17 @@ Clone following repos and build images
 - Clone [Chat Widget](https://github.com/buerokratt/Chat-Widget) ```git clone (https://github.com/buerokratt/Chat-Widget```
 - Navigate to, checkout dev branch ```git checkout dev```build chat widget image `docker build -f Dockerfile.dev -t chat-widget .`
 
-Run the stack with ```docker-compose up -d```
+Run the stack with 
+```
+docker-compose up -d
+```
 
 ## Automatic dev setup
 
 Create a local project folder ```widget```
 
-Navigate inside created folder and run the set-up script
-```run-widget-setup.sh```
+Navigate inside created folder and copy the script ```run-widget-setup.sh```  
+Run the set-up script  
+```
+bash run-widget-setup.sh
+```  
