@@ -5,8 +5,7 @@ Set up a local Buerokratt widget within Buerokratt stack
 
 ## Manual dev setup
  
-Create a local project folder  
-For example ```widget```
+Create a local project folder  ```widget```
 
 Navigate inside created folder
 Clone following repos and build images
@@ -22,8 +21,7 @@ Run the stack with ```docker-compose up -d```
 
 ## Automatic dev setup
 
-Create a local project folder  
-For example ```widget```
+Create a local project folder ```widget```
 
 Navigate inside created folder and run the set-up script
 ```run-widget-setup.sh```
