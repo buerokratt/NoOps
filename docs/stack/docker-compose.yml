@@ -14,7 +14,7 @@ services:
       - application.internalRequests.disabled=true
       - server.port=8086
     volumes:
-      - ./DSL/Ruuter.public:/DSL
+      - ./DSL/Ruuter.public:/DSL/backoffice
       - ./constants.ini:/app/constants.ini
     ports:
       - 8086:8086
@@ -52,7 +52,7 @@ services:
     ports:
       - 8082:8082
     volumes:
-      - ./DSL/Resql:/DSL
+      - ./DSL/Resql:/DSL/backoffice
     networks:
       - bykstack
 # To use DB locally, enable following block. For quick testing without database seeding, you can use the DB described in RESQL block
