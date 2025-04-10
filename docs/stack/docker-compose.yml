@@ -24,21 +24,21 @@ services:
     mem_limit: "512M"
     
 # Is not needed for local Widget run
-  # data-mapper:
-  #   container_name: data-mapper
-  #   image: data-mapper
-  #   environment:
-  #     - PORT=3000
-  #     - CONTENT_FOLDER=/data
-  #     - RATE_LIMIT_PER_MINUTE=1000
-  #   volumes:
-  #     - ./DSL:/data
-  #     - ./DSL/DMapper/backoffice/hbs:/workspace/app/views/backoffice
-  #     - ./DSL/DMapper/backoffice/js:/workspace/app/js/backoffice
-  #   ports:
-  #     - 3000:3000
-  #   networks:
-  #     - bykstack
+  data-mapper:
+    container_name: data-mapper
+    image: data-mapper
+    environment:
+      - PORT=3000
+      - CONTENT_FOLDER=/data
+      - RATE_LIMIT_PER_MINUTE=1000
+    volumes:
+      - ./DSL:/data
+      - ./DSL/DMapper/backoffice/hbs:/workspace/app/views/backoffice
+      # - ./DSL/DMapper/backoffice/js:/workspace/app/js/backoffice
+    ports:
+      - 3000:3000
+    networks:
+      - bykstack
 
   resql:
     container_name: resql
