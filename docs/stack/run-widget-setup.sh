@@ -91,6 +91,6 @@ cp Buerokratt-Chatbot/constants.ini NoOps/docs/stack/
 # --- Run docker-compose ---
 echo "🚀 Running docker compose from $NOOPS_COMPOSE_PATH..."
 cd "$NOOPS_COMPOSE_PATH"
-docker compose up -d
+docker-compose up -d
 
 echo "✅ Setup complete!"
