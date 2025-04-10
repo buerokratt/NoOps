@@ -43,8 +43,6 @@ services:
   resql:
     container_name: resql
     image: resql
-    depends_on:
-      - users_db
     environment:
       - sqlms.datasources.[0].name=byk
       - sqlms.datasources.[0].jdbcUrl=jdbc:postgresql://171.22.247.13:5433/byk?sslmode=require
