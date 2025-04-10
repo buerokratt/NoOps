@@ -1,0 +1,88 @@
+version: "3.9"
+
+services:
+  ruuter-public:
+    container_name: ruuter-public
+    image: ruuter
+    environment:
+      - application.cors.allowedOrigins=http://localhost:8086,http://localhost:3001,http://localhost:3003,http://localhost:3004,http://localhost:8080
+      - application.httpCodesAllowList=200,201,202,400,401,403,500
+      - application.internalRequests.allowedIPs=127.0.0.1
+      - application.logging.displayRequestContent=true
+      - application.logging.displayResponseContent=true
+      - application.logging.printStackTrace=true
+      - application.internalRequests.disabled=true
+      - server.port=8086
+    volumes:
+      - ./DSL/Ruuter.public:/DSL
+      - ./constants.ini:/app/constants.ini
+    ports:
+      - 8086:8086
+    networks:
+      - bykstack
+    cpus: "0.5"
+    mem_limit: "512M"
+    
+# Is not needed for local Widget run
+  # data-mapper:
+  #   container_name: data-mapper
+  #   image: data-mapper
+  #   environment:
+  #     - PORT=3000
+  #     - CONTENT_FOLDER=/data
+  #     - RATE_LIMIT_PER_MINUTE=1000
+  #   volumes:
+  #     - ./DSL:/data
+  #     - ./DSL/DMapper/backoffice/hbs:/workspace/app/views/backoffice
+  #     - ./DSL/DMapper/backoffice/js:/workspace/app/js/backoffice
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - bykstack
+
+  resql:
+    container_name: resql
+    image: resql
+    depends_on:
+      - users_db
+    environment:
+      - sqlms.datasources.[0].name=byk
+      - sqlms.datasources.[0].jdbcUrl=jdbc:postgresql://171.22.247.13:5433/byk?sslmode=require
+      - sqlms.datasources.[0].username=byk
+      - sqlms.datasources.[0].password=2nH09n6Gly
+      - logging.level.org.springframework.boot=INFO
+    ports:
+      - 8082:8082
+    volumes:
+      - ./DSL/Resql:/DSL
+    networks:
+      - bykstack
+# To use DB locally, enable following block. For quick testing without database seeding, you can use the DB described in RESQL block
+  # users_db:
+  #   container_name: users_db
+  #   image: postgres:14.1
+  #   environment:
+  #     - POSTGRES_USER=byk
+  #     - POSTGRES_PASSWORD=01234
+  #     - POSTGRES_DB=byk
+  #   ports:
+  #     - 5433:5432
+  #   volumes:
+  #     - ./data:/var/lib/postgresql/data
+  #   networks:
+  #     - bykstack
+
+  chat-widget:
+    container_name: chat-widget
+    image: chat-widget
+    ports:
+      - 3003:3003
+    networks:
+      - bykstack
+
+networks:
+  bykstack:
+    name: bykstack
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
