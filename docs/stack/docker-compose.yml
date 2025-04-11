@@ -14,7 +14,7 @@ services:
       - application.internalRequests.disabled=true
       - server.port=8086
     volumes:
-      - ./DSL/Ruuter.public:/DSL/backoffice
+      - ./DSL/Ruuter.public:/DSL
       - ./constants.ini:/app/constants.ini
     ports:
       - 8086:8086
