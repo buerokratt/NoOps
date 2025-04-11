@@ -27,6 +27,8 @@ Run the stack with
 docker-compose up -d
 ```
 
+With manual setup, you would also need to clone the [Buerokratt-Chatbot repo](https://github.com/buerokratt/Buerokratt-Chatbot.git) for the necsessary DSL's and make sure, that these DSL's are correctly placed within your project folder. 
+
 ## Automatic dev setup
 
 Create a local project folder ```widget```
