@@ -23,7 +23,6 @@ services:
     cpus: "0.5"
     mem_limit: "512M"
     
-# Is not needed for local Widget run
   data-mapper:
     container_name: data-mapper
     image: data-mapper
