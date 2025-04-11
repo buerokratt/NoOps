@@ -3,6 +3,9 @@
 # Scope
 Set up a local Buerokratt widget within Buerokratt stack
 
+### Requirements  
+```docker```, ```docker-compose```
+
 ## Manual dev setup
  
 Create a local project folder  ```widget```
