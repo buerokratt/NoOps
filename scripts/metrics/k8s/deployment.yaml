@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-metrics-checker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics-checker
+  template:
+    metadata:
+      labels:
+        app: metrics-checker
+    spec:
+      containers:
+      - name: metrics-checker
+        image: <IMAGE-HERE>
+        volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+        - name: metrics-logs
+          mountPath: /data
+      volumes:
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+      - name: metrics-logs
+        persistentVolumeClaim:
+          claimName: metrics-logs-pvc
