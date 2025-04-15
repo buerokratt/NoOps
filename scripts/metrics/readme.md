@@ -25,4 +25,12 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/data:/data cus
 ```
 
 ### K8s  
-To be added
+Run:  
+
+```
+kubectl apply -f k8s/pvc.yaml
+```
+
+```
+kubectl apply -f k8s/deployment.yaml
+```
