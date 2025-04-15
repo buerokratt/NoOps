@@ -62,3 +62,11 @@ env:
   REACT_APP_RUUTER_SERVICES_POST_PATH: /shared-data/services/POST/services
   REACT_APP_RUUTER_SERVICES_PATH: /shared-data/services
   REACT_APP_RUUTER_SERVICES_DIR_PATH: services
+
+resources:
+  requests:
+    memory: "3000Mi"
+    cpu: "100m"
+  limits:
+    memory: "4000Mi"
+    cpu: "100m"
