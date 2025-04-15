@@ -16,7 +16,30 @@ Metrics are logged as JSON lines to `/data/metrics.log`.
 
 ## 🚀 Usage
 
-### Local Docker
+### 🛠️ Dev Shortcuts
+
+Using the provided `Makefile`:
+
+```bash
+# Build the image
+make build
+
+
+# Run the container locally
+make run
+
+# View collected logs
+make logs
+
+# Clean the Docker image
+make clean
+
+# Use docker-compose
+make compose-up   # to start
+make compose-down # to stop
+```
+
+### 🐳 Local Docker (manual)
 
 Build and run:
 ```bash
@@ -24,7 +47,7 @@ docker build -t custom-metrics-checker .
 docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/data:/data custom-metrics-checker
 ```
 
-### K8s  
+### ☸️ K8s  
 Run:  
 
 ```
