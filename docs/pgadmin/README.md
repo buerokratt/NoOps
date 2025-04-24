@@ -24,7 +24,8 @@ User for this will be created by the administrator on the `pgadmin` side and giv
 ![Add Server - Step 1](https://github.com/user-attachments/assets/6b673f00-0559-4f5b-99a6-df88320f7b75)  
 **Name** – A name for the connection you will create. Can be anything, but it is recommended to use the DB name you will connect to.
 
-![Add Server - Step 2](https://github.com/user-attachments/assets/d6c07124-6dc2-4378-a035-b1232addded2)  
+
+![Add Server - Step 2](https://github.com/user-attachments/assets/127c20de-40fc-424c-9076-84506e326ed3)   
 - **Hostname:** `component-databases-users-db.byrokratt.svc.cluster.local`  
 - **Username:** ask DevOps  
 - **Password:** ask DevOps  
