@@ -11,22 +11,22 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initContainers:
-        - name: init-copy-files
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              pwd
-              cp -r ../Ruuter/ /app/DSL
-              cp -r ../Resql/ /app/DSL
-              cp -r ../DataMapper/ /app/DSL
-              cp -r ../OpenSearch/ /app/DSL
-              cp -r ../Liquibase/ /app/DSL
-              ls -la 
-          volumeMounts:
-            - name: training-dsl
-              mountPath: /app/DSL
+      #initContainers:
+      #  - name: init-copy-files
+      #    image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+      #    command: ["/bin/sh", "-c"]
+      #    args:
+      #      - |
+      #        pwd
+      #        cp -r ../Ruuter/ /app/DSL
+      #        cp -r ../Resql/ /app/DSL
+      #        cp -r ../DataMapper/ /app/DSL
+      #        cp -r ../OpenSearch/ /app/DSL
+      #        cp -r ../Liquibase/ /app/DSL
+      #        ls -la 
+      #    volumeMounts:
+      #      - name: training-dsl
+      #        mountPath: /app/DSL
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -146,9 +146,9 @@ spec:
         - name: config-volume
           configMap:
             name: configmap-byk-training
-        - name: training-dsl
-          persistentVolumeClaim:
-            claimName: pvc-{{ namespace }}-training-dsl
+       # - name: training-dsl
+       #   persistentVolumeClaim:
+       #     claimName: pvc-{{ namespace }}-training-dsl
         # - name: rasa-training-data
         #   persistentVolumeClaim:
         #     claimName: rasa-training-data
