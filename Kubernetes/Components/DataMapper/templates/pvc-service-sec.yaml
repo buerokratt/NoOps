@@ -4,7 +4,7 @@ metadata:
   name: pvc-service-secrets
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: longhorn
   resources:
     requests:
