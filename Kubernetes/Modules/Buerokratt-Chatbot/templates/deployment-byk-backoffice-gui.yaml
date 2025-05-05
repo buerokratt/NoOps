@@ -113,6 +113,6 @@ spec:
         - name: config-volume
           configMap:
             name: configmap-byk-backoffice
-        - name: buerokratt-dsl
-          persistentVolumeClaim:
-            claimName: pvc-{{ namespace }}-dsl
+      #  - name: buerokratt-dsl
+      #    persistentVolumeClaim:
+      #      claimName: pvc-{{ namespace }}-dsl
