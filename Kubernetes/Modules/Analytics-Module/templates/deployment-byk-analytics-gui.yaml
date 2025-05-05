@@ -12,21 +12,21 @@ spec:
         app: "{{ .Values.release_name }}"
     spec:
       # automountServiceAccountToken: false
-      initContainers:
-        - name: init-copy-files
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              pwd
-              cp -r ../Ruuter/ /app/DSL
-              cp -r ../Resql/ /app/DSL
-              cp -r ../DataMapper/ /app/DSL
-              cp -r ../Liquibase/ /app/DSL
-              ls -la
-          volumeMounts:
-            - name: analytics-dsl
-              mountPath: /app/DSL
+      # initContainers:
+        #- name: init-copy-files
+        #  image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+        #  command: ["/bin/sh", "-c"]
+        #  args:
+        #    - |
+        #      pwd
+        #      cp -r ../Ruuter/ /app/DSL
+        #      cp -r ../Resql/ /app/DSL
+        #      cp -r ../DataMapper/ /app/DSL
+        #      cp -r ../Liquibase/ /app/DSL
+        #      ls -la
+        #  volumeMounts:
+        #    - name: analytics-dsl
+        #      mountPath: /app/DSL
           # securityContext:
           #   allowPrivilegeEscalation: false
           #   capabilities:
