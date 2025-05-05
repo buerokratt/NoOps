@@ -9,4 +9,4 @@ spec:
       storage: 200Mi
   volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
