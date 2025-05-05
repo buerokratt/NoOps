@@ -90,8 +90,8 @@ spec:
           #   timeoutSeconds: 5
           #   failureThreshold: 3
           volumeMounts:
-            - name: buerokratt-dsl
-              mountPath: /app/DSL
+          #  - name: buerokratt-dsl
+          #    mountPath: /app/DSL
             - name: menu-configmap-volume
               mountPath: /app/menu.json
               subPath: menu.json
