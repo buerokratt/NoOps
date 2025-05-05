@@ -11,21 +11,21 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initContainers:
-        - name: init-copy-files
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              pwd
-              cp -r ../Ruuter/public/ /app/DSL
-              cp -r ../Resql/ /app/DSL
-              cp -r ../DataMapper/ /app/DSL
-              cp -r ../Liquibase/ /app/DSL
-              ls -la 
-          volumeMounts:
-            - name: buerokratt-dsl
-              mountPath: /app/DSL
+      #initContainers:
+      #  - name: init-copy-files
+      #    image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+      #    command: ["/bin/sh", "-c"]
+      #    args:
+      #      - |
+      #        pwd
+      #        cp -r ../Ruuter/public/ /app/DSL
+      #        cp -r ../Resql/ /app/DSL
+      #        cp -r ../DataMapper/ /app/DSL
+      #        cp -r ../Liquibase/ /app/DSL
+      #        ls -la 
+      #    volumeMounts:
+      #      - name: buerokratt-dsl
+      #        mountPath: /app/DSL
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
