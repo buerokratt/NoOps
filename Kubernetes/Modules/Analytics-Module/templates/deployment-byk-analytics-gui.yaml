@@ -160,9 +160,9 @@ spec:
           #   timeoutSeconds: 5
           #   failureThreshold: 3
       volumes:
-        - name: analytics-dsl
-          persistentVolumeClaim:
-            claimName: pvc-{{ namespace }}-analytics-dsl
+        #- name: analytics-dsl
+        #  persistentVolumeClaim:
+        #    claimName: pvc-{{ namespace }}-analytics-dsl
         - emptyDir: {}
           name: tmp
         - name: run
