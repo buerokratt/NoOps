@@ -4,7 +4,7 @@ metadata:
   name: pvc-{{ namespace }}-commonservice
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:
