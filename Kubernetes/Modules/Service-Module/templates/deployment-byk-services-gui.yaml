@@ -11,25 +11,25 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
-      initContainers:
-        - name: init-copy-files
-          image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              pwd
-              cp -r ../Ruuter/ /app/DSL
-              cp -r ../Resql/ /app/DSL
-              cp -r ../DataMapper/ /app/DSL
-              cp -r ../Ruuter/ /opt/dsl
-              cp -r ../Resql/ /opt/dsl
-              cp -r ../DataMapper/ /opt/dsl
-              ls -la 
-          volumeMounts:
-            - name: services-dsl
-              mountPath: /app/DSL
-            - name: dsl
-              mountPath: /data
+      #initContainers:
+      #  - name: init-copy-files
+      #    image: "{{ .Values.images.dsl.registry }}/{{ .Values.images.dsl.repository }}:{{ .Values.images.dsl.tag }}"
+      #    command: ["/bin/sh", "-c"]
+      #    args:
+      #      - |
+      #        pwd
+      #        cp -r ../Ruuter/ /app/DSL
+      #        cp -r ../Resql/ /app/DSL
+      #        cp -r ../DataMapper/ /app/DSL
+      #        cp -r ../Ruuter/ /opt/dsl
+      #        cp -r ../Resql/ /opt/dsl
+      #        cp -r ../DataMapper/ /opt/dsl
+      #        ls -la 
+      #    volumeMounts:
+      #      - name: services-dsl
+      #        mountPath: /app/DSL
+      #      - name: dsl
+      #        mountPath: /data
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.gui.registry }}/{{ .Values.images.gui.repository }}:{{ .Values.images.gui.tag }}"
@@ -128,10 +128,10 @@ spec:
               memory: "{{ .Values.resources.limits.memory }}"
               cpu: "{{ .Values.resources.limits.cpu }}"
       volumes:
-        - name: services-dsl
-          emptyDir: {}
-#          persistentVolumeClaim:
-#            claimName: pvc-{{ namespace }}-services-dsl
+        #- name: services-dsl
+        #  emptyDir: {}
+#       #   persistentVolumeClaim:
+#       #     claimName: pvc-{{ namespace }}-services-dsl
         - name: dsl
           emptyDir: {}
 
