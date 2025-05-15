@@ -60,6 +60,8 @@ spec:
                 secretKeyRef:
                   name: "byk-tim-env-secret"
                   key: "jwt_integration_key_store_password"
+            - name: security.cookie.same-site
+              value: Lax
           volumeMounts:
             - name: application-properties
               mountPath: /workspace/app/src/main/resources/application.properties
