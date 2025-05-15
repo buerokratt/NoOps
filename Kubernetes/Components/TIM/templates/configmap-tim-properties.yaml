@@ -12,7 +12,7 @@ data:
     security.oauth2.client.access-token-uri={{ .Values.byk.tim.env.security.oauth2.client.accessTokenUri }}
     security.oauth2.resource.jwk.key-set-uri={{ .Values.byk.tim.env.security.oauth2.resource.jwk.keySetUri }}
     security.allowlist.jwt={{ .Values.byk.tim.env.security.allowlist.jwt }}
-
+    security.cookie.same-site=Lax
     frontpage.redirect.url=https://admin.{{ .Values.domain }}/chat
 
     logging.level.root={{ .Values.byk.tim.env.logging.level.root }}
