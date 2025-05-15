@@ -52,3 +52,4 @@ data:
     RUUTER_SERVICES_PATH=/shared-data
     RUUTER_SERVICES_DIR_PATH=services
     SERVICES_PIPELINE=http://module-byk-training-gui-pipelines:3010
+    COOKIE_SAME_SITE=Lax
