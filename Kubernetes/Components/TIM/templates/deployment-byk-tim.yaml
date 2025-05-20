@@ -62,6 +62,8 @@ spec:
                   key: "jwt_integration_key_store_password"
             - name: security.cookie.same-site
               value: Lax
+            - name: jwt.whitelist.period
+              value: "30000"
           volumeMounts:
             - name: application-properties
               mountPath: /workspace/app/src/main/resources/application.properties
