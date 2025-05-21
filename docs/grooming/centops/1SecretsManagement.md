@@ -14,6 +14,7 @@ The Secrets Management epic focuses on establishing a secure, reliable, and scal
 ### Access Control and Authorization
 
 - Define strict access policies based on roles and least privilege principles to control which components, services, or users can retrieve secrets.
+- The custom role and rights must be defined by platform engineer/devops. Currently I suggest the minimal requirements for the roles (in RBAC) would be - UPDATE; READ; LIST; CREATE; PATCH 
 - Implement robust authentication mechanisms for secrets access, including audit trails for all access events.
 
 ### Secrets Rotation and Lifecycle Management
