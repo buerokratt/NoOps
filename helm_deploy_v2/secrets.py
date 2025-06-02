@@ -3,16 +3,6 @@ import sys
 import os
 import re
 
-def is_valid_password(password):
-    """Check if the password meets the requirements."""
-    if len(password) < 8:
-        return False
-    if not re.search(r"[A-Z]", password):  # Check for at least one capital letter
-        return False
-    if not re.search(r"\d", password):  # Check for at least one number
-        return False
-    return True
-
 def replace_placeholders(yaml_content, replacements):
     """Replace placeholders in the YAML content with actual values from replacements."""
     changes_made = False
