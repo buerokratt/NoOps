@@ -3,7 +3,7 @@ import sys
 import os
 import re
 
-def is_valid_password(password):Add commentMore actions
+def is_valid_password(password):
     #"""Check if the password meets the requirements."""
     #if len(password) < 8:
     #    return False
