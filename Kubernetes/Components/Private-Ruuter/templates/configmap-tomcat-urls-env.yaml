@@ -53,3 +53,7 @@ data:
     RUUTER_SERVICES_DIR_PATH=services
     SERVICES_PIPELINE=http://module-byk-training-gui-pipelines:3010
     COOKIE_SAME_SITE=Lax
+    CHATBOT_DMAPPER_HBS=http://component-byk-dmapper:3000/backoffice/hbs
+    ANALYTICS_DMAPPER_HBS=http://component-byk-dmapper:3000/analytics/hbs
+    SERVICE_DMAPPER_HBS=http://component-byk-dmapper:3000/service/hbs
+    TRAINING_DMAPPER_HBS=http://component-byk-dmapper:3000/training/hbs
