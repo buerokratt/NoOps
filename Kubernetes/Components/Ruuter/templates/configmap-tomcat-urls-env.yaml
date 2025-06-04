@@ -52,5 +52,5 @@ data:
     COOKIE_SAME_SITE=Lax
     CHATBOT_DMAPPER_HBS=http://component-byk-dmapper:3000/backoffice/hbs
     ANALYTICS_DMAPPER_HBS=http://component-byk-dmapper:3000/analytics/hbs
-    SERVICE_DMAPPER_HBS=http://component-byk-dmapper:3000/service/hbs
+    SERVICE_DMAPPER_HBS=http://component-byk-dmapper:3000/services/hbs
     TRAINING_DMAPPER_HBS=http://component-byk-dmapper:3000/training/hbs
