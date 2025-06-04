@@ -54,3 +54,4 @@ data:
     ANALYTICS_DMAPPER_HBS=http://component-byk-dmapper:3000/analytics/hbs
     SERVICE_DMAPPER_HBS=http://component-byk-dmapper:3000/services/hbs
     TRAINING_DMAPPER_HBS=http://component-byk-dmapper:3000/training/hbs
+    BGK_ACTIVE=true
