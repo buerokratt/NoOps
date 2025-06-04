@@ -61,3 +61,5 @@ data:
     BACKOFFICE_PROJECT_LAYER=backoffice
     SERVICE_PROJECT_LAYER=services
     TRAINING_PROJECT_LAYER=training
+    CHATBOT_PROJECT_LAYER=backoffice
+    
