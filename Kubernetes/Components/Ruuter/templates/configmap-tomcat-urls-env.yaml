@@ -43,8 +43,8 @@ data:
     SEARCH_ENDPOINT=X
     SKM_ACTIVE=false
     BGK_STRICTNESS=3
-    BGK_MAX_TOKENS=1000
-    BGK_DOCUMENTS=5
+    BGK_MAX_TOKENS=800
+    BGK_DOCUMENTS=7
     BGK_INDEX_NAME=
     BGK_QUERY_TYPE=vector_semantic_hybrid
     BGK_SEMANTIC_CONFIGURATION=azureml-default
@@ -55,3 +55,4 @@ data:
     SERVICE_DMAPPER_HBS=http://component-byk-dmapper:3000/services/hbs
     TRAINING_DMAPPER_HBS=http://component-byk-dmapper:3000/training/hbs
     BGK_ACTIVE=true
+    CHATBOT_PROJECT_LAYER=backoffice
