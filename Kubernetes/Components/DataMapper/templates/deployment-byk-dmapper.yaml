@@ -147,10 +147,7 @@ spec:
             - name: DSL_REPO
               value: {{ .Values.images.sec.service.repo }}
             - name: DSL_PATH
-              value: {{ .Values.images.sec.service.path }}               
-          # securityContext:
-          #  runAsUser: 0     
-          #  runAsGroup: 0         
+              value: {{ .Values.images.sec.service.path }}                     
       securityContext:
         runAsUser: 0     
         runAsGroup: 0         
@@ -158,8 +155,6 @@ spec:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           env:
-#            - name: EXTENSION
-#              value: .handlebars
             - name: CONTENT_FOLDER
               value: /rasa
             - name: SYNC_INTERVAL_MINUTES
@@ -198,10 +193,8 @@ spec:
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"
-              #cpu: "{{ .Values.resources.requests.cpu }}"
             limits:
               memory: "{{ .Values.resources.limits.memory }}"
-              #cpu: "{{ .Values.resources.limits.cpu }}"
       volumes:
         - name: shared-volume
           persistentVolumeClaim:
