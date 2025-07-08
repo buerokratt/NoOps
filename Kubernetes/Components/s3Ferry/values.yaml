@@ -5,20 +5,10 @@ replicas: 1
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 domain: {{ domain.name }} # Domain name
-#secretname: {{ cert.Name.value }} # Cert name value, change this as suited to environment
-#ingress:
-#  certIssuerName: {{ cert.Issuer.Name }}  # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-s3"    
 
