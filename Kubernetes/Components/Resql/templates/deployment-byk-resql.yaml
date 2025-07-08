@@ -84,23 +84,11 @@ spec:
           volumeMounts:
             - name: resql-volume
               mountPath: /DSL/
-          # livenessProbe:
-          #   httpGet:
-          #     port: 8082
-          #   initialDelaySeconds: 26
-          #   periodSeconds: 11
-          # readinessProbe:
-          #   httpGet:
-          #     port: 8082
-          #   initialDelaySeconds: 25
-          #   periodSeconds: 10
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"
-          #    cpu: "{{ .Values.resources.requests.cpu }}"
             limits:
               memory: "{{ .Values.resources.limits.memory }}"
-          #    cpu: "{{ .Values.resources.limits.cpu }}"
 
       volumes:
         - name: resql-volume
