@@ -5,21 +5,12 @@ replicas: 1
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+
 istio:
   enabled: {{ istio.enabled }}
 domain: {{ domain.name }} # Domain name
-#secretname: {{ cert.Name.value }} # Cert name value, change this as suited to environment
-#ingress:
-#  certIssuerName: {{ cert.Issuer.Name }}   # Change this if your certIssuerName has set up different
 
 release_name: "component-byk-cronmanager"    
 
@@ -40,13 +31,13 @@ images:
 
 contstants:
   TRAINING_PUBLIC_RUUTER: "http://component-byk-ruuter-private:8080/training"
-  TRAINING_DMAPPER: "http://component-byk-dmapper:3000" # Vaata üle täpselt mi siia läks
+  TRAINING_DMAPPER: "http://component-byk-dmapper:3000"
   TRAINING_OPENSEARCH: "http://component-opensearch-node:9200"
   TRAINING_TIM: "http://component-byk-tim:8085"
   TRAINING_RESQL: "http://component-byk-resql:8082"
-  TRAINING_USERS_RESQL: http://component-byk-resql:8082
+  TRAINING_USERS_RESQL: "http://component-byk-resql:8082"
   TRAINING_PIPELINE: "http://module-byk-training-gui-pipelines:3010"
-  TRAINING_RASA: "http://component-byk-train-bot:5005" # ehita training rasa image, muuda trin-bot? deploy kausta, midagi seal all juba valmis kah
+  TRAINING_RASA: "http://component-byk-train-bot:5005"
   S3_FERRY_TRAIN: "http://component-byk-s3:3000"
   S3_FERRY_LOAD: "http://component-byk-s3-ferry-publish:3000"
   SERVICES_RESQL: "http://component-byk-resql:8082"
