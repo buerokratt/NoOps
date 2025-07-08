@@ -6,20 +6,11 @@ replicas: 1
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 domain: {{ domain.name }} # Domain name
 secretname: {{ tim.cert.Name.value }}  # Cert name value, change this as suited to environment
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
