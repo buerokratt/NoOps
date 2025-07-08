@@ -5,20 +5,10 @@ replicas: 1
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 domain: {{ domain.name }} # Domain name
-
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }}
