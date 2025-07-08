@@ -8,20 +8,10 @@ istio:
   enabled: {{ istio.enabled }}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 domain: {{ domain.name }} # Domain name
-
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
