@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"               # Keep component-scoped if unique per chart
+  annotations:
+    sidecar.istio.io/inject: "{{ .Values.global.istio.enabled }}"
+spec:
+  replicas: {{ .Values.replicas }}                  # replicas might be component-scoped still
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      initContainers:
+        - name: init-copy-files-backoffice
+          image: "{{ .Values.global.images.backoffice.registry }}/{{ .Values.global.images.backoffice.repository }}:{{ .Values.global.images.backoffice.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Resql/backoffice/ /root/DSL/
+              ls -la /root/DSL/
+          volumeMounts:
+            - name: resql-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-analytics
+          image: "{{ .Values.global.images.analytics.registry }}/{{ .Values.global.images.analytics.repository }}:{{ .Values.global.images.analytics.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Resql/analytics /root/DSL/
+              ls -la /root/DSL/
+          volumeMounts:
+            - name: resql-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-training
+          image: "{{ .Values.global.images.training.registry }}/{{ .Values.global.images.training.repository }}:{{ .Values.global.images.training.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Resql/training /root/DSL/
+              ls -la /root/DSL/
+          volumeMounts:
+            - name: resql-volume
+              mountPath: /root/DSL/
+        - name: init-copy-files-services
+          image: "{{ .Values.global.images.services.registry }}/{{ .Values.global.images.services.repository }}:{{ .Values.global.images.services.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Resql/services /root/DSL/
+              ls -la /root/DSL/
+          volumeMounts:
+            - name: resql-volume
+              mountPath: /root/DSL/
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.global.images.scope.registry }}/{{ .Values.global.images.scope.repository }}:{{ .Values.global.images.scope.tag }}"
+          env:
+            - name: logging.level.root
+              value: "{{ .Values.global.env.LOGGING_LEVEL_ROOT }}"
+            - name: SQLMS_DATASOURCES_0_NAME
+              value: "{{ .Values.global.env.SQLMS_DATASOURCES_0_NAME }}"
+            - name: SQLMS_DATASOURCES_0_JDBCURL
+              value: "{{ .Values.global.env.SQLMS_DATASOURCES_0_JDBCURL }}"
+            - name: SQLMS_DATASOURCES_0_USERNAME
+              value: "{{ .Values.global.env.SQLMS_DATASOURCES_0_USERNAME }}"
+            - name: SQLMS_DATASOURCES_0_PASSWORD
+              value: "{{ .Values.global.env.SQLMS_DATASOURCES_0_PASSWORD }}"
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT
+              value: "{{ .Values.global.env.LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT }}"
+            - name: SQLMS_SAVED_QUERIES_DIR
+              value: "/DSL/"
+          ports:
+            - containerPort: 8082
+              name: http
+          volumeMounts:
+            - name: resql-volume
+              mountPath: /DSL/
+          resources:
+            requests:
+              memory: "{{ .Values.global.resources.requests.memory }}"
+              # cpu: "{{ .Values.global.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.global.resources.limits.memory }}"
+              # cpu: "{{ .Values.global.resources.limits.cpu }}"
+
+      volumes:
+        - name: resql-volume
+          emptyDir: {}
