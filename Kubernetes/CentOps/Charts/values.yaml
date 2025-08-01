@@ -33,8 +33,8 @@ global:
     LOGGING_LEVEL_ROOT: "INFO"
     SQLMS_DATASOURCES_0_NAME: "byk"
     SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
-    SQLMS_DATASOURCES_0_USERNAME: "byk"
-    SQLMS_DATASOURCES_0_PASSWORD: "users-db-password"
+    SQLMS_DATASOURCES_0_USERNAME: "" # Example: <path:kv/data/apps/component-byk-resql/db-creds#SQLMS_DATASOURCES_0_USERNAME>
+    SQLMS_DATASOURCES_0_PASSWORD: "" # Example: <path:kv/data/apps/component-byk-resql/db-creds#SQLMS_DATASOURCES_0_PASSWORD>
     LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
 
   resources:
