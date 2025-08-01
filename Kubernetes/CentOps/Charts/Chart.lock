@@ -1,0 +1,9 @@
+dependencies:
+- name: Databases
+  repository: file://./charts/Databases
+  version: 0.1.0
+- name: Resql
+  repository: file://./charts/Resql
+  version: 0.1.0
+digest: sha256:7aa10e277d6ac6fa6f05829b1c0e7b6eaeb3449a51db78afdb4913514c85700f
+generated: "2025-08-01T10:14:37.826571223Z"
