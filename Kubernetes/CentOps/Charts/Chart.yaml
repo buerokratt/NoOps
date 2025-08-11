@@ -5,9 +5,6 @@ version: 0.1.0
 type: application
 
 dependencies:
-  - name: Databases
-    version: 0.1.0
-    repository: "file://./charts/Databases"
   - name: Resql
     version: 0.1.0
     repository: "file://./charts/Resql"
