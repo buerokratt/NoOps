@@ -1,0 +1,6 @@
+dependencies:
+- name: Resql
+  repository: file://./charts/Resql
+  version: 0.1.0
+digest: sha256:f7be3cade887ca3641119af14cd5e44c6e36df5e481c0ce5cc8ce59cdbfba226
+generated: "2025-08-11T12:22:48.69859024Z"
