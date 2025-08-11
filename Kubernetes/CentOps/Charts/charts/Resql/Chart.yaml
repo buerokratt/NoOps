@@ -1,7 +1,0 @@
-apiVersion: v2
-name: Resql
-description: A Helm chart for Resql
-type: application
-
-version: 0.1.0
-appVersion: 2.0.0
