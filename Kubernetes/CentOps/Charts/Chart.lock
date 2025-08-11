@@ -1,0 +1,6 @@
+dependencies:
+- name: Ruuter
+  repository: file://./charts/Ruuter
+  version: 0.1.0
+digest: sha256:e6fc7480f187a72fd3ea9416c8667c90843fcb9ad8b62d2a15ac1ed4bdf11ffd
+generated: "2025-08-11T13:22:32.647054913Z"
