@@ -1,0 +1,32 @@
+component-byk-resql:
+  release_name: "component-byk-resql"
+  replicas: 1
+  global:
+    istio:
+      enabled: true
+    domain: "example.com"
+    ingress:
+      certIssuerName: "letsencrypt-prod"
+    images:
+      scope:
+        registry: "ghcr.io"
+        repository: "buerokratt/resql"
+        tag: "v1.3.4"
+      backoffice:
+        registry: "ghcr.io"
+        repository: "buerokratt/buerokratt-dsl"
+        tag: "backoffice-module-test-1.5.20"
+    env:
+      LOGGING_LEVEL_ROOT: "INFO"
+      SQLMS_DATASOURCES_0_NAME: "byk"
+      SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
+      SQLMS_DATASOURCES_0_USERNAME: "" # Example: <path:kv/data/apps/component-byk-resql/db-creds#SQLMS_DATASOURCES_0_USERNAME>
+      SQLMS_DATASOURCES_0_PASSWORD: "" # Example: <path:kv/data/apps/component-byk-resql/db-creds#SQLMS_DATASOURCES_0_PASSWORD>
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
+    resources:
+      requests:
+        memory: "1000Mi"
+        cpu: "50m"
+      limits:
+        memory: "2000Mi"
+        cpu: "50m"
