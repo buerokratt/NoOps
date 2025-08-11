@@ -3,7 +3,7 @@ global:
     enabled: true
 
   domain: "example.com"
-
+release_name: "component-byk-resql"
   ingress:
     certIssuerName: "letsencrypt-prod"
 
