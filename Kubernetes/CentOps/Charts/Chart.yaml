@@ -1,0 +1,10 @@
+apiVersion: v2
+name: Buerokratt
+description: Umbrella chart for Buerokratt
+version: 0.1.0
+type: application
+
+dependencies:
+  - name: Resql
+    version: 0.1.1
+    repository: "file://./charts/Ruuter"
