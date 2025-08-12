@@ -12,5 +12,5 @@ dependencies:
     version: 0.1.0
     repository: "file://./charts/Resql"
   - name: Databases
-    version: 0.1.0
+    version: 0.1.20
     repository: "file://./charts/Databases"
