@@ -36,7 +36,7 @@ spec:
             - name: application.logging.printStackTrace
               value: "true"
             - name: application.httpResponseSizeLimit
-              value: "{{ .Values.env.size.limit }}"
+              value: "{{ .Values.env.sizelimit }}"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
