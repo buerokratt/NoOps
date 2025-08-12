@@ -24,7 +24,7 @@ spec:
             - name: logging.level.root
               value: "info"
             - name: application.logging.displayRequestContent
-              value: "rue"
+              value: "true"
             - name: application.logging_displayResponseContent
               value: "true"
             - name: application.cors.allowedOrigins
