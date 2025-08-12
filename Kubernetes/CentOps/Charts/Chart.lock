@@ -2,5 +2,8 @@ dependencies:
 - name: Ruuter
   repository: file://./charts/Ruuter
   version: 0.1.0
-digest: sha256:e6fc7480f187a72fd3ea9416c8667c90843fcb9ad8b62d2a15ac1ed4bdf11ffd
-generated: "2025-08-11T13:22:32.647054913Z"
+- name: Resql
+  repository: file://./charts/Resql
+  version: 0.1.0
+digest: sha256:444e993662837e59823858de63beec7c7431c1262510ccfe5c9b673e8df51705
+generated: "2025-08-12T09:28:24.798802306Z"
