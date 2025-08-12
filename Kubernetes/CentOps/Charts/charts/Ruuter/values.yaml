@@ -8,4 +8,5 @@ images:
 cors: "https://xample.com"
 certIssuerName: "letsencrypt-prod"
 secretname: "ruuter.stage.buerokratt.ee0001"
-size.limit: "3000"
+size:
+  limit: "3000"

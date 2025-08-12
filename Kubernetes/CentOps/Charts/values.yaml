@@ -9,4 +9,5 @@ Ruuter:
   cors: "https://xample.com"
   certIssuerName: "letsencrypt-prod"
   secretname: "ruuter.stage.buerokratt.ee0001"
-  size.limit: "3200"
+  size:
+    limit: "3200"
