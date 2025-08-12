@@ -5,7 +5,7 @@ metadata:
   annotations:
     sidecar.istio.io/inject: "false"
 spec:
-  replicas: 1
+  replicas: "{{ .Values.replicas }}"
   selector:
     matchLabels:
       app: "{{ .Values.release_name }}"
@@ -28,7 +28,7 @@ spec:
             - name: application.logging_displayResponseContent
               value: "true"
             - name: application.cors.allowedOrigins
-              value: "{{ .Values.cors }}"
+              value: "{{ .Values.env.cors }}"
             - name: application.DSL.allowedFiletypes
               value: .yml,.yaml,.md,.tmp
             - name: application.internalRequests.disabled
@@ -36,7 +36,7 @@ spec:
             - name: application.logging.printStackTrace
               value: "true"
             - name: application.httpResponseSizeLimit
-              value: "{{ .Values.size.limit }}"
+              value: "{{ .Values.env.size.limit }}"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/

@@ -1,13 +1,15 @@
 Ruuter:
   release_name: "ruuteritest"
   domain: "eexample.com"
+  replicas: "1"
   images:
     scope:
       registry: "ghcr.io"
       repository: "buerokratt/ruuter"
-      tag: "v2.2.0"
-  cors: "https://xample.com"
+      tag: "v2.2.2"
   certIssuerName: "letsencrypt-prod"
   secretname: "ruuter.stage.buerokratt.ee0001"
-  size:
-    limit: "3200"
+  env:
+    cors: "https://xample.com"
+    size:
+      limit: "3000"
