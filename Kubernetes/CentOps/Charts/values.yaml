@@ -11,3 +11,48 @@ Ruuter:
   env:
     cors: "https://xample.com"
     sizelimit: "3000"
+Resql:
+  istio:
+    enabled: false
+  domain: "eexample.com"
+
+  release_name: "component-byk-resql"
+  release_db: "component-databases" 
+  
+  images:
+    scope:
+      registry: "ghcr.io"
+      repository: "buerokratt/resql"
+      tag: "v1.3.4" 
+    backoffice:
+      registry: "ghcr.io"
+      repository: "buerokratt/buerokratt-dsl"
+      tag: "backoffice-module-test-1.5.19" 
+    analytics:
+      registry: "ghcr.io"
+      repository: "buerokratt/buerokratt-dsl"
+      tag: "analytics-module-test-1.5.11" 
+    services:
+      registry: "ghcr.io"
+      repository: "buerokratt/buerokratt-dsl"
+      tag: "service-module-test-1.5.20" 
+    training:
+      registry: "ghcr.io"
+      repository: "buerokratt/buerokratt-dsl"
+      tag: "training-module-test-1.5.18" 
+      
+  env:
+    LOGGING_LEVEL_ROOT: "INFO"
+    SQLMS_DATASOURCES_0_NAME: "byk"
+    SQLMS_DATASOURCES_0_JDBCURL: "jdbc:postgresql://component-databases-users-db:5432/byk"
+    SQLMS_DATASOURCES_0_USERNAME: "byk"
+    SQLMS_DATASOURCES_0_PASSWORD: ""
+    LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
+
+  resources:
+    requests:
+      memory: "1000Mi"
+      cpu: "50m"
+    limits:
+      memory: "2000Mi"
+      cpu: "50m"
