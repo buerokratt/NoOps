@@ -11,5 +11,4 @@ Ruuter:
   secretname: "ruuter.stage.buerokratt.ee0001"
   env:
     cors: "https://xample.com"
-    size:
-      limit: "3000"
+    sizelimit: "3000"
