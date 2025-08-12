@@ -22,7 +22,9 @@ jobs:
 
     - name: Build Helm dependencies
       working-directory: ./Kubernetes/CentOps/Charts
-      run: helm dependency build
+      run: |
+        rm -f Chart.lock
+        helm dependency build
 
     - name: Commit and push if dependencies updated
       run: |
