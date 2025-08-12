@@ -1,6 +1,5 @@
 release_name: "ruuteritest"
 domain: "eexample.com"
-replicas: 1
 images:
   scope:
     registry: "ghcr.io"

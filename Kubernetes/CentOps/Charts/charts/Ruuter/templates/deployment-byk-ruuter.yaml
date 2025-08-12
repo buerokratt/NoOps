@@ -5,7 +5,7 @@ metadata:
   annotations:
     sidecar.istio.io/inject: "false"
 spec:
-  replicas: "{{ .Values.replicas | int }}"
+  replicas: 1
   selector:
     matchLabels:
       app: "{{ .Values.release_name }}"
@@ -36,7 +36,7 @@ spec:
             - name: application.logging.printStackTrace
               value: "true"
             - name: application.httpResponseSizeLimit
-              value: "{{ .Values.env.sizelimit }}"
+              value: "{{ .Values.env.size.limit }}"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
