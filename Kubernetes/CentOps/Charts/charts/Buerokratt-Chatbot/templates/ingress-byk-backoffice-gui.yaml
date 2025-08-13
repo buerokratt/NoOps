@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; connect-src 'self' https://ruuter.test.example.ee/v2/public https://tim.test.example.ee https://admin.test.example.ee https://ruuter.test.example.ee/v2/private https://ruuter.test.example.ee;";
+      add_header Content-Security-Policy "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; connect-src 'self' {{ .Values.ingress.urlnameruuter }}/v2/public {{ .Values.ingress.urlnametim }} {{ .Values.ingress.urlnameadmin }} {{ .Values.ingress.urlnameruuter }}/v2/private {{ .Values.ingress.urlnameruuter }};";
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/whitelist-source-range: "{{ .Values.ingress.whitelistSourceRange }}"
   labels:

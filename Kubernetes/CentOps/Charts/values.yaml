@@ -96,6 +96,9 @@ Buerokratt-Chatbot:
 
   ingress:
     whitelistSourceRange: ""
+    urlnameruuter: "https://ruuter.test.example.ee"
+    urlnametim: "https://tim.test.example.ee"
+    urlnameadmin: "https://admin.test.example.ee"
     
   release_name: "module-byk-backoffice-gui"
 
