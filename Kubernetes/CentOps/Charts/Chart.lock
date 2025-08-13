@@ -12,4 +12,4 @@ dependencies:
   repository: file://./charts/Buerokratt-Chatbot
   version: 0.1.0
 digest: sha256:71e6da9e7c4112bf097a7c8cdff3d1fc955fb4a2352f58c042261e245a3d0ad7
-generated: "2025-08-13T06:47:46.374132709Z"
+generated: "2025-08-13T07:06:15.658394214Z"
