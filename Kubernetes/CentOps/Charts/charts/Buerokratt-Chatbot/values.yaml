@@ -1,0 +1,51 @@
+domain: "example.com"
+secretname: "certname"
+
+ingress:
+  whitelistSourceRange: ""
+  
+release_name: "module-byk-backoffice-gui"
+
+images:
+  gui:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-chatbot"
+    tag: "v1.1.1"
+  dsl:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "v1.1.1"
+  liquibase:
+    dsl:
+      repo: https://github.com/buerokratt/Buerokratt-Chatbot.git
+      path: DSL/Liquibase
+
+env:
+  REACT_APP_RUUTER_API_URL: "https://ruuter.test.example.ee/v2/public/backoffice"
+  REACT_APP_RUUTER_PRIVATE_API_URL: "https://ruuter.test.example.ee/v2/private/backoffice"
+  REACT_APP_BUEROKRATT_CHATBOT_URL: "https://admin.test.example.ee/chat"
+  REACT_APP_MENU_URL: "https://admin.test.example.ee"
+  REACT_APP_MENU_PATH: "/chat/menu.json"
+  REACT_APP_CUSTOMER_SERVICE_LOGIN: "https://admin.test.example.ee/et/log-in"
+  DOMAIN: "test.example.ee"
+  REACT_APP_CONVERSATIONS_BASE_URL: "https://admin.test.example.ee/chat"
+  REACT_APP_TRAINING_BASE_URL: "https://admin.test.example.ee/training"
+  REACT_APP_ANALYTICS_BASE_URL: "https://admin.test.example.ee/analytics"
+  REACT_APP_SERVICES_BASE_URL: "https://admin.test.example.ee/services"
+  REACT_APP_SETTINGS_BASE_URL: "https://admin.test.example.ee/settings"
+  REACT_APP_MONITORING_BASE_URL: "https://admin.test.example.ee/monitoring"
+  REACT_APP_SERVICE_ID: "conversations,settings,monitoring"
+  REACT_APP_NOTIFICATION_NODE_URL: "https://ruuter.test.example.ee"
+
+
+liquibase:
+  jdbcUrl: "jdbc:postgresql://test-buerokratt-users-db.test2.svc.cluster.local:5432/byk?user=byk"    
+  dbPassword: ""
+
+resources:
+  requests:
+    memory: "10Mi"
+    cpu: "1m"
+  limits:
+    memory: "50Mi"
+    cpu: "5m"

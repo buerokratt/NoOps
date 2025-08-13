@@ -1,0 +1,7 @@
+apiVersion: v2
+name: Buerokratt-Chatbot
+description: A Helm chart for Chatbot
+type: application
+
+version: 0.1.0
+appVersion: 2.0.0
