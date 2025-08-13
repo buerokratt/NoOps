@@ -15,5 +15,5 @@ dependencies:
     version: 0.1.20
     repository: "file://./charts/Databases"
   - name: Buerokratt-Chatbot
-    version: 0.1.20
+    version: 0.1.0
     repository: "file://./charts/Buerokratt-Chatbot"
