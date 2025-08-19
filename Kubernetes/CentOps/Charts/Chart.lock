@@ -18,4 +18,4 @@ dependencies:
   repository: file://./charts/Widget
   version: 0.1.0
 digest: sha256:f3484d92a11dd391c1e02dbe59178ae7c23a672162ae7a4de806c3aa0eb8f044
-generated: "2025-08-19T13:02:36.985600183Z"
+generated: "2025-08-19T13:03:30.517427834Z"
