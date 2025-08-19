@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      initContainers:
+        - name: init-keytool
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          command:
+            - "sh"
+            - "-c"
+            - |
+              if [ ! -e "/workspace/app-shared/keystore.jwt" ]; then
+                keytool -delete -alias jwtsign -keystore '/workspace/app-shared/jwtkeystore.jks' -storepass 123456
+                keytool -genkeypair -alias jwtsign -keyalg RSA -keysize 2048 -keystore 'jwtkeystore.jks' -validity 3650 -noprompt -dname "CN={{ .Values.domain }}" -storepass {{ .Values.keystore }}
+                touch /workspace/app-shared/keystore.jwt
+                echo "Initialization successful: keystore.jwt created."
+              else
+                echo "keystore.jwt already exists. No initialization needed really."
+              fi
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace/app
+            - name: workspace-shared
+              mountPath: /workspace/app-shared
+
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          ports:
+            - containerPort: 8085
+              name: "http"
+          env:
+            - name: KEY_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: "byk-tim-env-secret"
+                  key: key_pass
+            - name: "DB_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: "byk-tim-env-secret"
+                  key: password
+            - name: "OAUTH2_CLIENT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: "byk-tim-env-secret"
+                  key: "oauth2_client_secret"
+            - name: "KEY_STORE_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: "byk-tim-env-secret"
+                  key: "jwt_integration_key_store_password"
+            - name: security.cookie.same-site
+              value: Lax
+            - name: jwt.whitelist.period
+              value: "30000"
+          volumeMounts:
+            - name: application-properties
+              mountPath: /workspace/app/src/main/resources/application.properties
+              subPath: application.properties
+            - name: workspace-shared
+              mountPath: /workspace/app-shared
+          livenessProbe:
+            httpGet:
+              port: 8085
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              port: 8085
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          #resources:
+          #  requests:
+          #    memory: "{{ .Values.resources.requests.memory }}"
+          #    cpu: "{{ .Values.resources.requests.cpu }}"
+          #  limits:
+          #    memory: "{{ .Values.resources.limits.memory }}"
+          #    cpu: "{{ .Values.resources.limits.cpu }}"
+
+      volumes:
+        - name: tomcat-config
+          configMap:
+            name: tomcat-server-config
+        - name: application-properties
+          configMap:
+            name: byk-tim-config
+        - name: workspace
+          persistentVolumeClaim:
+            claimName: byk-tim-workspace-pvc
+        - name: workspace-shared
+          persistentVolumeClaim:
+            claimName: byk-tim-workspace-shared-pvc

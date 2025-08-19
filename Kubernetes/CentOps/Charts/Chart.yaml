@@ -17,3 +17,9 @@ dependencies:
   - name: Buerokratt-Chatbot
     version: 0.1.0
     repository: "file://./charts/Buerokratt-Chatbot"
+  - name: TIM
+    version: 0.1.0
+    repository: "file://./charts/TIM"
+  - name: Widget
+    version: 0.1.0
+    repository: "file://./charts/Widget"

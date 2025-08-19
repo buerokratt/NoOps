@@ -1,0 +1,24 @@
+domain: "test.buerokratt.ee"
+secretname: "secretnamevaartus"
+release_name: "module-byk-widget"
+
+images:
+  gui:
+    registry: "ghcr.io"
+    repository: "buerokratt/chat-widget"
+    tag: "v1.1.1"
+  dsl:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "v1.1.1"
+
+config: 
+  header_origin: "https://test.buerokratt.ee"
+
+resources:
+  requests:
+    memory: "10Mi"
+    cpu: "1m"
+  limits:
+    memory: "50Mi"
+    cpu: "5m"

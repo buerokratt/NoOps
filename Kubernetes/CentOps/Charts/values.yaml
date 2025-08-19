@@ -6,7 +6,6 @@ Ruuter:
       registry: "ghcr.io"
       repository: "buerokratt/ruuter"
       tag: "v2.2.2"
-  certIssuerName: "letsencrypt-prod"
   secretname: "ruuter.stage.buerokratt.ee0001"
   env:
     cors: "https://xample.com"
@@ -82,6 +81,7 @@ Databases:
       postgresPassword: postgres
       username: byk
       password: "{{ usersDB.password }}"
+      database: byk
     statefulset:
       enabled: true
       replicaCount: 1
@@ -145,3 +145,65 @@ Buerokratt-Chatbot:
     limits:
       memory: "50Mi"
       cpu: "5m"
+TIM:
+  domain: "eexample.com"
+  secretname: "tim.centops.example.ee0001"
+  certIssuerName: "letsencrypt-prod"
+
+
+      env:
+        security:
+          allowlist:
+            jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
+          oauth2:
+            client:
+              clientId: "example" 
+              clientSecret: "example"
+              scope: openid
+              userAuthorizationUri: "https://tim.centops.example.com/oidc/authorize"
+              accessTokenUri: "https://tim.centops.example.com/oidc/token"
+            resource:
+              jwk:
+                keySetUri: "https://tim.centops.example.com/oidc/jwks"
+        legacyPortalIntegration:
+          legacyUrl: NA
+          legacyPortalRefererMarker: NA
+          sessionCookieDomain: "eexample.com"
+        jwtIntegration:
+          signature:
+            issuer: "eexample.com"
+            keyStorePassword: "password"
+            keyStore: classpath:jwtkeystore.jks
+        spring:
+          profiles:
+            active: dev
+        logging:
+          level:
+            root: INFO
+    key_pass: "keystorepassword"
+  keystore: "keystorepassword"
+        
+  tim-postgresql:
+    image:
+      tag: 14.1.0
+    auth:
+      postgresPassword: postgres
+      username: tim
+      password: "timdbpassword"
+      database: "tim"
+
+  tim_postgresql: "timdbpassword"
+
+  images:
+    scope:
+      registry: "ghcr.io"
+      repository: "buerokratt/tim"
+      tag: "v1.1.1"
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "2Gi"
+      cpu: "200m"

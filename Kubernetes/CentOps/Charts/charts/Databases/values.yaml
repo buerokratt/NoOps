@@ -22,6 +22,7 @@ users-db:
     postgresPassword: postgres
     username: byk
     password: "{{ usersDB.password }}"
+    database: byk
   statefulset:
     enabled: true
     replicaCount: 1
