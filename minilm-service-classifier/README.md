@@ -1,4 +1,4 @@
-# MiniLM Service Intent Classifier
+# MiniLM Service Intent Classifier **POC**
 
 A lightweight, intent-based classifier for service queries, supporting both interactive and batch processing. The script performs **intent classification**, **parameter extraction**, and routes queries to the appropriate service or fallback (RAG/general_response).
 
