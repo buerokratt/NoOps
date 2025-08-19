@@ -29,7 +29,7 @@ def extract_params(intent_name, text):
             results[param] = None
     return results
 
-# Full query routing, now taking settings as arguments
+# Full query routing
 def route_query(text, enforce_params=True, threshold=0.8):
     if not is_informative(text):
         return {"route": "RAG", "intent": "general_question", "confidence": 1.0, "reason": "not_informative"}
