@@ -1,6 +1,5 @@
 domain: "eexample.com"
 secretname: "tim.centops.example.ee0001"
-certIssuerName: "letsencrypt-prod"
 
 release_name: "component-byk-tim"
 release_db: "component-databases"

@@ -148,9 +148,12 @@ Buerokratt-Chatbot:
 TIM:
   domain: "eexample.com"
   secretname: "tim.centops.example.ee0001"
-  certIssuerName: "letsencrypt-prod"
 
+  release_name: "component-byk-tim"
+  release_db: "component-databases"
 
+  byk:
+    tim:
       env:
         security:
           allowlist:
@@ -207,3 +210,29 @@ TIM:
     limits:
       memory: "2Gi"
       cpu: "200m"
+
+Widget:
+  domain: "test.buerokratt.ee"
+  secretname: "secretnamevaartus"
+  release_name: "module-byk-widget"
+
+  images:
+    gui:
+      registry: "ghcr.io"
+      repository: "buerokratt/chat-widget"
+      tag: "v1.1.1"
+    dsl:
+      registry: "ghcr.io"
+      repository: "buerokratt/buerokratt-dsl"
+      tag: "v1.1.1"
+
+  config: 
+    header_origin: "https://test.buerokratt.ee"
+
+  resources:
+    requests:
+      memory: "10Mi"
+      cpu: "1m"
+    limits:
+      memory: "50Mi"
+      cpu: "5m"
