@@ -1,0 +1,20 @@
+domain: "test.buerokratt.ee"
+secretname: "vaartus"
+
+ingress:
+  whitelistSourceRange: ""
+
+release_name: "module-byk-authentication-layer"
+
+images:
+  gui:
+    registry: "ghcr.io"
+    repository: "buerokratt/authentication-layer"
+    tag: "v1.1.1"
+resources:
+  requests:
+    memory: "10Mi"
+    cpu: "1m"
+  limits:
+    memory: "50Mi"
+    cpu: "5m"

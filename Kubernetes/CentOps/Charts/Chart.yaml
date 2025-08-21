@@ -23,3 +23,15 @@ dependencies:
   - name: Widget
     version: 0.1.0
     repository: "file://./charts/Widget"
+  - name: Analytics-Module
+    version: 0.1.0
+    repository: "file://./charts/Analytics-Module"
+  - name: Authentication-Layer
+    version: 0.1.0
+    repository: "file://./charts/Authentication-Layer"
+  - name: Service-Module
+    version: 0.1.0
+    repository: "file://./charts/Service-Module"
+  - name: Training-Module
+    version: 0.1.0
+    repository: "file://./charts/Training-Module"
