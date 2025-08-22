@@ -1,11 +1,11 @@
 # schemas.py
 SERVICE_SCHEMAS = {
-    "weather_query": {
+    "common_service_weather": {
         "params": {
             "location": {"required": True, "extract": "location_gazetteer"}
         }
     },
-    "vehicle_tax_check": {
+    "common_service_motor_vehicle_tax": {
         "params": {
             "registration_number": {"required": True, "extract": "regex_plate"}
         }
@@ -16,7 +16,7 @@ SERVICE_SCHEMAS = {
             "full_name": {"required": False, "extract": "regex_name"}
         }
     },
-    "electricity_info": {
+    "common_service_electricity_price": {
         "params": {
             "query_type": {  # "praegu" või "kõrge/madal"
                 "required": True,
@@ -28,7 +28,7 @@ SERVICE_SCHEMAS = {
             }
         }
     },
-    "holiday_info": {
+    "common_service_holidays": {
         "params": {
             "query_time": {  # "täna", "järgmine", "eelmine", "spetsiifiline"
                 "required": True,
@@ -40,7 +40,7 @@ SERVICE_SCHEMAS = {
             }
         }
     },
-    "currency_conversion": {
+    "common_service_exchange_rate": {
         "params": {
             "source_currency": {
                 "required": True,
@@ -56,7 +56,7 @@ SERVICE_SCHEMAS = {
             }
         }
     },
-    "recent_votes": {
+    "common_service_parliament_votes": {
         "params": {
             "plural": {
                 "required": False,
