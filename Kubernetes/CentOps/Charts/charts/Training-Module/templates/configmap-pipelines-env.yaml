@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pipelines-env
+data:
+  OPENSEARCH_HOST: "http://component-opensearch-node"
+  OPENSEARCH_PORT: "9200"
+  OPENSEARCH_PROTOCOL: "http"
+  OPENSEARCH_AUTH: "admin:admin"

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: Service-Module
+description: A Helm chart for Service-Module
+type: application
+
+version: 0.1.0
+appVersion: 2.0.0
