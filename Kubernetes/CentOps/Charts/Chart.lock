@@ -17,5 +17,17 @@ dependencies:
 - name: Widget
   repository: file://./charts/Widget
   version: 0.1.0
-digest: sha256:f3484d92a11dd391c1e02dbe59178ae7c23a672162ae7a4de806c3aa0eb8f044
-generated: "2025-08-19T13:05:06.689486504Z"
+- name: Analytics-Module
+  repository: file://./charts/Analytics-Module
+  version: 0.1.0
+- name: Authentication-Layer
+  repository: file://./charts/Authentication-Layer
+  version: 0.1.0
+- name: Service-Module
+  repository: file://./charts/Service-Module
+  version: 0.1.0
+- name: Training-Module
+  repository: file://./charts/Training-Module
+  version: 0.1.0
+digest: sha256:409781f70f5397cffdc7e6b6a8b018540e00a079e8ee54647db1d7607e3b84c7
+generated: "2025-08-22T08:00:10.410390556Z"
