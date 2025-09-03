@@ -49,7 +49,7 @@ env:
   REACT_APP_AUTH_BASE_URL: "{{ url.name.ruuter }}" # Change the domain name, leave subdomain and subpath same
   REACT_APP_APP_PORT: "3001"
   REACT_APP_LOCAL: "false"
-  REACT_APP_AUTH_PATH: "/v2/private/backoffice/custom-jwt/userinfo"
+  REACT_APP_AUTH_PATH: "/v2/private/backoffice/auth/jwt/userinfo"
   REACT_APP_DOCKER_RUUTER: "http://byk-ruuter-private:8080"
   REACT_APP_CUSTOMER_SERVICE_LOGIN: "{{ url.name.admin }}/et/dev-auth" # Change the domain name, leave subdomain and subpath same
   REACT_APP_CONVERSATIONS_BASE_URL: "{{ url.name.admin }}/chat" # Change the domain name, leave subdomain and subpath same
