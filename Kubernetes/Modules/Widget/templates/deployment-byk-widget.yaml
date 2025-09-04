@@ -19,9 +19,9 @@ spec:
           ports:
             - containerPort: 80
               name: http
-          # env:
-          #   - name: ENABLE_HIDDEN_FEATURES
-          #     value: "true"
+           env:
+             - name: ENABLE_MULTI_DOMAIN
+               value: "false"
           volumeMounts:
             - name: widget-index-volume
               mountPath: /usr/share/nginx/html/widget/index.html
