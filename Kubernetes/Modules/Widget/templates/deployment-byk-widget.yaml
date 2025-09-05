@@ -19,7 +19,7 @@ spec:
           ports:
             - containerPort: 80
               name: http
-           env:
+          env:
              - name: ENABLE_MULTI_DOMAIN
                value: "false"
           volumeMounts:
