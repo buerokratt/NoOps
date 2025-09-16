@@ -24,6 +24,7 @@ data:
           DAYS: [1, 2, 3, 4, 5, 6, 7],
         },
         ENABLE_HIDDEN_FEATURES: 'FALSE',
+        ENABLE_MULTI_DOMAIN: 'FALSE',
         <!-- FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
       };
     </script>
@@ -49,5 +50,6 @@ data:
           DAYS: [1, 2, 3, 4, 5, 6, 7],
         },
         ENABLE_HIDDEN_FEATURES: 'FALSE',
+        ENABLE_MULTI_DOMAIN: 'FALSE',
     <!--FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
       };
