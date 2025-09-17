@@ -111,6 +111,8 @@ spec:
               value: "{{ .Values.env.APPLICATION_CORS_ALLOWED_ORIGINS }}"
             - name: application.openSearchConfiguration.url
               value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
+            - name: application.openSearchConfiguration.index
+              value: ruuterlog              
             - name: application.httpCodesAllowList
               value: "{{ .Values.env.APPLICATION_HTTPCODESALLOWLIST }}"
             - name: application.DSL.allowedFiletypes
