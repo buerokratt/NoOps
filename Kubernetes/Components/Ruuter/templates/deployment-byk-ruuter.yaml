@@ -52,6 +52,8 @@ spec:
               value: "true"
             - name: application.httpResponseSizeLimit
               value: "2000"
+            - name: application.openSearchConfiguration.index
+              value: "ruuterlog"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
