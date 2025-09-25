@@ -25,6 +25,7 @@ data:
     SERVICE_DMAPPER=http://component-byk-dmapper:3000
     SERVICE_RUUTER=http://component-byk-ruuter-private:8080
     SERVICE_RESQL=http://component-byk-resql:8082
+    CHATBOT_PROJECT_LAYER=backoffice
     DOMAIN={{ domain.name }}
     CHATBOT_EXTERNAL_BOT_URL={{ CHATBOT.EXTERNAL.BOT.URL }}
     CHATBOT_EXTERNAL_API_KEY={{ CHATBOT.EXTERNAL.API.KEY }}
