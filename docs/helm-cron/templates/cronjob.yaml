@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "cron-task.fullname" . }}
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Chart.Name }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  chmod +x /scripts/{{ .Values.script.name }}
+                  /scripts/{{ .Values.script.name }}
+              volumeMounts:
+                - name: script-volume
+                  mountPath: /scripts
+          volumes:
+            - name: script-volume
+              configMap:
+                name: {{ include "cron-task.fullname" . }}-script
+          restartPolicy: {{ .Values.restartPolicy }}
