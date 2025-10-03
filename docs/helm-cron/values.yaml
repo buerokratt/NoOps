@@ -1,14 +1,15 @@
-schedule: "*/30 * * * *"   # iga 30 minuti järel
+schedule: "*/30 * * * *"
+
 image:
   repository: alpine
   tag: "3.20"
   pullPolicy: IfNotPresent
-
-command: ["/bin/sh", "-c"]
-args:
-  - |
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] CronJob töötas!"
-    # Siia pane tegelik bash skript või käsklus
+  
+script:
+  name: replace.sh
+  content: |
+    #!/bin/sh
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Asenda see asi skriptiga"
 
 restartPolicy: OnFailure
 
