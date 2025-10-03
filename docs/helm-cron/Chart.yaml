@@ -1,5 +1,5 @@
 apiVersion: v2
-name: Cron-task
+name: cron-task
 description: Example Helm chart for a Kubernetes CronJob
 type: application
 version: 0.1.0
