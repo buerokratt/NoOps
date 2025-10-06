@@ -112,7 +112,7 @@ spec:
             - name: application.openSearchConfiguration.url
               value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
             - name: application.openSearchConfiguration.index
-              value: ruuterlog              
+              value: "ruuterlog"              
             - name: application.httpCodesAllowList
               value: "{{ .Values.env.APPLICATION_HTTPCODESALLOWLIST }}"
             - name: application.DSL.allowedFiletypes
@@ -135,8 +135,6 @@ spec:
               value: rasa/model/add-new-model-processing,rasa/model/add-new-model-testing,rasa/model/add-new-model-cross-validating,rasa/model/add-new-model-ready,rasa/model/add-new-model-already-trained,rasa/model/add-new-model-error,cron-tasks/delete-conversations,chats/back-up-removable-chats,chats/chat-to-remove,chats/empty-conversations-by-chat-ids,rasa/model/add-new-model-deployed,/cron-tasks/delete-conversations,chats/back-up-removable-chats,chats/chat-to-remove,chats/empty-conversations-by-chat-ids,rasa/model/add-new-model-deployed
             - name: application.httpResponseSizeLimit
               value: "2000"
-            - name: application.openSearchConfiguration.index
-              value: "ruuterlog"
             - name: application.DSL.processedFiletypes
               value: .yml,.yaml,.tmp
           volumeMounts:
