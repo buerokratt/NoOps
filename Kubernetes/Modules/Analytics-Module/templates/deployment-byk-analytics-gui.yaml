@@ -114,6 +114,8 @@ spec:
               value: "1000"
             - name: REACT_APP_NOTIFICATION_NODE_URL
               value: "{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}"
+            - name: REACT_APP_RUUTER_PRIVATE_ENDED_API_URL
+              value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_ENDED_API_URL }}"
            # - name: REACT_APP_SHOW_TEST_MESSAGE mitte kustutada
            #   value: "false"
            # - name: REACT_APP_SHOW_TEST_CONVERSATIONS mitte kustutada
