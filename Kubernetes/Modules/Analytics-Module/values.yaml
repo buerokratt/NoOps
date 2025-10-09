@@ -62,6 +62,7 @@ env:
   REACT_APP_RUUTER_PRIVATE_API_URL: "{{ url.name.ruuter }}/v2/private/backoffice"  # Change the domain name, leave subdomain and subpath same  
   REACT_APP_BASE_API_PATH: "{{ url.name.ruuter }}/v2/private/backoffice" 
   REACT_APP_NOTIFICATION_NODE_URL: "{{ url.name.ruuter }}"
+  REACT_APP_RUUTER_PRIVATE_ENDED_API_URL: "{{ url.name.ruuter }}/v2/private/analytics"
 
 
 liquibase:
