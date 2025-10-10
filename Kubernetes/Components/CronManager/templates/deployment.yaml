@@ -142,6 +142,9 @@ spec:
         - name: cronconst
           mountPath: /app/constants.ini
           subPath: constants.ini
+        - name: cronconst
+          mountPath: /app/scripts/constants.ini
+          subPath: constants.ini
         - name: shared-cron-volume
           mountPath: /cron-data/
         - name: cron-dsl
