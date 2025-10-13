@@ -106,6 +106,8 @@ spec:
               value: "{{ .Values.env.REACT_APP_INTENT_CREATION_PATH }}"
             - name: REACT_APP_NOTIFICATION_NODE_URL
               value: "{{ .Values.env.REACT_APP_NOTIFICATION_NODE_URL }}"
+            - name: REACT_APP_RUUTER_SERVICES_TESTING_HEADER
+              value: "voorshpellhappilo"
           #volumeMounts:
           #  - name: services-dsl
           #    mountPath: /DSL/
