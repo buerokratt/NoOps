@@ -79,10 +79,10 @@ spec:
               value: "1000"
             - name: REACT_APP_RUUTER_PRIVATE_ENDED_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_ENDED_API_URL }}"
-          #  - name: REACT_APP_SHOW_AUTO_CLOSE_CONFIG
-          #    value: "TRUE"
-          #  - name: REACT_APP_ENABLE_MULTI_DOMAIN
-          #    value: "FALSE"
+            - name: REACT_APP_SHOW_AUTO_CLOSE_CONFIG
+              value: "TRUE"
+            - name: REACT_APP_ENABLE_MULTI_DOMAIN
+              value: "FALSE"
           
           # livenessProbe:
           #   httpGet:
