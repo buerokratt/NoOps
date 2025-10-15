@@ -49,7 +49,7 @@ data:
     XTR_AR_PASSWORD:{{ xtr.password }}
     RUUTER_SERVICES_GET_PATH=/shared-data/services/GET/services
     RUUTER_SERVICES_POST_PATH=/shared-data/services/POST/services
-    RUUTER_SERVICES_PATH=/shared-data
+    RUUTER_SERVICES_PATH=/shared-data/services
     RUUTER_SERVICES_DIR_PATH=services
     SERVICES_PIPELINE=http://module-byk-training-gui-pipelines:3010
     COOKIE_SAME_SITE=Lax
