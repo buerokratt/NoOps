@@ -58,3 +58,4 @@ data:
     BGK_ACTIVE=true
     SKM_STREAM=false
     BGK_STREAM=false
+    CHATBOT_RUUTER_PUBLIC_INTERNAL_SERVICE=http://component-byk-ruuter-private:8080/services
