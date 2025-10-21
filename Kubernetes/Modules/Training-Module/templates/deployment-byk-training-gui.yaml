@@ -116,7 +116,7 @@ spec:
               value: "TRUE"
             - name: REACT_APP_RUUTER_PRIVATE_ENDED_API_URL
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_ENDED_API_URL }}"
-            - name: REACT_APP_ENABLE_MULTI_DOMAIN mitte kustutada
+            - name: REACT_APP_ENABLE_MULTI_DOMAIN #mitte kustutada
               value: "TRUE"
           resources:
             requests:
