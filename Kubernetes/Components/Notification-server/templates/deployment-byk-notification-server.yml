@@ -38,6 +38,16 @@ spec:
               value: "{{ .Values.env.RUUTER_URL }}"
             - name: CHAT_TERMINATION_DELAY
               value: "{{ .Values.env.CHAT_TERMINATION_DELAY }}"
+            - name: AZURE_OPENAI_ENDPOINT
+              value: "{{ .Values.env.AZURE_OPENAI_ENDPOINT }}"
+            - name: AZURE_OPENAI_API_KEY
+              value: "{{ .Values.env.AZURE_OPENAI_API_KEY }}"
+            - name: AZURE_OPENAI_DEPLOYMENT
+              value: "{{ .Values.env.AZURE_OPENAI_DEPLOYMENT }}"
+            - name: AZURE_OPENAI_API_VERSION
+              value: "{{ .Values.env.AZURE_OPENAI_API_VERSION }}"
+            - name: AZURE_OPENAI_MODEL
+              value: "{{ .Values.env.AZURE_OPENAI_MODEL }}"
           volumeMounts:
             - name: notification-server
               mountPath: /app/notification-server
