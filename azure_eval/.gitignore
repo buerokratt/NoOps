@@ -1,0 +1,21 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Environment variables
+.env
+
+# Data directories - ignore all data (raw and parsed)
+data_json/
+datasets/
+models/
+outputs/
+
+*.pdf
