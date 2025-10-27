@@ -35,3 +35,12 @@ dependencies:
   - name: Private-Ruuter
     version: 0.1.0
     repository: "file://./charts/Private-Ruuter"
+  - name: minio
+    version: 0.1.0
+    repository: "file://./charts/minio"
+  - name: mlflow
+    version: 0.1.0
+    repository: "file://./charts/mlflow"
+  - name: GKLSF-GUI
+    version: 0.1.0
+    repository: "file://./charts/GKLSF-GUI"
