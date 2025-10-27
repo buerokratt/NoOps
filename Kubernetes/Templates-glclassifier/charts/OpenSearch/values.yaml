@@ -1,0 +1,33 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+replicas: 1
+podAnnotations: {}
+
+
+domain: "exxample.com"
+
+release_name: "component-opensearch-node"  
+
+images:
+  scope:
+    registry: ""
+    repository: ""
+    tag: ""
+
+env:
+  CLUSTER_NAME: "opensearch-cluster"
+  NODE_NAME: "component-opensearch-node"
+  DISCOVERY_TYPE: "single-node"
+  BOOTSTRAP_MEMORY_LOCK: "true"
+  OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
+  DISABLE_INSTALL_DEMO_CONFIG: "true"
+  DISABLE_SECURITY_PLUGIN: "true"
+
+resources:
+  requests:
+    memory: "3Gi"
+    cpu: "2000m"
+  limits:
+    memory: "4Gi"
+    cpu: "2000m"

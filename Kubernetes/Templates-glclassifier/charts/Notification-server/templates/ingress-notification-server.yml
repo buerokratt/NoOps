@@ -1,0 +1,37 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ .Values.release_name }}-ingress"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10s"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600s"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600s"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "{{ .Values.ingress.cors_allowed_origins }}"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "{{ .Values.ingress.cors_allow_methods }}"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "{{ .Values.ingress.cors_allow_headers }}"
+    cert-manager.io/cluster-issuer: "{{ .Values.ingress.cluster_issuer }}"
+  labels:
+    name: "{{ .Values.release_name }}-ingress"
+spec:
+  rules:
+    - host: "{{ .Values.release_name }}.{{ .Values.domain }}"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "{{ .Values.ingress.path }}"
+            backend:
+              service:
+                name: "{{ .Values.release_name }}"
+                port:
+                  number: 4040
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - "{{ .Values.release_name }}.{{ .Values.domain }}"
+      secretName: "{{ .Values.secretname }}"
+  {{- end }}
+{{- end }}

@@ -1,0 +1,33 @@
+domain: "eexample.com"
+releaseName: "component-databases"
+tim-postgresql:
+  image:
+    tag: 14.1.0
+  auth:
+    postgresPassword: postgres
+    username: tim
+    password: "{{ TIMDB.password }}"
+    database: tim
+  statefulset:
+    enabled: true
+    replicaCount: 1
+    persistence:
+      storageClass: longhorn
+      enabled: true
+      size: 1Gi
+users-db:
+  image:
+    tag: 14.1.0
+  auth:
+    postgresPassword: postgres
+    username: byk
+    password: "{{ usersDB.password }}"
+    database: byk
+  statefulset:
+    enabled: true
+    replicaCount: 1
+    persistence:
+      storageClass: longhorn
+      enabled: true
+      size: 1Gi
+      

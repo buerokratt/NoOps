@@ -1,0 +1,190 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+
+      initContainers:
+        - name: bring-train-data
+          image: alpine/git:2.36.3
+          volumeMounts:
+            - name: trainbot-rasa-locations
+              mountPath: /rasa/locations
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              git clone {{ .Values.dslRepos.bot.repo }} /tmp/dsl-source &&
+              cp -r /tmp/dsl-source/{{ .Values.dslRepos.bot.path }}/* /rasa/locations/ &&
+              chmod 777 -R /rasa &&
+              ls /rasa/locations/
+
+        - name: bring-common-service
+          image: alpine/git:2.36.3
+          volumeMounts:
+            - name: dmapper-commonservice
+              mountPath: /rasa/OpenSearch
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              git clone {{ .Values.dslRepos.commonservice.repo }} /tmp/dsl-source &&
+              cp -r /tmp/dsl-source/{{ .Values.dslRepos.commonservice.path }}/* /rasa/OpenSearch/ &&
+              chmod 755 -R /rasa/OpenSearch &&
+              ls /rasa/OpenSearch/
+
+        - name: init-copy-files-backoffice
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              cp -r ../DataMapper/backoffice/ /workspace/app/module/
+              cp -r ../DataMapper/common-services/ /workspace/app/module/
+              ls -la /workspace/app/module/
+          volumeMounts:
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
+
+        - name: init-copy-files-analytics
+          image: "{{ .Values.images.analytics.registry }}/{{ .Values.images.analytics.repository }}:{{ .Values.images.analytics.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              cp -r ../DataMapper/analytics /workspace/app/module/
+              ls -la /workspace/app/module/
+          volumeMounts:
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
+
+        - name: init-copy-files-training
+          image: "{{ .Values.images.training.registry }}/{{ .Values.images.training.repository }}:{{ .Values.images.training.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /workspace/app/module/training/hbs/training
+              cp -r ../DataMapper/training/ /workspace/app/module/
+              mv /workspace/app/module/training/hbs/hbs/* /workspace/app/module/training/hbs/training
+              ls -la /workspace/app/module/
+          volumeMounts:
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
+
+        - name: init-copy-files-services
+          image: "{{ .Values.images.services.registry }}/{{ .Values.images.services.repository }}:{{ .Values.images.services.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              cp -r ../DataMapper/services /workspace/app/module/
+              ls -la /workspace/app/module/
+          volumeMounts:
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
+
+        - name: datamapper-service-dsl
+          image: alpine/git:2.36.3
+          volumeMounts:
+             - name: byk-dsl-services
+               mountPath: /data
+          command: ["/bin/sh"]
+          args:
+             - "-c"
+             - >
+               git clone {{ .Values.dslRepos.pipelines.repo }} /tmp/dsl-source &&
+               cp -r /tmp/dsl-source/{{ .Values.dslRepos.pipelines.path }}/* /data/ &&
+               cp -r /tmp/dsl-source/secrets /data/ &&
+               ls /data/
+
+        - name: service-sec
+          image: alpine/git:2.36.3
+          volumeMounts:
+            - name: service-sec
+              mountPath: /rasa/secrets
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              git clone {{ .Values.dslRepos.sec.repo }} /tmp/dsl-source &&
+              cp -r /tmp/dsl-source/{{ .Values.dslRepos.sec.path }}/* /rasa/secrets/ &&
+              ls /rasa/secrets/
+
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: CONTENT_FOLDER
+              value: /rasa
+            - name: SYNC_INTERVAL_MINUTES
+              value: "10"
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /rasa/shared-data
+            - name: shared-cron-volume
+              mountPath: /rasa/cron-data
+            - name: dmapper-volume
+              mountPath: /workspace/app/module/
+            - name: byk-dsl-services
+              mountPath: /data
+            - name: trainbot-rasa-locations
+              mountPath: /rasa/locations
+            - name: dmapper-commonservice
+              mountPath: /rasa/OpenSearch
+            - name: service-sec
+              mountPath: /rasa/secrets
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 120
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 120
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: privateruuter-pvc
+        - name: shared-cron-volume
+          persistentVolumeClaim:
+            claimName: cron-pvc
+        - name: dmapper-volume
+          emptyDir: {}
+        - name: byk-dsl-services
+          persistentVolumeClaim:
+            claimName: byk-{{ .Release.Namespace }}-dsl-services
+        - name: trainbot-rasa-locations
+          persistentVolumeClaim:
+            claimName: pvc-{{ .Release.Namespace }}-trainbot
+        - name: dmapper-commonservice
+          persistentVolumeClaim:
+            claimName: pvc-{{ .Release.Namespace }}-commonservice
+        - name: service-sec
+          persistentVolumeClaim:
+            claimName: pvc-service-secrets

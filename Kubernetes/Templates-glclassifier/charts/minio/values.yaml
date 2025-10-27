@@ -1,0 +1,41 @@
+release_name: "component-byk-minio"
+
+image:
+  registry: "docker.io"
+  repository: "minio/minio"
+  tag: "latest"
+
+replicas: 1
+
+resources:
+  requests:
+    memory: "500Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+env:
+  MINIO_ROOT_USER: "minioadmin"
+  MINIO_ROOT_PASSWORD: "minioadmin"
+  MINIO_BROWSER_REDIRECT_URL: "http://localhost:9001"
+
+volumes:
+  minio_data:
+    type: pvc
+    size: "5Gi"
+
+ports:
+  api: 9000
+  console: 9001
+
+ingress:
+  enabled: true
+  host: "minio.example.com"
+  path: "/"
+  tls:
+    enabled: true
+secretname: "minio-tls"
+
+istio:
+  enabled: false

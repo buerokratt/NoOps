@@ -1,0 +1,45 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+replicas: 1
+podAnnotations: {}
+
+
+domain: "exxample.com"
+secretname: "ruuter.exxample.buerokratt.ee0001"
+
+istio:
+  enabled: false # Change to "true" if mTLS should be enabled
+
+ingress:
+  whitelistSourceRange: "" # leave empty if no whitelisting
+
+release_name: "component-byk-ruuter-private"
+
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: "buerokratt/ruuter"
+    tag: "v1.1.1"
+
+env:
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOG_LEVEL_TIMING: "INFO"
+  APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "false"
+  APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "false"
+  APPLICATION_HTTPCODESALLOWLIST: "200,201,202,204,400,401,403,500"
+  application.internalRequests.allowedIPs: "127.0.0.1"
+  APPLICATION_CORS_ALLOWED_ORIGINS: "https://example.com"
+  APPLICATION_OPENSEARCH_CONFIGURATION_URL: "http://component-opensearch-node:9200"
+  application.externalAuthAllowed: "rasa/model/add-new-model-processing,rasa/model/add-new-model-testing,rasa/model/add-new-model-cross-validating,rasa/model/add-new-model-ready,rasa/model/add-new-model-already-trained,rasa/model/add-new-model-error,cron-tasks/delete-conversations,chats/back-up-removable-chats,chats/chat-to-remove,chats/empty-conversations-by-chat-ids,rasa/model/add-new-model-deployed,/cron-tasks/delete-conversations,chats/back-up-removable-chats,chats/chat-to-remove,chats/empty-conversations-by-chat-ids,rasa/model/add-new-model-deployed,/cron-tasks/end-dead-chats"
+  application.httpResponseSizeLimit: "2000"
+  application.DSL.allowedFiletypes: ".yml,.yaml,.md,.tmp"
+  application.DSL.processedFiletypes: ".yml,.yaml,.tmp"
+
+resources:
+  requests:
+    memory: "3000Mi"
+    cpu: "100m"
+  limits:
+    memory: "4000Mi"
+    cpu: "100m"

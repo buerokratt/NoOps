@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: logging.level.root
+              value: "info"
+            - name: application.logging.displayRequestContent
+              value: "true"
+            - name: application.logging_displayResponseContent
+              value: "true"
+            - name: application.cors.allowedOrigins
+              value: "{{ .Values.env.cors }}"
+            - name: application.DSL.allowedFiletypes
+              value: .yml,.yaml,.md,.tmp
+            - name: application.internalRequests.disabled
+              value: "true"
+            - name: application.logging.printStackTrace
+              value: "true"
+            - name: application.httpResponseSizeLimit
+              value: "{{ .Values.env.sizelimit }}"
+          volumeMounts:
+            - name: ruuter-volume
+              mountPath: /DSL/
+            - name: urls-env
+              mountPath: /app/constants.ini
+              subPath: constants.ini
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+
+      volumes:
+        - name: ruuter-volume
+          emptyDir: {}
+        - name: urls-env
+          configMap:
+            name: urls-env-config

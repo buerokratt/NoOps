@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: urls-env-config-private
+data:
+  constants.ini: |
+    CHATBOT_RUUTER_PUBLIC=http://component-byk-ruuter:8080
+    CHATBOT_RUUTER_PRIVATE=http://component-byk-ruuter-private:8080
+    CHATBOT_RUUTER=http://component-byk-ruuter:8080
+    CHATBOT_RESQL=http://component-byk-resql:8082/backoffice
+    CHATBOT_DMAPPER=http://component-byk-dmapper:3000
+    CHATBOT_TIM=http://component-byk-tim:8085
+    CHATBOT_OPENSEARCH=http://component-opensearch-node:9200
+    CHATBOT_NOTIFICATIONS=http://component-notification-node:4040
+    ANALYTICS_TIM=http://component-byk-tim:8085
+    ANALYTICS_DMAPPER=http://component-byk-dmapper:3000
+    ANALYTICS_RUUTER=http://component-byk-ruuter-private:8080/analytics
+    ANALYTICS_RESQL=http://component-byk-resql:8082/analytics
+    ANALYTICS_OPEN_DATA_SERVICE=https://avaandmedtest.eesti.ee
+    TRAINING_TIM=http://component-byk-tim:8085
+    TRAINING_DMAPPER=http://component-byk-dmapper:3000
+    TRAINING_RUUTER=http://component-byk-ruuter-private:8080/training
+    TRAINING_PUBLIC_RUUTER=http://component-byk-ruuter-private:8080/training
+    TRAINING_RESQL=http://component-byk-resql:8082/training
+    TRAINING_USERS_RESQL=http://component-byk-resql:/training
+    TRAINING_PIPELINE=http://module-byk-training-gui-pipelines:3010
+    TRAINING_RASA=http://component-byk-train-bot:5005
+    TRAINING_PUBLIC_RUUTER_INTERNAL=http://component-byk-ruuter-private:8080/training
+    S3_FERRY=http://component-byk-s3-ferry-publish:3000
+    SERVICES_RESQL=http://component-byk-resql:8082
+    CRON_INSTANCE=http://component-byk-cronmanager:9010
+    CRON_MANAGER=http://component-byk-cronmanager:9010
+    TRAINING_FILES_PATH=/data/DMapper/locations/data/
+    TESTING_FILES_PATH=/data/DMapper/locations/tests/
+    CROSS_VALIDATION_FILES_PATH=/data/DMapper/locations/data/nlu/
+    SERVICE_TIM=http://component-byk-tim:8085
+    SERVICE_DMAPPER=http://component-byk-dmapper:3000
+    SERVICE_NODE=http://component-byk-dmapper:3000
+    SERVICE_RUUTER=http://component-byk-ruuter-private:8080/services
+    SERVICE_RESQL=http://component-byk-resql:8082/services
+    SERVICE_TRAINING_RESQL=http://component-byk-resql:8082/services
+    TRAINING_OPENSEARCH=http://component-opensearch-node:9200
+    DOMAIN={{ domain.name }}
+    CHATBOT_BOT=http://component-byk-bot:5005
+    CHATBOT_RUUTER_PRIVATE_INTERNAL=http://component-byk-ruuter-private:8080
+    CHATBOT_RUUTER_PUBLIC_INTERNAL=http://component-byk-ruuter:8080
+    PASSWORD_AUTH_ENABLED=TRUE
+    XTR_AR_USERNAME:{{ xtr.user }}
+    XTR_AR_PASSWORD:{{ xtr.password }}
+    RUUTER_SERVICES_GET_PATH=/shared-data/services/GET/services
+    RUUTER_SERVICES_POST_PATH=/shared-data/services/POST/services
+    RUUTER_SERVICES_PATH=/shared-data/services
+    RUUTER_SERVICES_DIR_PATH=services
+    SERVICES_PIPELINE=http://module-byk-training-gui-pipelines:3010
+    COOKIE_SAME_SITE=Lax
+    CHATBOT_DMAPPER_HBS=http://component-byk-dmapper:3000/backoffice/hbs
+    ANALYTICS_DMAPPER_HBS=http://component-byk-dmapper:3000/analytics/hbs
+    SERVICE_DMAPPER_HBS=http://component-byk-dmapper:3000/services/hbs
+    TRAINING_DMAPPER_HBS=http://component-byk-dmapper:3000/training/hbs
+    ANALYTICS_PROJECT_LAYER=analytics
+    BACKOFFICE_PROJECT_LAYER=backoffice
+    SERVICE_PROJECT_LAYER=services
+    TRAINING_PROJECT_LAYER=training
+    CHATBOT_PROJECT_LAYER=backoffice
+    SERVICE_OPENSEARCH=http://component-opensearch-node:9200
+    DMAPPER_LOCATIONS_PATH=/locations
+    SMAX_CLOUD_DOMAIN=
+    SMAX_TENANT_ID=
+    SMAX_LOGIN=
+    SMAX_PASSWORD=
+    SMAX_REQUESTED_BY_PERSON=
+    SMAX_SERVICE_DESK_GROUP=
+    SMAX_OIDC_CLIENT_SECRET=
+    SMAX_REQUEST_OFFERING=
+    SMAX_MAX_SYNC_RECURSION=5
+    SMAX_OIDC_CLIENT_ID=
+    CHATBOT_GUI=
+    

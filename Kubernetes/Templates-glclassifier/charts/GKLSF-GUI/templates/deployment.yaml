@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 3001
+              name: http
+          env:
+{{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+{{- end }}
+          volumeMounts:
+            - name: app-node-modules
+              mountPath: /app/node_modules
+            - name: gui-app
+              mountPath: /app
+      volumes:
+        - name: app-node-modules
+          emptyDir: {}
+        - name: gui-app
+          emptyDir: {}
+      resources:
+        requests:
+          memory: "{{ .Values.resources.requests.memory }}"
+          cpu: "{{ .Values.resources.requests.cpu }}"
+        limits:
+          memory: "{{ .Values.resources.limits.memory }}"
+          cpu: "{{ .Values.resources.limits.cpu }}"

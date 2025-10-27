@@ -1,0 +1,49 @@
+release_name: "component-byk-dmapper"
+domain: "example.com"
+istio:
+  enabled: false
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: "buerokratt/datamapper"
+    tag: "v1.0.0"
+  backoffice:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "v1.0.0"
+  analytics:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "v1.0.0"
+  services:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "v1.0.0"
+  training:
+    registry: "ghcr.io"
+    repository: "buerokratt/buerokratt-dsl"
+    tag: "v1.0.0"
+
+dslRepos:
+  pipelines:
+    repo: "https://github.com/buerokratt/Service-Module.git"
+    path: "/DSL"
+  bot:
+    repo: "https://github.com/buerokratt/Training-Module.git"
+    path: "DSL/DMapper/locations"
+  commonservice:
+    repo: "https://github.com/buerokratt/Common-Services.git"
+    path: "/"
+  sec:
+    repo: "https://github.com/buerokratt/Service-Module.git"
+    path: "/secrets"
+
+resources:
+  requests:
+    memory: "1000Mi"
+    cpu: "100m"
+  limits:
+    memory: "2000Mi"
+    cpu: "100m"
+
+replicas: 1

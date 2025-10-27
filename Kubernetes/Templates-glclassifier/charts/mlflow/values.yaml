@@ -1,0 +1,33 @@
+release_name: "component-byk-mlflow"
+
+image:
+  registry: "ghcr.io"
+  repository: "buerokratt/mlflow"
+  tag: "latest"
+
+replicas: 1
+
+resources:
+  requests:
+    memory: "500Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+env:
+  MLFLOW_TRACKING_USERNAME: "mlflow_user"
+  MLFLOW_TRACKING_PASSWORD: "mlflow_pass"
+  MLFLOW_HOST: "mlflow"
+  MLFLOW_PORT: "5000"
+  MLFLOW_BACKEND_STORE_URI: "sqlite:///mlflow.db"
+  MLFLOW_DEFAULT_ARTIFACT_ROOT: "/mlflow/mlflow_artifacts"
+  MLFLOW_FLASK_SERVER_SECRET_KEY: "supersecretkey"
+
+volumes:
+  mlflow_data:
+    type: pvc
+    size: "1Gi"
+  mlflow_artifacts:
+    type: pvc
+    size: "2Gi"

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["server", "/data", "--console-address", ":{{ .Values.ports.console }}"]
+          ports:
+            - containerPort: {{ .Values.ports.api }}
+              name: api
+            - containerPort: {{ .Values.ports.console }}
+              name: console
+          env:
+{{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+{{- end }}
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: pvc-{{ .Release.Namespace }}-minio-data
+      resources:
+        requests:
+          memory: "{{ .Values.resources.requests.memory }}"
+          cpu: "{{ .Values.resources.requests.cpu }}"
+        limits:
+          memory: "{{ .Values.resources.limits.memory }}"
+          cpu: "{{ .Values.resources.limits.cpu }}"

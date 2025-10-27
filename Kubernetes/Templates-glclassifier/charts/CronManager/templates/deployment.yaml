@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  annotations:
+    sidecar.istio.io/inject: "{{ .Values.istio.enabled }}"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+            - name: server.port
+              value: "9010"
+            - name: MLFLOW_TRACKING_URI
+              value: "http://mlflow:5000"
+            - name: PYTHONPATH
+              value: "/app:/app/src/model_training:/app/src/s3_dataset_processor:/app/src"
+          {{- if .Values.gpu.enabled }}
+          resources:
+            limits:
+              nvidia.com/gpu: {{ .Values.gpu.count }}
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+          {{- else }}
+          resources:
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+          {{- end }}
+          volumeMounts:
+            - name: dsl-dsl
+              mountPath: /DSL
+            - name: dsl-script
+              mountPath: /app/scripts
+            - name: output-datasets
+              mountPath: /app/output_datasets
+            - name: s3-processor
+              mountPath: /app/src/s3_dataset_processor
+            - name: config
+              mountPath: /app/config
+            - name: model-training
+              mountPath: /app/src/training
+            - name: mlflow-artifacts
+              mountPath: /mlflow/mlflow_artifacts
+            - name: data-processed
+              mountPath: /app/data/processed
+            - name: shared-volume
+              mountPath: /app/shared
+            - name: cron-data
+              mountPath: /app/data
+            - name: models
+              mountPath: /app/models
+      volumes:
+        - name: dsl-dsl
+          emptyDir: {}
+        - name: dsl-script
+          emptyDir: {}
+        - name: output-datasets
+          emptyDir: {}
+        - name: s3-processor
+          emptyDir: {}
+        - name: config
+          emptyDir: {}
+        - name: model-training
+          emptyDir: {}
+        - name: mlflow-artifacts
+          emptyDir: {}
+        - name: data-processed
+          emptyDir: {}
+        - name: shared-volume
+          emptyDir: {}
+        - name: cron-data
+          emptyDir: {}
+        - name: models
+          emptyDir: {}
