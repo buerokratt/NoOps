@@ -1,0 +1,128 @@
+# tim StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $.Release.Name }}-tim-postgresql
+  labels:
+    app: {{ $.Release.Name }}-tim-postgresql
+spec:
+  serviceName: {{ $.Release.Name }}-tim-postgresql-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $.Release.Name }}-tim-postgresql
+  template:
+    metadata:
+      labels:
+        app: {{ $.Release.Name }}-tim-postgresql
+    spec:
+      securityContext:
+        fsGroup: 999
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: database
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          env:
+            - name: POSTGRES_USER
+              value: "tim"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-tim-secret
+                  key: password
+            - name: POSTGRES_DB
+              value: "tim"
+            - name: PGDATA
+              value: /bitnami/postgresql/data
+          ports:
+            - containerPort: {{ $.Values.service.port }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ $.Values.service.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: {{ $.Values.service.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/postgresql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: {{ toYaml $.Values.persistence.accessModes | nindent 8 }}
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: {{ $.Values.persistence.storageClass }}
+---
+# loop for other databases
+{{- range .Values.databases }}
+{{- if ne .name "tim" }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $.Release.Name }}-{{ .name }}
+  labels:
+    app: {{ $.Release.Name }}-{{ .name }}
+spec:
+  serviceName: {{ $.Release.Name }}-{{ .name }}-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $.Release.Name }}-{{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $.Release.Name }}-{{ .name }}
+    spec:
+      securityContext:
+        fsGroup: 999
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: database
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          env:
+            - name: POSTGRES_USER
+              value: "{{ .username }}"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-{{ .name }}-secret
+                  key: password
+            - name: POSTGRES_DB
+              value: "{{ .db }}"
+            - name: PGDATA
+              value: /bitnami/postgresql/data
+          ports:
+            - containerPort: {{ $.Values.service.port }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ $.Values.service.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: {{ $.Values.service.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/postgresql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: {{ toYaml $.Values.persistence.accessModes | nindent 8 }}
+        resources:
+          requests:
+            storage: {{ .storage }}
+        storageClassName: {{ $.Values.persistence.storageClass }}
+---
+{{- end }}
+{{- end }}
