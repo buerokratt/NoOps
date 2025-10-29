@@ -1,55 +1,23 @@
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-domain: {{ domain.name }} # Domain name
-releaseName: "component-databases"
-
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up differents
-
-tim-postgresql:
-  image:
-    tag: 14.1.0
-  auth:
-    postgresPassword: postgres
+databases:
+  - name: tim
     username: tim
-    password: "{{ TIMDB.password }}" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml under component TIM values.yaml
-    database: tim
-  statefulset:
-    enabled: true
-    replicaCount: 1
-    persistence:
-      storageClass: longhorn
-      enabled: true
-      size: 1Gi
-
-users-db:
-  image:
-    tag: 14.1.0
-  auth:
-    postgresPassword: postgres
+    password: "{{ TIMDB.password }}"
+    db: tim
+    storage: 1Gi
+  - name: users-db
     username: byk
-    password: "{{ usersDB.password }}" # Change password accordingly, make sure that ths passord you set here, will be used inside values.yaml in components and modules, where necessary.
-    database: byk
-  statefulset:
-    enabled: true
-    replicaCount: 1
-    persistence:
-      storageClass: longhorn
-      enabled: true
-      size: 1Gi
-      
+    password: "{{ usersDB.password }}"
+    db: byk
+    storage: 1Gi
+
+image:
+  repository: postgres
+  tag: "14.1"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 5432
+
+persistence:
+  storageClass: longhorn
+  accessModes: ["ReadWriteOnce"]
