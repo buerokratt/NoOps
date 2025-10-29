@@ -72,6 +72,8 @@ def find_files(directories):
                     target_files.append(os.path.join(root, file))
                 if "post-deploy" in file.lower() and file.endswith(".yaml"):
                     target_files.append(os.path.join(root, file))
+                if "secrets" in file.lower() and file.endswith(".yaml"):
+                    target_files.append(os.path.join(root, file))
     return target_files
 
 def main():
