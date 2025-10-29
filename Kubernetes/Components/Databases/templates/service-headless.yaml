@@ -1,0 +1,32 @@
+# tim headless service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-tim-postgresql-headless
+spec:
+  clusterIP: None
+  selector:
+    app: {{ $.Release.Name }}-tim-postgresql
+  ports:
+    - name: postgres
+      port: {{ $.Values.service.port }}
+      targetPort: {{ $.Values.service.port }}
+---
+# loop for other databases
+{{- range .Values.databases }}
+{{- if ne .name "tim" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ .name }}-headless
+spec:
+  clusterIP: None
+  selector:
+    app: {{ $.Release.Name }}-{{ .name }}
+  ports:
+    - name: postgres
+      port: {{ $.Values.service.port }}
+      targetPort: {{ $.Values.service.port }}
+---
+{{- end }}
+{{- end }}
