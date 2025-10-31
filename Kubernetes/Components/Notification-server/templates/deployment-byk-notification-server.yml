@@ -49,7 +49,7 @@ spec:
             - name: AZURE_OPENAI_MODEL
               value: "{{ .Values.env.AZURE_OPENAI_MODEL }}"
             - name: PRIVATE_RUUTER_URL
-              value: "http://component-byk-ruuter-private:8080"
+              value: "{{ .Values.env.PRIVATE_RUUTER_URL }}"
           volumeMounts:
             - name: notification-server
               mountPath: /app/notification-server
