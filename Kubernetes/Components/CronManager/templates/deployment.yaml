@@ -113,6 +113,8 @@ spec:
           value: "{{ .Values.contstants.CROSS_VALIDATION_FILES_PATH }}"
         - name: CHATBOT_BOT
           value: "{{ .Values.contstants.CHATBOT_BOT }}"
+        - name: SMAX_INTEGRATION_ENABLED
+          value: "false"
         resources:
           requests:
             memory: "{{ .Values.resources.requests.memory }}"
