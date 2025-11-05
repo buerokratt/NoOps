@@ -83,6 +83,8 @@ spec:
               value: "TRUE"
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
               value: "FALSE"
+            - name: REACT_APP_SMAX_INTEGRATION_ENABLED
+              value: "FALSE"
           
           # livenessProbe:
           #   httpGet:
