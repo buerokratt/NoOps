@@ -25,6 +25,7 @@ data:
         },
         ENABLE_HIDDEN_FEATURES: 'FALSE',
         ENABLE_MULTI_DOMAIN: 'FALSE',
+        STREAM_TYPING_SPEED: 20,
         <!-- FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
       };
     </script>
@@ -51,5 +52,6 @@ data:
         },
         ENABLE_HIDDEN_FEATURES: 'FALSE',
         ENABLE_MULTI_DOMAIN: 'FALSE',
+        STREAM_TYPING_SPEED: 20,
     <!--FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
       };
