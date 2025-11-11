@@ -25,7 +25,9 @@ data:
         },
         ENABLE_HIDDEN_FEATURES: 'FALSE',
         ENABLE_MULTI_DOMAIN: 'FALSE',
-        STREAM_TYPING_SPEED: 20,
+        STREAM_TYPING_SPEED: 10,
+        WIDGET_HEIGHT: 450,
+        WIDGET_WIDTH: 400,
         <!-- FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
       };
     </script>
