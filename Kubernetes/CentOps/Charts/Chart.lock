@@ -30,4 +30,4 @@ dependencies:
   repository: file://./charts/Training-Module
   version: 0.1.0
 digest: sha256:409781f70f5397cffdc7e6b6a8b018540e00a079e8ee54647db1d7607e3b84c7
-generated: "2025-11-12T08:42:09.322063998Z"
+generated: "2025-11-12T13:19:51.235407196Z"
