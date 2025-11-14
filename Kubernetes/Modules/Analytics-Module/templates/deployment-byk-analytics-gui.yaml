@@ -118,7 +118,7 @@ spec:
             - name: REACT_APP_SHOW_TEST_MESSAGE
               value: "false"
             - name: REACT_APP_SHOW_TEST_CONVERSATIONS
-              value: "true"
+              value: "false"
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
               value: "FALSE"
           volumeMounts:
