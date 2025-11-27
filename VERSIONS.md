@@ -8,8 +8,8 @@ All application version numbers listed here represent the latest available **rel
 | Application         | Latest Version | Release Date |
 |---------------------|----------------|--------------|
 | CronManager         | vX.X.X         | YYYY-MM-DD   |
-| Ruuter              | vX.X.X         | YYYY-MM-DD   |
-| Ruuter-Private      | vX.X.X         | YYYY-MM-DD   |
+| Ruuter              | v2.2.8         | 2025-11-25   |
+| Ruuter-Private      | v2.2.8         | 2025-11-25   |
 | DataMapper          | vX.X.X         | YYYY-MM-DD   |
 | Resql               | vX.X.X         | YYYY-MM-DD   |
 | S3Ferry             | vX.X.X         | YYYY-MM-DD   |
