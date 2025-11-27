@@ -1,0 +1,55 @@
+name: Append Version Changes
+
+on:
+  push:
+    paths:
+      - "VERSIONS.md"
+
+jobs:
+  append_changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Collect commit info
+        id: meta
+        run: |
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "author_name=$AUTHOR_NAME" >> $GITHUB_OUTPUT
+          echo "author_email=$AUTHOR_EMAIL" >> $GITHUB_OUTPUT
+
+      - name: Generate diff block
+        run: |
+          export TZ="Europe/Tallinn"
+          NOW=$(date +"%Y-%m-%d %H:%M:%S (%Z)")
+          
+          echo "## Change on $NOW" > new_block.tmp
+          echo "**Author:** ${{ steps.meta.outputs.author_name }} <${{ steps.meta.outputs.author_email }}>" >> new_block.tmp
+          echo "" >> new_block.tmp
+          echo "\`\`\`diff" >> new_block.tmp
+          git diff HEAD^ -- VERSIONS.md >> new_block.tmp
+          echo "\`\`\`" >> new_block.tmp
+          echo "" >> new_block.tmp
+
+      - name: Append or create VERSION_CHANGES.md
+        run: |
+          if [ -f VERSION_CHANGES.md ]; then
+            cat new_block.tmp >> VERSION_CHANGES.md
+          else
+            echo "# Version Change History" > VERSION_CHANGES.md
+            echo "" >> VERSION_CHANGES.md
+            cat new_block.tmp >> VERSION_CHANGES.md
+          fi
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add VERSION_CHANGES.md
+          git commit -m "Update VERSION_CHANGES.md (auto append)" || true
+          git push
