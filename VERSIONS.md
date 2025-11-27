@@ -14,7 +14,7 @@ All application version numbers listed here represent the latest available **rel
 | Resql               | vX.X.X         | YYYY-MM-DD   |
 | S3Ferry             | vX.X.X         | YYYY-MM-DD   |
 | S3Ferry-publish     | vX.X.X         | YYYY-MM-DD   |
-| TIM                 | vX.X.X         | YYYY-MM-DD   |
+| TIM                 | v2.3.6         | 2025-11-25   |
 | UsersDB             | vX.X.X         | YYYY-MM-DD   |
 | TimDB               | vX.X.X         | YYYY-MM-DD   |
 | XTR                 | vX.X.X         | YYYY-MM-DD   |
