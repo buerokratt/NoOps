@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - dev
+    paths: 
+      - 'Kubernetes/CentOps'
 
 jobs:
   build-dependencies:
