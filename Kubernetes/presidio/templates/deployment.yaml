@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "anonymizer.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "anonymizer.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "anonymizer.name" . }}
+    spec:
+      containers:
+        - name: anonymizer
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8089
+          env:
+            - name: FLASK_ENV
+              value: {{ .Values.env.FLASK_ENV | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.env.LOG_LEVEL | quote }}
+            - name: HOST
+              value: {{ .Values.env.HOST | quote }}
+            - name: PORT
+              value: {{ .Values.env.PORT | quote }}
+            - name: PYTHONUNBUFFERED
+              value: {{ .Values.env.PYTHONUNBUFFERED | quote }}
+
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "anonymizer.fullname" . }}-config
