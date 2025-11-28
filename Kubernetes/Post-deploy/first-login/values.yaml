@@ -33,5 +33,5 @@ user:
 db:
   db_host: component-databases-users-db
   db_port: "5432"
-  db_user: byk
-  db_password: {{ usersDB.password }} # Change password accordingly
+  db_user: "byk"
+  db_password: "{{ usersDB.password }}" # Change password accordingly
