@@ -75,4 +75,7 @@ data:
     SMAX_MAX_SYNC_RECURSION=5
     SMAX_OIDC_CLIENT_ID=
     CHATBOT_GUI=
+    CHATBOT_ANONYMIZER=http://presidio-presidio-anonymizer:8089
+    ANONYMIZER_ENABLED=false
+    ANONYMIZER_HASH_TYPE=sha256
     
