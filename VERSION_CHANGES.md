@@ -71,3 +71,49 @@ index e38536c..b174299 100644
  ---
 ```
 
+## Change on 2025-12-02 14:01:31 (EET)
+**Author:** KlviG <78801020+KlviG@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index b174299..fac56da 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -7,26 +7,25 @@ All application version numbers listed here represent the latest available **rel
+ 
+ | Application         | Latest Version | Release Date |
+ |---------------------|----------------|--------------|
+-| CronManager         | v1.1.23        | 2025-11-25   |
+ | Ruuter              | v2.2.8         | 2025-11-25   |
+ | Ruuter-Private      | v2.2.8         | 2025-11-25   |
+-| DataMapper          | v2.2.23        | 2025-11-25   |
+ | Resql               | v1.3.5         | 2025-11-25   |
+-| S3Ferry             | pre-alpha-1.1.1| 2025-11-25   |
+-| S3Ferry-publish     | pre-alpha-1.1.1| 2025-11-25   |
+ | TIM                 | v2.3.6         | 2025-11-25   |
+-| UsersDB             | postgres:14.1  | 2025-11-25   |
+-| TimDB               | postgres:14.1  | 2025-11-25   |
+-| XTR                 | pre-alpha-test-1.1.3| 2025-11-25   |
++| CronManager         | v1.1.28        | 2025-11-25   |
++| DataMapper          | v2.2.23        | 2025-11-25   |
+ | NotificationsNode   | v2.1.61-notification-node| 2025-11-25   |
+ | OpenSearch          | 1.3.16         | 2025-11-25   |
+-| AuthLayer           | v1.1.1         | 2025-11-25   |
++| S3Ferry             | pre-alpha-1.1.1| 2025-11-25   |
++| S3Ferry-publish     | pre-alpha-1.1.1| 2025-11-25   |
++| XTR                 | pre-alpha-test-1.1.3| 2025-11-25   |
++| widget              | v2.1.37        | 2025-11-25   |
+ | backoffice          | v2.1.61        | 2025-11-25   |
+ | analytics           | v1.1.33        | 2025-11-25   |
+ | training            | v2.1.34        | 2025-11-25   |
+ | service             | temp-fix-1.1.2-temp| 2025-11-25   |
+-| widget              | v2.1.37        | 2025-11-25   |
+-
++| AuthLayer           | v1.1.1         | 2025-11-25   |
++| UsersDB             | postgres:14.1  | 2025-11-25   |
++| TimDB               | postgres:14.1  | 2025-11-25   |
+ 
+ ---
+ 
+```
+
