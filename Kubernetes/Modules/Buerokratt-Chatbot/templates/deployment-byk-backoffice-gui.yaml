@@ -85,6 +85,8 @@ spec:
               value: "FALSE"
             - name: REACT_APP_SMAX_INTEGRATION_ENABLED
               value: "FALSE"
+            - name: REACT_APP_JIRA_INTEGRATION_ENABLED
+              value: "FALSE"
           
           # livenessProbe:
           #   httpGet:
