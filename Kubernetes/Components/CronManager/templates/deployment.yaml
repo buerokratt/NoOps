@@ -115,6 +115,8 @@ spec:
           value: "{{ .Values.contstants.CHATBOT_BOT }}"
         - name: SMAX_INTEGRATION_ENABLED
           value: "false"
+        - name: JIRA_INTEGRATION_ENABLED
+          value: "false"
         resources:
           requests:
             memory: "{{ .Values.resources.requests.memory }}"
