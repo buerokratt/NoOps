@@ -18,7 +18,7 @@ All application version numbers listed here represent the latest available **rel
 | S3Ferry             | pre-alpha-1.1.1| 2025-11-25   |
 | S3Ferry-publish     | pre-alpha-1.1.1| 2025-11-25   |
 | XTR                 | pre-alpha-test-1.1.3| 2025-11-25   |
-| widget              | v2.1.37        | 2025-11-25   |
+| widget              | v2.1.53        | 2025-12-9   |
 | backoffice          | v2.1.61        | 2025-11-25   |
 | analytics           | v1.1.33        | 2025-11-25   |
 | training            | v2.1.34        | 2025-11-25   |
@@ -26,7 +26,10 @@ All application version numbers listed here represent the latest available **rel
 | AuthLayer           | v1.1.1         | 2025-11-25   |
 | UsersDB             | postgres:14.1  | 2025-11-25   |
 | TimDB               | postgres:14.1  | 2025-11-25   |
-
+| Backoffice DSL                 | backoffice-module-test-1.6.19  | 2025-11-25   |
+| Analytics DSL                 | analytics-module-test-1.6.11  | 2025-11-25   |
+| Training DSL                 | training-module-test-1.6.4  | 2025-11-25   |
+| Service DSL                 | service-module-test-1.5.30  | 2025-11-25   |
 ---
 
 ## Versioning Notes
