@@ -1,24 +1,24 @@
 name: Dynamic Issue Title
 
 on:
-  issues:
-    types: [opened]
+  issue_form:
+    types: [submitted]  # Käivitub, kui täidetakse Issue Form
 
 jobs:
   update-title:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - name: Update issue title dynamically
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue_number = context.issue.number;
 
-            // For GitHub Issue Forms, the submitted fields are in payload.issue.fields
-            const fields = context.payload.issue.fields || {};
-            const client = fields.client || "UnknownClient";
-            const version = fields.version || "v0.0.0";
-            const date = fields.date || new Date().toISOString().slice(0,10);
+            // Otse issue_form inputitest
+            const client = context.payload.inputs.client || "UnknownClient";
+            const version = context.payload.inputs.version || "v0.0.0";
+            const date = context.payload.inputs.date || new Date().toISOString().slice(0,10);
 
             const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
 
