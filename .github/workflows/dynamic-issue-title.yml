@@ -10,6 +10,7 @@ jobs:
     steps:
       - uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue_number = context.issue.number;
             const body = context.payload.issue.body;
@@ -26,8 +27,10 @@ jobs:
 
             const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
 
+            // Use the GitHub client provided by actions/github-script
             await github.issues.update({
-              ...context.repo,
-              issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
               title: newTitle
             });
