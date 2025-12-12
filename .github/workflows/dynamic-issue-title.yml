@@ -1,8 +1,8 @@
 name: Dynamic Issue Title
 
 on:
-  issues:
-    types: [opened]
+  issue_form:
+    types: [submitted]
 
 jobs:
   update-title:
@@ -12,24 +12,15 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // github and context are automatically available
-
             const issue_number = context.issue.number;
-            const body = context.payload.issue.body;
 
-            // Extract Client and Version from issue body (markdown-safe)
-            const clientMatch = body.match(/\*{0,2}Client\*{0,2}:\s*(.*)/i);
-            const versionMatch = body.match(/\*{0,2}Version deployed\*{0,2}:\s*(.*)/i);
-
-            const client = clientMatch ? clientMatch[1].trim() : "UnknownClient";
-            const version = versionMatch ? versionMatch[1].trim() : "v0.0.0";
-
-            // Current date YYYY-MM-DD
-            const date = new Date().toISOString().slice(0,10);
+            // Access the form inputs directly
+            const client = context.payload.inputs.client || "UnknownClient";
+            const version = context.payload.inputs.version || "v0.0.0";
+            const date = context.payload.inputs.date || new Date().toISOString().slice(0,10);
 
             const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
 
-            // Update the issue title
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
