@@ -13,18 +13,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue_number = context.issue.number;
-            const body = context.payload.issue.body;
 
-            // Extract Client and Version from issue body (GitHub Issue Form markdown)
-            const clientMatch = body.match(/\*\*Client:\*\*\s*(.*)/i);
-            const versionMatch = body.match(/\*\*Version deployed:\*\*\s*(.*)/i);
-
-            const client = clientMatch ? clientMatch[1].trim() : "UnknownClient";
-            const version = versionMatch ? versionMatch[1].trim() : "v0.0.0";
-
-            // Extract date field from form if available, else use today
-            const dateMatch = body.match(/\*\*Delivery Date:\*\*\s*(.*)/i);
-            const date = dateMatch ? dateMatch[1].trim() : new Date().toISOString().slice(0,10);
+            // For GitHub Issue Forms, the submitted fields are in payload.issue.fields
+            const fields = context.payload.issue.fields || {};
+            const client = fields.client || "UnknownClient";
+            const version = fields.version || "v0.0.0";
+            const date = fields.date || new Date().toISOString().slice(0,10);
 
             const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
 
