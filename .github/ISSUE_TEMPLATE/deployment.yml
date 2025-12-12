@@ -1,7 +1,6 @@
 ---
-name: Deployment
-description: "Track deployment"
-title: "[Deployment] Client - Version"
+name: Manual Deployment
+description: "Track a manually executed deployment"
 labels: 
   - deployment
 
