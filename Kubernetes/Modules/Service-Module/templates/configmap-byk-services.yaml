@@ -31,3 +31,6 @@ data:
     REACT_APP_SERVICE_ID=services
     REACT_APP_RUUTER_PRIVATE_API_URL=https://ruuter.DOMAIN.buerokratt.ee/v2/private/backoffice
     REACT_APP_RUUTER_SERVICES_TESTING_HEADER=voorshpellhappilo
+    AZURE_SEARCH_SERVICE_NAME=
+    AZURE_SEARCH_INDEXER_NAME=
+    AZURE_SEARCH_API_KEY=
