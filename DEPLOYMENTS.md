@@ -9,3 +9,4 @@
 |  |  |  |  |  | [Issue #253](https://github.com/buerokratt/NoOps/issues/253) |
 |  |  |  |  |  | [Issue #254](https://github.com/buerokratt/NoOps/issues/254) |
 |  |  |  |  |  |  | [Issue #255](https://github.com/buerokratt/NoOps/issues/255) |
+|  |  |  |  |  |  | [Issue #256](https://github.com/buerokratt/NoOps/issues/256) |
