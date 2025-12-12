@@ -17,14 +17,25 @@ jobs:
           ISSUE_NUMBER="${{ github.event.issue.number }}"
           ISSUE_URL="${{ github.event.issue.html_url }}"
 
-          # Extract values from Markdown issue form
-          CLIENT=$(echo "$ISSUE_BODY" | awk '/### Client/{getline; print}' | xargs)
-          VERSION=$(echo "$ISSUE_BODY" | awk '/### Version deployed/{getline; print}' | xargs)
-          DATE=$(echo "$ISSUE_BODY" | awk '/### Delivery Date/{getline; print}' | xargs)
-          ENGINEER=$(echo "$ISSUE_BODY" | awk '/### Engineer/{getline; print}' | xargs)
-          CONTENTS=$(echo "$ISSUE_BODY" | awk '/### What was deployed\?/{getline; print}' | xargs)
-          NOTES=$(echo "$ISSUE_BODY" | awk '/### Notes \/ Problems/{flag=1; next} flag && /^$/{flag=0} flag{print}' | sed ':a;N;$!ba;s/\n/<br>/g' | xargs)
+          # Function to extract section content until next ### or EOF
+          extract_section() {
+            local section="$1"
+            awk -v sec="$section" '
+              BEGIN {flag=0}
+              $0 ~ "### " sec {flag=1; next}
+              $0 ~ /^### / && flag {flag=0}
+              flag {print}
+            ' <<< "$ISSUE_BODY" | sed '/^\s*$/d' | xargs
+          }
 
+          CLIENT=$(extract_section "Client")
+          VERSION=$(extract_section "Version deployed")
+          DATE=$(extract_section "Delivery Date")
+          ENGINEER=$(extract_section "Engineer")
+          CONTENTS=$(extract_section "What was deployed?")
+          NOTES=$(extract_section "Notes / Problems" | sed ':a;N;$!ba;s/\n/<br>/g')
+
+          # Export variables for later steps
           echo "CLIENT=$CLIENT" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "DATE=$DATE" >> $GITHUB_ENV
