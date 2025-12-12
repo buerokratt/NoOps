@@ -1,0 +1,33 @@
+name: Dynamic Issue Title
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  update-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const issue_number = context.issue.number;
+            const body = context.payload.issue.body;
+
+            // Regex helpers to extract Client and Version from issue body
+            const clientMatch = body.match(/Client\s*:\s*(.*)/i);
+            const versionMatch = body.match(/Version deployed\s*:\s*(.*)/i);
+
+            const client = clientMatch ? clientMatch[1].trim() : "UnknownClient";
+            const version = versionMatch ? versionMatch[1].trim() : "v0.0.0";
+
+            // Current date YYYY-MM-DD
+            const date = new Date().toISOString().slice(0,10);
+
+            const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
+
+            await github.issues.update({
+              ...context.repo,
+              issue_number,
+              title: newTitle
+            });
