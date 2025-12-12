@@ -2,30 +2,50 @@ name: Dynamic Issue Title
 
 on:
   issues:
-    types: [opened]
+    types: [opened]  # Käivitub, kui issue luuakse
 
 jobs:
   update-title:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - name: Update issue title dynamically
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue_number = context.issue.number;
             const body = context.payload.issue.body;
 
-            // Täpsed regexid Markdownist
-            const clientMatch = body.match(/\*\*Client:\*\*\s*(.+)/);
-            const versionMatch = body.match(/\*\*Version deployed:\*\*\s*(.+)/);
-            const dateMatch = body.match(/\*\*Delivery Date:\*\*\s*(.+)/);
+            // Funktsioon sektsiooni välja tõmbamiseks
+            function extractSection(body, section) {
+              const lines = body.split("\n");
+              let flag = false;
+              const result = [];
 
-            const client = clientMatch ? clientMatch[1].trim() : "UnknownClient";
-            const version = versionMatch ? versionMatch[1].trim() : "v0.0.0";
-            const date = dateMatch ? dateMatch[1].trim() : new Date().toISOString().slice(0,10);
+              for (const line of lines) {
+                if (line.startsWith("### ")) {
+                  if (flag) break; // jõudnud uue sektsioonini
+                  if (line.slice(4).trim() === section) {
+                    flag = true;
+                    continue;
+                  }
+                }
+                if (flag && line.trim() !== "") {
+                  result.push(line.trim());
+                }
+              }
+
+              return result.join(" ");
+            }
+
+            // Tõmba välja vajalikud väljad
+            const client = extractSection(body, "Client") || "UnknownClient";
+            const version = extractSection(body, "Version deployed") || "v0.0.0";
+            const date = extractSection(body, "Delivery Date") || new Date().toISOString().slice(0,10);
 
             const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
 
+            // Uuenda issue pealkiri
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
