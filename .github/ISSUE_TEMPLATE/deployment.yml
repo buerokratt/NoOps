@@ -1,0 +1,41 @@
+name: Manual Delivery
+description: Track a manually executed delivery
+title: "[Deployment] Client - Version"
+labels: ["deployment"]
+body:
+  - type: input
+    id: client
+    attributes:
+      label: Client
+      description: Who is receiving the deployment?
+
+  - type: input
+    id: version
+    attributes:
+      label: Version deployed
+      description: Example: 1.4.17
+
+  - type: input
+    id: date
+    attributes:
+      label: Delivery Date
+      description: yyyy-mm-dd (engineer fills by hand)
+
+  - type: dropdown
+    id: engineer
+    attributes:
+      label: Engineer
+      options:
+        - Georg
+        - Fredy
+        - Varmo
+
+  - type: textarea
+    id: contents
+    attributes:
+      label: What was deployed?
+      description: Entire version or components/modules, configmaps etc
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes / Problems
