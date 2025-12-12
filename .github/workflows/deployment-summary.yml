@@ -2,7 +2,7 @@ name: Update Deployment Summary
 
 on:
   issues:
-    types: [opened]
+    types: [labeled]
 
 jobs:
   update-summary:
