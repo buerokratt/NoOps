@@ -12,8 +12,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // github client is passed in automatically as `github`
-            const { github, context } = require('@actions/github-script');
+            // github and context are automatically available here
 
             const issue_number = context.issue.number;
             const body = context.payload.issue.body;
