@@ -1,6 +1,6 @@
 ---
-name: Manual Delivery
-description: "Track a manually executed delivery"
+name: Deployment
+description: "Track deployment"
 title: "[Deployment] Client - Version"
 labels: 
   - deployment
