@@ -7,7 +7,7 @@ on:
 jobs:
   update-summary:
     runs-on: ubuntu-latest
-    if: contains(github.event.label.name, 'deployed') # only run when 'deployed' label added
+    if: contains(github.event.label.name, 'deployed')
     steps:
       - uses: actions/checkout@v3
 
@@ -44,7 +44,7 @@ jobs:
           NOTES=${NOTES:-"—"}
           ISSUE_LINK="[Issue #$ISSUE_NUMBER]($ISSUE_URL)"
 
-          # Export for later steps
+          # Export variables for later steps
           echo "CLIENT=$CLIENT" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "DATE=$DATE" >> $GITHUB_ENV
@@ -58,8 +58,8 @@ jobs:
           SUMMARY_FILE="DEPLOYMENTS.md"
 
           if [ ! -f $SUMMARY_FILE ]; then
-            echo "| Client | Version | Date | Engineer | Contents | Notes | Issue |" > $SUMMARY_FILE
-            echo "|--------|---------|------|---------|---------|-------|-------|" >> $SUMMARY_FILE
+            echo "| Client | Version | Date | Engineer | What was deployed | Notes | Issue |" > $SUMMARY_FILE
+            echo "|--------|---------|------|---------|-----------------|-------|-------|" >> $SUMMARY_FILE
           fi
 
           if grep -q "Issue #${{ github.event.issue.number }}" $SUMMARY_FILE; then
