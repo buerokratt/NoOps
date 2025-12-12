@@ -15,13 +15,13 @@ body:
     id: version
     attributes:
       label: "Version deployed"
-      description: "Example: 1.4.17"
+      description: "Example: v3.0.0"
 
   - type: input
     id: date
     attributes:
       label: "Delivery Date"
-      description: "dd-mm-yyyy (engineer fills by hand)"
+      description: "dd-mm-yyyy"
 
   - type: dropdown
     id: engineer
