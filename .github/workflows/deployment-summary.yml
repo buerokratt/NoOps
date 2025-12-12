@@ -2,56 +2,58 @@ name: Update Deployment Summary
 
 on:
   issues:
-    types: [labeled]
+    types: [opened]
 
 jobs:
   update-summary:
     runs-on: ubuntu-latest
-    if: contains(github.event.label.name, 'deployed') # only run when 'deployed' label added
+
     steps:
-      - uses: actions/checkout@v3
+      # Step 1: Checkout the repo to update summary file
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Extract issue details
-        run: |
-          ISSUE_BODY="${{ github.event.issue.body }}"
-          ISSUE_NUMBER="${{ github.event.issue.number }}"
-          ISSUE_URL="${{ github.event.issue.html_url }}"
-
-          # Grab the line after each field name
-          CLIENT=$(echo "$ISSUE_BODY" | awk '/Client/{getline; print}' | xargs)
-          VERSION=$(echo "$ISSUE_BODY" | awk '/Version deployed/{getline; print}' | xargs)
-          DATE=$(echo "$ISSUE_BODY" | awk '/Delivery Date/{getline; print}' | xargs)
-          ENGINEER=$(echo "$ISSUE_BODY" | awk '/Engineer/{getline; print}' | xargs)
-          NOTES=$(echo "$ISSUE_BODY" | awk '/Notes \/ Problems/{getline; print}' | xargs)
-
-          # Export variables for later steps
-          echo "CLIENT=$CLIENT" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "DATE=$DATE" >> $GITHUB_ENV
-          echo "ENGINEER=$ENGINEER" >> $GITHUB_ENV
-          echo "NOTES=$NOTES" >> $GITHUB_ENV
-          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
-          echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
-
-      - name: Update deployment summary
-        run: |
-          SUMMARY_FILE="DEPLOYMENTS.md"
-
-          # Create file with header if it doesn't exist
-          if [ ! -f $SUMMARY_FILE ]; then
-            echo "| Client | Version | Date | Engineer | Notes | Issue |" > $SUMMARY_FILE
-            echo "|--------|---------|------|---------|-------|-------|" >> $SUMMARY_FILE
-          fi
-
-          # Skip if this issue is already in the summary
-          if grep -q "Issue #$ISSUE_NUMBER" $SUMMARY_FILE; then
-            echo "Issue #$ISSUE_NUMBER already in summary. Skipping."
-          else
-            echo "| $CLIENT | $VERSION | $DATE | $ENGINEER | $NOTES | [Issue #$ISSUE_NUMBER]($ISSUE_URL) |" >> $SUMMARY_FILE
-          fi
-
-      - name: Commit summary
-        uses: stefanzweifel/git-auto-commit-action@v5
+      # Step 2: Extract issue fields and update summary
+      - name: Update summary
+        uses: actions/github-script@v6
         with:
-          commit_message: "Update deployment summary for $CLIENT - $VERSION"
-          branch: dev
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = '.github/ISSUE_SUMMARY.md';
+            const issue_number = context.issue.number;
+            const body = context.payload.issue.body;
+
+            // Regex to extract fields from GitHub Issue Form markdown
+            const getField = (label) => {
+              const match = body.match(new RegExp(`\\*\\*${label}:\\*\\*\\s*(.*)`,'i'));
+              return match ? match[1].trim() : '';
+            };
+
+            const client = getField('Client');
+            const version = getField('Version deployed');
+            const date = getField('Delivery Date');
+            const engineer = getField('Engineer');
+            const notes = getField('Notes / Problems');
+
+            // Build a new table row
+            const newRow = `| ${client} | ${version} | ${date} | ${engineer} | ${notes} | [Issue #${issue_number}](${context.payload.issue.html_url}) |`;
+
+            // Read existing summary or create new table
+            let summary = '';
+            if (fs.existsSync(path)) {
+              summary = fs.readFileSync(path, 'utf8');
+              summary += '\n' + newRow;
+            } else {
+              summary = '| Client | Version | Date | Engineer | Notes | Issue |\n|--------|---------|------|---------|-------|-------|\n' + newRow;
+            }
+
+            // Write back summary
+            fs.writeFileSync(path, summary);
+            
+      # Step 3: Commit the updated summary file
+      - name: Commit summary update
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update deployment summary for issue #${{ github.event.issue.number }}"
+          branch: main
