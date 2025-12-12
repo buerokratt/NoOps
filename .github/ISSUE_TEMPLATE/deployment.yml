@@ -22,7 +22,7 @@ body:
     id: date
     attributes:
       label: "Delivery Date"
-      description: "yyyy-mm-dd (engineer fills by hand)"
+      description: "dd-mm-yyyy (engineer fills by hand)"
 
   - type: dropdown
     id: engineer
