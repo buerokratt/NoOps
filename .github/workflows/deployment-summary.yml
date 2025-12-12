@@ -1,0 +1,54 @@
+name: Update Deployment Summary
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  update-summary:
+    runs-on: ubuntu-latest
+    if: contains(github.event.label.name, 'deployed') # only run when 'deployed' label added
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract issue details
+        run: |
+          ISSUE_BODY="${{ github.event.issue.body }}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          ISSUE_URL="${{ github.event.issue.html_url }}"
+
+          CLIENT=$(echo "$ISSUE_BODY" | grep -i "Client:" | cut -d ':' -f2 | xargs)
+          VERSION=$(echo "$ISSUE_BODY" | grep -i "Version deployed:" | cut -d ':' -f2 | xargs)
+          DATE=$(echo "$ISSUE_BODY" | grep -i "Delivery Date:" | cut -d ':' -f2 | xargs)
+          ENGINEER=$(echo "$ISSUE_BODY" | grep -i "Engineer:" | cut -d ':' -f2 | xargs)
+          NOTES=$(echo "$ISSUE_BODY" | grep -i "Notes / Problems:" -A 5 | tail -n +2 | xargs)
+
+          echo "CLIENT=$CLIENT" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "DATE=$DATE" >> $GITHUB_ENV
+          echo "ENGINEER=$ENGINEER" >> $GITHUB_ENV
+          echo "NOTES=$NOTES" >> $GITHUB_ENV
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
+
+      - name: Update deployment summary
+        run: |
+          SUMMARY_FILE="DEPLOYMENTS.md"
+
+          if [ ! -f $SUMMARY_FILE ]; then
+            echo "| Client | Version | Date | Engineer | Notes | Issue |" > $SUMMARY_FILE
+            echo "|--------|---------|------|---------|-------|-------|" >> $SUMMARY_FILE
+          fi
+
+          # Check if this issue number already exists in the file
+          if grep -q "Issue #$ISSUE_NUMBER" $SUMMARY_FILE; then
+            echo "Issue #$ISSUE_NUMBER already in summary. Skipping."
+          else
+            echo "| $CLIENT | $VERSION | $DATE | $ENGINEER | $NOTES | [Issue #$ISSUE_NUMBER]($ISSUE_URL) |" >> $SUMMARY_FILE
+          fi
+
+      - name: Commit summary
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update deployment summary for $CLIENT - $VERSION"
+          branch: dev
