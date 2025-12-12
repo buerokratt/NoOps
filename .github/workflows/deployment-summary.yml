@@ -25,25 +25,33 @@ jobs:
               $0 ~ "### " sec {flag=1; next}
               $0 ~ /^### / && flag {flag=0}
               flag {print}
-            ' <<< "$ISSUE_BODY" | sed '/^\s*$/d' | xargs
+            ' <<< "$ISSUE_BODY" | sed '/^\s*$/d'
           }
 
-          CLIENT=$(extract_section "Client")
-          VERSION=$(extract_section "Version deployed")
-          DATE=$(extract_section "Delivery Date")
-          ENGINEER=$(extract_section "Engineer")
-          CONTENTS=$(extract_section "What was deployed?")
-          NOTES=$(extract_section "Notes / Problems" | sed ':a;N;$!ba;s/\n/<br>/g')
+          CLIENT=$(extract_section "Client" | xargs)
+          VERSION=$(extract_section "Version deployed" | xargs)
+          DATE=$(extract_section "Delivery Date" | xargs)
+          ENGINEER=$(extract_section "Engineer" | xargs)
+          CONTENTS=$(extract_section "What was deployed?" | sed ':a;N;$!ba;s/\n/<br>/g' | xargs)
+          NOTES=$(extract_section "Notes / Problems" | sed ':a;N;$!ba;s/\n/<br>/g' | xargs)
 
-          # Export variables for later steps
+          # Ensure empty fields do not break table
+          CLIENT=${CLIENT:-"—"}
+          VERSION=${VERSION:-"—"}
+          DATE=${DATE:-"—"}
+          ENGINEER=${ENGINEER:-"—"}
+          CONTENTS=${CONTENTS:-"—"}
+          NOTES=${NOTES:-"—"}
+          ISSUE_LINK="[Issue #$ISSUE_NUMBER]($ISSUE_URL)"
+
+          # Export for later steps
           echo "CLIENT=$CLIENT" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "DATE=$DATE" >> $GITHUB_ENV
           echo "ENGINEER=$ENGINEER" >> $GITHUB_ENV
           echo "CONTENTS=$CONTENTS" >> $GITHUB_ENV
           echo "NOTES=$NOTES" >> $GITHUB_ENV
-          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
-          echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
+          echo "ISSUE_LINK=$ISSUE_LINK" >> $GITHUB_ENV
 
       - name: Update deployment summary
         run: |
@@ -54,10 +62,10 @@ jobs:
             echo "|--------|---------|------|---------|---------|-------|-------|" >> $SUMMARY_FILE
           fi
 
-          if grep -q "Issue #$ISSUE_NUMBER" $SUMMARY_FILE; then
-            echo "Issue #$ISSUE_NUMBER already in summary. Skipping."
+          if grep -q "Issue #${{ github.event.issue.number }}" $SUMMARY_FILE; then
+            echo "Issue #${{ github.event.issue.number }} already in summary. Skipping."
           else
-            echo "| $CLIENT | $VERSION | $DATE | $ENGINEER | $CONTENTS | $NOTES | [Issue #$ISSUE_NUMBER]($ISSUE_URL) |" >> $SUMMARY_FILE
+            echo "| $CLIENT | $VERSION | $DATE | $ENGINEER | $CONTENTS | $NOTES | $ISSUE_LINK |" >> $SUMMARY_FILE
           fi
 
       - name: Commit summary
