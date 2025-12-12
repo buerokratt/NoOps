@@ -11,26 +11,29 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Extract issue details
+      - name: Extract issue details from form JSON
         run: |
           ISSUE_BODY="${{ github.event.issue.body }}"
           ISSUE_NUMBER="${{ github.event.issue.number }}"
           ISSUE_URL="${{ github.event.issue.html_url }}"
 
-          # Extract fields robustly, ignoring case and trimming spaces
-          CLIENT=$(echo "$ISSUE_BODY" | grep -i "^Client:" | head -n1 | cut -d':' -f2- | xargs)
-          VERSION=$(echo "$ISSUE_BODY" | grep -i "^Version deployed:" | head -n1 | cut -d':' -f2- | xargs)
-          DATE=$(echo "$ISSUE_BODY" | grep -i "^Delivery Date:" | head -n1 | cut -d':' -f2- | xargs)
-          ENGINEER=$(echo "$ISSUE_BODY" | grep -i "^Engineer:" | head -n1 | cut -d':' -f2- | xargs)
+          # Parse JSON from GitHub Issue Form using jq
+          CLIENT=$(echo "$ISSUE_BODY" | jq -r '.client // ""')
+          VERSION=$(echo "$ISSUE_BODY" | jq -r '.version // ""')
+          DATE=$(echo "$ISSUE_BODY" | jq -r '.date // ""')
+          ENGINEER=$(echo "$ISSUE_BODY" | jq -r '.engineer // ""')
+          CONTENTS=$(echo "$ISSUE_BODY" | jq -r '.contents // ""')
+          NOTES=$(echo "$ISSUE_BODY" | jq -r '.notes // ""')
 
-          # Extract multi-line notes and convert newlines to <br> for Markdown table
-          NOTES=$(echo "$ISSUE_BODY" | awk '/Notes \/ Problems:/ {flag=1; next} /^$/ {flag=0} flag {print}' | sed ':a;N;$!ba;s/\n/<br>/g' | xargs)
+          # Replace newlines in Notes and Contents with <br> for Markdown table
+          NOTES=$(echo "$NOTES" | sed ':a;N;$!ba;s/\n/<br>/g')
+          CONTENTS=$(echo "$CONTENTS" | sed ':a;N;$!ba;s/\n/<br>/g')
 
-          # Export as GitHub environment variables
           echo "CLIENT=$CLIENT" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "DATE=$DATE" >> $GITHUB_ENV
           echo "ENGINEER=$ENGINEER" >> $GITHUB_ENV
+          echo "CONTENTS=$CONTENTS" >> $GITHUB_ENV
           echo "NOTES=$NOTES" >> $GITHUB_ENV
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
           echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
@@ -40,15 +43,14 @@ jobs:
           SUMMARY_FILE="DEPLOYMENTS.md"
 
           if [ ! -f $SUMMARY_FILE ]; then
-            echo "| Client | Version | Date | Engineer | Notes | Issue |" > $SUMMARY_FILE
-            echo "|--------|---------|------|---------|-------|-------|" >> $SUMMARY_FILE
+            echo "| Client | Version | Date | Engineer | Contents | Notes | Issue |" > $SUMMARY_FILE
+            echo "|--------|---------|------|---------|---------|-------|-------|" >> $SUMMARY_FILE
           fi
 
-          # Check if this issue number already exists in the file
           if grep -q "Issue #$ISSUE_NUMBER" $SUMMARY_FILE; then
             echo "Issue #$ISSUE_NUMBER already in summary. Skipping."
           else
-            echo "| $CLIENT | $VERSION | $DATE | $ENGINEER | $NOTES | [Issue #$ISSUE_NUMBER]($ISSUE_URL) |" >> $SUMMARY_FILE
+            echo "| $CLIENT | $VERSION | $DATE | $ENGINEER | $CONTENTS | $NOTES | [Issue #$ISSUE_NUMBER]($ISSUE_URL) |" >> $SUMMARY_FILE
           fi
 
       - name: Commit summary
