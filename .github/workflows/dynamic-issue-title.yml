@@ -1,24 +1,28 @@
 name: Dynamic Issue Title
 
 on:
-  issue_form:
-    types: [submitted]  # Käivitub, kui täidetakse Issue Form
+  issues:
+    types: [opened]
 
 jobs:
   update-title:
     runs-on: ubuntu-latest
     steps:
-      - name: Update issue title dynamically
-        uses: actions/github-script@v6
+      - uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue_number = context.issue.number;
+            const body = context.payload.issue.body;
 
-            // Otse issue_form inputitest
-            const client = context.payload.inputs.client || "UnknownClient";
-            const version = context.payload.inputs.version || "v0.0.0";
-            const date = context.payload.inputs.date || new Date().toISOString().slice(0,10);
+            // Täpsed regexid Markdownist
+            const clientMatch = body.match(/\*\*Client:\*\*\s*(.+)/);
+            const versionMatch = body.match(/\*\*Version deployed:\*\*\s*(.+)/);
+            const dateMatch = body.match(/\*\*Delivery Date:\*\*\s*(.+)/);
+
+            const client = clientMatch ? clientMatch[1].trim() : "UnknownClient";
+            const version = versionMatch ? versionMatch[1].trim() : "v0.0.0";
+            const date = dateMatch ? dateMatch[1].trim() : new Date().toISOString().slice(0,10);
 
             const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
 
