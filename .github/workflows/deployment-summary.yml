@@ -11,23 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Extract issue details from form JSON
+      - name: Extract issue details from Markdown form
         run: |
           ISSUE_BODY="${{ github.event.issue.body }}"
           ISSUE_NUMBER="${{ github.event.issue.number }}"
           ISSUE_URL="${{ github.event.issue.html_url }}"
 
-          # Parse JSON from GitHub Issue Form using jq
-          CLIENT=$(echo "$ISSUE_BODY" | jq -r '.client // ""')
-          VERSION=$(echo "$ISSUE_BODY" | jq -r '.version // ""')
-          DATE=$(echo "$ISSUE_BODY" | jq -r '.date // ""')
-          ENGINEER=$(echo "$ISSUE_BODY" | jq -r '.engineer // ""')
-          CONTENTS=$(echo "$ISSUE_BODY" | jq -r '.contents // ""')
-          NOTES=$(echo "$ISSUE_BODY" | jq -r '.notes // ""')
-
-          # Replace newlines in Notes and Contents with <br> for Markdown table
-          NOTES=$(echo "$NOTES" | sed ':a;N;$!ba;s/\n/<br>/g')
-          CONTENTS=$(echo "$CONTENTS" | sed ':a;N;$!ba;s/\n/<br>/g')
+          # Extract values from Markdown issue form
+          CLIENT=$(echo "$ISSUE_BODY" | awk '/### Client/{getline; print}' | xargs)
+          VERSION=$(echo "$ISSUE_BODY" | awk '/### Version deployed/{getline; print}' | xargs)
+          DATE=$(echo "$ISSUE_BODY" | awk '/### Delivery Date/{getline; print}' | xargs)
+          ENGINEER=$(echo "$ISSUE_BODY" | awk '/### Engineer/{getline; print}' | xargs)
+          CONTENTS=$(echo "$ISSUE_BODY" | awk '/### What was deployed\?/{getline; print}' | xargs)
+          NOTES=$(echo "$ISSUE_BODY" | awk '/### Notes \/ Problems/{flag=1; next} flag && /^$/{flag=0} flag{print}' | sed ':a;N;$!ba;s/\n/<br>/g' | xargs)
 
           echo "CLIENT=$CLIENT" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
