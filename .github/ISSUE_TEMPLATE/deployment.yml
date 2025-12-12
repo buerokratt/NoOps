@@ -2,6 +2,7 @@ name: Manual Delivery
 description: Track a manually executed delivery
 title: "[Deployment] Client - Version"
 labels: ["deployment"]
+
 body:
   - type: input
     id: client
@@ -35,6 +36,7 @@ body:
     attributes:
       label: What was deployed?
       description: Entire version or components/modules, configmaps etc
+
   - type: textarea
     id: notes
     attributes:
