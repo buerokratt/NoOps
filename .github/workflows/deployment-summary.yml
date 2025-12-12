@@ -21,7 +21,9 @@ jobs:
           VERSION=$(echo "$ISSUE_BODY" | sed -n 's/^Version deployed:[[:space:]]*//Ip' | head -n1)
           DATE=$(echo "$ISSUE_BODY" | sed -n 's/^Delivery Date:[[:space:]]*//Ip' | head -n1)
           ENGINEER=$(echo "$ISSUE_BODY" | sed -n 's/^Engineer:[[:space:]]*//Ip' | head -n1)
-          NOTES=$(echo "$ISSUE_BODY" | awk '/Notes \/ Problems:/ {flag=1; next} /^$/ {flag=0} flag {print}' | tr '\n' ' ' | xargs)
+          
+          # Extract multi-line notes and convert newlines to <br> for Markdown table
+          NOTES=$(echo "$ISSUE_BODY" | awk '/Notes \/ Problems:/ {flag=1; next} /^$/ {flag=0} flag {print}' | sed ':a;N;$!ba;s/\n/<br>/g' | xargs)
 
           echo "CLIENT=$CLIENT" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
