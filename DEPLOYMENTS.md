@@ -6,3 +6,4 @@
 |  |  |  |  |  | [Issue #250](https://github.com/buerokratt/NoOps/issues/250) |
 |  |  |  |  |  | [Issue #251](https://github.com/buerokratt/NoOps/issues/251) |
 |  |  |  |  |  | [Issue #243](https://github.com/buerokratt/NoOps/issues/243) |
+|  |  |  |  |  | [Issue #253](https://github.com/buerokratt/NoOps/issues/253) |
