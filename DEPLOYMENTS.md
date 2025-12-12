@@ -10,3 +10,4 @@
 |  |  |  |  |  | [Issue #254](https://github.com/buerokratt/NoOps/issues/254) |
 |  |  |  |  |  |  | [Issue #255](https://github.com/buerokratt/NoOps/issues/255) |
 |  |  |  |  |  |  | [Issue #256](https://github.com/buerokratt/NoOps/issues/256) |
+| r | r | 12-12-2025 | Varmo | r | rr | [Issue #257](https://github.com/buerokratt/NoOps/issues/257) |
