@@ -9,11 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repo to update summary file
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Extract issue fields and update summary
+      # Step 2: Check for deployment label
+      - name: Check if issue has 'deployment' label
+        if: "!contains(github.event.issue.labels.*.name, 'deployed')"
+        run: |
+          echo "Issue does not have the 'deployment' label. Exiting."
+          exit 0
+
+      # Step 3: Extract fields and update summary
       - name: Update summary
         uses: actions/github-script@v6
         with:
@@ -24,7 +31,6 @@ jobs:
             const issue_number = context.issue.number;
             const body = context.payload.issue.body;
 
-            // Regex to extract fields from GitHub Issue Form markdown
             const getField = (label) => {
               const match = body.match(new RegExp(`\\*\\*${label}:\\*\\*\\s*(.*)`,'i'));
               return match ? match[1].trim() : '';
@@ -36,10 +42,8 @@ jobs:
             const engineer = getField('Engineer');
             const notes = getField('Notes / Problems');
 
-            // Build a new table row
             const newRow = `| ${client} | ${version} | ${date} | ${engineer} | ${notes} | [Issue #${issue_number}](${context.payload.issue.html_url}) |`;
 
-            // Read existing summary or create new table
             let summary = '';
             if (fs.existsSync(path)) {
               summary = fs.readFileSync(path, 'utf8');
@@ -48,10 +52,9 @@ jobs:
               summary = '| Client | Version | Date | Engineer | Notes | Issue |\n|--------|---------|------|---------|-------|-------|\n' + newRow;
             }
 
-            // Write back summary
             fs.writeFileSync(path, summary);
-            
-      # Step 3: Commit the updated summary file
+
+      # Step 4: Commit the updated summary
       - name: Commit summary update
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
