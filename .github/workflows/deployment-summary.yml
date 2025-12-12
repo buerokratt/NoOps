@@ -17,14 +17,16 @@ jobs:
           ISSUE_NUMBER="${{ github.event.issue.number }}"
           ISSUE_URL="${{ github.event.issue.html_url }}"
 
-          CLIENT=$(echo "$ISSUE_BODY" | sed -n 's/^Client:[[:space:]]*//Ip' | head -n1)
-          VERSION=$(echo "$ISSUE_BODY" | sed -n 's/^Version deployed:[[:space:]]*//Ip' | head -n1)
-          DATE=$(echo "$ISSUE_BODY" | sed -n 's/^Delivery Date:[[:space:]]*//Ip' | head -n1)
-          ENGINEER=$(echo "$ISSUE_BODY" | sed -n 's/^Engineer:[[:space:]]*//Ip' | head -n1)
-          
+          # Extract fields robustly, ignoring case and trimming spaces
+          CLIENT=$(echo "$ISSUE_BODY" | grep -i "^Client:" | head -n1 | cut -d':' -f2- | xargs)
+          VERSION=$(echo "$ISSUE_BODY" | grep -i "^Version deployed:" | head -n1 | cut -d':' -f2- | xargs)
+          DATE=$(echo "$ISSUE_BODY" | grep -i "^Delivery Date:" | head -n1 | cut -d':' -f2- | xargs)
+          ENGINEER=$(echo "$ISSUE_BODY" | grep -i "^Engineer:" | head -n1 | cut -d':' -f2- | xargs)
+
           # Extract multi-line notes and convert newlines to <br> for Markdown table
           NOTES=$(echo "$ISSUE_BODY" | awk '/Notes \/ Problems:/ {flag=1; next} /^$/ {flag=0} flag {print}' | sed ':a;N;$!ba;s/\n/<br>/g' | xargs)
 
+          # Export as GitHub environment variables
           echo "CLIENT=$CLIENT" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "DATE=$DATE" >> $GITHUB_ENV
