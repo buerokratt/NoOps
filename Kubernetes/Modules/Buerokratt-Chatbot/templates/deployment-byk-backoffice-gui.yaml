@@ -87,6 +87,8 @@ spec:
               value: "FALSE"
             - name: REACT_APP_JIRA_INTEGRATION_ENABLED
               value: "FALSE"
+            - name: REACT_APP_REFLECT_DOMAINS
+              value: "FALSE"
           
           # livenessProbe:
           #   httpGet:
