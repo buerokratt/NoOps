@@ -12,10 +12,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            // github client is passed in automatically as `github`
+            const { github, context } = require('@actions/github-script');
+
             const issue_number = context.issue.number;
             const body = context.payload.issue.body;
 
-            // Regex helpers to extract Client and Version from issue body
+            // Extract Client and Version from issue body
             const clientMatch = body.match(/Client\s*:\s*(.*)/i);
             const versionMatch = body.match(/Version deployed\s*:\s*(.*)/i);
 
@@ -27,10 +30,10 @@ jobs:
 
             const newTitle = `[Deployment] ${client} - ${version} - ${date}`;
 
-            // Use the GitHub client provided by actions/github-script
-            await github.issues.update({
+            // Update the issue title
+            await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue_number,
+              issue_number,
               title: newTitle
             });
