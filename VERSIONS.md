@@ -11,7 +11,7 @@ All application version numbers listed here represent the latest available **rel
 | Ruuter-Private      | v2.2.8         | 2025-11-25   |
 | Resql               | v1.3.5         | 2025-11-25   |
 | TIM                 | v2.3.6         | 2025-11-25   |
-| CronManager         | v1.1.28        | 2025-11-25   |
+| CronManager         | prod-3.0.1     | 2025-12-16   |
 | DataMapper          | v2.2.23        | 2025-11-25   |
 | NotificationsNode   | v2.1.61-notification-node| 2025-11-25   |
 | OpenSearch          | 1.3.16         | 2025-11-25   |
