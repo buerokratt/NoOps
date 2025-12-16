@@ -148,3 +148,22 @@ index fac56da..d9f3307 100644
  ## Versioning Notes
 ```
 
+## Change on 2025-12-16 15:42:47 (EET)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index d9f3307..2b2f388 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -11,7 +11,7 @@ All application version numbers listed here represent the latest available **rel
+ | Ruuter-Private      | v2.2.8         | 2025-11-25   |
+ | Resql               | v1.3.5         | 2025-11-25   |
+ | TIM                 | v2.3.6         | 2025-11-25   |
+-| CronManager         | v1.1.28        | 2025-11-25   |
++| CronManager         | prod-3.0.1     | 2025-12-16   |
+ | DataMapper          | v2.2.23        | 2025-11-25   |
+ | NotificationsNode   | v2.1.61-notification-node| 2025-11-25   |
+ | OpenSearch          | 1.3.16         | 2025-11-25   |
+```
+
