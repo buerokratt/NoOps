@@ -6,10 +6,10 @@ data:
   constants.ini: |
     TRAINING_PUBLIC_RUUTER=http://component-byk-ruuter-private:8080/training
     TRAINING_DMAPPER=//component-byk-dmapper:3000
-    CHATBOT_BOT_RESQL=http://localhost:8082
+    CHATBOT_BOT_RESQL=http://component-byk-resql:8082
     CHATBOT_TRAINING_RESQL=http://resql-training:8083/training
     TRAINING_OPENSEARCH=http://component-opensearch-node:9200
-    TRAINING_TIM=http://tim:8085
+    TRAINING_TIM=http://component-byk-tim:8085
     TRAINING_RESQL=http://component-byk-resql:8082/training
     TRAINING_USERS_RESQL=http://component-byk-resql:8082/training
     TRAINING_PIPELINE=http://module-byk-training-gui-pipelines:3010
@@ -20,7 +20,7 @@ data:
     CRON_INSTANCE=http://component-byk-cronmanager:9010
     CRON_MANAGER=http://component-byk-cronmanager:9010
     CHATBOT_BOT=http://component-byk-bot:5005
-    CHATBOT_PRIVATE_RUUTER=http://ruuter-private:8088/backoffice
+    CHATBOT_PRIVATE_RUUTER=http://component-byk-ruuter-private:8088/backoffice
     JIRA_INTEGRATION_ENABLED=false
     SMAX_INTEGRATION_ENABLED=false
     CHATBOT_RUUTER_PRIVATE=http://component-byk-ruuter-private:8080/backoffice
