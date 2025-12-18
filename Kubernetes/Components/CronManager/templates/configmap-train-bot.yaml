@@ -5,7 +5,7 @@ metadata:
 data:
   constants.ini: |
     TRAINING_PUBLIC_RUUTER=http://component-byk-ruuter-private:8080/training
-    TRAINING_DMAPPER=//component-byk-dmapper:3000
+    TRAINING_DMAPPER=http://component-byk-dmapper:3000
     CHATBOT_BOT_RESQL=http://component-byk-resql:8082
     CHATBOT_TRAINING_RESQL=http://resql-training:8083/training
     TRAINING_OPENSEARCH=http://component-opensearch-node:9200
