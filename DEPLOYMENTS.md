@@ -6,3 +6,4 @@
 | Keskkonnaagentuur | 3.0.0 | 16-12-2025 | Georg | Updated to latest stable version | _No response_ | [Issue #269](https://github.com/buerokratt/NoOps/issues/269) |
 | cl6-llm | v3.0.0 | 16-12-2025 | Georg | Updated to latest stable version | _No response_ | [Issue #270](https://github.com/buerokratt/NoOps/issues/270) |
 | kratid | v3.0.0 | 17-12-2025 | Georg | Initial deployment to kratid.ee | _No response_ | [Issue #272](https://github.com/buerokratt/NoOps/issues/272) |
+| Stage | v3.0.1 | 19.12.2025 | Fredy | DSL:<br>analytics analytics-module-test-1.6.12<br>backoffice backoffice-module-test-1.6.32<br>services service-module-test-1.6.3<br>training training-module-test-1.6.5<br>Analytics GUI v1.1.33<br>Backoffice GUI v2.1.71<br>Services GUI v1.1.44<br>Training GUI v2.1.37<br>Widget v2.1.53 | _No response_ | [Issue #274](https://github.com/buerokratt/NoOps/issues/274) |
