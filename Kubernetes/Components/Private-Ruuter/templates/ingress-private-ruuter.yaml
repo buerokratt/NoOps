@@ -18,6 +18,8 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/whitelist-source-range: "{{ .Values.ingress.whitelistSourceRange }}"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Robots-Tag "noindex, nofollow";
   labels:
     name: "{{ .Values.release_name }}-ingress"
 spec:
