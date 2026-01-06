@@ -50,6 +50,8 @@ spec:
               value: "{{ .Values.env.AZURE_OPENAI_MODEL }}"
             - name: PRIVATE_RUUTER_URL
               value: "{{ .Values.env.PRIVATE_RUUTER_URL }}"
+            - name: TERMINATION_TIMEOUT
+              value: "{{ .Values.env.TERMINATION_TIMEOUT }}"
           volumeMounts:
             - name: notification-server
               mountPath: /app/notification-server
