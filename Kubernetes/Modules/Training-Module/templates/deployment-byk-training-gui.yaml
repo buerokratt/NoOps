@@ -118,6 +118,8 @@ spec:
               value: "{{ .Values.env.REACT_APP_RUUTER_PRIVATE_ENDED_API_URL }}"
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
               value: "FALSE"
+            - name: REACT_APP_CURRENT_VERSION
+              value: "Version 1.0.0"
           resources:
             requests:
               memory: "{{ .Values.resources.training.requests.memory }}"
