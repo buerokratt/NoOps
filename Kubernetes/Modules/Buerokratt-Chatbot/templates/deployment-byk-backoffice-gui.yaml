@@ -89,6 +89,8 @@ spec:
               value: "FALSE"
             - name: REACT_APP_REFLECT_DOMAINS
               value: "FALSE"
+            - name: REACT_APP_CURRENT_VERSION
+              value: "Version 1.0.0"
           
           # livenessProbe:
           #   httpGet:
