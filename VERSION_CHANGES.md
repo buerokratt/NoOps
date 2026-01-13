@@ -324,3 +324,22 @@ index 817db1c..b7998d6 100644
  | Service DSL                 | service-module-test-1.6.3  | 2026-01-13   |
 ```
 
+## Change on 2026-01-13 17:18:07 (EET)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index b7998d6..2460701 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -14,7 +14,7 @@ Upcoming version - **V3.1.0**
+ | Resql               | v1.3.5         | 2026-01-13   |
+ | TIM                 | v2.3.6         | 2026-01-13   |
+ | CronManager         | v1.1.33        | 2026-01-13   |
+-| DataMapper          | v2.2.28        | 2026-01-13   |
++| DataMapper          | v2.2.29        | 2026-01-13   |
+ | NotificationsNode   | v2.1.79-notification-node| 2026-01-13   |
+ | OpenSearch          | 1.3.16         | 2026-01-13   |
+ | S3Ferry             | pre-alpha-1.1.1| 2026-01-13   |
+```
+
