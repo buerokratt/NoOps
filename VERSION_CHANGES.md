@@ -221,3 +221,24 @@ index 2b2f388..200a5f7 100644
  | Ruuter              | v2.2.8         | 2025-11-25   |
 ```
 
+## Change on 2026-01-13 12:49:48 (EET)
+**Author:** Varmo <101868197+varmoh@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index 200a5f7..94a202d 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -14,8 +14,8 @@ Upcoming version - **V3.1.0**
+ | Resql               | v1.3.5         | 2025-11-25   |
+ | TIM                 | v2.3.6         | 2025-11-25   |
+ | CronManager         | prod-3.0.1     | 2025-12-16   |
+-| DataMapper          | v2.2.28        | 2025-11-25   |
+-| NotificationsNode   | v2.1.61-notification-node| 2026-01-13   |
++| DataMapper          | v2.2.28        | 2025-01-13   |
++| NotificationsNode   | v2.1.61-notification-node| 2026-11-25   |
+ | OpenSearch          | 1.3.16         | 2025-11-25   |
+ | S3Ferry             | pre-alpha-1.1.1| 2025-11-25   |
+ | S3Ferry-publish     | pre-alpha-1.1.1| 2025-11-25   |
+```
+
