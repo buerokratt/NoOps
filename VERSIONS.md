@@ -14,8 +14,8 @@ Upcoming version - **V3.1.0**
 | Resql               | v1.3.5         | 2025-11-25   |
 | TIM                 | v2.3.6         | 2025-11-25   |
 | CronManager         | prod-3.0.1     | 2025-12-16   |
-| DataMapper          | v2.2.28        | 2025-11-25   |
-| NotificationsNode   | v2.1.61-notification-node| 2026-01-13   |
+| DataMapper          | v2.2.28        | 2025-01-13   |
+| NotificationsNode   | v2.1.61-notification-node| 2026-11-25   |
 | OpenSearch          | 1.3.16         | 2025-11-25   |
 | S3Ferry             | pre-alpha-1.1.1| 2025-11-25   |
 | S3Ferry-publish     | pre-alpha-1.1.1| 2025-11-25   |
