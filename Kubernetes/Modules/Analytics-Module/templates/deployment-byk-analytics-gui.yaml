@@ -122,7 +122,7 @@ spec:
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
               value: "FALSE"
             - name: REACT_APP_CURRENT_VERSION
-              value: "Version 1.0.0"
+              value: "Version 3.1.0"
           volumeMounts:
             - mountPath: /tmp
               name: tmp
