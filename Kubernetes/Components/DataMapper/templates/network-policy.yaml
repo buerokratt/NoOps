@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Values.release_name }}-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.release_name }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: {{ .Values.networkPolicy.cidr }}
+            except:
+              {{- toYaml .Values.networkPolicy.except | nindent 14 }}
