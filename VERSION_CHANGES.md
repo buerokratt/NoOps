@@ -369,3 +369,29 @@ index 2460701..b92effa 100644
  | training            | v2.1.40        | 2026-01-13   |
 ```
 
+## Change on 2026-01-20 13:32:23 (EET)
+**Author:** Varmo <101868197+varmoh@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index b92effa..fe6d29f 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -14,13 +14,13 @@ Upcoming version - **V3.1.0**
+ | Resql               | v1.3.5         | 2026-01-13   |
+ | TIM                 | v2.3.6         | 2026-01-13   |
+ | CronManager         | v1.1.33        | 2026-01-13   |
+-| DataMapper          | v2.2.30        | 2026-01-13   |
++| DataMapper          | v2.2.31        | 2026-01-13   |
+ | NotificationsNode   | v2.1.79-notification-node| 2026-01-13   |
+ | OpenSearch          | 1.3.16         | 2026-01-13   |
+ | S3Ferry             | pre-alpha-1.1.1| 2026-01-13   |
+ | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
+ | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
+-| widget              | downloadtemp-1.1.1        | 2026-01-13   |
++| widget              | v2.1.59        | 2026-01-13   |
+ | backoffice          | v2.1.79        | 2026-01-13   |
+ | analytics           | v1.1.38        | 2026-01-13   |
+ | training            | v2.1.40        | 2026-01-13   |
+```
+
