@@ -73,3 +73,8 @@ resources:
   limits:
     memory: "2000Mi"
     cpu: "100m"
+
+networkPolicy:
+  cidr: 0.0.0.0/0
+  except: []
+
