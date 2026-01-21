@@ -395,3 +395,22 @@ index b92effa..fe6d29f 100644
  | training            | v2.1.40        | 2026-01-13   |
 ```
 
+## Change on 2026-01-21 16:12:18 (EET)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index fe6d29f..68834a8 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -28,7 +28,7 @@ Upcoming version - **V3.1.0**
+ | AuthLayer           | v1.1.2         | 2026-01-13   |
+ | UsersDB             | postgres:14.1  | 2026-01-13   |
+ | TimDB               | postgres:14.1  | 2026-01-13   |
+-| Backoffice DSL                 | backoffice-module-test-1.6.45  | 2026-01-13   |
++| Backoffice DSL                 | backoffice-module-test-3.1.4-stage  | 2026-01-13   |
+ | Analytics DSL                 | analytics-module-test-1.6.14  | 2026-01-13   |
+ | Training DSL                 | training-module-test-1.6.7  | 2026-01-13   |
+ | Service DSL                 | service-module-test-1.6.3  | 2026-01-13   |
+```
+
