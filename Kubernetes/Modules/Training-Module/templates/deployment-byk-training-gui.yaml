@@ -119,7 +119,7 @@ spec:
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
               value: "FALSE"
             - name: REACT_APP_CURRENT_VERSION
-              value: "Version 3.1.0"
+              value: "Version 3.1.1"
           resources:
             requests:
               memory: "{{ .Values.resources.training.requests.memory }}"
