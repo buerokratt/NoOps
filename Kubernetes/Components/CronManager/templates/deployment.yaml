@@ -117,6 +117,8 @@ spec:
           value: "false"
         - name: JIRA_INTEGRATION_ENABLED
           value: "false"
+        - name: INACTIVITY_TIME
+          value: "{{ .Values.contstants.INACTIVITY_TIME }}"
         resources:
           requests:
             memory: "{{ .Values.resources.requests.memory }}"
