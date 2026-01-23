@@ -58,6 +58,7 @@ contstants:
   CROSS_VALIDATION_FILES_PATH: "/rasa/locations/cross/data/"
   CHATBOT_RUUTER_PRIVATE: "http://component-byk-ruuter-private:8080/backoffice"
   CHATBOT_RUUTER_PUBLIC: "http://component-byk-ruuter:8080/backoffice"
+  INACTIVITY_TIME: "5"
 
 resources:
   requests:
