@@ -499,3 +499,22 @@ index 785f24f..3028e60 100644
  | Service DSL                 | service-module-test-1.6.3  | 2026-01-13   |
 ```
 
+## Change on 2026-01-26 12:35:11 (EET)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index 3028e60..feb32dd 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -28,7 +28,7 @@ Upcoming version - **V3.1.0**
+ | AuthLayer           | v1.1.2         | 2026-01-13   |
+ | UsersDB             | postgres:14.1  | 2026-01-13   |
+ | TimDB               | postgres:14.1  | 2026-01-13   |
+-| Backoffice DSL                 | backoffice-module-test-3.1.6-stage  | 2026-01-26   |
++| Backoffice DSL                 | backoffice-module-test-3.1.7-stage  | 2026-01-26   |
+ | Analytics DSL                 | analytics-module-test-1.6.14  | 2026-01-13   |
+ | Training DSL                 | training-module-test-1.6.7  | 2026-01-13   |
+ | Service DSL                 | service-module-test-1.6.3  | 2026-01-13   |
+```
+
