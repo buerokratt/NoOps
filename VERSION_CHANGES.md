@@ -433,3 +433,31 @@ index 024af1e..631eab3 100644
  | Service DSL                 | service-module-test-1.6.3  | 2026-01-13   |
 ```
 
+## Change on 2026-01-26 11:00:39 (EET)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index 631eab3..89df971 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -13,7 +13,7 @@ Upcoming version - **V3.1.0**
+ | Ruuter-Private      | v2.2.8         | 2026-01-13   |
+ | Resql               | v1.3.5         | 2026-01-13   |
+ | TIM                 | v2.3.6         | 2026-01-13   |
+-| CronManager         | v1.1.33        | 2026-01-13   |
++| CronManager         | v1.1.40        | 2026-01-26   |
+ | DataMapper          | v2.2.31        | 2026-01-13   |
+ | NotificationsNode   | v2.1.79-notification-node| 2026-01-13   |
+ | OpenSearch          | 1.3.16         | 2026-01-13   |
+@@ -28,7 +28,7 @@ Upcoming version - **V3.1.0**
+ | AuthLayer           | v1.1.2         | 2026-01-13   |
+ | UsersDB             | postgres:14.1  | 2026-01-13   |
+ | TimDB               | postgres:14.1  | 2026-01-13   |
+-| Backoffice DSL                 | backoffice-module-test-3.1.5-stage  | 2026-01-21   |
++| Backoffice DSL                 | backoffice-module-test-3.1.5-stage  | 2026-01-26   |
+ | Analytics DSL                 | analytics-module-test-1.6.14  | 2026-01-13   |
+ | Training DSL                 | training-module-test-1.6.7  | 2026-01-13   |
+ | Service DSL                 | service-module-test-1.6.3  | 2026-01-13   |
+```
+
