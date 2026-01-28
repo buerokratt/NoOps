@@ -518,3 +518,22 @@ index 3028e60..feb32dd 100644
  | Service DSL                 | service-module-test-1.6.3  | 2026-01-13   |
 ```
 
+## Change on 2026-01-28 12:06:52 (EET)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index feb32dd..8caca90 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -20,7 +20,7 @@ Upcoming version - **V3.1.0**
+ | S3Ferry             | pre-alpha-1.1.1| 2026-01-13   |
+ | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
+ | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
+-| widget              | v2.1.59        | 2026-01-13   |
++| widget              | v2.1.61        | 2026-01-28   |
+ | backoffice          | v2.1.79        | 2026-01-13   |
+ | analytics           | v1.1.38        | 2026-01-13   |
+ | training            | v2.1.40        | 2026-01-13   |
+```
+
