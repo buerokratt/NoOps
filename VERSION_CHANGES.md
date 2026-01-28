@@ -537,3 +537,22 @@ index feb32dd..8caca90 100644
  | training            | v2.1.40        | 2026-01-13   |
 ```
 
+## Change on 2026-01-28 13:27:25 (EET)
+**Author:** KlviG <78801020+KlviG@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index 8caca90..f945e51 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -4,7 +4,7 @@ All application version numbers listed here represent the latest available **rel
+ 
+ 
+ 
+-Upcoming version - **V3.1.0**
++Upcoming version - **V3.1.1**
+ ---
+ 
+ | Application         | Latest Version | Release Date |
+```
+
