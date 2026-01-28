@@ -20,7 +20,7 @@ Upcoming version - **V3.1.0**
 | S3Ferry             | pre-alpha-1.1.1| 2026-01-13   |
 | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
 | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
-| widget              | v2.1.59        | 2026-01-13   |
+| widget              | v2.1.61        | 2026-01-28   |
 | backoffice          | v2.1.79        | 2026-01-13   |
 | analytics           | v1.1.38        | 2026-01-13   |
 | training            | v2.1.40        | 2026-01-13   |
