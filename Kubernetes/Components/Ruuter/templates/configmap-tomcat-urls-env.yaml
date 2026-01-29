@@ -36,7 +36,7 @@ data:
     XTR=http://component-byk-xtr:8080
     XTR_AR_USERNAME:{{ xtr.user }}
     XTR_AR_PASSWORD:{{ xtr.password }}
-    COOKIE_SAME_SITE=Lax
+    COOKIE_SAME_SITE={{ cookie.policy }}
     CHATBOT_DMAPPER_HBS=http://component-byk-dmapper:3000/backoffice/hbs
     ANALYTICS_DMAPPER_HBS=http://component-byk-dmapper:3000/analytics/hbs
     SERVICE_DMAPPER_HBS=http://component-byk-dmapper:3000/services/hbs
