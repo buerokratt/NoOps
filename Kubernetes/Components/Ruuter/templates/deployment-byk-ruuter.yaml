@@ -54,6 +54,8 @@ spec:
               value: "2000"
             - name: application.openSearchConfiguration.index
               value: "ruuterlog"
+            - name: application.httpRequestTimeout
+              value: "35000"
           volumeMounts:
             - name: ruuter-volume
               mountPath: /DSL/
