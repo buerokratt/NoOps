@@ -86,3 +86,8 @@ data:
     ID_SEMANTIC_CONFIGURATION=test-index-semantic-configuration
     ID_IN_SCOPE=true
     ID_SEARCH_ENDPOINT=exmaple-endpoint
+
+    SKM_USE_AGENTIC=""
+    BGK_USE_AGENTIC=""
+    AZURE_AGENT_NAME=""
+    AZURE_AGENT_TYPE=""
