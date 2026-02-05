@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: azurite
+spec:
+  type: {{ .Values.service.ferry.type }}
+  selector:
+    app: azurite
+  ports:
+    - port: {{ .Values.service.ferry.port }}
+      targetPort: 3000

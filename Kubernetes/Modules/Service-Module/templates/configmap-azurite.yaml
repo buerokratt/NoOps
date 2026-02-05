@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: azurite-scripts
+data:
+  azurite-init.sh: |
+    #!/bin/sh
+    set -e
+
+    apk add --no-cache curl
+
+    # Wait for Azurite to be ready
+    echo "Waiting for Azurite to be ready..."
+    until curl -s http://azurite:10000 > /dev/null 2>&1; do
+      sleep 1
+    done
+    echo "Azurite is ready!"
+
+    # Install Azure Storage Blob package in /tmp (writable location)
+    echo "Installing @azure/storage-blob..."
+    cd /tmp
+    npm install --no-save @azure/storage-blob
+
+    # Run Node.js script to create containers
+    NODE_PATH=/tmp/node_modules node /scripts/create-azure-containers.js
+
+  create-azure-containers.js: |
+    /* eslint-disable */
+    // This script creates required Azure blob storage containers in Azurite (local Azure Storage emulator)
+    const { BlobServiceClient } = require('@azure/storage-blob');
+
+    const containers = ['buerokratt']; // Add more container names as needed
+
+    const connectionString =
+      'DefaultEndpointsProtocol=http;AccountName=testaccount1;AccountKey=dGVzdGtleTE9PQ==;BlobEndpoint=http://azurite:10000/testaccount1;QueueEndpoint=http://azurite:10001/testaccount1;TableEndpoint=http://azurite:10002/testaccount1;';
+
+    async function createContainers() {
+      const blobServiceClient = BlobServiceClient.fromConnectionString(
+        connectionString,
+      );
+
+      for (const containerName of containers) {
+        try {
+          const containerClient = blobServiceClient.getContainerClient(containerName);
+          await containerClient.createIfNotExists();
+          console.log(`✓ Container '${containerName}' created/verified`);
+        } catch (error) {
+          console.error(
+            `✗ Failed to create container '${containerName}':`,
+            error.message,
+          );
+          process.exit(1);
+        }
+      }
+      console.log('✓ All containers created successfully!');
+    }
+
+    createContainers().catch((error) => {
+      console.error('Error creating containers:', error);
+      process.exit(1);
+    });

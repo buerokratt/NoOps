@@ -33,6 +33,18 @@ images:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
     tag: "{{ module.services.image.version }}"  # Images (tags) are up to date, currently no changes needed
+  ferry:
+    repository: ghcr.io/buerokratt/s3-ferry
+    tag: v1.1.1
+    pullPolicy: IfNotPresent
+  azurite:
+    repository: mcr.microsoft.com/azure-storage/azurite
+    tag: latest
+    pullPolicy: IfNotPresent
+  azuriteInit:
+    repository: node
+    tag: 24-alpine
+    pullPolicy: IfNotPresent
 
 env:
   REACT_APP_RUUTER_API_URL: "{{ url.name.ruuter }}/v2/private/backoffice" # Change the domain name, leave subdomain and subpath same
@@ -77,3 +89,16 @@ resources:
   limits:
     memory: "50Mi"
     cpu: "5m"
+
+service:
+  ferry:
+    type: ClusterIP
+    port: 3000
+azurite:
+  accounts: testaccount1:dGVzdGtleTE9PQ==;
+  storageSize: 1Gi
+
+azuriteenv:
+  apiCorsOrigin: "*"
+  apiDocumentationEnabled: "true"
+  azureConnectionString: "DefaultEndpointsProtocol=http;AccountName=testaccount1;AccountKey=dGVzdGtleTE9PQ==;BlobEndpoint=http://azurite:10000/testaccount1;QueueEndpoint=http://azurite:10001/testaccount1;TableEndpoint=http://azurite:10002/testaccount1;"
