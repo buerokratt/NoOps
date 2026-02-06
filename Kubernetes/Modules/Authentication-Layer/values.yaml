@@ -20,7 +20,7 @@ secretname: {{ admin.cert.Name.value }} # Cert name value, change this as suited
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
-  whitelistSourceRange: "" # Client based IP if the whitelisting is needed, if not, leave as it is  
+  whitelistSourceRange: "{{ ip.whitelist }}" # Client based IP if the whitelisting is needed, if not, leave as it is  
 
 release_name: "module-byk-authentication-layer"
 
