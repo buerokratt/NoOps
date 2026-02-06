@@ -12,7 +12,7 @@ spec:
       labels:
         app: azurite
     spec:
-      initContainers:
+      containers:
         - name: azurite-init
           image: "{{ .Values.images.azuriteInit.repository }}:{{ .Values.images.azuriteInit.tag }}"
           imagePullPolicy: {{ .Values.images.azuriteInit.pullPolicy }}
@@ -21,7 +21,6 @@ spec:
           volumeMounts:
             - name: scripts
               mountPath: /scripts
-      containers:
         - name: azurite
           image: "{{ .Values.images.azurite.repository }}:{{ .Values.images.azurite.tag }}"
           imagePullPolicy: {{ .Values.images.azurite.pullPolicy }}
@@ -46,11 +45,11 @@ spec:
           imagePullPolicy: {{ .Values.images.ferry.pullPolicy }}
           env:
             - name: API_CORS_ORIGIN
-              value: "{{ .Values.env.apiCorsOrigin }}"
+              value: "{{ .Values.azuriteenv.apiCorsOrigin }}"
             - name: API_DOCUMENTATION_ENABLED
-              value: "{{ .Values.env.apiDocumentationEnabled }}"
+              value: "{{ .Values.azuriteenv.apiDocumentationEnabled }}"
             - name: AZURE_ACCOUNT_1_CONNECTION_STRING
-              value: "{{ .Values.env.azureConnectionString }}"
+              value: "{{ .Values.azuriteenv.azureConnectionString }}"
           ports:
             - containerPort: 3000
       volumes:
