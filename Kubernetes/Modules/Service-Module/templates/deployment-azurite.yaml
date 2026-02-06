@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azurite
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: azurite
+  template:
+    metadata:
+      labels:
+        app: azurite
+    spec:
+      initContainers:
+        - name: azurite-init
+          image: "{{ .Values.images.azuriteInit.repository }}:{{ .Values.images.azuriteInit.tag }}"
+          imagePullPolicy: {{ .Values.images.azuriteInit.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args: ["/scripts/azurite-init.sh"]
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      containers:
+        - name: azurite
+          image: "{{ .Values.images.azurite.repository }}:{{ .Values.images.azurite.tag }}"
+          imagePullPolicy: {{ .Values.images.azurite.pullPolicy }}
+          env:
+            - name: AZURITE_ACCOUNTS
+              value: "{{ .Values.azurite.accounts }}"
+          ports:
+            - containerPort: 10000
+            - containerPort: 10001
+            - containerPort: 10002
+          volumeMounts:
+            - name: azurite-data
+              mountPath: /data
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 10000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+        - name: s3-ferry
+          image: "{{ .Values.images.ferry.repository }}:{{ .Values.images.ferry.tag }}"
+          imagePullPolicy: {{ .Values.images.ferry.pullPolicy }}
+          env:
+            - name: API_CORS_ORIGIN
+              value: "{{ .Values.env.apiCorsOrigin }}"
+            - name: API_DOCUMENTATION_ENABLED
+              value: "{{ .Values.env.apiDocumentationEnabled }}"
+            - name: AZURE_ACCOUNT_1_CONNECTION_STRING
+              value: "{{ .Values.env.azureConnectionString }}"
+          ports:
+            - containerPort: 3000
+      volumes:
+        - name: azurite-data
+          persistentVolumeClaim:
+            claimName: azurite-pvc
+        - name: scripts
+          configMap:
+            name: azurite-scripts
+            defaultMode: 0755
