@@ -20,6 +20,7 @@ secretname: {{ widget.cert.Name.value }} # Cert name value, change this as suite
 
 ingress:
   certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
+  whitelistSourceRange: "{{ ip.whitelist }}"
 
 release_name: "module-byk-widget"
 
