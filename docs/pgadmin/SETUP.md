@@ -11,18 +11,8 @@
 
 ---
 
-## 1. Create Basic Auth Secret
 
-```bash
-echo "admin:$(openssl passwd -apr1 PASSWORD)" > auth
-kubectl create secret generic pgadmin-basic-auth \
-  --from-file=auth \
-  -n <namespace>
-```
-#### Replace PASSWORD with the correct info you want to use
-
-
-## 2. Create pgadmin-values.yaml
+## 1. Create pgadmin-values.yaml
 
 ```
 env:
@@ -40,9 +30,6 @@ ingress:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header X-Script-Name /pgadmin;
-    nginx.ingress.kubernetes.io/auth-type: "basic"
-    nginx.ingress.kubernetes.io/auth-secret: pgadmin-basic-auth
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
     nginx.ingress.kubernetes.io/whitelist-source-range: "<IP-YOU-WANT-TO-ALLOW/24"
   hosts:
     - host: <DOMAIN>
@@ -59,7 +46,7 @@ service:
 ```
 #### REPLACE the placeholder values
 
-## 3. Deploy via Helm
+## 2. Deploy via Helm
 
 ```
 helm repo add runix https://helm.runix.net/
