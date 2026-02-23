@@ -4,7 +4,7 @@ All application version numbers listed here represent the latest available **rel
 
 
 
-Upcoming version - **V3.1.1**
+Upcoming version - **V3.2.0**
 ---
 
 | Application         | Latest Version | Release Date |
