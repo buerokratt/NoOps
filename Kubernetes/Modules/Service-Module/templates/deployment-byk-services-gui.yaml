@@ -115,7 +115,7 @@ spec:
             - name: REACT_APP_RUUTER_SERVICES_TESTING_HEADER
               value: "voorshpellhappilo"
             - name: REACT_APP_CURRENT_VERSION
-              value: "Version 3.1.1"
+              value: "Version 3.2.0"
           #volumeMounts:
           #  - name: services-dsl
           #    mountPath: /DSL/
