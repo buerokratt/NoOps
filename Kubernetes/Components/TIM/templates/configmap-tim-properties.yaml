@@ -72,6 +72,6 @@ data:
 
     headers.contentSecurityPolicy=upgrade-insecure-requests;default-src 'self' 'unsafe-inline' 'unsafe-eval' https://tim.{{ .Values.domain }} https://admin.{{ .Values.domain }} https://ruuter.{{ .Values.domain }}/v2/public/ https://ruuter.{{ .Values.domain }}/v2/private/ byk-tim byk-ruuter byk-ruuter-private byk-backoffice-login;object-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' https://{{ .Values.domain }} https://admin.{{ .Values.domain }} https://tim.{{ .Values.domain }};connect-src 'self' https://{{ .Values.domain }} https://tim.{{ .Values.domain }} https://admin.{{ .Values.domain }} https://ruuter.{{ .Values.domain }}/v2/public/ https://ruuter.{{ .Values.domain }}/v2/private/;frame-src 'self';media-src 'none'
     cors.allowedOrigins=https://{{ .Values.domain }},https://admin.{{ .Values.domain }},https://ruuter.{{ .Values.domain }}/v2/public/,https://ruuter.{{ .Values.domain }}/v2/private/
-    auth.success.redirect.whitelist=https://admin.{{ .Values.domain }}/auth/callback,https://{{ .Values.domain }},https://{{ .Values.domain }}/auth/callback,https://admin.{{ .Values.domain }}
+    auth.success.redirect.whitelist=https://admin.{{ .Values.domain }}/auth/callback,https://{{ .Values.domain }},https://{{ .Values.domain }}/auth/callback,https://admin.{{ .Values.domain }},https://{{ .Values.domain }}/.*
 
     server.port=8085
