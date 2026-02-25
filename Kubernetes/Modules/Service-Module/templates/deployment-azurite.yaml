@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: azurite
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.azurite.replicaCount }}
   selector:
     matchLabels:
       app: azurite
