@@ -97,6 +97,7 @@ service:
 azurite:
   accounts: testaccount1:dGVzdGtleTE9PQ==;
   storageSize: 1Gi
+  replicaCount: {{ azurite.replicas }}
 
 azuriteenv:
   apiCorsOrigin: "*"
