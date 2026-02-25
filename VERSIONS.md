@@ -14,7 +14,7 @@ Upcoming version - **V3.2.0**
 | Resql               | v1.3.5         | 2026-01-13   |
 | TIM                 | v2.3.6         | 2026-01-13   |
 | CronManager         | v1.1.41        | 2026-02-23   |
-| DataMapper          | v2.2.37        | 2026-02-23   |
+| DataMapper          | v2.2.38        | 2026-02-23   |
 | NotificationsNode   | v2.1.92-notification-node| 2026-02-23   |
 | OpenSearch          | 1.3.16         | 2026-01-13   |
 | S3Ferry             | pre-alpha-1.1.1| 2026-01-13   |
@@ -28,8 +28,8 @@ Upcoming version - **V3.2.0**
 | AuthLayer           | v1.1.2         | 2026-01-13   |
 | UsersDB             | postgres:14.1  | 2026-01-13   |
 | TimDB               | postgres:14.1  | 2026-01-13   |
-| Backoffice DSL                 | backoffice-module-test-3.2.18  | 2026-02-23   |
-| Analytics DSL                 | analytics-module-test-3.2.13  | 2026-02-23   |
+| Backoffice DSL                 | backoffice-module-test-3.2.21  | 2026-02-23   |
+| Analytics DSL                 | analytics-module-test-3.2.15  | 2026-02-23   |
 | Training DSL                 | training-module-test-3.2.9  | 2026-02-23   |
 | Service DSL                 | service-module-test-3.2.7  | 2026-02-23   |
 ---
