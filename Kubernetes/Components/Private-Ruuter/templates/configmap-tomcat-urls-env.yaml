@@ -78,4 +78,13 @@ data:
     CHATBOT_ANONYMIZER=http://presidio-presidio-anonymizer:8089
     ANONYMIZER_ENABLED=false
     ANONYMIZER_HASH_TYPE=sha256
+    STORAGE_FERRY=http://azurite:3000
+
+    STORAGE_FERRY_ACCOUNT_ID=
+    
+    STORAGE_FERRY_CONTAINER=teenused
+    
+    AZURE_SEARCH_SERVICE_NAME=
+    AZURE_SEARCH_INDEXER_NAME=
+    AZURE_SEARCH_API_KEY=
     
