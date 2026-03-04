@@ -765,3 +765,30 @@ index f856ae2..1fbbc37 100644
  
 ```
 
+## Change on 2026-03-04 11:41:26 (EET)
+**Author:** KlviG <78801020+KlviG@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index 1fbbc37..a1c7f27 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -22,14 +22,14 @@ Upcoming version - **V3.2.0**
+ | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
+ | widget              | v2.1.69        | 2026-02-23   |
+ | backoffice          | v2.1.102        | 2026-03-02   |
+-| analytics           | v1.1.54        | 2026-03-02   |
++| analytics           | v1.1.55        | 2026-03-02   |
+ | training            | v2.1.48        | 2026-03-02   |
+ | service             | v1.1.55        | 2026-03-02   |
+ | AuthLayer           | v1.1.2         | 2026-01-13   |
+ | UsersDB             | postgres:14.1  | 2026-01-13   |
+ | TimDB               | postgres:14.1  | 2026-01-13   |
+ | Backoffice DSL                 | backoffice-module-test-3.2.24  | 2026-03-02   |
+-| Analytics DSL                 | analytics-module-test-3.2.16  | 2026-03-02   |
++| Analytics DSL                 | analytics-module-test-3.2.19  | 2026-03-02   |
+ | Training DSL                 | training-module-test-3.2.9  | 2026-03-02   |
+ | Service DSL                 | service-module-test-3.2.8  | 2026-03-02   |
+ ---
+```
+
