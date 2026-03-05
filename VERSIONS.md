@@ -13,7 +13,7 @@ Upcoming version - **V3.2.0**
 | Ruuter-Private      | v2.2.8         | 2026-01-13   |
 | Resql               | v1.3.5         | 2026-01-13   |
 | TIM                 | v2.3.6         | 2026-01-13   |
-| CronManager         | v1.1.41        | 2026-02-23   |
+| CronManager         | v1.1.42        | 2026-02-23   |
 | DataMapper          | v2.2.38        | 2026-02-23   |
 | NotificationsNode   | v2.1.102-notification-node| 2026-03-02   |
 | OpenSearch          | 1.3.16         | 2026-01-13   |
