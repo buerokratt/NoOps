@@ -29,3 +29,4 @@ data:
     TESTING_FILES_PATH=/rasa/locations/tests/
     CROSS_VALIDATION_FILES_PATH=/rasa/locations/data/
     INACTIVITY_TIME=4
+    CHAT_GENERATION={{ chat.generation }}
