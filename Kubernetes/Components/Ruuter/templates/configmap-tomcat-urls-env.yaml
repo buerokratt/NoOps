@@ -24,7 +24,7 @@ data:
     SERVICE_TIM=http://component-byk-tim:8085
     SERVICE_DMAPPER=http://component-byk-dmapper:3000
     SERVICE_RUUTER=http://component-byk-ruuter-private:8080
-    SERVICE_RESQL=http://component-byk-resql:8082
+    SERVICE_RESQL=http://component-byk-resql:8082/services
     CHATBOT_PROJECT_LAYER=backoffice
     DOMAIN={{ domain.name }}
     CHATBOT_RUUTER_PUBLIC_INTERNAL=http://component-byk-ruuter:8080/backoffice
