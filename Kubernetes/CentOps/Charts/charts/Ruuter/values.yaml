@@ -4,7 +4,7 @@ images:
   scope:
     registry: "ghcr.io"
     repository: "buerokratt/ruuter"
-    tag: "v2.2.2"
+    tag: "v2.2.3"
 secretname: "ruuter.stage.buerokratt.ee0001"
 env:
   cors: "https://xample.com"
