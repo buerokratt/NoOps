@@ -59,6 +59,12 @@ contstants:
   CHATBOT_RUUTER_PRIVATE: "http://component-byk-ruuter-private:8080/backoffice"
   CHATBOT_RUUTER_PUBLIC: "http://component-byk-ruuter:8080/backoffice"
 
+## If you have more then one file to symlink, just add another block under fist one
+cron:
+  symlinks:
+    - source: /cron-data/delete_conversations.yml
+      target: /DSL/delete_conversations.yml
+
 resources:
   requests:
     memory: "512Mi"
