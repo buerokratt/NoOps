@@ -124,6 +124,16 @@ spec:
           limits:
             memory: "{{ .Values.resources.limits.memory }}"
             cpu: "{{ .Values.resources.limits.cpu }}"
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  {{- range .Values.cron.symlinks }}
+                  ln -sf {{ .source }} {{ .target }}
+                  {{- end }}
         livenessProbe:
           httpGet:
             port: 8080
