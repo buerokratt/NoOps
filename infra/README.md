@@ -1,6 +1,6 @@
 # Infrastructure
 
-This directory contains the Terraform configuration for provisioning AWS infrastructure required for NoOps environments.
+This directory contains the Terraform configuration for provisioning AWS infrastructure required for Buerokratt environments.
 
 ## Purpose
 
