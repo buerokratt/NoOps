@@ -30,8 +30,8 @@ infra/
 
 ```bash
 terraform init
-terraform plan
-terraform apply
+terraform plan -var-file="<environment>.tfvars"
+terraform apply -var-file="<environment>.tfvars"
 ```
 
 After infrastructure is created:
