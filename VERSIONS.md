@@ -17,7 +17,7 @@ Upcoming version - **V3.2.0**
 | DataMapper          | v2.2.38        | 2026-02-23   |
 | NotificationsNode   | v2.1.102-notification-node| 2026-03-02   |
 | OpenSearch          | 1.3.16         | 2026-01-13   |
-| S3Ferry             | pre-alpha-1.1.1| 2026-01-13   |
+| S3Ferry             | v1.1.2| 2026-01-13   |
 | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
 | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
 | widget              | v2.1.69        | 2026-02-23   |
