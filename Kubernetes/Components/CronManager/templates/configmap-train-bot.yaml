@@ -30,3 +30,4 @@ data:
     CROSS_VALIDATION_FILES_PATH=/rasa/locations/data/
     INACTIVITY_TIME=4
     CHAT_GENERATION={{ chat.generation }}
+    DOMAIN=https://{{ domain.name }}/
