@@ -10,3 +10,9 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - port: 3001
+      targetPort: 3001
+      protocol: TCP
+      name: s3ferry
+      
+      
