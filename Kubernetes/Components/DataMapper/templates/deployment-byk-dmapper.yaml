@@ -181,8 +181,48 @@ spec:
               mountPath: /rasa/locations
             - name: dmapper-commonservice
               mountPath: /rasa/OpenSearch
+            - name: chat-exports
+              mountPath: /rasa/chat-exports
             - name: service-sec
               mountPath: /rasa/secrets
+        - name: "component-byk-s3-ferry"
+          image: "{{ .Values.images.s3ferry.registry }}/{{ .Values.images.s3ferry.repository }}:{{ .Values.images.s3ferry.tag }}"
+          env:
+            - name: S3_DEFAULT_ENDPOINT_URL
+              value: 
+            - name: API_CORS_ORIGIN
+              value: '*'
+            - name: API_DOCUMENTATION_ENABLED
+              value: 'true'
+            - name: S3_DEFAULT_REGION
+              value: us-east-1
+            - name: S3_DEFAULT_ACCESS_KEY_ID
+              value: "{{ .Values.s3ferry.default.id }}"
+            - name: S3_DEFAULT_SECRET_ACCESS_KEY
+              value: "{{ .Values.s3ferry.default.key }}"
+            - name: S3_DEFAULT_DATA_BUCKET_NAME
+              value: "{{ .Values.s3ferry.default.bucket }}"
+            - name: S3_DEFAULT_DATA_BUCKET_PATH
+            - name: S3_DEFAULT_FS_DATA_DIRECTORY_PATH
+              value: ./data
+            - name: S3_CHATS_ENDPOINT_URL
+              value: https://s3.varmoh.eu
+            - name: S3_CHATS_REGION
+              value: us-east-1
+            - name: S3_CHATS_ACCESS_KEY_ID
+              value: "{{ .Values.s3ferry.chats.id }}"
+            - name: S3_CHATS_SECRET_ACCESS_KEY
+              value: "{{ .Values.s3ferry.chats.key }}"
+            - name: S3_CHATS_DATA_BUCKET_NAME
+              value: "{{ .Values.s3ferry.chats.bucket }}"
+            - name: S3_CHATS_DATA_BUCKET_PATH
+            - name: S3_CHATS_FS_DATA_DIRECTORY_PATH
+              value: /rasa
+            - name: API_PORT
+              value: '3001'
+          envFrom:
+            - configMapRef:
+                name: component-byk-s3-config
           livenessProbe:
             httpGet:
               path: /
@@ -220,6 +260,9 @@ spec:
         - name: dmapper-commonservice
           persistentVolumeClaim:
             claimName: pvc-{{ namespace }}-commonservice
+        - name: chat-exports
+          persistentVolumeClaim:
+            claimName: pvc-chat-exports
         - name: service-sec
           persistentVolumeClaim:
             claimName: pvc-service-secrets
