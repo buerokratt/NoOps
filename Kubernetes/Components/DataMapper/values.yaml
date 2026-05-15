@@ -73,11 +73,11 @@ s3ferry:
   default:
     id:
     key:
-    bucket:
+    url:
   chats:
     id:
     key:
-    bucket:
+    url:
 
 resources:
   requests:
