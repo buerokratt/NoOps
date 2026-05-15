@@ -48,6 +48,10 @@ images:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
     tag: "{{ module.training.image.version }}" # Images (tags) are up to date, currently no changes needed 
+  s3ferry:
+    registry: "ghcr.io"
+    repository: "buerokratt/s3-ferry"
+    tag: "{{ module.s3ferry.image.version }}" # Images (tags) are up to date, currently no changes needed
   pipelines:
     service:
       repo: https://github.com/buerokratt/Service-Module.git
@@ -65,6 +69,15 @@ images:
       repo: https://github.com/buerokratt/Service-Module.git
       path: /secrets
 
+s3ferry:
+  default:
+    id:
+    key:
+    bucket:
+  chats:
+    id:
+    key:
+    bucket:
 
 resources:
   requests:
