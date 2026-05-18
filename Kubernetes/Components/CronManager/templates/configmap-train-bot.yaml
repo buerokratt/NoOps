@@ -31,3 +31,5 @@ data:
     INACTIVITY_TIME=4
     CHAT_GENERATION={{ chat.generation }}
     DOMAIN=https://{{ domain.name }}/
+    CRON_FILE_LOCATION=/cron-data
+    CRON_SCRIPTS_LOCATION=../app/scripts
