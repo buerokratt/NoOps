@@ -21,7 +21,7 @@ spec:
               name: http
           env:
              - name: ENABLE_MULTI_DOMAIN
-               value: "false"
+               value: "{{ multi.domain }}"
           volumeMounts:
             - name: widget-index-volume
               mountPath: /usr/share/nginx/html/widget/index.html
