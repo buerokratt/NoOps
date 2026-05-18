@@ -31,7 +31,7 @@ images:
   cron:
     registry: "ghcr.io"
     repository: "buerokratt/buerokratt-dsl"
-    tag: "cronmanager-test-1.1.0" 
+    tag: "cronmanager-test-1.1.3" 
   commonservice:
     dsl:
       repo: https://github.com/buerokratt/Common-Services.git
@@ -63,7 +63,7 @@ contstants:
 ## If you have more then one file to symlink, just add another block under fist one
 cron:
   symlinks:
-    - source: /cron-data/delete_conversations.yml
+    - source: /cron-data/DSL/delete_conversations.yml
       target: /DSL/delete_conversations.yml
 
 resources:
