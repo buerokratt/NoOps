@@ -122,7 +122,7 @@ spec:
             - name: REACT_APP_SHOW_TEST_CONVERSATIONS
               value: "false"
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
-              value: "FALSE"
+              value: "{{ MULTI.DOMAIN }}"
             - name: REACT_APP_CURRENT_VERSION
               value: "Version 3.2.0"
           volumeMounts:
