@@ -51,7 +51,7 @@ images:
   s3ferry:
     registry: "ghcr.io"
     repository: "buerokratt/s3-ferry"
-    tag: "{{ module.s3ferry.image.version }}" # Images (tags) are up to date, currently no changes needed
+    tag: "{{ component.s3.ferry.image.version }}" # Images (tags) are up to date, currently no changes needed
   pipelines:
     service:
       repo: https://github.com/buerokratt/Service-Module.git
@@ -71,13 +71,13 @@ images:
 
 s3ferry:
   default:
-    id:
-    key:
-    url:
+    id: {{ S3_ACCESS_KEY_ID }}
+    key: {{ S3_SECRET_ACCESS_KEY }}
+    url: {{ S3_ENDPOINT_URL }}
   chats:
-    id:
-    key:
-    url:
+    id: {{ S3_ACCESS_KEY_ID }}
+    key: S3_SECRET_ACCESS_KEY
+    url: {{ S3_ENDPOINT_URL }}
 
 resources:
   requests:
