@@ -84,7 +84,7 @@ spec:
             - name: REACT_APP_SHOW_AUTO_CLOSE_CONFIG
               value: "TRUE"
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
-              value: "FALSE"
+              value: "{{ MULTI.DOMAIN }}"
             - name: REACT_APP_SMAX_INTEGRATION_ENABLED
               value: "FALSE"
             - name: REACT_APP_JIRA_INTEGRATION_ENABLED
