@@ -1,7 +1,7 @@
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-replicas: {{ trainbot.replicas }}
+replicas: 1
 podAnnotations: {}
 
 podSecurityContext: {}
