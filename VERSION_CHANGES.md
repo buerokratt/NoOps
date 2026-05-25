@@ -943,3 +943,22 @@ index 6f0955b..4440b83 100644
  
 ```
 
+## Change on 2026-05-25 10:27:01 (EEST)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index 4440b83..e95f379 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -24,7 +24,7 @@ Upcoming version - **V3.2.0**
+ | backoffice          | v2.1.130        | 25-05-2026    |
+ | analytics           | v1.1.68        | 18-05-2026   |
+ | training            | v2.1.51        | 18-05-2026   |
+-| service             | v1.1.68        | 18-05-2026   |
++| service             | v1.1.69        | 25-05-2026   |
+ | AuthLayer           | v1.1.2         | 2026-01-13   |
+ | UsersDB             | postgres:14.1  | 2026-01-13   |
+ | TimDB               | postgres:14.1  | 2026-01-13   |
+```
+
