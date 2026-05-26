@@ -102,4 +102,4 @@ azurite:
 azuriteenv:
   apiCorsOrigin: "*"
   apiDocumentationEnabled: "true"
-  azureConnectionString: "DefaultEndpointsProtocol=http;AccountName=testaccount1;AccountKey=dGVzdGtleTE9PQ==;BlobEndpoint=http://azurite:10000/testaccount1;QueueEndpoint=http://azurite:10001/testaccount1;TableEndpoint=http://azurite:10002/testaccount1;"
+  azureConnectionString: "DefaultEndpointsProtocol={{ DefaultEndpointsProtocol }}"
