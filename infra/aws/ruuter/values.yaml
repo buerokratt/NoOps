@@ -1,0 +1,31 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+replicas: 1
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+domain: test.buerokratt.ee
+
+release_name: "component-byk-ruuter"    
+
+images:
+  scope:
+    registry: "ghcr.io"
+    repository: "buerokratt/ruuter"
+    tag: "v2.2.8"
+    
+env:
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOG_LEVEL_TIMING: "INFO"
+
+resources:
+  requests:
+    memory: "3000Mi"
+    cpu: "100m"
+  limits:
+    memory: "4000Mi"
+    cpu: "100m"
