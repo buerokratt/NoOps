@@ -92,4 +92,6 @@ data:
     LLM_RUUTER_PUBLIC=
 
     CHATBOT_S3_FERRY_SOURCE_CONFIG_KEY=chats
+
+    CHATBOT_CRON_MANAGER=http://component-byk-cronmanager:9010
     
