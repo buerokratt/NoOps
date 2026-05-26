@@ -94,4 +94,8 @@ data:
     CHATBOT_S3_FERRY_SOURCE_CONFIG_KEY=chats
 
     CHATBOT_CRON_MANAGER=http://component-byk-cronmanager:9010
+
+    CRON_FILE_LOCATION=/cron-data
+
+    CRON_SCRIPTS_LOCATION=../app/scripts
     
