@@ -1,1 +1,7 @@
-.
+apiVersion: v2
+name: ruuter
+description: Applications
+
+type: application
+version: v2.2.8
+appVersion: 1.0.0
