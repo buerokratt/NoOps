@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "ruuter"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "ruuter"
+  template:
+    metadata:
+      labels:
+        app: "ruuter"
+    spec:
+      containers:
+        - name: "ruuter"
+          image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: logging.level.root
+              value: "{{ .Values.env.LOGGING_LEVEL_ROOT }}"
+            - name: LOG_LEVEL_TIMING
+              value: "{{ .Values.env.LOG_LEVEL_TIMING }}"
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "ruuter"
+spec:
+  selector:
+    app: "ruuter"
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "ruuter-ingress"
+  annotations:
+#    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/additional-response-headers: "Access-Control-Allow-Headers: Content-Type"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "content-type, Cache-Control"
+    nginx.ingress.kubernetes.io/cors-expose-headers: "cs-exposed-header1, cs-exposed-header2"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  labels:
+    name: "ruuter-ingress"
+spec:
+  rules:
+    - host: ruuter.{{ .Values.domain }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: "ruuter"
+                port:
+                  number: 8080
