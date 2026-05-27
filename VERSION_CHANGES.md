@@ -1023,3 +1023,43 @@ index 3d9677a..ebea9ea 100644
  
 ```
 
+## Change on 2026-05-27 12:01:40 (EEST)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index ebea9ea..4b83b3f 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -15,23 +15,23 @@ Upcoming version - **V3.2.0**
+ | TIM                 | v2.3.6         | 2026-01-13   |
+ | CronManager         | v1.1.46        | 25-05-2026   |
+ | DataMapper          | v2.2.42        | 18-05-2026   |
+-| NotificationsNode   | v2.1.134-notification-node| 26-05-2026    |
++| NotificationsNode   | v2.1.135-notification-node| 26-05-2026    |
+ | OpenSearch          | 1.3.16         | 2026-01-13   |
+ | S3Ferry             | v1.1.3         | 18-05-2026   |
+ | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
+ | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
+ | widget              | v2.1.78        | 26-05-2026   |
+-| backoffice          | v2.1.134        | 26-05-2026    |
++| backoffice          | v2.1.135        | 27-05-2026    |
+ | analytics           | v1.1.69        | 26-05-2026   |
+ | training            | v2.1.51        | 18-05-2026   |
+ | service             | v1.1.69        | 25-05-2026   |
+ | AuthLayer           | v1.1.2         | 2026-01-13   |
+ | UsersDB             | postgres:14.1  | 2026-01-13   |
+ | TimDB               | postgres:14.1  | 2026-01-13   |
+-| Backoffice DSL                 | backoffice-module-test-3.2.5-stage  | 26-05-2026   |
+-| Analytics DSL                 | analytics-module-test-3.2.5-stage  | 26-05-2026   |
+-| Training DSL                 | training-module-test-3.2.5-stage  | 26-05-2026   |
+-| Service DSL                 | service-module-test-3.2.5-stage  | 26-05-2026   |
++| Backoffice DSL                 | backoffice-module-test-3.2.6-stage  | 27-05-2026   |
++| Analytics DSL                 | analytics-module-test-3.2.6-stage  | 27-05-2026   |
++| Training DSL                 | training-module-test-3.2.6-stage  | 27-05-2026   |
++| Service DSL                 | service-module-test-3.2.6-stage  | 27-05-2026   |
+ ---
+ 
+ 
+```
+
