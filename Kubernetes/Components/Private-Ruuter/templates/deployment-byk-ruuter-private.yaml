@@ -14,6 +14,10 @@ spec:
       labels:
         app: "{{ .Values.release_name }}"
     spec:
+      hostAliases:
+        - hostnames:
+            - example.com
+          ip: 127.0.0.1
       initContainers:
         - name: init-copy-files-backoffice
           image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
