@@ -5,6 +5,8 @@ metadata:
   annotations:
     sidecar.istio.io/inject: "{{ .Values.istio.enabled }}" 
 spec:
+  strategy:
+    type: Recreate
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
