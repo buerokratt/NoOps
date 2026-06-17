@@ -29,7 +29,7 @@ Upcoming version - **V3.3.0**
 | UsersDB             | postgres:14.1  | 2026-01-13   |
 | TimDB               | postgres:14.1  | 2026-01-13   |
 | Backoffice DSL                 | backoffice-module-test-3.3.1-stage | 16-06-2026   |
-| Analytics DSL                 | analytics-module-test-3.3.1-stage  | 16-06-2026   |
+| Analytics DSL                 | analytics-module-test-3.3.2-stage  | 17-06-2026   |
 | Training DSL                 | training-module-test-3.3.1-stage  | 16-06-2026   |
 | Service DSL                 | service-module-test-3.3.1-stage  | 16-06-2026   |
 ---
