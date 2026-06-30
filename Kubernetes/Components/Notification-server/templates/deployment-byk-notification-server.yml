@@ -94,7 +94,7 @@ spec:
           args:
             - "-c"
             - |
-              git clone --branch dev --single-branch https://github.com/buerokratt/Buerokratt-Chatbot.git /app/Buerokratt-Chatbot && \
+              git clone --branch main --single-branch https://github.com/buerokratt/Buerokratt-Chatbot.git /app/Buerokratt-Chatbot && \
               cp -r /app/Buerokratt-Chatbot/notification-server/* /app/notification-server/
           volumeMounts:
             - name: notification-server
