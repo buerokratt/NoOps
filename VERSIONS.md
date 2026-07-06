@@ -14,24 +14,24 @@ Upcoming version - **V3.3.0**
 | Resql               | v1.3.5         | 2026-01-13   |
 | TIM                 | v2.3.6         | 2026-01-13   |
 | CronManager         | v1.1.51        | 16-06-2026   |
-| DataMapper          | v2.2.43        | 16-06-2026   |
-| NotificationsNode   | v2.1.147-notification-node| 01-06-2026    |
+| DataMapper          | v2.2.44        | 03-07-2026   |
+| NotificationsNode   | v2.1.149-notification-node| 03-07-2026    |
 | OpenSearch          | 1.3.16         | 2026-01-13   |
 | S3Ferry             | v1.1.3         | 18-05-2026   |
 | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
 | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
 | widget              | v2.1.80        | 16-06-2026   |
-| backoffice          | v2.1.147        | 16-06-2026    |
-| analytics           | v1.1.79        | 16-06-2026   |
+| backoffice          | v2.1.149        | 03-07-2026    |
+| analytics           | v1.1.82        | 03-07-2026   |
 | training            | v2.1.51        | 18-05-2026   |
-| service             | v1.1.75        | 16-06-2026   |
+| service             | v1.1.76        | 03-07-2026   |
 | AuthLayer           | v1.1.2         | 2026-01-13   |
 | UsersDB             | postgres:14.1  | 2026-01-13   |
 | TimDB               | postgres:14.1  | 2026-01-13   |
-| Backoffice DSL                 | backoffice-module-test-3.3.1-stage | 16-06-2026   |
-| Analytics DSL                 | analytics-module-test-3.3.2-stage  | 17-06-2026   |
-| Training DSL                 | training-module-test-3.3.1-stage  | 16-06-2026   |
-| Service DSL                 | service-module-test-3.3.1-stage  | 16-06-2026   |
+| Backoffice DSL                 | backoffice-module-test-3.3.12 | 03-07-2026   |
+| Analytics DSL                 | analytics-module-test-3.3.14  | 03-07-2026   |
+| Training DSL                 | training-module-test-3.3.5  | 03-07-2026   |
+| Service DSL                 | service-module-test-3.3.7  | 03-07-2026   |
 ---
 
 
