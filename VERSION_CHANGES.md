@@ -1232,3 +1232,22 @@ index 8db6f8e..8654b0e 100644
  
 ```
 
+## Change on 2026-07-07 14:06:08 (EEST)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index 8654b0e..7854bb6 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -4,7 +4,7 @@ All application version numbers listed here represent the latest available **rel
+ 
+ 
+ 
+-Upcoming version - **V3.3.0**
++Upcoming version - **V3.3.1**
+ ---
+ 
+ | Application         | Latest Version | Release Date |
+```
+
