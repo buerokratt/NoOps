@@ -28,10 +28,10 @@ Upcoming version - **V3.3.1**
 | AuthLayer           | v1.1.2         | 2026-01-13   |
 | UsersDB             | postgres:14.1  | 2026-01-13   |
 | TimDB               | postgres:14.1  | 2026-01-13   |
-| Backoffice DSL                 | backoffice-module-test-3.3.12 | 03-07-2026   |
+| Backoffice DSL                 | backoffice-module-test-3.3.13 | 13-07-2026   |
 | Analytics DSL                 | analytics-module-test-3.3.14  | 03-07-2026   |
 | Training DSL                 | training-module-test-3.3.5  | 03-07-2026   |
-| Service DSL                 | service-module-test-3.3.7  | 03-07-2026   |
+| Service DSL                 | service-module-test-3.3.8  | 13-07-2026   |
 ---
 
 
