@@ -98,4 +98,8 @@ data:
     CRON_FILE_LOCATION=/cron-data
 
     CRON_SCRIPTS_LOCATION=../app/scripts
+
+    CHAT_HISTORY_EXPORT_RESPONSE_SIZE_LIMIT_KB=20480
+
+    VAULT_AGENT_BACKOFFICE=http://module-byk-backoffice-gui-vault-agent:8203
     
