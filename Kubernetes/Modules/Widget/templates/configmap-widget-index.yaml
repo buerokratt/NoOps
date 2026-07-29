@@ -30,6 +30,7 @@ data:
         STREAM_TYPING_SPEED: 10,
         WIDGET_HEIGHT: {{ widget.height }},
         WIDGET_WIDTH: {{ widget.width }},
+        FALLBACK_LANGUAGE: "et",
         <!-- FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
       };
     </script>
@@ -60,5 +61,6 @@ data:
         STREAM_TYPING_SPEED: 20,
         WIDGET_HEIGHT: 450,
         WIDGET_WIDTH: 400,
+        FALLBACK_LANGUAGE: "et",
     <!--FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
       };
