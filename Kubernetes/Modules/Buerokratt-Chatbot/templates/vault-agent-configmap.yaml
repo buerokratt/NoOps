@@ -1,0 +1,50 @@
+{{- if .Values.vaultAgent.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.release_name }}-vault-agent"
+  labels:
+    app: "{{ .Values.release_name }}"
+    app.kubernetes.io/component: vault-agent
+data:
+  agent.hcl: |
+    vault {
+      address = "{{ .Values.vaultAgent.vaultAddress }}"
+
+      retry {
+        num_retries = {{ .Values.vaultAgent.retryCount }}
+      }
+    }
+
+    auto_auth {
+      method "approle" {
+        mount_path = "{{ .Values.vaultAgent.approle.mountPath }}"
+
+        config = {
+          role_id_file_path                   = "/vault-agent/credentials/role_id"
+          secret_id_file_path                 = "/vault-agent/credentials/secret_id"
+          remove_secret_id_file_after_reading = false
+        }
+      }
+
+      sink "file" {
+        config = {
+          path = "/vault/secrets/.agent-token"
+          mode = 0640
+        }
+      }
+    }
+
+    cache {}
+
+    listener "tcp" {
+      address     = "0.0.0.0:{{ .Values.vaultAgent.service.port }}"
+      tls_disable = true
+    }
+
+    api_proxy {
+      use_auto_auth_token = "force"
+    }
+
+    log_level = "{{ .Values.vaultAgent.logLevel }}"
+{{- end }}
