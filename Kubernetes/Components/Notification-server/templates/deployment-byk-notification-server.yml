@@ -54,10 +54,6 @@ spec:
               value: "{{ .Values.env.TERMINATION_TIMEOUT }}"
             - name: AZURE_TENANT_ID
               value: "{{ .Values.env.AZURE_TENANT_ID }}"
-            - name: AZURE_CLIENT_ID
-              value: "{{ .Values.env.AZURE_CLIENT_ID }}"
-            - name: AZURE_CLIENT_SECRET
-              value: "{{ .Values.env.AZURE_CLIENT_SECRET }}"
             - name: AZURE_GRANT_TYPE
               value: "{{ .Values.env.AZURE_GRANT_TYPE }}"
             - name: AZURE_SCOPE
@@ -68,8 +64,6 @@ spec:
               value: "{{ .Values.env.AZURE_AGENTIC_PROJECT_NAME }}"
             - name: AZURE_AGENTIC_API_VERSION
               value: "{{ .Values.env.AZURE_AGENTIC_API_VERSION }}"
-            - name: AZURE_AGENTIC_MAX_OUTPUT_TOKENS
-              value: "{{ .Values.env.AZURE_AGENTIC_MAX_OUTPUT_TOKENS }}"
               
           volumeMounts:
             - name: notification-server
