@@ -128,13 +128,53 @@ spec:
             limits:
               memory: "{{ .Values.resources.limits.memory }}"
               cpu: "{{ .Values.resources.limits.cpu }}"
+{{- if .Values.vaultAgent.enabled }}
+        - name: vault-agent
+          image: "{{ .Values.vaultAgent.image.registry }}/{{ .Values.vaultAgent.image.repository }}:{{ .Values.vaultAgent.image.tag }}"
+          imagePullPolicy: {{ .Values.vaultAgent.image.pullPolicy }}
+          env:
+          - name: SKIP_SETCAP
+            value: "1"
+          args:
+            - agent
+            - -config=/vault-agent/config/agent.hcl
+          ports:
+            - name: vault-agent
+              containerPort: {{ .Values.vaultAgent.service.port }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /v1/sys/health
+              port: vault-agent
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          volumeMounts:
+            - name: vault-agent-config
+              mountPath: /vault-agent/config
+              readOnly: true
+            - name: vault-agent-credentials
+              mountPath: /vault-agent/credentials
+              readOnly: true
+            - name: vault-agent-runtime
+              mountPath: /vault/secrets
+          securityContext:
+            {{- toYaml .Values.vaultAgent.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.vaultAgent.resources | nindent 12 }}
+{{- end }}
       volumes:
-        - name: menu-configmap-volume
-          configMap:
-            name: menu-configmap
         - name: config-volume
           configMap:
             name: configmap-byk-backoffice
-      #  - name: buerokratt-dsl
-      #    persistentVolumeClaim:
-      #      claimName: pvc-{{ namespace }}-dsl
+{{- if .Values.vaultAgent.enabled }}
+        - name: vault-agent-config
+          configMap:
+            name: "{{ .Values.release_name }}-vault-agent"
+        - name: vault-agent-credentials
+          secret:
+            secretName: {{ .Values.vaultAgent.credentialsSecretName | quote }}
+        - name: vault-agent-runtime
+          emptyDir: {}
+{{- end }}
