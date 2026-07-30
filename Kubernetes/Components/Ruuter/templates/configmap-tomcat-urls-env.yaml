@@ -87,9 +87,6 @@ data:
     ID_IN_SCOPE=true
     ID_SEARCH_ENDPOINT=exmaple-endpoint
 
-    SKM_USE_AGENTIC=false
     BGK_USE_AGENTIC=false
-    AZURE_AGENT_NAME=placeholder
-    AZURE_AGENT_TYPE=placeholder
 
     VAULT_AGENT_BACKOFFICE=http://module-byk-backoffice-gui-vault-agent:8203
