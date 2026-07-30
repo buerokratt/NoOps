@@ -102,4 +102,6 @@ data:
     CHAT_HISTORY_EXPORT_RESPONSE_SIZE_LIMIT_KB=20480
 
     VAULT_AGENT_BACKOFFICE=http://module-byk-backoffice-gui-vault-agent:8203
+
+    AZURE_STORAGE_ENABLED=true
     
