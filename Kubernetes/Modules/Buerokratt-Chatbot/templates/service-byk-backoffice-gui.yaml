@@ -10,3 +10,23 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+      
+{{- if .Values.vaultAgent.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.release_name }}-vault-agent"
+  labels:
+    app: "{{ .Values.release_name }}"
+    app.kubernetes.io/component: vault-agent
+spec:
+  type: ClusterIP
+  selector:
+    app: "{{ .Values.release_name }}"
+  ports:
+    - name: vault-agent
+      port: {{ .Values.vaultAgent.service.port }}
+      targetPort: vault-agent
+      protocol: TCP
+{{- end }}
