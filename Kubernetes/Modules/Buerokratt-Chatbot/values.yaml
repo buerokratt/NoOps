@@ -69,3 +69,43 @@ resources:
   limits:
     memory: "50Mi"
     cpu: "5m"
+
+
+vaultAgent:
+  enabled: true
+
+  image:
+    registry: docker.io
+    repository: hashicorp/vault
+    tag: "1.18.5"
+    pullPolicy: IfNotPresent
+
+  vaultAddress: "http://vault-backoffice-buerokratt-vault:8200"
+
+  credentialsSecretName: "backoffice-vault-approle"
+
+  approle:
+    mountPath: "auth/approle"
+
+  retryCount: 5
+  logLevel: "info"
+
+  service:
+    port: 8203
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    runAsNonRoot: true
+    runAsUser: 100
+    runAsGroup: 1000
+
+  resources:
+    requests:
+      cpu: "10m"
+      memory: "32Mi"
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
