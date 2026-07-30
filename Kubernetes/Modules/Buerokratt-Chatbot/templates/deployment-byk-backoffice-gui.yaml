@@ -168,6 +168,9 @@ spec:
         - name: config-volume
           configMap:
             name: configmap-byk-backoffice
+        - name: menu-configmap-volume
+          configMap:
+            name: menu-configmap
 {{- if .Values.vaultAgent.enabled }}
         - name: vault-agent-config
           configMap:
