@@ -1274,3 +1274,54 @@ index 7854bb6..d7d556f 100644
  
 ```
 
+## Change on 2026-07-31 15:07:29 (EEST)
+**Author:** ffrose <119657383+ffrose@users.noreply.github.com>
+
+```diff
+diff --git a/VERSIONS.md b/VERSIONS.md
+index d7d556f..8d15bc0 100644
+--- a/VERSIONS.md
++++ b/VERSIONS.md
+@@ -2,8 +2,6 @@
+ 
+ All application version numbers listed here represent the latest available **release versions** intended for deployment.
+ 
+-
+-
+ Upcoming version - **V3.3.1**
+ ---
+ 
+@@ -15,23 +13,23 @@ Upcoming version - **V3.3.1**
+ | TIM                 | v2.3.6         | 2026-01-13   |
+ | CronManager         | v1.1.51        | 16-06-2026   |
+ | DataMapper          | v2.2.44        | 03-07-2026   |
+-| NotificationsNode   | v2.1.149-notification-node| 03-07-2026    |
++| NotificationsNode   | v2.1.160-notification-node| 31-07-2026    |
+ | OpenSearch          | 1.3.16         | 2026-01-13   |
+ | S3Ferry             | v1.1.3         | 18-05-2026   |
+ | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
+ | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
+-| widget              | v2.1.80        | 16-06-2026   |
+-| backoffice          | v2.1.149        | 03-07-2026    |
+-| analytics           | v1.1.82        | 03-07-2026   |
++| widget              | v2.1.85        | 31-07-2026   |
++| backoffice          | v2.1.160        | 31-07-2026    |
++| analytics           | v1.1.91        | 31-07-2026   |
+ | training            | v2.1.51        | 18-05-2026   |
+-| service             | v1.1.76        | 03-07-2026   |
++| service             | v1.1.78        | 31-07-2026   |
+ | AuthLayer           | v1.1.2         | 2026-01-13   |
+ | UsersDB             | postgres:14.1  | 2026-01-13   |
+ | TimDB               | postgres:14.1  | 2026-01-13   |
+-| Backoffice DSL                 | backoffice-module-test-3.3.13 | 13-07-2026   |
+-| Analytics DSL                 | analytics-module-test-3.3.14  | 03-07-2026   |
++| Backoffice DSL                 | backoffice-module-test-3.3.24 | 31-07-2026  |
++| Analytics DSL                 | analytics-module-test-3.3.21  | 31-07-2026   |
+ | Training DSL                 | training-module-test-3.3.5  | 03-07-2026   |
+-| Service DSL                 | service-module-test-3.3.8  | 13-07-2026   |
++| Service DSL                 | service-module-test-3.3.10  | 31-07-2026   |
+ ---
+ 
+ 
+```
+
