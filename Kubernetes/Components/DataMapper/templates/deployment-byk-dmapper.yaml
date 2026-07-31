@@ -229,6 +229,23 @@ spec:
           envFrom:
             - configMapRef:
                 name: component-byk-s3-config
+          volumeMounts:
+            - mountPath: /rasa/shared-data
+              name: shared-volume
+            - mountPath: /rasa/cron-data
+              name: shared-cron-volume
+            - mountPath: /workspace/app/module/
+              name: dmapper-volume
+            - mountPath: /data
+              name: byk-dsl-services
+            - mountPath: /rasa/locations
+              name: trainbot-rasa-locations
+            - mountPath: /rasa/OpenSearch
+              name: dmapper-commonservice
+            - mountPath: /rasa/secrets
+              name: service-sec
+            - mountPath: /rasa/chat-exports
+              name: chat-exports
           livenessProbe:
             httpGet:
               path: /
