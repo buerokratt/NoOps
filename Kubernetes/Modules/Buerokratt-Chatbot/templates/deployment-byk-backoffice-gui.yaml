@@ -95,7 +95,7 @@ spec:
             - name: REACT_APP_REFLECT_DOMAINS
               value: "FALSE"
             - name: REACT_APP_CURRENT_VERSION
-              value: "{{ CURRENT_VERSION }}"
+              value: "{{ CURRENT.VERSION }}"
           
           # livenessProbe:
           #   httpGet:
