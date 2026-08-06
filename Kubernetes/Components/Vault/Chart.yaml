@@ -1,0 +1,6 @@
+apiVersion: v2
+name: buerokratt-vault
+description: Standalone Vault server for Buerokratt with KV v2 and Backoffice AppRole bootstrap
+type: application
+version: 0.2.0
+appVersion: "1.18"

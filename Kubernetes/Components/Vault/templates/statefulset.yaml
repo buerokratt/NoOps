@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "buerokratt-vault.fullname" . }}
+  labels:
+    {{- include "buerokratt-vault.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "buerokratt-vault.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "buerokratt-vault.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "buerokratt-vault.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.bootstrap.enabled }}
+      serviceAccountName: {{ include "buerokratt-vault.fullname" . }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: vault
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          args:
+            - server
+            
+          env:
+            - name: VAULT_ADDR
+              value: http://127.0.0.1:8200
+          ports:
+            - name: http
+              containerPort: 8200
+          startupProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200
+              port: http
+            periodSeconds: 2
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true&sealedcode=200
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /vault/config/config.hcl
+              subPath: config.hcl
+              readOnly: true
+            - name: data
+              mountPath: /vault/data
+        {{- if .Values.bootstrap.enabled }}
+        - name: vault-bootstrap
+          image: "{{ .Values.bootstrap.image.repository }}:{{ .Values.bootstrap.image.tag }}"
+          imagePullPolicy: {{ .Values.bootstrap.image.pullPolicy }}
+          command: ["/bin/sh", "/vault/bootstrap/bootstrap.sh"]
+          env:
+            - name: VAULT_ADDR
+              value: http://127.0.0.1:8200
+          resources:
+            {{- toYaml .Values.bootstrap.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /vault/bootstrap/bootstrap.sh
+              subPath: bootstrap.sh
+              readOnly: true
+            - name: data
+              mountPath: /vault/data
+        {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "buerokratt-vault.fullname" . }}-config
+            defaultMode: 0555
+        {{- if not .Values.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+        {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          {{- include "buerokratt-vault.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          {{- toYaml .Values.persistence.accessModes | nindent 10 }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+        {{- with .Values.persistence.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+  {{- end }}

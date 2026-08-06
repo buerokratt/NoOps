@@ -1,0 +1,88 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: hashicorp/vault
+  tag: "1.18"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8200
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+
+resources: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsUser: 0
+  runAsNonRoot: false
+  capabilities:
+    add:
+      - IPC_LOCK
+
+vaultConfig: |
+  ui = true
+  api_addr = "http://0.0.0.0:8200"
+  disable_mlock = true
+
+  listener "tcp" {
+    address     = "0.0.0.0:8200"
+    tls_disable = 1
+  }
+
+  storage "file" {
+    path = "/vault/data"
+  }
+
+bootstrap:
+  enabled: true
+
+  # The Secret is created in the same namespace as this Helm release.
+  # Mount this Secret into the Vault Agent deployment.
+  credentialsSecretName: backoffice-vault-approle
+
+  kvMount: secret
+  approleMount: approle
+  roleName: backoffice-service
+  policyName: backoffice-admin-policy
+  tokenPeriod: 1h
+
+  # This policy covers paths used by PR #2088, including:
+  # secret/data/backoffice/<domain>/azure-agentic
+  policy: |
+    path "secret/data/backoffice/*" {
+      capabilities = ["create", "read", "update", "delete"]
+    }
+
+    path "secret/metadata/backoffice/*" {
+      capabilities = ["read", "list", "delete"]
+    }
+
+  image:
+    repository: hashicorp/vault
+    tag: "1.18"
+    pullPolicy: IfNotPresent
+
+  resources: {}
+
+  # Development-compatible automatic initialization/unseal.
+  # For production, replace this with KMS/HSM auto-unseal.
+  init:
+    secretShares: 1
+    secretThreshold: 1
+
+networkPolicy:
+  enabled: false
+  # When enabled, add selectors that are allowed to access Vault.
+  ingressFrom: []

@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "buerokratt-vault.fullname" . }}-config
+  labels:
+    {{- include "buerokratt-vault.labels" . | nindent 4 }}
+data:
+  config.hcl: |
+{{ .Values.vaultConfig | indent 4 }}
+{{- if .Values.bootstrap.enabled }}
+  bootstrap.sh: |
+    #!/bin/sh
+    set -eu
+
+    VAULT_ADDR="http://127.0.0.1:8200"
+    DATA_DIR="/vault/data"
+    INIT_FILE="$DATA_DIR/init.json"
+    K8S_API="https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}"
+    SA_TOKEN_FILE="/var/run/secrets/kubernetes.io/serviceaccount/token"
+    SA_CA_FILE="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    NAMESPACE_FILE="/var/run/secrets/kubernetes.io/serviceaccount/namespace"
+
+    KV_MOUNT={{ .Values.bootstrap.kvMount | quote }}
+    APPROLE_MOUNT={{ .Values.bootstrap.approleMount | quote }}
+    ROLE_NAME={{ .Values.bootstrap.roleName | quote }}
+    POLICY_NAME={{ .Values.bootstrap.policyName | quote }}
+    TOKEN_PERIOD={{ .Values.bootstrap.tokenPeriod | quote }}
+    CREDS_SECRET={{ .Values.bootstrap.credentialsSecretName | quote }}
+
+    apk add --no-cache curl jq >/dev/null
+
+    wait_for_vault() {
+      i=0
+      until curl -fsS "$VAULT_ADDR/v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200" >/dev/null; do
+        i=$((i + 1))
+        [ "$i" -lt 90 ] || { echo "Vault did not become reachable" >&2; exit 1; }
+        sleep 2
+      done
+    }
+
+    vault_get() {
+      curl -fsS -H "X-Vault-Token: $ROOT_TOKEN" "$VAULT_ADDR$1"
+    }
+
+    vault_post() {
+      path="$1"
+      body="$2"
+      curl -fsS -X POST -H "X-Vault-Token: $ROOT_TOKEN" \
+        -H 'Content-Type: application/json' -d "$body" "$VAULT_ADDR$path"
+    }
+
+    k8s_request() {
+      method="$1"
+      path="$2"
+      body="${3:-}"
+      token="$(cat "$SA_TOKEN_FILE")"
+      if [ -n "$body" ]; then
+        curl -fsS --cacert "$SA_CA_FILE" -X "$method" \
+          -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+          -d "$body" "$K8S_API$path"
+      else
+        curl -fsS --cacert "$SA_CA_FILE" -X "$method" \
+          -H "Authorization: Bearer $token" "$K8S_API$path"
+      fi
+    }
+
+    wait_for_vault
+
+    INITIALIZED="$(curl -fsS "$VAULT_ADDR/v1/sys/init" | jq -r '.initialized')"
+    if [ "$INITIALIZED" != "true" ]; then
+      echo "Initializing Vault"
+      curl -fsS -X POST -H 'Content-Type: application/json' \
+        -d '{"secret_shares":{{ .Values.bootstrap.init.secretShares }},"secret_threshold":{{ .Values.bootstrap.init.secretThreshold }}}' \
+        "$VAULT_ADDR/v1/sys/init" > "$INIT_FILE"
+      chmod 600 "$INIT_FILE"
+    fi
+
+    if [ ! -s "$INIT_FILE" ]; then
+      echo "Vault is initialized but $INIT_FILE is unavailable; cannot automatically unseal" >&2
+      exit 1
+    fi
+
+    ROOT_TOKEN="$(jq -r '.root_token' "$INIT_FILE")"
+    UNSEAL_KEY="$(jq -r '.keys_base64[0]' "$INIT_FILE")"
+
+    unseal_if_needed() {
+      sealed="$(curl -fsS "$VAULT_ADDR/v1/sys/seal-status" | jq -r '.sealed')"
+      if [ "$sealed" = "true" ]; then
+        echo "Unsealing Vault"
+        curl -fsS -X POST -H 'Content-Type: application/json' \
+          -d "{\"key\":\"$UNSEAL_KEY\"}" "$VAULT_ADDR/v1/sys/unseal" >/dev/null
+      fi
+    }
+
+    unseal_if_needed
+
+    curl -sS -X POST -H "X-Vault-Token: $ROOT_TOKEN" -H 'Content-Type: application/json' \
+      -d '{"type":"kv","options":{"version":"2"}}' \
+      "$VAULT_ADDR/v1/sys/mounts/$KV_MOUNT" >/dev/null || true
+
+    curl -sS -X POST -H "X-Vault-Token: $ROOT_TOKEN" -H 'Content-Type: application/json' \
+      -d '{"type":"approle"}' "$VAULT_ADDR/v1/sys/auth/$APPROLE_MOUNT" >/dev/null || true
+
+    POLICY_JSON="$(cat <<'POLICY' | jq -Rs '{policy:.}'
+{{ .Values.bootstrap.policy | indent 4 }}
+    POLICY
+    )"
+    vault_post "/v1/sys/policies/acl/$POLICY_NAME" "$POLICY_JSON" >/dev/null
+
+    ROLE_JSON="$(jq -n --arg policy "$POLICY_NAME" --arg period "$TOKEN_PERIOD" \
+      '{token_policies:[$policy],token_period:$period,token_num_uses:0,secret_id_ttl:"0",secret_id_num_uses:0,bind_secret_id:true}')"
+    vault_post "/v1/auth/$APPROLE_MOUNT/role/$ROLE_NAME" "$ROLE_JSON" >/dev/null
+
+    ROLE_ID="$(vault_get "/v1/auth/$APPROLE_MOUNT/role/$ROLE_NAME/role-id" | jq -r '.data.role_id')"
+
+    NAMESPACE="$(cat "$NAMESPACE_FILE")"
+    SECRET_PATH="/api/v1/namespaces/$NAMESPACE/secrets/$CREDS_SECRET"
+    EXISTING_SECRET="$(k8s_request GET "$SECRET_PATH" 2>/dev/null || true)"
+    EXISTING_ROLE_ID="$(printf '%s' "$EXISTING_SECRET" | jq -r '.data.role_id // empty' | base64 -d 2>/dev/null || true)"
+    EXISTING_SECRET_ID="$(printf '%s' "$EXISTING_SECRET" | jq -r '.data.secret_id // empty' | base64 -d 2>/dev/null || true)"
+
+    SECRET_ID=""
+    if [ "$EXISTING_ROLE_ID" = "$ROLE_ID" ] && [ -n "$EXISTING_SECRET_ID" ]; then
+      LOGIN_BODY="$(jq -n --arg role "$ROLE_ID" --arg secret "$EXISTING_SECRET_ID" '{role_id:$role,secret_id:$secret}')"
+      if curl -fsS -X POST -H 'Content-Type: application/json' -d "$LOGIN_BODY" \
+        "$VAULT_ADDR/v1/auth/$APPROLE_MOUNT/login" | jq -e '.auth.client_token' >/dev/null 2>&1; then
+        SECRET_ID="$EXISTING_SECRET_ID"
+        echo "Reusing valid AppRole secret_id"
+      fi
+    fi
+
+    if [ -z "$SECRET_ID" ]; then
+      echo "Minting AppRole secret_id"
+      SECRET_ID="$(vault_post "/v1/auth/$APPROLE_MOUNT/role/$ROLE_NAME/secret-id" '{}' | jq -r '.data.secret_id')"
+    fi
+
+    SECRET_JSON="$(jq -n \
+      --arg name "$CREDS_SECRET" --arg namespace "$NAMESPACE" \
+      --arg role_id "$(printf '%s' "$ROLE_ID" | base64 | tr -d '\n')" \
+      --arg secret_id "$(printf '%s' "$SECRET_ID" | base64 | tr -d '\n')" \
+      '{apiVersion:"v1",kind:"Secret",metadata:{name:$name,namespace:$namespace},type:"Opaque",data:{role_id:$role_id,secret_id:$secret_id}}')"
+
+    if [ -n "$EXISTING_SECRET" ]; then
+      RESOURCE_VERSION="$(printf '%s' "$EXISTING_SECRET" | jq -r '.metadata.resourceVersion')"
+      SECRET_JSON="$(printf '%s' "$SECRET_JSON" | jq --arg rv "$RESOURCE_VERSION" '.metadata.resourceVersion=$rv')"
+      k8s_request PUT "$SECRET_PATH" "$SECRET_JSON" >/dev/null
+    else
+      k8s_request POST "/api/v1/namespaces/$NAMESPACE/secrets" "$SECRET_JSON" >/dev/null
+    fi
+
+    echo "Vault bootstrap complete; credentials stored in Secret $NAMESPACE/$CREDS_SECRET"
+
+    while true; do
+      sleep 10
+      unseal_if_needed || true
+    done
+{{- end }}
