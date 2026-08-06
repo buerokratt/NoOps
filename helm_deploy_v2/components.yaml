@@ -55,3 +55,7 @@ deployments:
   - name: component-opensearch-node
     chart_path: ./NoOps/Kubernetes/Components/OpenSearch
     namespace: {{ namespace }}
+
+  - name: vault-backoffice
+    chart_path: ./NoOps/Kubernetes/Components/Vault
+    namespace: {{ namespace }}
