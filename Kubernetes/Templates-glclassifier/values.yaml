@@ -3,9 +3,10 @@ Ruuter:
   domain: "eexample.com"
   images:
     scope:
-      registry: "ghcr.io"
-      repository: "buerokratt/ruuter"
-      tag: "v2.2.2"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/ruuter"
+      # tag: "v2.2.2"
+      tag: "latest"
   secretname: "ruuter_cert_name_here" #We use CertManager so use e.g ruuter.domain.ee.001
   env:
     cors: "https://xample.com"
@@ -20,25 +21,30 @@ Resql:
 
   images:
     scope:
-      registry: "ghcr.io"
-      repository: "buerokratt/resql"
-      tag: "v1.3.4" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/resql"
+      # tag: "v1.3.4"
+      tag: "latest"
     backoffice:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "backoffice-module-test-1.5.19" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "backoffice-module-test-1.5.19"
+      tag: "latest"
     analytics:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "analytics-module-test-1.5.11" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "analytics-module-test-1.5.11"
+      tag: "latest"
     services:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "service-module-test-1.5.20" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "service-module-test-1.5.20"
+      tag: "latest"
     training:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "training-module-test-1.5.18" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "training-module-test-1.5.18"
+      tag: "latest"
       
   env:
     LOGGING_LEVEL_ROOT: "INFO"
@@ -144,9 +150,10 @@ TIM:
 
   images:
     scope:
-      registry: "ghcr.io"
-      repository: "buerokratt/tim"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/tim"
+      # tag: "v1.1.1"
+      tag: "latest"
 
   resources:
     requests:

@@ -5,17 +5,20 @@ ingress:
 release_name: "module-byk-training-gui"
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/training-module"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/training-module"
+    # tag: "v1.1.1"
+    tag: "latest"
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.1.1"
+    tag: "latest"
   pipelines:
-    registry: "ghcr.io"
-    repository: "buerokratt/training-module"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/training-module"
+    # tag: "v1.1.1"
+    tag: "latest"
     
 
 env:

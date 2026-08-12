@@ -26,16 +26,16 @@ release_name: "module-byk-training-gui"
   
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/training-module"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/training-module"
     tag: "{{ module.training.gui.version }}" # Images (tags) are up to date, currently no changes needed
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.training.image.version }}" # Images (tags) are up to date, currently no changes needed
   pipelines:
-    registry: "ghcr.io"
-    repository: "buerokratt/training-module"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/training-module"
     tag: "{{ module.training.pipelines.version }}" # Images (tags) are up to date, currently no changes needed
     
 

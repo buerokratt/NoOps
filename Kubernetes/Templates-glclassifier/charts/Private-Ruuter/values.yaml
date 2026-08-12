@@ -18,9 +18,10 @@ release_name: "component-byk-ruuter-private"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/ruuter"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/ruuter"
+    # tag: "v1.1.1"
+    tag: "latest"
 
 env:
   LOGGING_LEVEL_ROOT: "INFO"

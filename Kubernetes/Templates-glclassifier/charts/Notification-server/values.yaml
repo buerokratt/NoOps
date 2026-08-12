@@ -1,8 +1,8 @@
 release_name: "component-byk-notifications-node"
 
 image:
-  registry: "ghcr.io"
-  repository: "buerokratt/notifications-node"
+  registry: "registry.gitlab.ria.ee"
+  repository: "byk/notifications-node"
   tag: "latest"
 
 replicas: 1

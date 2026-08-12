@@ -1,8 +1,8 @@
 release_name: "component-byk-mlflow"
 
 image:
-  registry: "ghcr.io"
-  repository: "buerokratt/mlflow"
+  registry: "registry.gitlab.ria.ee"
+  repository: "byk/mlflow"
   tag: "latest"
 
 replicas: 1

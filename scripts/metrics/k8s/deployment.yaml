@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: metrics-checker
-        image: <IMAGE-HERE>
+        image: registry.gitlab.ria.ee/byk/<IMAGE-HERE>:latest
         volumeMounts:
         - name: docker-socket
           mountPath: /var/run/docker.sock

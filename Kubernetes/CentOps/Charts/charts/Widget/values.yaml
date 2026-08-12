@@ -4,13 +4,15 @@ release_name: "module-byk-widget"
 
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/chat-widget"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/chat-widget"
+    # tag: "v1.1.1"
+    tag: "latest"
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.1.1"
+    tag: "latest"
 
 config: 
   header_origin: "https://test.buerokratt.ee"

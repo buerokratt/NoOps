@@ -9,7 +9,7 @@
 To get the needed scripts, component and module charts, you need to clone Buerokratt-NoOps repo  
 
 ```
-git clone https://github.com/buerokratt/NoOps.git
+git clone https://gitlab.ria.ee/BYK/NoOps.git
 ```  
 
 Change directory  

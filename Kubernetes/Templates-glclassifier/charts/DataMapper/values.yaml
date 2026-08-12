@@ -4,38 +4,43 @@ istio:
   enabled: false
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/datamapper"
-    tag: "v1.0.0"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/datamapper"
+    # tag: "v1.0.0"
+    tag: "latest"
   backoffice:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.0.0"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.0.0"
+    tag: "latest"
   analytics:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.0.0"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.0.0"
+    tag: "latest"
   services:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.0.0"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.0.0"
+    tag: "latest"
   training:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.0.0"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.0.0"
+    tag: "latest"
 
 dslRepos:
   pipelines:
-    repo: "https://github.com/buerokratt/Service-Module.git"
+    repo: "https://gitlab.ria.ee/BYK/Service-Module.git"
     path: "/DSL"
   bot:
-    repo: "https://github.com/buerokratt/Training-Module.git"
+    repo: "https://gitlab.ria.ee/BYK/Training-Module.git"
     path: "DSL/DMapper/locations"
   commonservice:
-    repo: "https://github.com/buerokratt/Common-Services.git"
+    repo: "https://gitlab.ria.ee/BYK/Common-Services.git"
     path: "/"
   sec:
-    repo: "https://github.com/buerokratt/Service-Module.git"
+    repo: "https://gitlab.ria.ee/BYK/Service-Module.git"
     path: "/secrets"
 
 resources:

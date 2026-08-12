@@ -29,44 +29,44 @@ release_name: "component-byk-dmapper"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: buerokratt/datamapper
+    registry: "registry.gitlab.ria.ee"
+    repository: byk/datamapper
     tag: {{ component.datamapper.image.version }}
   backoffice:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.backoffice.image.version }}" # Images (tags) are up to date, currently no changes needed
   analytics:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.analytics.image.version }}" # Images (tags) are up to date, currently no changes needed
   services:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.services.image.version }}" # Images (tags) are up to date, currently no changes needed
   training:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.training.image.version }}" # Images (tags) are up to date, currently no changes needed 
   s3ferry:
-    registry: "ghcr.io"
-    repository: "buerokratt/s3-ferry"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/s3-ferry"
     tag: "{{ component.s3.ferry.image.version }}" # Images (tags) are up to date, currently no changes needed
   pipelines:
     service:
-      repo: https://github.com/buerokratt/Service-Module.git
+      repo: https://gitlab.ria.ee/BYK/Service-Module.git
       path: /DSL
   bot:
     dsl:
-      repo: https://github.com/buerokratt/Training-Module.git
+      repo: https://gitlab.ria.ee/BYK/Training-Module.git
       path: DSL/DMapper/locations
   commonservice:
     dsl:
-      repo: https://github.com/buerokratt/Common-Services.git
+      repo: https://gitlab.ria.ee/BYK/Common-Services.git
       path: /
   sec:
     service:
-      repo: https://github.com/buerokratt/Service-Module.git
+      repo: https://gitlab.ria.ee/BYK/Service-Module.git
       path: /secrets
 
 s3ferry:

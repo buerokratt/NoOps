@@ -17,7 +17,7 @@ else
     exit 1
 fi
 cd $buildpath
-git clone https://github.com/buerokratt/Installation-Guides.git
+git clone https://gitlab.ria.ee/BYK/Installation-Guides.git
 cd Installation-Guides
 cd $buildpath/Installation-Guides/default-setup/chatbot-and-training/bot/
 docker-compose up -d

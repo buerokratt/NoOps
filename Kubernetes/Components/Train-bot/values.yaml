@@ -28,13 +28,13 @@ release_name: "component-byk-train-bot"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "varmoh/rasa-for-buerokratt"
+    registry: "registry.gitlab.ria.ee"
+    repository: "registry.gitlab.ria.ee/byk/rasa-for-buerokratt"
     tag: "{{ component.bot.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 bot:
   dsl:
-    repo: https://github.com/buerokratt/Installation-Guides.git
+    repo: https://gitlab.ria.ee/BYK/Installation-Guides.git
     path: default-setup/chatbot-and-training/bot
 
 resources:

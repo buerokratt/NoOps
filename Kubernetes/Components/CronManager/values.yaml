@@ -25,16 +25,17 @@ release_name: "component-byk-cronmanager"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/cronmanager"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/cronmanager"
     tag: "{{ component.cronmanager.image.version }}" # Images (tags) are up to date, currently no changes needed
   cron:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "cronmanager-test-1.1.3" 
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "cronmanager-test-1.1.3"
+    tag: "latest"
   commonservice:
     dsl:
-      repo: https://github.com/buerokratt/Common-Services.git
+      repo: https://gitlab.ria.ee/BYK/Common-Services.git
       path: services
 
 

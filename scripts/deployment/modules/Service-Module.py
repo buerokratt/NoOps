@@ -34,7 +34,7 @@ if os.path.isdir(repo_path):
     execute_command(f"cd {repo_path} && git restore . && git fetch && git pull && git branch && git checkout dev && cd ../../")
 else:
     print("[+] Cloning repo from git")
-    execute_command(f" git clone https://github.com/buerokratt/Service-Module.git && cd Service-Module && git branch && git checkout dev && cd ../../")
+    execute_command(f" git clone https://gitlab.ria.ee/BYK/Service-Module.git && cd Service-Module && git branch && git checkout dev && cd ../../")
 
 # Copy files
 if not copy_files:
@@ -113,7 +113,7 @@ docker_compose_modifications = {
      #    r'node_server:\s+container_name: node_server\n\s+build:\s+context: .*?\n\s+dockerfile: .*?$',
      #    f'node_server:\n    container_name: {node_container}\n    image: {node_image}',
      #   ),
-        (f'node_server:\n    ports:\n\s+- 3005:3005', f'ports:\n      - {node_port[0]}:{node_port[1]}'),
+        (r'node_server:\n    ports:\n\s+- 3005:3005', f'ports:\n      - {node_port[0]}:{node_port[1]}'),
         (r'gui_dev:\s+container_name: gui_dev\n\s+', f'gui_dev:\n    container_name: {gui_container}\n    '),
     ],
 }
@@ -174,7 +174,7 @@ else:
 print(f"{Fore.YELLOW}[+] .env file updated{Style.RESET_ALL}")
 
 # Run it all
- print("[+] Running containers")
+print("[+] Running containers")
 
 execute_command(f"cd Service-Module && docker-compose up -d --build && cd ../../")
 

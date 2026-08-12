@@ -27,7 +27,7 @@ ingress:
 release_name: "job-postdeploy-seed"
 releaseName: post-deploy-pipeline-seed
 
-dslRepo: "https://github.com/buerokratt/Training-Module.git"
+dslRepo: "https://gitlab.ria.ee/BYK/Training-Module.git"
 dslPath: "/"
 dslBranch: "dev"
 
@@ -37,11 +37,11 @@ images:
     image: opensearchproject/opensearch:latest
   pipelines:
     training:
-      repo: https://github.com/buerokratt/Training-Module.git
+      repo: https://gitlab.ria.ee/BYK/Training-Module.git
       path: /
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.training.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 liquibase:

@@ -8,10 +8,10 @@ CHANGELOG="$CENTRAL_PATH/CHANGELOG.md"
 
 # Hardcoded source repos
 SOURCE_REPOS=(
-  "buerokratt/Buerokratt-Chatbot:test"
-  "buerokratt/Training-Module:test"
-  "buerokratt/Analytics-Module:test"
-  "buerokratt/Service-Module:test"
+  "BYK/Buerokratt-Chatbot:test"
+  "BYK/Training-Module:test"
+  "BYK/Analytics-Module:test"
+  "BYK/Service-Module:test"
 )
 
 # Hardcoded version
@@ -72,18 +72,18 @@ for repo in "${SOURCE_REPOS[@]}"; do
   REPO_DIR="$TEMP_DIR/$(basename "$REPO_NAME")"
   
   echo "Cloning $REPO_NAME into $REPO_DIR"
-  git clone --depth 1 --branch "$REPO_BRANCH" "https://github.com/$REPO_NAME.git" "$REPO_DIR"
+  git clone --depth 1 --branch "$REPO_BRANCH" "https://gitlab.ria.ee/$REPO_NAME.git" "$REPO_DIR"
   
-  if [ "$REPO_NAME" = "buerokratt/Buerokratt-Chatbot" ]; then
+  if [ "$REPO_NAME" = "BYK/Buerokratt-Chatbot" ]; then
     MAPPINGS=("${CHATBOT_MAPPINGS[@]}")
     CHANGES_ARRAY="CHATBOT_CHANGES"
-  elif [ "$REPO_NAME" = "buerokratt/Training-Module" ]; then
+  elif [ "$REPO_NAME" = "BYK/Training-Module" ]; then
     MAPPINGS=("${TRAINING_MAPPINGS[@]}")
     CHANGES_ARRAY="TRAINING_CHANGES"
-  elif [ "$REPO_NAME" = "buerokratt/Analytics-Module" ]; then
+  elif [ "$REPO_NAME" = "BYK/Analytics-Module" ]; then
     MAPPINGS=("${ANALYTICS_MAPPINGS[@]}")
     CHANGES_ARRAY="ANALYTICS_CHANGES"
-  elif [ "$REPO_NAME" = "buerokratt/Service-Module" ]; then
+  elif [ "$REPO_NAME" = "BYK/Service-Module" ]; then
     MAPPINGS=("${SERVICE_MAPPINGS[@]}")
     CHANGES_ARRAY="SERVICE_CHANGES"
   else

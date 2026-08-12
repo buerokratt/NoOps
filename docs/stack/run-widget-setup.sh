@@ -3,8 +3,8 @@ k#!/bin/bash
 set -e  # Exit on error
 
 PROJECT_DIR="widget"
-NOOPS_REPO="https://github.com/buerokratt/NoOps"
-CHATBOT_REPO="https://github.com/buerokratt/Buerokratt-Chatbot"
+NOOPS_REPO="https://gitlab.ria.ee/BYK/NoOps"
+CHATBOT_REPO="https://gitlab.ria.ee/BYK/Buerokratt-Chatbot"
 NOOPS_COMPOSE_PATH="NoOps/docs/stack"
 
 echo "📁 Creating project directory: $PROJECT_DIR"
@@ -14,7 +14,7 @@ cd "$PROJECT_DIR"
 # --- Clone and build Ruuter ---
 if [ ! -d "Ruuter" ]; then
     echo "🔄 Cloning Ruuter..."
-    git clone https://github.com/buerokratt/Ruuter
+    git clone https://gitlab.ria.ee/BYK/Ruuter
 fi
 cd Ruuter
 git checkout dev
@@ -25,7 +25,7 @@ cd ..
 # --- Clone and build DataMapper ---
 if [ ! -d "DataMapper" ]; then
     echo "🔄 Cloning DataMapper..."
-    git clone https://github.com/buerokratt/DataMapper.git
+    git clone https://gitlab.ria.ee/BYK/DataMapper.git
 fi
 cd DataMapper
 git checkout dev
@@ -36,7 +36,7 @@ cd ..
 # --- Clone and build Resql ---
 if [ ! -d "Resql" ]; then
     echo "🔄 Cloning Resql..."
-    git clone https://github.com/buerokratt/Resql
+    git clone https://gitlab.ria.ee/BYK/Resql
 fi
 cd Resql
 git checkout dev
@@ -47,7 +47,7 @@ cd ..
 # --- Clone and build Chat Widget ---
 if [ ! -d "Chat-Widget" ]; then
     echo "🔄 Cloning Chat-Widget..."
-    git clone https://github.com/buerokratt/Chat-Widget
+    git clone https://gitlab.ria.ee/BYK/Chat-Widget
 fi
 cd Chat-Widget
 git checkout dev

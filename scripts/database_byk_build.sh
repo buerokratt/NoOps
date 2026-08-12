@@ -29,7 +29,7 @@ if [ -d "Installation-Guides" ]; then
     cd ..
 else
     echo -e "[+] cloning repo from git"
-    git clone https://github.com/buerokratt/Installation-Guides.git
+    git clone https://gitlab.ria.ee/BYK/Installation-Guides.git
 fi
 
 

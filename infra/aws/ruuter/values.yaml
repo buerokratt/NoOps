@@ -14,9 +14,10 @@ release_name: "component-byk-ruuter"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/ruuter"
-    tag: "v2.2.8"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/ruuter"
+    # tag: "v2.2.8"
+    tag: "latest"
     
 env:
   LOGGING_LEVEL_ROOT: "INFO"

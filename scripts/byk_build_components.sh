@@ -27,7 +27,7 @@ if [ "$Ruuter" == "Y" ]; then
         cd ..
     else
         echo -e "[+] \x1b[1;32mcloning Ruuter\x1b[0m"
-        git clone https://github.com/buerokratt/Ruuter.git
+        git clone https://gitlab.ria.ee/BYK/Ruuter.git
     fi
 else
     echo "Dont want Ruuter"
@@ -42,7 +42,7 @@ if [ "$TIM" == "Y" ]; then
         cd ..
     else
         echo -e "[+] \x1b[1;32mcloning TIM\x1b[0m"
-        git clone https://github.com/buerokratt/TIM.git
+        git clone https://gitlab.ria.ee/BYK/TIM.git
     fi
 else
     echo "Dont want TIM"
@@ -57,7 +57,7 @@ if [ "$DataMapper" == "Y" ]; then
         cd ..
     else
         echo -e "[+] \x1b[1;32mcloning DataMapper\x1b[0m"
-        git clone https://github.com/buerokratt/DataMapper.git
+        git clone https://gitlab.ria.ee/BYK/DataMapper.git
     fi
 else
     echo "Dont want DataMapper"
@@ -72,7 +72,7 @@ if [ "$Resql" == "Y" ]; then
         cd ..
     else
         echo -e "[+] \x1b[1;32mcloning Resql\x1b[0m"
-        git clone https://github.com/buerokratt/Resql.git
+        git clone https://gitlab.ria.ee/BYK/Resql.git
     fi
 else
     echo "Dont want Resql"
@@ -87,7 +87,7 @@ if [ "$Chat_Widget" == "Y" ]; then
         cd ..
     else
         echo -e "[+] \x1b[1;32mcloning Chat-Widget\x1b[0m"
-        git clone https://github.com/buerokratt/Chat-Widget.git
+        git clone https://gitlab.ria.ee/BYK/Chat-Widget.git
     fi
 else
     echo "Dont want Chat-Widget"
@@ -102,7 +102,7 @@ if [ "$Buerokratt_Chatbot" == "Y" ]; then
         cd ..
     else
         echo -e "[+] \x1b[1;32mcloning Buerokratt-Chatbot\x1b[0m"
-        git clone https://github.com/buerokratt/Buerokratt-Chatbot.git
+        git clone https://gitlab.ria.ee/BYK/Buerokratt-Chatbot.git
     fi
 else
     echo "Dont want Buerokratt-Chatbot"
@@ -117,7 +117,7 @@ if [ "$Training_Module" == "Y" ]; then
         cd ..
     else
         echo -e "[+] \x1b[1;32mcloning Training-Module\x1b[0m"
-        git clone https://github.com/buerokratt/Training-Module.git
+        git clone https://gitlab.ria.ee/BYK/Training-Module.git
     fi
 else
     echo "Dont want Training-Module"

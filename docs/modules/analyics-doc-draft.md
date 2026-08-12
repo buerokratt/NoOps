@@ -59,7 +59,7 @@ The Analytics Module is designed to facilitate data collection, processing, and 
 1. **Cloning the Repository**
    - Open your terminal and run the following command to clone the repository:
      ```bash
-     git clone https://github.com/buerokratt/Analytics-Module.git
+     git clone https://gitlab.ria.ee/BYK/Analytics-Module.git
      cd Analytics-Module
      ```
    
@@ -348,7 +348,7 @@ Deploying the Analytics Module requires careful planning to ensure that the appl
         spec:
           containers:
             - name: analytics-module
-              image: your-docker-repo/analytics-module:latest
+              image: registry.gitlab.ria.ee/byk/analytics-module:latest
               ports:
                 - containerPort: 3001
               env:
