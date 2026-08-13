@@ -14,7 +14,7 @@ release_name: "component-byk-ruuter"
 
 images:
   scope:
-    registry: "723566154927.dkr.ecr.eu-north-1.amazonaws.com"
+    registry: ""
     repository: "ruuter"
     tag: "v2.2.9"
     # tag: "latest"
