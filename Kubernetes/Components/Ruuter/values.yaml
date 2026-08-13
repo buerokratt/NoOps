@@ -27,12 +27,12 @@ release_name: "component-byk-ruuter"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/ruuter"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/ruuter"
     tag: "{{ component.ruuter.image.version }}" # Images (tags) are up to date, currently no changes needed
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.backoffice.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 env:

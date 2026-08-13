@@ -7,13 +7,15 @@ release_name: "module-byk-services-gui"
 
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/service-module"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/service-module"
+    # tag: "v1.1.1"
+    tag: "latest"
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.1.1"
+    tag: "latest"
 
 env:
   REACT_APP_RUUTER_API_URL: "https://ruuter.{{ .Values.domain }}/v2/private/backoffice" 

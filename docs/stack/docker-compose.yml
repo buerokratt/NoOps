@@ -3,7 +3,8 @@ version: "3.9"
 services:
   ruuter-public:
     container_name: ruuter-public
-    image: ruuter
+    # image: ruuter
+    image: registry.gitlab.ria.ee/byk/ruuter:latest
     environment:
       - application.cors.allowedOrigins=http://localhost:8086,http://localhost:3001,http://localhost:3003,http://localhost:3004,http://localhost:8080
       - application.httpCodesAllowList=200,201,202,400,401,403,500
@@ -25,7 +26,8 @@ services:
     
   data-mapper:
     container_name: data-mapper
-    image: data-mapper
+    # image: data-mapper
+    image: registry.gitlab.ria.ee/byk/datamapper:latest
     environment:
       - PORT=3000
       - CONTENT_FOLDER=/data
@@ -41,7 +43,8 @@ services:
 
   resql:
     container_name: resql
-    image: resql
+    # image: resql
+    image: registry.gitlab.ria.ee/byk/resql:latest
     environment:
       - sqlms.datasources.[0].name=byk
       - sqlms.datasources.[0].jdbcUrl=jdbc:postgresql://171.22.247.13:5433/byk?sslmode=require
@@ -71,7 +74,8 @@ services:
 
   chat-widget:
     container_name: chat-widget
-    image: chat-widget
+    # image: chat-widget
+    image: registry.gitlab.ria.ee/byk/chat-widget:latest
     ports:
       - 3003:3003
     networks:

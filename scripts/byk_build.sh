@@ -36,7 +36,7 @@ if [ -d "Installation-Guides" ]; then
     cd ..
 else
     echo -e "[+] cloning repo from git"
-    git clone https://github.com/buerokratt/Installation-Guides.git
+    git clone https://gitlab.ria.ee/BYK/Installation-Guides.git
 fi
 
 echo -e "[+] \x1b[1;32mreplace in files placeholders with config values\x1b[0m"

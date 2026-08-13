@@ -67,7 +67,7 @@ Consult [this part](#Python-libraries) of readme, if you need to install librari
 ## IMPORTANT  
 To run this test, clone this repo:  
 ```
-git clone https://github.com/buerokratt/NoOps.git
+git clone https://gitlab.ria.ee/BYK/NoOps.git
 ```
 then  
 ```

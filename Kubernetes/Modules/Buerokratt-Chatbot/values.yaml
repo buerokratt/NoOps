@@ -27,16 +27,16 @@ release_name: "module-byk-backoffice-gui"
 
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-chatbot"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-chatbot"
     tag: "{{ module.backoffice.gui.version }}" # Images (tags) are up to date, currently no changes needed
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.backoffice.image.version }}" # Images (tags) are up to date, currently no changes needed
   liquibase:
     dsl:
-      repo: https://github.com/buerokratt/Buerokratt-Chatbot.git
+      repo: https://gitlab.ria.ee/BYK/Buerokratt-Chatbot.git
       path: DSL/Liquibase
 
 env:

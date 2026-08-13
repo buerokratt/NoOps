@@ -73,8 +73,8 @@ tim_postgresql: "{{ TIMDB.password }}"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/tim"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/tim"
     tag: "{{ component.tim.image.version }}"
 
 resources:

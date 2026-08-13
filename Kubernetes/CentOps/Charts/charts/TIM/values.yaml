@@ -51,9 +51,10 @@ tim_postgresql: "timdbpassword"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/tim"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/tim"
+    # tag: "v1.1.1"
+    tag: "latest"
 
 resources:
   requests:

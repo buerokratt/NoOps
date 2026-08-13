@@ -8,9 +8,10 @@ release_name: "module-byk-authentication-layer"
 
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/authentication-layer"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/authentication-layer"
+    # tag: "v1.1.1"
+    tag: "latest"
 resources:
   requests:
     memory: "10Mi"

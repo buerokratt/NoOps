@@ -24,10 +24,9 @@ release_name: "component-byk-s3"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/s3-ferry"
-    tag: "pre-alpha-1.1.1" # Images (tags) are up to date, currently no changes needed
-
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/s3-ferry"
+    tag: "{{ component.s3.ferry.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 env:
   S3_ENDPOINT_URL: {{ S3_ENDPOINT_URL }}

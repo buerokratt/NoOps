@@ -26,12 +26,12 @@ release_name: "module-byk-widget"
 
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/chat-widget"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/chat-widget"
     tag: "{{ component.widget.gui.version }}" # Images (tags) are up to date, currently no changes needed
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
     tag: "{{ module.backoffice.gui.version }}"  # Images (tags) are up to date, currently no changes needed
 
 config: 

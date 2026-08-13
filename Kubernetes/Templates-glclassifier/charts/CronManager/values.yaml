@@ -14,12 +14,12 @@ release_name: "component-byk-cronmanager"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/cron-manager-python"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/cron-manager-python"
     tag: "latest"
   commonservice:
     dsl:
-      repo: https://github.com/buerokratt/Common-Services.git
+      repo: https://gitlab.ria.ee/BYK/Common-Services.git
       path: services
 
 

@@ -8,13 +8,15 @@ release_name: "module-byk-analytics-gui"
 
 images:
   gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/analytics-module"
-    tag: "v1.1.1" 
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/analytics-module"
+    # tag: "v1.1.1"
+    tag: "latest"
   dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "v1.1.1"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-dsl"
+    # tag: "v1.1.1"
+    tag: "latest"
 env:
   REACT_APP_RUUTER_API_URL: "https://ruuter.{{ .Values.domain }}/v2/public/backoffice"
   NODE_ENV: "development"

@@ -1,31 +1,34 @@
 #### About  
-Here is how to publish and pull npm repo from Github npm registry  
+Here is how to publish and pull an npm package from the RIA GitLab npm registry  
 
 ##### NPM publish  
 Step 1
 Change your project package.json - 
-`"name": "@user/repo_name_you_want_to_use",`  
-change the name according to github user/organization and repo name
+`"name": "@byk/repo_name_you_want_to_use",`  
+the scope must match the GitLab group (`BYK`), lowercased
 
 ```
  "publishConfig": {
-  "registry": "https://ghcr.io/"
+  "registry": "https://gitlab.ria.ee/api/v4/projects/<PROJECT_ID>/packages/npm/"
 },
   "repository": {
   "type": "git",
-  "url": "https://github.com/varmoh/cvi"
+  "url": "https://gitlab.ria.ee/BYK/cvi"
 }
 ```
-Change the registry name and repository url to reflect the repo, where package.json is.
+Change `<PROJECT_ID>` and the repository url to reflect the project where package.json is.
+The numeric project id is on the project's main page, under the project name.
 
 ##### NPM pull
-Make sure that .npmrc has your PAT (Personalized Auth Token) in.
-Log in, change @USERNAME accordingly
+Make sure that .npmrc has your PAT (Personalized Auth Token) in. The token needs
+the `read_api` scope to install, `write_registry` to publish.
+
 ```
-npm login --registry=https://npm.pkg.github.com --scope=@USERNAME
+@byk:registry=https://gitlab.ria.ee/api/v4/packages/npm/
+//gitlab.ria.ee/api/v4/packages/npm/:_authToken=<YOUR_TOKEN>
 ```
 
 Install
 ```
-npm install @username/repo
+npm install @byk/repo
 ```

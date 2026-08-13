@@ -25,8 +25,8 @@ release_name: "component-notification-node"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-chatbot"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/buerokratt-chatbot"
     tag: "{{ component.notification.node.image.version }}" # Images (tags) are up to date, currently no changes needed
 
 env:

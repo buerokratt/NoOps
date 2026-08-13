@@ -3,7 +3,8 @@ version: "3.9"
 services:
   ruuter-public:
     container_name: ruuter-public
-    image: ruutertrain
+    # image: ruutertrain
+    image: registry.gitlab.ria.ee/byk/ruuter:latest
     environment:
       - application.cors.allowedOrigins=http://localhost:8086,http://localhost:3001,http://localhost:3003,http://localhost:3004,http://localhost:8080
       - application.httpCodesAllowList=200,201,202,400,401,403,500
@@ -37,7 +38,8 @@ services:
 
   resql:
     container_name: resql
-    image: resqltrain
+    # image: resqltrain
+    image: registry.gitlab.ria.ee/byk/resql:latest
     depends_on:
       - users_db
     environment:
@@ -69,7 +71,8 @@ services:
 
   s3-ferry:
     container_name: s3-ferry
-    image: ghcr.io/buerokratt/s3-ferry:pre-alpha-1.1.1
+    # image: ghcr.io/buerokratt/s3-ferry:pre-alpha-1.1.1
+    image: registry.gitlab.ria.ee/byk/s3-ferry:latest
     # user: root # This root user is only for local development due to multi container mounted volume permissions
     volumes:
       - /home/varmoh/workfiles/REFACTO-TRAINING/CronManager/mock-test:/api/data

@@ -7,7 +7,7 @@
 1. **Cloning the Repository**
    - Open your terminal and run the following command to clone the repository:
      ```bash
-     git clone https://github.com/buerokratt/Analytics-Module.git
+     git clone https://gitlab.ria.ee/BYK/Analytics-Module.git
      cd Analytics-Module
      ```
    

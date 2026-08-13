@@ -7,7 +7,7 @@ if [ -d "$compose_path" ]; then
     git fetch
     git pull
 else
-    git clone https://github.com/buerokratt/Data-Anonymizer.git
+    git clone https://gitlab.ria.ee/BYK/Data-Anonymizer.git
     cd "$compose_path"
     docker-compose up -d
 fi

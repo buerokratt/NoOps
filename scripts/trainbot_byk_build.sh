@@ -18,7 +18,7 @@ else
 fi
 
 cd $buildpath
-git clone https://github.com/buerokratt/Installation-Guides.git
+git clone https://gitlab.ria.ee/BYK/Installation-Guides.git
 cd Installation-Guides
 #replace in files placeholders with $vars
 deploy="$buildpath/Installation-Guides/default-setup/chatbot-and-training/bot_training/deploy.sh"

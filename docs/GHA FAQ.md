@@ -50,15 +50,15 @@ jobs:
           echo "FIX=$FIX" >> $GITHUB_ENV
       - name: Set repo
         run: |
-           LOWER_CASE_GITHUB_REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')
-           echo "DOCKER_TAG_CUSTOM=ghcr.io/${LOWER_CASE_GITHUB_REPOSITORY}:$RELEASE-$VERSION.$BUILD.$FIX" >> $GITHUB_ENV
+           REPO_NAME=$(echo ${GITHUB_REPOSITORY#*/} | tr '[:upper:]' '[:lower:]')
+           echo "DOCKER_TAG_CUSTOM=registry.gitlab.ria.ee/byk/${REPO_NAME}:$RELEASE-$VERSION.$BUILD.$FIX" >> $GITHUB_ENV
       - name: Docker Build
         run: docker image build --tag $DOCKER_TAG_CUSTOM .
 
-      - name: Log in to GitHub container registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+      - name: Log in to GitLab container registry
+        run: echo "${{ secrets.GITLAB_REGISTRY_TOKEN }}" | docker login registry.gitlab.ria.ee -u "${{ secrets.GITLAB_REGISTRY_USER }}" --password-stdin
 
-      - name: Push Docker image to ghcr
+      - name: Push Docker image to GitLab
         run: docker push $DOCKER_TAG_CUSTOM
 ```
 

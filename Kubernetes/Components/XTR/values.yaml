@@ -28,12 +28,12 @@ release_name: "component-byk-xtr"
 
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/xtr"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/xtr"
     tag: "{{ component.xtr.image.version }}" # Images (tags) are up to date, currently no changes needed
 xtr:
   xtr:
-    repo: https://github.com/buerokratt/xtr.git
+    repo: https://gitlab.ria.ee/BYK/XTR.git
     path: DSL/
 
 resources:

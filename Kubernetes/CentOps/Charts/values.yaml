@@ -3,9 +3,10 @@ Ruuter:
   domain: "eexample.com"
   images:
     scope:
-      registry: "ghcr.io"
-      repository: "buerokratt/ruuter"
-      tag: "v2.2.2"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/ruuter"
+      # tag: "v2.2.2"
+      tag: "latest"
   secretname: "ruuter.stage.buerokratt.ee0001"
   env:
     cors: "https://xample.com"
@@ -20,25 +21,30 @@ Resql:
 
   images:
     scope:
-      registry: "ghcr.io"
-      repository: "buerokratt/resql"
-      tag: "v1.3.4" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/resql"
+      # tag: "v1.3.4"
+      tag: "latest"
     backoffice:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "backoffice-module-test-1.5.19" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "backoffice-module-test-1.5.19"
+      tag: "latest"
     analytics:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "analytics-module-test-1.5.11" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "analytics-module-test-1.5.11"
+      tag: "latest"
     services:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "service-module-test-1.5.20" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "service-module-test-1.5.20"
+      tag: "latest"
     training:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "training-module-test-1.5.18" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "training-module-test-1.5.18"
+      tag: "latest"
       
   env:
     LOGGING_LEVEL_ROOT: "INFO"
@@ -104,16 +110,18 @@ Buerokratt-Chatbot:
 
   images:
     gui:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-chatbot"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-chatbot"
+      # tag: "v1.1.1"
+      tag: "latest"
     dsl:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "v1.1.1"
+      tag: "latest"
     liquibase:
       dsl:
-        repo: https://github.com/buerokratt/Buerokratt-Chatbot.git
+        repo: https://gitlab.ria.ee/BYK/Buerokratt-Chatbot.git
         path: DSL/Liquibase
 
   env:
@@ -199,9 +207,10 @@ TIM:
 
   images:
     scope:
-      registry: "ghcr.io"
-      repository: "buerokratt/tim"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/tim"
+      # tag: "v1.1.1"
+      tag: "latest"
 
   resources:
     requests:
@@ -218,13 +227,15 @@ Widget:
 
   images:
     gui:
-      registry: "ghcr.io"
-      repository: "buerokratt/chat-widget"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/chat-widget"
+      # tag: "v1.1.1"
+      tag: "latest"
     dsl:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "v1.1.1"
+      tag: "latest"
 
   config: 
     header_origin: "https://test.buerokratt.ee"
@@ -248,13 +259,15 @@ Analytics-Module:
 
   images:
     gui:
-      registry: "ghcr.io"
-      repository: "buerokratt/analytics-module"
-      tag: "v1.1.1" 
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/analytics-module"
+      # tag: "v1.1.1"
+      tag: "latest"
     dsl:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "v1.1.1"
+      tag: "latest"
   env:
     REACT_APP_RUUTER_API_URL: "https://ruuter.{{ .Values.domain }}/v2/public/backoffice"
     NODE_ENV: "development"
@@ -307,9 +320,10 @@ Authentication-Layer:
 
   images:
     gui:
-      registry: "ghcr.io"
-      repository: "buerokratt/authentication-layer"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/authentication-layer"
+      # tag: "v1.1.1"
+      tag: "latest"
   resources:
     requests:
       memory: "10Mi"
@@ -328,13 +342,15 @@ Service-Module:
 
   images:
     gui:
-      registry: "ghcr.io"
-      repository: "buerokratt/service-module"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/service-module"
+      # tag: "v1.1.1"
+      tag: "latest"
     dsl:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "v1.1.1"
+      tag: "latest"
 
   env:
     REACT_APP_RUUTER_API_URL: "https://ruuter.{{ .Values.domain }}/v2/private/backoffice" 
@@ -384,17 +400,20 @@ Training-Module:
   release_name: "module-byk-training-gui"
   images:
     gui:
-      registry: "ghcr.io"
-      repository: "buerokratt/training-module"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/training-module"
+      # tag: "v1.1.1"
+      tag: "latest"
     dsl:
-      registry: "ghcr.io"
-      repository: "buerokratt/buerokratt-dsl"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/buerokratt-dsl"
+      # tag: "v1.1.1"
+      tag: "latest"
     pipelines:
-      registry: "ghcr.io"
-      repository: "buerokratt/training-module"
-      tag: "v1.1.1"
+      registry: "registry.gitlab.ria.ee"
+      repository: "byk/training-module"
+      # tag: "v1.1.1"
+      tag: "latest"
       
 
   env:

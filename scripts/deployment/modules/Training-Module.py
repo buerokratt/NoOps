@@ -29,7 +29,7 @@ if os.path.isdir(repo_path):
     execute_command(f"cd {repo_path} && git restore . && git fetch && git pull && git branch && git checkout dev && cd ../../")
 else:
     print("[+] Cloning repo from git")
-    execute_command(f"cd path-to/Training-Module && git clone https://github.com/buerokratt/Training-Module.git && cd Training-Module && git branch && git checkout dev && cd ../../")
+    execute_command(f"cd path-to/Training-Module && git clone https://gitlab.ria.ee/BYK/Training-Module.git && cd Training-Module && git branch && git checkout dev && cd ../../")
 
 
 if os.path.isfile(dockerfile_path):

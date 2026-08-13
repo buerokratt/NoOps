@@ -2,9 +2,10 @@ release_name: "ruuteritest"
 domain: "eexample.com"
 images:
   scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/ruuter"
-    tag: "v2.2.2"
+    registry: "registry.gitlab.ria.ee"
+    repository: "byk/ruuter"
+    # tag: "v2.2.2"
+    tag: "latest"
 secretname: "ruuter.exxample.buerokratt.ee0001"
 env:
   cors: "https://xample.com"

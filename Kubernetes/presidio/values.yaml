@@ -1,6 +1,7 @@
 image:
-  repository: ghcr.io/buerokratt/presidio-anonymizer
-  tag: dev-1.1.2
+  repository: registry.gitlab.ria.ee/byk/presidio-anonymizer
+  # tag: dev-1.1.2
+  tag: "latest"
   pullPolicy: IfNotPresent
 
 service:
