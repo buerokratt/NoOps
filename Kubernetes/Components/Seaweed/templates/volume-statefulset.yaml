@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "seaweedfs.fullname" . }}-volume
+  labels:
+    {{- include "seaweedfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: volume
+spec:
+  serviceName: {{ include "seaweedfs.fullname" . }}-volume
+  replicas: {{ .Values.volume.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: volume
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: volume
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: volume
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["weed"]
+          args:
+            - volume
+            - -master={{ include "seaweedfs.fullname" . }}-master:{{ .Values.master.port }}
+            - -ip=$(POD_IP)
+            - -ip.bind=0.0.0.0
+            - -port={{ .Values.volume.port }}
+            - -port.grpc={{ .Values.volume.grpcPort }}
+            - -dir=/data
+            - -max={{ .Values.volume.maxVolumes }}
+            - -minFreeSpacePercent={{ .Values.volume.minFreeSpacePercent }}
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - name: http
+              containerPort: {{ .Values.volume.port }}
+            - name: grpc
+              containerPort: {{ .Values.volume.grpcPort }}
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.volume.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.volume.persistence.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.volume.persistence.size }}

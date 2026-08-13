@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "seaweedfs.fullname" . }}-volume
+  labels:
+    {{- include "seaweedfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: volume
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: volume
+  ports:
+    - name: http
+      port: {{ .Values.volume.port }}
+      targetPort: http
+    - name: grpc
+      port: {{ .Values.volume.grpcPort }}
+      targetPort: grpc
