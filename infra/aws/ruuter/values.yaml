@@ -14,10 +14,10 @@ release_name: "component-byk-ruuter"
 
 images:
   scope:
-    registry: "registry.gitlab.ria.ee"
-    repository: "byk/ruuter"
-    # tag: "v2.2.8"
-    tag: "latest"
+    registry: "723566154927.dkr.ecr.eu-north-1.amazonaws.com"
+    repository: "ruuter"
+    tag: "v2.2.9"
+    # tag: "latest"
     
 env:
   LOGGING_LEVEL_ROOT: "INFO"
