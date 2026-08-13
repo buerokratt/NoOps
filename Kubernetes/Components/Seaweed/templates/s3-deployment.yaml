@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "seaweedfs.fullname" . }}-s3
+  labels:
+    {{- include "seaweedfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: s3
+spec:
+  replicas: {{ .Values.s3.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: s3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: s3
+    spec:
+      containers:
+        - name: s3
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["weed"]
+          args:
+            - s3
+            - -filer={{ include "seaweedfs.fullname" . }}-filer:{{ .Values.filer.port }}
+            - -ip.bind=0.0.0.0
+            - -port={{ .Values.s3.port }}
+            - -config=/etc/seaweedfs/s3.json
+          ports:
+            - name: s3
+              containerPort: {{ .Values.s3.port }}
+          startupProbe:
+            tcpSocket:
+              port: s3
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: s3
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: s3
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.s3.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: s3-config
+              mountPath: /etc/seaweedfs
+              readOnly: true
+      volumes:
+        - name: s3-config
+          secret:
+            secretName: {{ include "seaweedfs.fullname" . }}-s3
