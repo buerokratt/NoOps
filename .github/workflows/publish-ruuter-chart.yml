@@ -1,0 +1,93 @@
+name: Publish Ruuter Helm chart
+
+on:
+  push:
+    branches:
+      - helms
+    paths:
+      - infra/aws/ruuter/Chart.yaml
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-ruuter-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Package and publish Ruuter
+    runs-on: ubuntu-latest
+
+    env:
+      CHART_DIR: infra/aws/ruuter
+      HELM_VERSION: v3.18.4
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Check whether chart version changed
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          chart_file="${CHART_DIR}/Chart.yaml"
+          current_version="$(helm show chart "${CHART_DIR}" | awk '$1 == "version:" { print $2; exit }')"
+          previous_version="$(git show "${GITHUB_EVENT_BEFORE}:${chart_file}" 2>/dev/null | awk '$1 == "version:" { print $2; exit }' || true)"
+          previous_version="${previous_version%\"}"
+          previous_version="${previous_version#\"}"
+
+          test -n "${current_version}"
+
+          echo "Current chart version: ${current_version}"
+          echo "Previous chart version: ${previous_version:-not found}"
+
+          if [[ "${current_version}" == "${previous_version}" ]]; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "Chart version did not change; nothing will be published."
+          else
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
+            echo "version=${current_version}" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Log in to GitHub Container Registry
+        if: steps.version.outputs.changed == 'true'
+        shell: bash
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          printf '%s' "${GHCR_TOKEN}" | helm registry login ghcr.io \
+            --username "${GITHUB_ACTOR}" \
+            --password-stdin
+
+      - name: Lint and package chart
+        if: steps.version.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          helm dependency update "${CHART_DIR}"
+          helm lint "${CHART_DIR}" --strict
+          mkdir -p dist
+          helm package "${CHART_DIR}" --destination dist
+
+      - name: Publish chart to GitHub Container Registry
+        if: steps.version.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          chart_package="$(find dist -maxdepth 1 -type f -name '*.tgz' -print -quit)"
+          test -n "${chart_package}"
+
+          helm push "${chart_package}" oci://ghcr.io/buerokratt/helm
