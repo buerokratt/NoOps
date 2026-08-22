@@ -1,56 +1,83 @@
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-replicas: 1
+nameOverride: component-notification-node
+fullnameOverride: component-notification-node
+release_name: component-notification-node
+replicaCount: 1
 podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-domain: {{ domain.name }} # Domain name
-secretname: {{ cert.Name.value }} # Cert name value, change this as suited to environment
-
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
-
-release_name: "component-notification-node"  
-
-images:
-  scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-chatbot"
-    tag: "{{ component.notification.node.image.version }}" # Images (tags) are up to date, currently no changes needed
-
+workload:
+  kind: Deployment
+  selectorLabels: {app: component-notification-node}
+image:
+  repository: ghcr.io
+  name: buerokratt/buerokratt-chatbot
+  tag: "{{ component.notification.node.image.version }}"
+  pullPolicy: IfNotPresent
+containerPorts:
+  - {name: http, containerPort: 4040}
+startupProbe:
+  tcpSocket: {port: 4040}
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 24
+  successThreshold: 1
+readinessProbe:
+  tcpSocket: {port: 4040}
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
+livenessProbe:
+  tcpSocket: {port: 4040}
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
 env:
-  OPENSEARCH_PROTOCOL: "http"
-  OPENSEARCH_HOST: "component-opensearch-node"
-  OPENSEARCH_PORT: "9200"
-  OPENSEARCH_USERNAME: "admin"
-  OPENSEARCH_PASSWORD: "admin"
-  PORT: "4040"
-  REFRESH_INTERVAL: "1000"
-  CORS_WHITELIST_ORIGINS: "http://module-byk-widget:3001,http://module-byk-backoffice-gui:3000,http://component-byk-ruuter-private:8080,http://component-byk-ruuter:8080"
-  RUUTER_URL: http://component-byk-ruuter:8080
-  CHAT_TERMINATION_DELAY: "5000"
-  AZURE_OPENAI_ENDPOINT: "{{ CHATBOT.EXTERNAL.BOT.URL }}"
-  AZURE_OPENAI_API_KEY: "{{ CHATBOT.EXTERNAL.API.KEY }}"
-  AZURE_OPENAI_DEPLOYMENT: "{{ AZURE_OPENAI_DEPLOYMENT }}"
-  AZURE_OPENAI_API_VERSION: "{{ AZURE_OPENAI_API_VERSION }}"
-  AZURE_OPENAI_MODEL: "{{ AZURE_OPENAI_MODEL }}"
-  PRIVATE_RUUTER_URL: "http://component-byk-ruuter-private:8080"
-  TERMINATION_TIMEOUT: "10"
-  AZURE_TENANT_ID: "X"
-  AZURE_GRANT_TYPE: "X"
-  AZURE_SCOPE: "X"
-  AZURE_AGENTIC_ENDPOINT: "X"
-  AZURE_AGENTIC_PROJECT_NAME: "X"
-  AZURE_AGENTIC_API_VERSION: "X"
-  
+  - {name: OPENSEARCH_PROTOCOL, value: "http"}
+  - {name: OPENSEARCH_HOST, value: component-opensearch-node}
+  - {name: OPENSEARCH_PORT, value: "9200"}
+  - {name: OPENSEARCH_USERNAME, value: admin}
+  - {name: OPENSEARCH_PASSWORD, value: admin}
+  - {name: PORT, value: "4040"}
+  - {name: REFRESH_INTERVAL, value: "1000"}
+  - {name: CORS_WHITELIST_ORIGINS, value: "http://module-byk-widget:3001,http://module-byk-backoffice-gui:3000,http://component-byk-ruuter-private:8080,http://component-byk-ruuter:8080"}
+  - {name: RUUTER_URL, value: "http://component-byk-ruuter:8080"}
+  - {name: CHAT_TERMINATION_DELAY, value: "5000"}
+  - {name: AZURE_OPENAI_ENDPOINT, value: X}
+  - {name: AZURE_OPENAI_API_KEY, value: X}
+  - {name: AZURE_OPENAI_DEPLOYMENT, value: X}
+  - {name: AZURE_OPENAI_API_VERSION, value: X}
+  - {name: AZURE_OPENAI_MODEL, value: X}
+  - {name: PRIVATE_RUUTER_URL, value: "http://component-byk-ruuter-private:8080"}
+  - {name: TERMINATION_TIMEOUT, value: "10"}
+  - {name: AZURE_TENANT_ID, value: X}
+  - {name: AZURE_GRANT_TYPE, value: X}
+  - {name: AZURE_SCOPE, value: X}
+  - {name: AZURE_AGENTIC_ENDPOINT, value: X}
+  - {name: AZURE_AGENTIC_PROJECT_NAME, value: X}
+  - {name: AZURE_AGENTIC_API_VERSION, value: X}
+initContainers:
+  - name: clone-repo
+    image: alpine/git
+    command: ["/bin/sh"]
+    args:
+      - "-c"
+      - >-
+        git clone --branch main --single-branch https://github.com/buerokratt/Buerokratt-Chatbot.git /app/Buerokratt-Chatbot &&
+        cp -r /app/Buerokratt-Chatbot/notification-server/* /app/notification-server/
+    volumeMounts:
+      - {name: notification-server, mountPath: /app/notification-server}
+volumeMounts:
+  - {name: notification-server, mountPath: /app/notification-server}
+volumes:
+  - name: notification-server
+    emptyDir: {}
+services:
+  http:
+    name: component-notification-node
+    ports:
+      http: {port: 4040, targetPort: 4040}
+ingress:
+  enabled: false
+  className: nginx
+  host: notification.example.invalid
+  tlsSecretName: notification-tls

@@ -1,45 +1,87 @@
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-replicas: 1
+nameOverride: "component-byk-xtr"
+fullnameOverride: "component-byk-xtr"
+replicaCount: 1
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+workload:
+  kind: Deployment
+  selectorLabels:
+    app: "component-byk-xtr"
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+image:
+  repository: "registry.gitlab.ria.ee"
+  name: "byk/xtr"
+  tag: "{{ component.xtr.image.version }}" # Images (tags) are up to date, currently no changes needed
+  pullPolicy: IfNotPresent
 
-domain: {{ domain.name }} # Domain name
+containerPorts:
+  - containerPort: 8080
+    name: http
 
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
+startupProbe:
+  tcpSocket:
+    port: 8080
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 24
+  successThreshold: 1
 
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }}
+readinessProbe:
+  tcpSocket:
+    port: 8080
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
 
-release_name: "component-byk-xtr"  
+livenessProbe:
+  tcpSocket:
+    port: 8080
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
 
 
-images:
-  scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/xtr"
-    tag: "{{ component.xtr.image.version }}" # Images (tags) are up to date, currently no changes needed
 xtr:
   xtr:
-    repo: https://github.com/buerokratt/xtr.git
+    repo: https://gitlab.ria.ee/BYK/XTR.git
     path: DSL/
 
-resources:
-  requests:
-    memory: "260Mi"
-    cpu: "50m"
-  limits:
-    memory: "300Mi"
-    cpu: "50m"
+initContainers:
+  - name: bring-xtr-data
+    image: alpine/git:2.36.3
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - name: xtr
+        mountPath: /DSL
+    command: ["/bin/sh"]
+    args:
+      - "-c"
+      - >
+        git clone $DSL_REPO /tmp/dsl-source &&
+        echo 'downloaded' &&
+        cp -r /tmp/dsl-source/$DSL_PATH/* /DSL &&
+        echo 'moved'
+    env:
+      - name: DSL_REPO
+        value: https://gitlab.ria.ee/BYK/XTR.git
+      - name: DSL_PATH
+        value: DSL/
+
+volumeMounts:
+  - name: xtr
+    mountPath: /DSL
+
+volumes:
+  - name: xtr
+    emptyDir: {}
+
+services:
+  http:
+    name: component-byk-xtr
+    ports:
+      http:
+        port: 8080
+        targetPort: 8080
+        protocol: TCP

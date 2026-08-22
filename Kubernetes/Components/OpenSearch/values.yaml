@@ -1,57 +1,107 @@
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-replicas: 1
+nameOverride: component-opensearch-node
+fullnameOverride: component-opensearch-node
+replicaCount: 1
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+workload:
+  kind: Deployment
+  selectorLabels:
+    app: component-opensearch-node
+deployment:
+  strategy:
+    type: Recreate
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+image:
+  repository: docker.io
+  name: opensearchproject/opensearch
+  tag: "2.19.2"
+  pullPolicy: IfNotPresent
 
-domain: {{ domain.name }} # Domain name
-
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
-
-release_name: "component-opensearch-node"  
-
-images:
-  scope:
-    image: {{ component.opensearch.node.image.version }}
-  opensearch:
-    backoffice:
-      repo: https://github.com/buerokratt/Buerokratt-Chatbot.git
-      path: DSL/OpenSearch
-    services:
-      repo: https://github.com/buerokratt/Service-Module.git
-      path: DSL/OpenSearch
-    training:
-      repo: https://github.com/buerokratt/Training-Module.git
-      path: DSL/OpenSearch
-    common:
-      repo: https://github.com/buerokratt/Common-Services
-      path: DSL/OpenSearch
+initContainers:
+  - name: fix-permissions
+    image: busybox:1.36.1
+    command: ["sh", "-c"]
+    args: ["chown -R 1000:1000 /usr/share/opensearch/data && chmod -R 750 /usr/share/opensearch/data"]
+    securityContext:
+      runAsUser: 0
+    volumeMounts:
+      - {name: opensearch-data, mountPath: /usr/share/opensearch/data}
 
 env:
-  CLUSTER_NAME: "opensearch-cluster"
-  NODE_NAME: "component-opensearch-node"
-  DISCOVERY_TYPE: "single-node"
-  BOOTSTRAP_MEMORY_LOCK: "true"
-  OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
-  DISABLE_INSTALL_DEMO_CONFIG: "true"
-  DISABLE_SECURITY_PLUGIN: "true"
+  - {name: cluster.name, value: opensearch-cluster}
+  - {name: node.name, value: component-opensearch-node}
+  - {name: discovery.type, value: single-node}
+  - {name: bootstrap.memory_lock, value: "false"}
+  - {name: node.store.allow_mmap, value: "false"}
+  - {name: OPENSEARCH_JAVA_OPTS, value: "-Xms1g -Xmx1g"}
+  - {name: DISABLE_INSTALL_DEMO_CONFIG, value: "false"}
+  - {name: DISABLE_SECURITY_PLUGIN, value: "false"}
+  - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef: {name: opensearch-admin, key: password}
+
+containerPorts:
+  - {name: https, containerPort: 9200}
+  - {name: metrics, containerPort: 9600}
+
+startupProbe:
+  tcpSocket: {port: 9200}
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 60
+  successThreshold: 1
+readinessProbe:
+  tcpSocket: {port: 9200}
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
+livenessProbe:
+  tcpSocket: {port: 9200}
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
 
 resources:
-  requests:
-    memory: "3Gi"
-    cpu: "2000m"
-  limits:
-    memory: "4Gi"
-    cpu: "2000m"
+  requests: {memory: 2Gi, cpu: 500m}
+  limits: {memory: 3Gi, cpu: "1"}
+
+volumeMounts:
+  - {name: opensearch-data, mountPath: /usr/share/opensearch/data}
+volumes:
+  - name: opensearch-data
+    persistentVolumeClaim: {claimName: opensearch-test-data}
+
+persistence:
+  claimName: opensearch-test-data
+  storageClassName: gp3
+  size: 20Gi
+
+services:
+  http:
+    name: component-opensearch-node
+    ports:
+      https: {port: 9200, targetPort: 9200}
+      metrics: {port: 9600, targetPort: 9600}
+
+loaders:
+  enabled: false
+  endpoint: https://component-opensearch-node:9200
+  credentials:
+    secretName: opensearch-admin
+    username: admin
+    passwordKey: password
+  tls:
+    curlArgs: ""
+    curlConfig: ""
+  images:
+    curl: curlimages/curl:7.85.0
+    git: alpine/git:2.36.3
+
+images:
+  opensearch:
+    backoffice: {repo: https://github.com/buerokratt/Buerokratt-Chatbot.git, path: DSL/OpenSearch}
+    services: {repo: https://github.com/buerokratt/Service-Module.git, path: DSL/OpenSearch}
+    training: {repo: https://github.com/buerokratt/Training-Module.git, path: DSL/OpenSearch}
+    common: {repo: https://github.com/buerokratt/Common-Services, path: DSL/OpenSearch}

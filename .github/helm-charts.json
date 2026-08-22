@@ -1,0 +1,46 @@
+{
+  "charts": [
+    {
+      "name": "xtr",
+      "path": "Kubernetes/Components/XTR",
+      "enabled": true,
+      "setValues": [
+        "image.tag=validation"
+      ]
+    },
+    {
+      "name": "ruuter",
+      "path": "Kubernetes/Components/Ruuter",
+      "enabled": false,
+      "setValues": []
+    },
+    {
+      "name": "resql",
+      "path": "Kubernetes/Components/Resql",
+      "enabled": true,
+      "setValues": [
+        "image.tag=validation",
+        "initContainers[0].image=validation/backoffice:latest",
+        "initContainers[1].image=validation/analytics:latest",
+        "initContainers[2].image=validation/training:latest",
+        "initContainers[3].image=validation/services:latest"
+      ]
+    },
+    {
+      "name": "notification",
+      "path": "Kubernetes/Components/Notification-server",
+      "enabled": true,
+      "setValues": [
+        "image.tag=validation"
+      ]
+    },
+    {
+      "name": "opensearch",
+      "path": "Kubernetes/Components/OpenSearch",
+      "enabled": true,
+      "setValues": [
+        "image.tag=2.19.2"
+      ]
+    }
+  ]
+}

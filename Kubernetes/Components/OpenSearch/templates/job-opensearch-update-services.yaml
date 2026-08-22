@@ -1,7 +1,8 @@
+{{- if .Values.loaders.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "job-{{ .Values.release_name }}-services"
+  name: "job-{{ .Release.Name }}-services"
   annotations:
     "helm.sh/hook": post-install, post-upgrade
     "helm.sh/hook-weight": "1"
@@ -10,14 +11,19 @@ spec:
 #  ttlSecondsAfterFinished: 120
   template:
     metadata:
-      name: "job-{{ .Values.release_name }}-services"
+      name: "job-{{ .Release.Name }}-services"
     spec:
       initContainers:
        - name: wait-for-opensearch
-         image: curlimages/curl:7.85.0
-         command: ['sh', '-c', 'until curl -s http://component-opensearch-node:9200; do echo waiting for opensearch; sleep 5; done']
+         image: {{ .Values.loaders.images.curl | quote }}
+         command: ['sh', '-c', 'until curl -sf $OPENSEARCH_CURL_TLS_ARGS -u "$OPENSEARCH_USERNAME:$OPENSEARCH_PASSWORD" "$OPENSEARCH_ENDPOINT"; do echo waiting for opensearch; sleep 5; done']
+         env:
+           - {name: OPENSEARCH_ENDPOINT, value: {{ .Values.loaders.endpoint | quote }}}
+           - {name: OPENSEARCH_USERNAME, value: {{ .Values.loaders.credentials.username | quote }}}
+           - {name: OPENSEARCH_PASSWORD, valueFrom: {secretKeyRef: {name: {{ .Values.loaders.credentials.secretName }}, key: {{ .Values.loaders.credentials.passwordKey }}}}}
+           - {name: OPENSEARCH_CURL_TLS_ARGS, value: {{ .Values.loaders.tls.curlArgs | quote }}}
        - name: opensearch-clone-services
-         image: alpine/git:2.36.3
+         image: {{ .Values.loaders.images.git | quote }}
          volumeMounts:
             - name: opensearch-repos
               mountPath: /root/services
@@ -40,14 +46,20 @@ spec:
               value: {{ .Values.images.opensearch.services.path }}
       containers:      
        - name: opensearch-update-services
-         image: alpine
+         image: {{ .Values.loaders.images.curl | quote }}
          command: ["/bin/sh"]
          args:
             - "-c"
             - >
-              apk add curl &&
+              printf '%s\n' "$OPENSEARCH_CURL_CONFIG" > "$CURL_HOME/.curlrc" &&
               cd /services &&
-              sh deploy-opensearch.sh http://component-opensearch-node:9200 admin:admin
+              sh deploy-opensearch.sh "$OPENSEARCH_ENDPOINT" "$OPENSEARCH_USERNAME:$OPENSEARCH_PASSWORD"
+         env:
+           - {name: OPENSEARCH_ENDPOINT, value: {{ .Values.loaders.endpoint | quote }}}
+           - {name: OPENSEARCH_USERNAME, value: {{ .Values.loaders.credentials.username | quote }}}
+           - {name: OPENSEARCH_PASSWORD, valueFrom: {secretKeyRef: {name: {{ .Values.loaders.credentials.secretName }}, key: {{ .Values.loaders.credentials.passwordKey }}}}}
+           - {name: OPENSEARCH_CURL_CONFIG, value: {{ .Values.loaders.tls.curlConfig | quote }}}
+           - {name: CURL_HOME, value: /tmp}
          volumeMounts:
             - name: opensearch-repos
               mountPath: /services
@@ -56,5 +68,4 @@ spec:
         - name: opensearch-repos
           emptyDir: {}
       restartPolicy: Never
-
-
+{{- end }}

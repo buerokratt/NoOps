@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: opensearch-{{ namespace }}-data
+  name: {{ .Values.persistence.claimName }}
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: longhorn
+    - ReadWriteOnce
+  storageClassName: {{ .Values.persistence.storageClassName | quote }}
   resources:
     requests:
-      storage: 5Gi
+      storage: {{ .Values.persistence.size | quote }}

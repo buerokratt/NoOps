@@ -1,7 +1,12 @@
 apiVersion: v2
-name: Resql
+name: resql
 description: A Helm chart for Resql
 type: application
 
-version: 0.1.0
+version: 0.2.0
 appVersion: 2.0.0
+
+dependencies:
+  - name: byk-helm-template-library
+    version: 1.0.0
+    repository: oci://ghcr.io/buerokratt

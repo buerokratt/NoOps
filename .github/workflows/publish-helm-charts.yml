@@ -1,0 +1,186 @@
+name: Publish component Helm charts
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - temp-mig
+    paths:
+      - .github/helm-charts.json
+      - .github/workflows/publish-helm-charts.yml
+      - Kubernetes/Components/**
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-component-charts-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Select enabled charts
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      count: ${{ steps.matrix.outputs.count }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build chart matrix
+        id: matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          matrix="$(jq -c '{chart: [.charts[] | select(.enabled == true)]}' .github/helm-charts.json)"
+          count="$(jq '.chart | length' <<< "${matrix}")"
+
+          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
+          echo "count=${count}" >> "${GITHUB_OUTPUT}"
+          echo "Enabled chart matrix: ${matrix}"
+
+  publish:
+    name: Publish ${{ matrix.chart.name }}
+    needs: prepare
+    if: needs.prepare.outputs.count != '0'
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+
+    env:
+      HELM_VERSION: v3.18.4
+      OCI_REGISTRY: ghcr.io
+      OCI_REPOSITORY: oci://ghcr.io/buerokratt/helm
+      CHART_NAME: ${{ matrix.chart.name }}
+      CHART_DIR: ${{ matrix.chart.path }}
+      SET_VALUES_JSON: ${{ toJSON(matrix.chart.setValues) }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Read and validate chart metadata
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          actual_name="$(helm show chart "${CHART_DIR}" | awk '/^name:[[:space:]]/ { print tolower($2); exit }')"
+          chart_version="$(helm show chart "${CHART_DIR}" | awk '/^version:[[:space:]]/ { print $2; exit }')"
+
+          test "${actual_name}" = "${CHART_NAME}"
+          test -n "${chart_version}"
+
+          echo "version=${chart_version}" >> "${GITHUB_OUTPUT}"
+          echo "Publishing candidate ${CHART_NAME}:${chart_version} from ${CHART_DIR}"
+
+      - name: Log in to GitHub Container Registry
+        shell: bash
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          printf '%s' "${GHCR_TOKEN}" | helm registry login "${OCI_REGISTRY}" \
+            --username "${GITHUB_ACTOR}" \
+            --password-stdin
+
+      - name: Build dependencies, lint, and package
+        id: package
+        shell: bash
+        env:
+          CHART_VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          if grep -q '^dependencies:' "${CHART_DIR}/Chart.yaml"; then
+            test -f "${CHART_DIR}/Chart.lock"
+          fi
+          helm dependency build "${CHART_DIR}"
+
+          mapfile -t set_values < <(jq -r '.[]' <<< "${SET_VALUES_JSON}")
+          helm_args=()
+          for value in "${set_values[@]}"; do
+            helm_args+=(--set-string "${value}")
+          done
+
+          helm lint "${CHART_DIR}" --strict "${helm_args[@]}"
+
+          mkdir -p dist
+          package_output="$(helm package "${CHART_DIR}" --destination dist)"
+          chart_package="${package_output##*: }"
+          test -f "${chart_package}"
+
+          packaged_name="$(helm show chart "${chart_package}" | awk '/^name:[[:space:]]/ { print tolower($2); exit }')"
+          packaged_version="$(helm show chart "${chart_package}" | awk '/^version:[[:space:]]/ { print $2; exit }')"
+          test "${packaged_name}" = "${CHART_NAME}"
+          test "${packaged_version}" = "${CHART_VERSION}"
+
+          echo "package=${chart_package}" >> "${GITHUB_OUTPUT}"
+
+      - name: Check immutable version
+        id: remote
+        shell: bash
+        env:
+          CHART_VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          chart_ref="${OCI_REPOSITORY}/${CHART_NAME}"
+          if helm show chart "${chart_ref}" --version "${CHART_VERSION}" >/dev/null 2>&1; then
+            echo "exists=true" >> "${GITHUB_OUTPUT}"
+            echo "${chart_ref}:${CHART_VERSION} already exists; the immutable version will not be overwritten."
+          else
+            echo "exists=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Publish missing chart version
+        if: steps.remote.outputs.exists == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          helm push "${{ steps.package.outputs.package }}" "${OCI_REPOSITORY}"
+
+      - name: Pull and render upstream artifact
+        shell: bash
+        env:
+          CHART_VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          chart_ref="${OCI_REPOSITORY}/${CHART_NAME}"
+          mkdir -p pulled
+          pulled=false
+          for attempt in 1 2 3 4 5 6; do
+            if helm pull "${chart_ref}" --version "${CHART_VERSION}" --destination pulled; then
+              pulled=true
+              break
+            fi
+            echo "Artifact is not visible yet (attempt ${attempt}/6)."
+            sleep 5
+          done
+          test "${pulled}" = "true"
+
+          pulled_package="$(find pulled -maxdepth 1 -type f -name "*-${CHART_VERSION}.tgz" -print -quit)"
+          test -n "${pulled_package}"
+
+          mapfile -t set_values < <(jq -r '.[]' <<< "${SET_VALUES_JSON}")
+          helm_args=()
+          for value in "${set_values[@]}"; do
+            helm_args+=(--set-string "${value}")
+          done
+
+          helm show chart "${pulled_package}"
+          helm template "component-byk-${CHART_NAME}" "${pulled_package}" \
+            --namespace ruuter \
+            --kube-version 1.30.0 \
+            "${helm_args[@]}" \
+            >/dev/null
