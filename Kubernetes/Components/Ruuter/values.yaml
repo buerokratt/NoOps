@@ -79,3 +79,4 @@ constantsIni: |
   DOMAIN=example.invalid
   COOKIE_SAME_SITE=Lax
   # Add only non-secret values needed by the smoke route.
+
