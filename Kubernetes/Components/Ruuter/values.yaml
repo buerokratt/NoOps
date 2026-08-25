@@ -50,15 +50,24 @@ volumes:
   - {name: urls-env, configMap: {name: urls-env-config}}
  
 startupProbe:
-  tcpSocket: {port: http}
+  httpGet:
+    port: http
+    path: /healthz
   periodSeconds: 5
   failureThreshold: 24
+  initialDelaySeconds: 30
+
 readinessProbe:
-  tcpSocket: {port: http}
+  httpGet:
+    port: http
+    path: /healthz
   periodSeconds: 5
   failureThreshold: 3
+
 livenessProbe:
-  tcpSocket: {port: http}
+  httpGet:
+    port: http
+    path: /healthz
   periodSeconds: 10
   failureThreshold: 3
  
