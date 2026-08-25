@@ -19,6 +19,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  build-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: true 
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.12.0  
+
+    - name: Build Helm dependencies
+      working-directory: ./Kubernetes/Components/Ruuter
+      run: |
+        helm dependency build
+
+    - name: Commit and push if dependencies updated
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add Kubernetes/Components/Ruuter/Chart.lock Kubernetes/Components/Ruuter/charts/
+        if ! git diff --cached --quiet; then
+          git commit -m "chore: update Helm dependencies (charts/ and Chart.lock)"
+          git push
+        else
+          echo "No changes to Helm dependencies."
+        fi
+
   prepare:
     name: Select enabled charts
     runs-on: ubuntu-22.04
