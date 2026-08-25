@@ -40,8 +40,8 @@ jobs:
 
     - name: Commit and push if dependencies updated
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
         git add Kubernetes/Components/Ruuter/Chart.lock Kubernetes/Components/Ruuter/charts/
         if ! git diff --cached --quiet; then
           git commit -m "chore: update Helm dependencies (charts/ and Chart.lock)"
