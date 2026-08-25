@@ -10,55 +10,99 @@ on:
       - .github/workflows/publish-helm-charts.yml
       - Kubernetes/Components/**
 
-permissions:
-  contents: read
-  packages: write
-
 concurrency:
   group: publish-component-charts-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   build-dependencies:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        persist-credentials: true 
-
-    - name: Set up Helm
-      uses: azure/setup-helm@v3
-      with:
-        version: v3.12.0  
-
-    - name: Build Helm dependencies
-      working-directory: ./Kubernetes/Components/Ruuter
-      run: |
-        helm dependency build
-
-    - name: Commit and push if dependencies updated
-      run: |
-        git config user.name "GitHub Action"
-        git config user.email "action@github.com"
-        git add Kubernetes/Components/Ruuter/Chart.lock Kubernetes/Components/Ruuter/charts/
-        if ! git diff --cached --quiet; then
-          git commit -m "chore: update Helm dependencies (charts/ and Chart.lock)"
-          git push
-        else
-          echo "No changes to Helm dependencies."
-        fi
-
-  prepare:
-    name: Select enabled charts
+    name: Build Helm dependencies
     runs-on: ubuntu-22.04
+
+    permissions:
+      contents: write
+      packages: read
+
+    env:
+      HELM_VERSION: v3.18.4
+      OCI_REGISTRY: ghcr.io
+
     outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      count: ${{ steps.matrix.outputs.count }}
+      source_sha: ${{ steps.source.outputs.sha }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Log in to GitHub Container Registry
+        shell: bash
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          printf '%s' "${GHCR_TOKEN}" | helm registry login "${OCI_REGISTRY}" \
+            --username "${GITHUB_ACTOR}" \
+            --password-stdin
+
+      - name: Update and build Helm dependencies
+        working-directory: ./Kubernetes/Components/Ruuter
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          helm dependency update .
+          helm dependency build .
+
+      - name: Commit dependency changes
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            Kubernetes/Components/Ruuter/Chart.lock \
+            Kubernetes/Components/Ruuter/charts/
+
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update Ruuter Helm dependencies"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          else
+            echo "No Helm dependency changes."
+          fi
+
+          echo "sha=$(git rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
+
+  prepare:
+    name: Select enabled charts
+    needs:
+      - build-dependencies
+
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      count: ${{ steps.matrix.outputs.count }}
+      source_sha: ${{ needs.build-dependencies.outputs.source_sha }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build-dependencies.outputs.source_sha }}
 
       - name: Build chart matrix
         id: matrix
@@ -71,13 +115,23 @@ jobs:
 
           echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
           echo "count=${count}" >> "${GITHUB_OUTPUT}"
+
           echo "Enabled chart matrix: ${matrix}"
 
   publish:
     name: Publish ${{ matrix.chart.name }}
-    needs: prepare
+
+    needs:
+      - prepare
+
     if: needs.prepare.outputs.count != '0'
+
     runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+      packages: write
+
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
@@ -93,6 +147,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.source_sha }}
 
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -105,8 +161,15 @@ jobs:
         run: |
           set -euo pipefail
 
-          actual_name="$(helm show chart "${CHART_DIR}" | awk '/^name:[[:space:]]/ { print tolower($2); exit }')"
-          chart_version="$(helm show chart "${CHART_DIR}" | awk '/^version:[[:space:]]/ { print $2; exit }')"
+          actual_name="$(
+            helm show chart "${CHART_DIR}" |
+              awk '/^name:[[:space:]]/ { print tolower($2); exit }'
+          )"
+
+          chart_version="$(
+            helm show chart "${CHART_DIR}" |
+              awk '/^version:[[:space:]]/ { print $2; exit }'
+          )"
 
           test "${actual_name}" = "${CHART_NAME}"
           test -n "${chart_version}"
@@ -120,6 +183,7 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+
           printf '%s' "${GHCR_TOKEN}" | helm registry login "${OCI_REGISTRY}" \
             --username "${GITHUB_ACTOR}" \
             --password-stdin
@@ -133,25 +197,49 @@ jobs:
           set -euo pipefail
 
           if grep -q '^dependencies:' "${CHART_DIR}/Chart.yaml"; then
-            test -f "${CHART_DIR}/Chart.lock"
+            if [[ ! -f "${CHART_DIR}/Chart.lock" ]]; then
+              echo "::error::${CHART_DIR}/Chart.yaml declares dependencies but Chart.lock is missing."
+              exit 1
+            fi
           fi
+
           helm dependency build "${CHART_DIR}"
 
-          mapfile -t set_values < <(jq -r '.[]' <<< "${SET_VALUES_JSON}")
+          mapfile -t set_values < <(
+            jq -r '.[]' <<< "${SET_VALUES_JSON}"
+          )
+
           helm_args=()
+
           for value in "${set_values[@]}"; do
             helm_args+=(--set-string "${value}")
           done
 
-          helm lint "${CHART_DIR}" --strict "${helm_args[@]}"
+          helm lint "${CHART_DIR}" \
+            --strict \
+            "${helm_args[@]}"
 
           mkdir -p dist
-          package_output="$(helm package "${CHART_DIR}" --destination dist)"
+
+          package_output="$(
+            helm package "${CHART_DIR}" \
+              --destination dist
+          )"
+
           chart_package="${package_output##*: }"
+
           test -f "${chart_package}"
 
-          packaged_name="$(helm show chart "${chart_package}" | awk '/^name:[[:space:]]/ { print tolower($2); exit }')"
-          packaged_version="$(helm show chart "${chart_package}" | awk '/^version:[[:space:]]/ { print $2; exit }')"
+          packaged_name="$(
+            helm show chart "${chart_package}" |
+              awk '/^name:[[:space:]]/ { print tolower($2); exit }'
+          )"
+
+          packaged_version="$(
+            helm show chart "${chart_package}" |
+              awk '/^version:[[:space:]]/ { print $2; exit }'
+          )"
+
           test "${packaged_name}" = "${CHART_NAME}"
           test "${packaged_version}" = "${CHART_VERSION}"
 
@@ -166,9 +254,13 @@ jobs:
           set -euo pipefail
 
           chart_ref="${OCI_REPOSITORY}/${CHART_NAME}"
-          if helm show chart "${chart_ref}" --version "${CHART_VERSION}" >/dev/null 2>&1; then
+
+          if helm show chart "${chart_ref}" \
+            --version "${CHART_VERSION}" \
+            >/dev/null 2>&1
+          then
             echo "exists=true" >> "${GITHUB_OUTPUT}"
-            echo "${chart_ref}:${CHART_VERSION} already exists; the immutable version will not be overwritten."
+            echo "${chart_ref}:${CHART_VERSION} already exists; immutable version will not be overwritten."
           else
             echo "exists=false" >> "${GITHUB_OUTPUT}"
           fi
@@ -178,7 +270,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          helm push "${{ steps.package.outputs.package }}" "${OCI_REPOSITORY}"
+
+          helm push \
+            "${{ steps.package.outputs.package }}" \
+            "${OCI_REPOSITORY}"
 
       - name: Pull and render upstream artifact
         shell: bash
@@ -188,29 +283,51 @@ jobs:
           set -euo pipefail
 
           chart_ref="${OCI_REPOSITORY}/${CHART_NAME}"
+
           mkdir -p pulled
+
           pulled=false
+
           for attempt in 1 2 3 4 5 6; do
-            if helm pull "${chart_ref}" --version "${CHART_VERSION}" --destination pulled; then
+            if helm pull "${chart_ref}" \
+              --version "${CHART_VERSION}" \
+              --destination pulled
+            then
               pulled=true
               break
             fi
+
             echo "Artifact is not visible yet (attempt ${attempt}/6)."
             sleep 5
           done
+
           test "${pulled}" = "true"
 
-          pulled_package="$(find pulled -maxdepth 1 -type f -name "*-${CHART_VERSION}.tgz" -print -quit)"
+          pulled_package="$(
+            find pulled \
+              -maxdepth 1 \
+              -type f \
+              -name "*-${CHART_VERSION}.tgz" \
+              -print \
+              -quit
+          )"
+
           test -n "${pulled_package}"
 
-          mapfile -t set_values < <(jq -r '.[]' <<< "${SET_VALUES_JSON}")
+          mapfile -t set_values < <(
+            jq -r '.[]' <<< "${SET_VALUES_JSON}"
+          )
+
           helm_args=()
+
           for value in "${set_values[@]}"; do
             helm_args+=(--set-string "${value}")
           done
 
           helm show chart "${pulled_package}"
-          helm template "component-byk-${CHART_NAME}" "${pulled_package}" \
+
+          helm template "component-byk-${CHART_NAME}" \
+            "${pulled_package}" \
             --namespace ruuter \
             --kube-version 1.30.0 \
             "${helm_args[@]}" \
