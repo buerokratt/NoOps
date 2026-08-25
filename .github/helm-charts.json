@@ -11,7 +11,7 @@
     {
       "name": "ruuter",
       "path": "Kubernetes/Components/Ruuter",
-      "enabled": false,
+      "enabled": true,
       "setValues": []
     },
     {

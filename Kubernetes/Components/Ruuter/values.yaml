@@ -1,51 +1,81 @@
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-replicas: 1
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-domain: {{ domain.name }} # Domain name
-secretname: {{ cert.Name.value }} # Cert name value, change this as suited to environment
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }}  # Change this if your certIssuerName has set up different
-
-istio:
-  enabled: {{ istio.enabled }}
-
-release_name: "component-byk-ruuter"    
-
-images:
-  scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/ruuter"
-    tag: "{{ component.ruuter.image.version }}" # Images (tags) are up to date, currently no changes needed
-  dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "{{ module.backoffice.image.version }}" # Images (tags) are up to date, currently no changes needed
-
+nameOverride: component-byk-ruuter
+fullnameOverride: component-byk-ruuter
+replicaCount: 1
+ 
+workload:
+  kind: Deployment
+  selectorLabels: {app: component-byk-ruuter}
+ 
+image:
+  repository: ghcr.io
+  name: buerokratt/ruuter
+  tag: v2.2.8
+  pullPolicy: IfNotPresent
+ 
+containerPorts:
+  - {name: http, containerPort: 8080}
+ 
 env:
-  LOGGING_LEVEL_ROOT: "INFO"
-  LOG_LEVEL_TIMING: "INFO"
-  APPLICATION_LOGGING_DISPLAY_REQUEST_CONTENT: "false"
-  APPLICATION_LOGGING_DISPLAY_RESPONSE_CONTENT: "false"
-  APPLICATION_CORS_ALLOWED_ORIGINS: {{ url.name.admin }}, {{ url.name.domain }}, {{ url.name.tim }}, {{ url.name.ruuter }}{{ extra.cors }}
-
+  - {name: logging.level.root, value: INFO}
+  - {name: LOG_LEVEL_TIMING, value: INFO}
+  - {name: application.logging.displayRequestContent, value: "false"}
+  - {name: application.logging_displayResponseContent, value: "false"}
+  - {name: application.DSL.allowedFiletypes, value: ".yml,.yaml,.md,.tmp"}
+  - {name: application.internalRequests.disabled, value: "true"}
+  - {name: application.logging.printStackTrace, value: "true"}
+  - {name: application.httpResponseSizeLimit, value: "2000"}
+  - {name: application.openSearchConfiguration.index, value: ruuterlog}
+  - {name: application.httpRequestTimeout, value: "35000"}
+ 
+initContainers:
+  - name: init-copy-files
+    image: ghcr.io/buerokratt/buerokratt-dsl@sha256:2123520e334160ba971d90fe802ecc8aeb2e8de766d935c0365cba12423130bc
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sh", "-c"]
+    args:
+      - |
+        set -eu
+        test -d /Ruuter/public/backoffice
+        cp -a /Ruuter/public/backoffice /DSL/
+        test -n "$(find /DSL/backoffice -type f -print -quit)"
+    volumeMounts:
+      - {name: ruuter-volume, mountPath: /DSL}
+ 
+volumeMounts:
+  - {name: ruuter-volume, mountPath: /DSL}
+  - {name: urls-env, mountPath: /app/constants.ini, subPath: constants.ini, readOnly: true}
+ 
+volumes:
+  - {name: ruuter-volume, emptyDir: {}}
+  - {name: urls-env, configMap: {name: urls-env-config}}
+ 
+startupProbe:
+  tcpSocket: {port: http}
+  periodSeconds: 5
+  failureThreshold: 24
+readinessProbe:
+  tcpSocket: {port: http}
+  periodSeconds: 5
+  failureThreshold: 3
+livenessProbe:
+  tcpSocket: {port: http}
+  periodSeconds: 10
+  failureThreshold: 3
+ 
 resources:
-  requests:
-    memory: "3000Mi"
-    cpu: "100m"
-  limits:
-    memory: "4000Mi"
-    cpu: "100m"
+  requests: {cpu: 100m, memory: 3000Mi}
+  limits: {cpu: 100m, memory: 4000Mi}
+ 
+services:
+  http:
+    name: component-byk-ruuter
+    ports:
+      http: {port: 8080, targetPort: http, protocol: TCP}
+ 
+ingress: {enabled: false}
+istio: {enabled: false}
+ 
+constantsIni: |
+  DOMAIN=example.invalid
+  COOKIE_SAME_SITE=Lax
+  # Add only non-secret values needed by the smoke route.
