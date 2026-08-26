@@ -53,13 +53,62 @@ jobs:
             --password-stdin
 
       - name: Update and build Helm dependencies
-        working-directory: ./Kubernetes/Components/Ruuter
         shell: bash
         run: |
           set -euo pipefail
 
-          helm dependency update .
-          helm dependency build .
+          mapfile -t chart_dirs < <(
+            jq -r '
+              .charts[]
+              | select(.enabled == true)
+              | .path
+            ' .github/helm-charts.json
+          )
+
+          if [[ "${#chart_dirs[@]}" -eq 0 ]]; then
+            echo "No enabled Helm charts found."
+            exit 0
+          fi
+
+          echo "Found ${#chart_dirs[@]} enabled Helm chart(s)."
+
+          for chart_dir in "${chart_dirs[@]}"; do
+            echo "::group::Build dependencies: ${chart_dir}"
+
+            if [[ ! -d "${chart_dir}" ]]; then
+              echo "::error::Chart directory does not exist: ${chart_dir}"
+              exit 1
+            fi
+
+            if [[ ! -f "${chart_dir}/Chart.yaml" ]]; then
+              echo "::error::Chart.yaml does not exist: ${chart_dir}/Chart.yaml"
+              exit 1
+            fi
+
+            echo "Updating Helm dependencies for ${chart_dir}..."
+            helm dependency update "${chart_dir}"
+
+            echo "Building Helm dependencies for ${chart_dir}..."
+            helm dependency build "${chart_dir}"
+
+            # If dependencies are declared, make sure Helm produced Chart.lock.
+            if grep -Eq '^[[:space:]]*dependencies:' "${chart_dir}/Chart.yaml"; then
+              if [[ ! -f "${chart_dir}/Chart.lock" ]]; then
+                echo "::error::${chart_dir}/Chart.yaml declares dependencies but Chart.lock was not generated."
+                exit 1
+              fi
+
+              echo "Chart.lock generated:"
+              ls -la "${chart_dir}/Chart.lock"
+            fi
+
+            if [[ -d "${chart_dir}/charts" ]]; then
+              echo "Downloaded dependencies:"
+              ls -la "${chart_dir}/charts"
+            fi
+
+            echo "::endgroup::"
+          done
 
       - name: Commit dependency changes
         id: source
@@ -70,12 +119,30 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add \
-            Kubernetes/Components/Ruuter/Chart.lock \
-            Kubernetes/Components/Ruuter/charts/
+          mapfile -t chart_dirs < <(
+            jq -r '
+              .charts[]
+              | select(.enabled == true)
+              | .path
+            ' .github/helm-charts.json
+          )
+
+          # Stage changes from all enabled chart directories.
+          #
+          # Using "git add -A" also handles:
+          #   - newly generated Chart.lock files
+          #   - updated Chart.lock files
+          #   - downloaded charts/*.tgz
+          #   - removed old dependencies
+          for chart_dir in "${chart_dirs[@]}"; do
+            git add -A -- "${chart_dir}"
+          done
+
+          echo "Dependency changes:"
+          git status --short
 
           if ! git diff --cached --quiet; then
-            git commit -m "chore: update Ruuter Helm dependencies"
+            git commit -m "chore: update Helm dependencies"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           else
             echo "No Helm dependency changes."
@@ -110,7 +177,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          matrix="$(jq -c '{chart: [.charts[] | select(.enabled == true)]}' .github/helm-charts.json)"
+          matrix="$(
+            jq -c '
+              {
+                chart: [
+                  .charts[]
+                  | select(.enabled == true)
+                ]
+              }
+            ' .github/helm-charts.json
+          )"
+
           count="$(jq '.chart | length' <<< "${matrix}")"
 
           echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
@@ -138,8 +215,10 @@ jobs:
 
     env:
       HELM_VERSION: v3.18.4
+
       OCI_REGISTRY: ghcr.io
       OCI_REPOSITORY: oci://ghcr.io/buerokratt/helm
+
       CHART_NAME: ${{ matrix.chart.name }}
       CHART_DIR: ${{ matrix.chart.path }}
       SET_VALUES_JSON: ${{ toJSON(matrix.chart.setValues) }}
@@ -161,6 +240,11 @@ jobs:
         run: |
           set -euo pipefail
 
+          if [[ ! -f "${CHART_DIR}/Chart.yaml" ]]; then
+            echo "::error::Missing Chart.yaml: ${CHART_DIR}/Chart.yaml"
+            exit 1
+          fi
+
           actual_name="$(
             helm show chart "${CHART_DIR}" |
               awk '/^name:[[:space:]]/ { print tolower($2); exit }'
@@ -171,8 +255,15 @@ jobs:
               awk '/^version:[[:space:]]/ { print $2; exit }'
           )"
 
-          test "${actual_name}" = "${CHART_NAME}"
-          test -n "${chart_version}"
+          if [[ "${actual_name}" != "${CHART_NAME}" ]]; then
+            echo "::error::Chart name mismatch. JSON=${CHART_NAME}, Chart.yaml=${actual_name}"
+            exit 1
+          fi
+
+          if [[ -z "${chart_version}" ]]; then
+            echo "::error::Chart version is empty for ${CHART_DIR}"
+            exit 1
+          fi
 
           echo "version=${chart_version}" >> "${GITHUB_OUTPUT}"
           echo "Publishing candidate ${CHART_NAME}:${chart_version} from ${CHART_DIR}"
@@ -196,13 +287,16 @@ jobs:
         run: |
           set -euo pipefail
 
-          if grep -q '^dependencies:' "${CHART_DIR}/Chart.yaml"; then
+          # If this chart declares dependencies, Chart.lock must already
+          # have been generated by the build-dependencies job.
+          if grep -Eq '^[[:space:]]*dependencies:' "${CHART_DIR}/Chart.yaml"; then
             if [[ ! -f "${CHART_DIR}/Chart.lock" ]]; then
               echo "::error::${CHART_DIR}/Chart.yaml declares dependencies but Chart.lock is missing."
               exit 1
             fi
           fi
 
+          # Rebuild charts/ using the committed Chart.lock.
           helm dependency build "${CHART_DIR}"
 
           mapfile -t set_values < <(
@@ -228,7 +322,10 @@ jobs:
 
           chart_package="${package_output##*: }"
 
-          test -f "${chart_package}"
+          if [[ ! -f "${chart_package}" ]]; then
+            echo "::error::Helm package was not generated: ${chart_package}"
+            exit 1
+          fi
 
           packaged_name="$(
             helm show chart "${chart_package}" |
@@ -240,8 +337,15 @@ jobs:
               awk '/^version:[[:space:]]/ { print $2; exit }'
           )"
 
-          test "${packaged_name}" = "${CHART_NAME}"
-          test "${packaged_version}" = "${CHART_VERSION}"
+          if [[ "${packaged_name}" != "${CHART_NAME}" ]]; then
+            echo "::error::Packaged chart name mismatch. Expected=${CHART_NAME}, actual=${packaged_name}"
+            exit 1
+          fi
+
+          if [[ "${packaged_version}" != "${CHART_VERSION}" ]]; then
+            echo "::error::Packaged chart version mismatch. Expected=${CHART_VERSION}, actual=${packaged_version}"
+            exit 1
+          fi
 
           echo "package=${chart_package}" >> "${GITHUB_OUTPUT}"
 
@@ -301,7 +405,10 @@ jobs:
             sleep 5
           done
 
-          test "${pulled}" = "true"
+          if [[ "${pulled}" != "true" ]]; then
+            echo "::error::Unable to pull ${chart_ref}:${CHART_VERSION}"
+            exit 1
+          fi
 
           pulled_package="$(
             find pulled \
@@ -312,7 +419,10 @@ jobs:
               -quit
           )"
 
-          test -n "${pulled_package}"
+          if [[ -z "${pulled_package}" ]]; then
+            echo "::error::Unable to find pulled package for ${CHART_NAME}:${CHART_VERSION}"
+            exit 1
+          fi
 
           mapfile -t set_values < <(
             jq -r '.[]' <<< "${SET_VALUES_JSON}"
