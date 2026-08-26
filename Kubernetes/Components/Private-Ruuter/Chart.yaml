@@ -3,7 +3,7 @@ name: private-ruuter
 description: A Helm chart for Private-Ruuter
 type: application
 
-version: 0.2.0
+version: 0.2.1
 appVersion: 2.0.0
 
 dependencies:

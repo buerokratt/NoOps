@@ -39,14 +39,14 @@ initContainers:
         cp -a /Ruuter/private/backoffice /DSL/
         test -n "$(find /DSL/backoffice -type f -print -quit)"
     volumeMounts:
-      - {name: ruuter-volume, mountPath: /DSL}
+      - {name: ruuter-private-volume, mountPath: /DSL}
  
 volumeMounts:
-  - {name: ruuter-volume, mountPath: /DSL}
+  - {name: ruuter-private-volume, mountPath: /DSL}
   - {name: urls-env, mountPath: /app/constants.ini, subPath: constants.ini, readOnly: true}
  
 volumes:
-  - {name: ruuter-volume, emptyDir: {}}
+  - {name: ruuter-private-volume, emptyDir: {}}
   - {name: urls-env, configMap: {name: urls-env-config-private}}
  
 startupProbe:
