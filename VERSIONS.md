@@ -7,29 +7,29 @@ Upcoming version - **V3.3.1**
 
 | Application         | Latest Version | Release Date |
 |---------------------|----------------|--------------|
-| Ruuter              | v-2.2.9         | 2026-01-13   |
-| Ruuter-Private      | v-2.2.9         | 2026-01-13   |
+| Ruuter              | v2.2.9         | 2026-01-13   |
+| Ruuter-Private      | v2.2.9         | 2026-01-13   |
 | Resql               | v1.3.5         | 2026-01-13   |
 | TIM                 | v2.3.6         | 2026-01-13   |
-| CronManager         | v1.1.51        | 16-06-2026   |
-| DataMapper          | v2.2.44        | 03-07-2026   |
-| NotificationsNode   | v2.1.52-notification-node| 31-07-2026    |
+| CronManager         | v3.3.1       | 26-08-2026   |
+| DataMapper          | v3.3.1        | 26-08-2026   |
+| NotificationsNode   | v3.3.1-notification-node| 26-08-2026    |
 | OpenSearch          | 1.3.16         | 2026-01-13   |
 | S3Ferry             | v1.1.3         | 18-05-2026   |
 | S3Ferry-publish     | pre-alpha-1.1.1| 2026-01-13   |
 | XTR                 | pre-alpha-test-1.1.3| 2026-01-13   |
 | widget              | pre-alpha-test-1.1.39       | 31-07-2026   |
-| backoffice          | v2.1.52        | 31-07-2026    |
-| analytics           | v1.1.91        | 31-07-2026   |
+| backoffice          | v3.3.1        | 26-08-2026    |
+| analytics           | v3.3.1        | 26-08-2026   |
 | training            | v2.1.51        | 18-05-2026   |
-| service             | v1.1.78        | 31-07-2026   |
+| service             | v3.3.1        | 26-08-2026   |
 | AuthLayer           | v1.1.2         | 2026-01-13   |
 | UsersDB             | postgres:14.1  | 2026-01-13   |
 | TimDB               | postgres:14.1  | 2026-01-13   |
-| Backoffice DSL                 | backoffice-module-test-3.3.25 | 31-07-2026  |
-| Analytics DSL                 | analytics-module-test-3.3.22  | 31-07-2026   |
+| Backoffice DSL                 | backoffice-module-main-3.3.1 | 26-08-2026  |
+| Analytics DSL                 | analytics-module-main-3.3.1  | 26-08-2026   |
 | Training DSL                 | training-module-test-3.3.6  | 03-07-2026   |
-| Service DSL                 | service-module-test-3.3.11  | 31-07-2026   |
+| Service DSL                 | service-module-test-main-3.3.1  | 26-08-2026   |
 ---
 
 
