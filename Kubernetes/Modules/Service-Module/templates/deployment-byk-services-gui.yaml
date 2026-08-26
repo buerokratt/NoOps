@@ -109,7 +109,7 @@ spec:
             - name: REACT_APP_RUUTER_SERVICES_TESTING_HEADER
               value: "voorshpellhappilo"
             - name: REACT_APP_CURRENT_VERSION
-              value: "Version 3.3.0"
+              value: "{{ CURRENT.VERSION }}"
             - name: REACT_APP_MULTI_CHOICE_QUESTION_MAX_BUTTONS
               value: "12"
           #volumeMounts:
