@@ -1,5 +1,5 @@
 apiVersion: v2
-name: Datamapper
+name: datamapper
 description: A Helm chart for Datamapper
 type: application
 
