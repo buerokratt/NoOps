@@ -1,93 +1,66 @@
+nameOverride: component-byk-dmapper
+fullnameOverride: component-byk-dmapper
+release_name: component-byk-dmapper
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-replicas: 1
+replicaCount: 1
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+workload:
+  kind: Deployment
+  selectorLabels: {app: component-byk-dmapper}
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+image:
+  repository: ghcr.io
+  name: buerokratt/datamapper
+  tag: "{{ component.datamapper.image.version }}"
+  pullPolicy: IfNotPresent
 
-istio:
-  enabled: {{ istio.enabled }}
+containerPorts:
+  - name: http
+    containerPort: 3000
 
-domain: {{ domain.name }} # Domain name
+env: []
 
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
+containerPorts:
+  - {name: http, containerPort: 3000}
+startupProbe:
+  tcpSocket: {port: 3000}
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 24
+  successThreshold: 1
+readinessProbe:
+  tcpSocket: {port: 3000}
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
+livenessProbe:
+  tcpSocket: {port: 3000}
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
 
-release_name: "component-byk-dmapper"
-      
+services:
+  http:
+    name: component-byk-dmapper
+    ports:
+      http:
+        port: 3000
+        targetPort: http
+        protocol: TCP
 
-images:
-  scope:
-    registry: "ghcr.io"
-    repository: buerokratt/datamapper
-    tag: {{ component.datamapper.image.version }}
-  backoffice:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "{{ module.backoffice.image.version }}" # Images (tags) are up to date, currently no changes needed
-  analytics:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "{{ module.analytics.image.version }}" # Images (tags) are up to date, currently no changes needed
-  services:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "{{ module.services.image.version }}" # Images (tags) are up to date, currently no changes needed
-  training:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "{{ module.training.image.version }}" # Images (tags) are up to date, currently no changes needed 
-  s3ferry:
-    registry: "ghcr.io"
-    repository: "buerokratt/s3-ferry"
-    tag: "{{ component.s3.ferry.image.version }}" # Images (tags) are up to date, currently no changes needed
-  pipelines:
-    service:
-      repo: https://github.com/buerokratt/Service-Module.git
-      path: /DSL
-  bot:
-    dsl:
-      repo: https://github.com/buerokratt/Training-Module.git
-      path: DSL/DMapper/locations
-  commonservice:
-    dsl:
-      repo: https://github.com/buerokratt/Common-Services.git
-      path: /
-  sec:
-    service:
-      repo: https://github.com/buerokratt/Service-Module.git
-      path: /secrets
-
-s3ferry:
-  default:
-    id: {{ S3_ACCESS_KEY_ID }}
-    key: {{ S3_SECRET_ACCESS_KEY }}
-    url: {{ S3_ENDPOINT_URL }}
-  chats:
-    id: {{ S3_ACCESS_KEY_ID }}
-    key: S3_SECRET_ACCESS_KEY
-    url: {{ S3_ENDPOINT_URL }}
 
 resources:
-  requests:
-    memory: "1000Mi"
-    cpu: "100m"
-  limits:
-    memory: "2000Mi"
-    cpu: "100m"
+  requests: {cpu: 100m, memory: 200Mi}
+  limits: {cpu: 100m, memory: 200Mi}
 
-networkPolicy:
-  cidr: 0.0.0.0/0
-  except: []
+services:
+  http:
+    name: component-byk-dmapper
+    ports:
+      http: {port: 3000, targetPort: http}
 
+ingress: {enabled: false}
+istio: {enabled: false}

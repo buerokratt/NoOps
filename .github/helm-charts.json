@@ -14,6 +14,12 @@
       "enabled": true,
       "setValues": []
     },
+        {
+      "name": "datamapper",
+      "path": "Kubernetes/Components/DataMapper",
+      "enabled": true,
+      "setValues": []
+    },
     {
       "name": "resql",
       "path": "Kubernetes/Components/Resql",
