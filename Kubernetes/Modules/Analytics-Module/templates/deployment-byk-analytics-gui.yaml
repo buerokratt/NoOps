@@ -127,7 +127,7 @@ spec:
             - name: REACT_APP_ENABLE_MULTI_DOMAIN
               value: "{{ MULTI.DOMAIN }}"
             - name: REACT_APP_CURRENT_VERSION
-              value: "Version 3.3.0"
+              value: "{{ CURRENT.VERSION }}"
           volumeMounts:
             - mountPath: /tmp
               name: tmp
