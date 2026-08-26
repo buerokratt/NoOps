@@ -27,28 +27,6 @@ env:
   - {name: application.openSearchConfiguration.index, value: ruuterlog}
   - {name: application.httpRequestTimeout, value: "35000"}
  
-initContainers:
-  - name: init-copy-files
-    image: ghcr.io/buerokratt/buerokratt-dsl@sha256:2123520e334160ba971d90fe802ecc8aeb2e8de766d935c0365cba12423130bc
-    imagePullPolicy: IfNotPresent
-    command: ["/bin/sh", "-c"]
-    args:
-      - |
-        set -eu
-        test -d /Ruuter/private/backoffice
-        cp -a /Ruuter/private/backoffice /DSL/
-        test -n "$(find /DSL/backoffice -type f -print -quit)"
-    volumeMounts:
-      - {name: private-ruuter-volume, mountPath: /DSL}
- 
-volumeMounts:
-  - {name: private-ruuter-volume, mountPath: /DSL}
-  - {name: urls-env, mountPath: /app/constants.ini, subPath: constants.ini, readOnly: true}
- 
-volumes:
-  - {name: private-ruuter-volume, emptyDir: {}}
-  - {name: urls-env, configMap: {name: urls-env-config-private}}
- 
 startupProbe:
   httpGet:
     port: http
