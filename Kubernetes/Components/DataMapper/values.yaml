@@ -24,23 +24,26 @@ env: []
 containerPorts:
   - {name: http, containerPort: 3000}
 startupProbe:
-  tcpSocket: {port: 3000}
+  httpGet:
+    port: http
+    path: /healthz
   periodSeconds: 5
-  timeoutSeconds: 2
   failureThreshold: 24
-  successThreshold: 1
+  initialDelaySeconds: 30
+
 readinessProbe:
-  tcpSocket: {port: 3000}
+  httpGet:
+    port: http
+    path: /healthz
   periodSeconds: 5
-  timeoutSeconds: 2
   failureThreshold: 3
-  successThreshold: 1
+
 livenessProbe:
-  tcpSocket: {port: 3000}
+  httpGet:
+    port: http
+    path: /healthz
   periodSeconds: 10
-  timeoutSeconds: 2
   failureThreshold: 3
-  successThreshold: 1
 
 services:
   http:
