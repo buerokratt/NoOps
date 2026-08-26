@@ -1,10 +1,10 @@
-nameOverride: component-byk-ruuter-private
-fullnameOverride: component-byk-ruuter-private
+nameOverride: component-byk-private-ruuter
+fullnameOverride: component-byk-private-ruuter
 replicaCount: 1
  
 workload:
   kind: Deployment
-  selectorLabels: {app: component-byk-ruuter-private}
+  selectorLabels: {app: component-byk-private-ruuter}
  
 image:
   repository: ghcr.io
@@ -39,14 +39,14 @@ initContainers:
         cp -a /Ruuter/private/backoffice /DSL/
         test -n "$(find /DSL/backoffice -type f -print -quit)"
     volumeMounts:
-      - {name: ruuter-private-volume, mountPath: /DSL}
+      - {name: private-ruuter-volume, mountPath: /DSL}
  
 volumeMounts:
-  - {name: ruuter-private-volume, mountPath: /DSL}
+  - {name: private-ruuter-volume, mountPath: /DSL}
   - {name: urls-env, mountPath: /app/constants.ini, subPath: constants.ini, readOnly: true}
  
 volumes:
-  - {name: ruuter-private-volume, emptyDir: {}}
+  - {name: private-ruuter-volume, emptyDir: {}}
   - {name: urls-env, configMap: {name: urls-env-config-private}}
  
 startupProbe:
@@ -77,7 +77,7 @@ resources:
  
 services:
   http:
-    name: component-byk-ruuter-private
+    name: component-byk-private-ruuter
     ports:
       http: {port: 8080, targetPort: http, protocol: TCP}
  
