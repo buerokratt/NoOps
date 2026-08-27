@@ -1,7 +1,12 @@
 apiVersion: v2
-name: Cronmanager
-description: A Helm chart for Kubernetes
-
+name: cronmanager
+description: A Helm chart for cronmanager
 type: application
-version: 0.1.0
-appVersion: "1.1.0"
+
+version: 0.2.0
+appVersion: 2.0.0
+
+dependencies:
+  - name: byk-helm-template-library
+    version: 1.0.0
+    repository: oci://ghcr.io/buerokratt
