@@ -1,86 +1,64 @@
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-replicas: 1
-podAnnotations: {}
-
+nameOverride: component-byk-tim
+fullnameOverride: component-byk-tim
+replicaCount: 1
+ 
+workload:
+  kind: Deployment
+  selectorLabels: {app: component-byk-tim}
 podSecurityContext: {}
-  # fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+ingress: {enabled: false}
+istio: {enabled: false}
 
-domain: {{ domain.name }} # Domain name
-secretname: {{ tim.cert.Name.value }}  # Cert name value, change this as suited to environment
-#ingress:
-#  tlsConfigMapName: byk-tls-configmap
+env:
+  - {name: security.allowlist.jwt, value: "component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16"}
+  - {name: security.oauth2.client.clientId, value: "id"}
+  - {name: security.oauth2.client.clientSecret, value: "Secret"}
+  - {name: security.oauth2.client.scope, value: "openid"}
+  - {name: security.oauth2.client.userAuthorizationUri, value: "https://example.com/oidc/authorize"}
+  - {name: security.oauth2.client.accessTokenUri, value: "https://example.com/oidc/token"}
+  - {name: security.oauth2.resource.jwk.keySetUri, value: "https://example.com/oidc/jwks"}
+  - {name: legacyPortalIntegration.legacyUrl, value: "NA"}
+  - {name: legacyPortalIntegration.legacyPortalRefererMarker, value: "NA"}
+  - {name: legacyPortalIntegration.sessionCookieDomain, value: "https://example.com"}
+  - {name: jwtIntegration.signature.issuer, value: "https://example.com"} # Change the domain name, leave subdomain and subpath same
+  - {name: jwtIntegration.signature.keyStorePassword, value: "keystore"}
+  - {name: jwtIntegration.signature.keyStore, value: "classpath:jwtkeystore.jks"}
+  - {name: spring.profiles.active, value: "dev"}
+  - {name: logging.level.root, value: "INFO"}
+  - {name: key_pass, value: "keystore"}
 
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
-
-release_name: "component-byk-tim"
-release_db: "component-databases"
-
-byk:
-  tim:
-    env:
-      security:
-        allowlist:
-          jwt: component-byk-ruuter,component-byk-ruuter-private,module-byk-widget,module-byk-authentication-layer,component-byk-tim,10.0.0.0/8,192.168.0.0/16
-        oauth2:
-          client:
-            clientId: {{ TIM.clientid }} 
-            clientSecret: {{ TIM.clientSecret }}
-            scope: openid
-            userAuthorizationUri: {{ TIM.tara }}/oidc/authorize
-            accessTokenUri: {{ TIM.tara }}/oidc/token
-          resource:
-            jwk:
-              keySetUri: {{ TIM.tara }}/oidc/jwks
-      legacyPortalIntegration:
-        legacyUrl: NA
-        legacyPortalRefererMarker: NA
-        sessionCookieDomain: {{ domain.name }}
-      jwtIntegration:
-        signature:
-          issuer: {{ domain.name }} # Change the domain name, leave subdomain and subpath same
-          keyStorePassword: {{ TIM.keystore }}
-          keyStore: classpath:jwtkeystore.jks
-      spring:
-        profiles:
-          active: dev
-      logging:
-        level:
-          root: INFO
-  key_pass: {{ TIM.keystore }}
-      
-tim-postgresql:
-  image:
-    tag: 14.1.0
-  auth:
-    postgresPassword: postgres
-    username: tim
-    password: "{{ TIMDB.password }}" # Change password accordingly
-    database: "tim"
-
-tim_postgresql: "{{ TIMDB.password }}"
-
-images:
-  scope:
-    registry: "ghcr.io"
-    repository: "buerokratt/tim"
-    tag: "{{ component.tim.image.version }}"
+image:
+  repository: ghcr.io
+  name: buerokratt/tim
+  tag: "{{ component.tim.image.version }}"
+  pullPolicy: IfNotPresent
 
 resources:
-  requests:
-    memory: "512Mi"
-    cpu: "200m"
-  limits:
-    memory: "2Gi"
-    cpu: "200m"
+  requests: {cpu: 250m, memory: 1000Mi}
+  limits: {cpu: 250m, memory: 1000Mi}
+
+startupProbe:
+  httpGet:
+    port: http
+    path: /healthz
+  periodSeconds: 5
+  failureThreshold: 24
+  initialDelaySeconds: 30
+
+readinessProbe:
+  httpGet:
+    port: http
+    path: /healthz
+  periodSeconds: 5
+  failureThreshold: 3
+
+livenessProbe:
+  httpGet:
+    port: http
+    path: /healthz
+  periodSeconds: 10
+  failureThreshold: 3
+
+timconfig: |
+  DOMAIN=example.invalid

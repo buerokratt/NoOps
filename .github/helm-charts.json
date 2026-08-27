@@ -20,6 +20,18 @@
       "enabled": true,
       "setValues": []
     },
+    {
+      "name": "cronmanager",
+      "path": "Kubernetes/Components/CronManager",
+      "enabled": true,
+      "setValues": []
+    },
+    {
+      "name": "tim",
+      "path": "Kubernetes/Components/TIM",
+      "enabled": true,
+      "setValues": []
+    },
         {
       "name": "datamapper",
       "path": "Kubernetes/Components/DataMapper",
