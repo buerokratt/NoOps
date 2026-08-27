@@ -1,0 +1,6 @@
+dependencies:
+- name: byk-helm-template-library
+  repository: oci://ghcr.io/buerokratt
+  version: 1.0.0
+digest: sha256:d72b77527947e611dafb2dabf0d6d5dbeea8774664432fc98dd0b85f33b49785
+generated: "2026-08-27T10:16:32.161045456Z"
