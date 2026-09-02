@@ -1,0 +1,145 @@
+nameOverride: ""
+fullnameOverride: ""
+
+imagePullSecrets: []
+
+server:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/buerokratt
+    name: dmr
+    tag: server-1.1.0
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8075
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    hosts:
+      - host: dmr.example.invalid
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  centops:
+    configurationUrl: http://centops:8080
+    configurationCronTime: "*/30 * * * *"
+  messageDeliveryTimeoutMs: "2000"
+  webSocketMaxDisconnectionDuration: "120000"
+  rabbitmq:
+    defaultTtl: "300000"
+    dlqTtl: "86400000"
+    validationFailuresTtl: "86400000"
+    reconnectInterval: "5000"
+    prefetchCount: "10"
+    concurrentConsumers: "2"
+    batchSize: "5"
+  extraEnv: []
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+  podDisruptionBudget:
+    enabled: true
+    maxUnavailable: 1
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Agents normally run in each client cluster. Keep this disabled in a central
+# server-only installation. Each enabled entry must have an agent ID, outgoing
+# endpoint, and either privateKey or an existingSecret containing private-key.
+agents:
+  enabled: false
+  image:
+    repository: ghcr.io/buerokratt
+    name: dmr
+    tag: agent-1.1.0
+    pullPolicy: IfNotPresent
+  serverWebSocketUrl: ""
+  service:
+    type: ClusterIP
+    port: 8077
+  items: []
+  # - name: agency-a
+  #   agentId: 00000000-0000-0000-0000-000000000000
+  #   outgoingMessageEndpoint: http://chatbot:8080/api/messages
+  #   privateKey: "" # Prefer existingSecret in production.
+  #   existingSecret: dmr-agency-a-key
+  #   existingSecretKey: private-key
+  #   extraEnv: []
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+  resources:
+    requests:
+      cpu: 50m
+      memory: 96Mi
+    limits:
+      memory: 256Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+rabbitmq:
+  # Creates a RabbitmqCluster custom resource. Install the RabbitMQ Cluster
+  # Operator first, or set enabled=false and configure an external broker.
+  enabled: true
+  name: ""
+  replicas: 3
+  image: rabbitmq:4.1-management
+  persistence:
+    storage: 10Gi
+    storageClassName: ""
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      memory: 1Gi
+  # Used when rabbitmq.enabled=false. For an operator-managed cluster these
+  # values may also override the generated service and credentials Secret.
+  external:
+    # A full amqp:// or amqps:// endpoint takes precedence over host and port.
+    endpoint: ""
+    endpointSecretKeyRef:
+      name: ""
+      key: ""
+    host: ""
+    port: 5672
+    managementUri: ""
+    managementUriSecretKeyRef:
+      name: ""
+      key: ""
+  auth:
+    existingSecret: ""
+    usernameKey: username
+    passwordKey: password

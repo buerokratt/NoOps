@@ -1,0 +1,19 @@
+{{- if .Values.rabbitmq.enabled }}
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: {{ include "dmr.rabbitmqName" . }}
+  labels:
+    {{- include "dmr.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.rabbitmq.replicas }}
+  image: {{ .Values.rabbitmq.image | quote }}
+  persistence:
+    storage: {{ .Values.rabbitmq.persistence.storage | quote }}
+    {{- with .Values.rabbitmq.persistence.storageClassName }}
+    storageClassName: {{ . | quote }}
+    {{- end }}
+  resources:
+    {{- toYaml .Values.rabbitmq.resources | nindent 4 }}
+{{- end }}
+

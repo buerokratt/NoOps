@@ -1,0 +1,87 @@
+{{- if .Values.server.enabled }}
+{{- $name := include "dmr.serverName" . -}}
+{{- $selector := dict "app.kubernetes.io/name" (include "dmr.name" .) "app.kubernetes.io/instance" .Release.Name "app.kubernetes.io/component" "server" -}}
+{{- $env := list
+  (dict "name" "PORT" "value" "8075")
+  (dict "name" "ENVIRONMENT" "value" "production")
+  (dict "name" "LOGGER_COLORS" "value" "false")
+  (dict "name" "CENTOPS_CONFIGURATION_URL" "value" .Values.server.centops.configurationUrl)
+  (dict "name" "CENTOPS_CONFIGURATION_CRON_TIME" "value" .Values.server.centops.configurationCronTime)
+  (dict "name" "WEB_SOCKET_MAX_DISCONNECTION_DURATION" "value" .Values.server.webSocketMaxDisconnectionDuration)
+  (dict "name" "MESSAGE_DELIVERY_TIMEOUT_MS" "value" .Values.server.messageDeliveryTimeoutMs)
+  (dict "name" "RABBITMQ_DEFAULT_TTL" "value" .Values.server.rabbitmq.defaultTtl)
+  (dict "name" "RABBITMQ_DEFAULT_DLQ_TTL" "value" .Values.server.rabbitmq.dlqTtl)
+  (dict "name" "RABBITMQ_VALIDATION_FAILURES_TTL" "value" .Values.server.rabbitmq.validationFailuresTtl)
+  (dict "name" "RABBITMQ_DEFAULT_DEFAULT_RECONNECT_INTERVAL" "value" .Values.server.rabbitmq.reconnectInterval)
+  (dict "name" "RABBITMQ_PREFETCH_COUNT" "value" .Values.server.rabbitmq.prefetchCount)
+  (dict "name" "RABBITMQ_CONCURRENT_CONSUMERS" "value" .Values.server.rabbitmq.concurrentConsumers)
+  (dict "name" "RABBITMQ_BATCH_SIZE" "value" .Values.server.rabbitmq.batchSize)
+  (dict "name" "RABBITMQ_DEFAULT_USER" "valueFrom" (dict "secretKeyRef" (dict "name" (include "dmr.rabbitmqSecret" .) "key" .Values.rabbitmq.auth.usernameKey)))
+  (dict "name" "RABBITMQ_DEFAULT_PASS" "valueFrom" (dict "secretKeyRef" (dict "name" (include "dmr.rabbitmqSecret" .) "key" .Values.rabbitmq.auth.passwordKey)))
+-}}
+{{- if .Values.rabbitmq.external.endpointSecretKeyRef.name -}}
+{{- $env = append $env (dict "name" "RABBITMQ_DEFAULT_ENDPOINT" "valueFrom" (dict "secretKeyRef" .Values.rabbitmq.external.endpointSecretKeyRef)) -}}
+{{- else if .Values.rabbitmq.external.endpoint -}}
+{{- $env = append $env (dict "name" "RABBITMQ_DEFAULT_ENDPOINT" "value" .Values.rabbitmq.external.endpoint) -}}
+{{- else -}}
+{{- $env = append $env (dict "name" "RABBITMQ_DEFAULT_HOST" "value" (include "dmr.rabbitmqHost" .)) -}}
+{{- $env = append $env (dict "name" "RABBITMQ_DEFAULT_PORT" "value" (toString .Values.rabbitmq.external.port)) -}}
+{{- end -}}
+{{- if .Values.rabbitmq.external.managementUriSecretKeyRef.name -}}
+{{- $env = append $env (dict "name" "RABBITMQ_DEFAULT_MANAGEMENT_UI_URI" "valueFrom" (dict "secretKeyRef" .Values.rabbitmq.external.managementUriSecretKeyRef)) -}}
+{{- else -}}
+{{- $env = append $env (dict "name" "RABBITMQ_DEFAULT_MANAGEMENT_UI_URI" "value" (include "dmr.rabbitmqManagementUri" .)) -}}
+{{- end -}}
+{{- $env = concat $env (.Values.server.extraEnv | default list) -}}
+{{- $ingress := dict "enabled" .Values.server.ingress.enabled "className" .Values.server.ingress.className "ingresses" (dict) -}}
+{{- if .Values.server.ingress.enabled -}}
+  {{- $hosts := list -}}
+  {{- range $host := .Values.server.ingress.hosts -}}
+    {{- $hostPaths := list -}}
+    {{- range $path := $host.paths -}}
+      {{- $hostPaths = append $hostPaths (dict "path" $path.path "pathType" $path.pathType "backendService" $name "port" "http") -}}
+    {{- end -}}
+    {{- $hosts = append $hosts (dict "host" $host.host "paths" $hostPaths) -}}
+  {{- end -}}
+  {{- $_ := set $ingress "ingresses" (dict "public" (dict "annotations" .Values.server.ingress.annotations "hosts" $hosts "tls" .Values.server.ingress.tls)) -}}
+{{- end -}}
+{{- $values := dict
+  "nameOverride" "dmr-server"
+  "fullnameOverride" $name
+  "workload" (dict "kind" "Deployment" "selectorLabels" $selector)
+  "replicaCount" .Values.server.replicaCount
+  "image" .Values.server.image
+  "imagePullSecrets" .Values.imagePullSecrets
+  "containerPorts" (list (dict "name" "http" "containerPort" 8075 "protocol" "TCP"))
+  "env" $env
+  "startupProbe" (dict "httpGet" (dict "path" "/v1/health" "port" "http") "periodSeconds" 5 "failureThreshold" 30)
+  "readinessProbe" (dict "httpGet" (dict "path" "/v1/health" "port" "http") "periodSeconds" 5)
+  "livenessProbe" (dict "httpGet" (dict "path" "/v1/health" "port" "http") "periodSeconds" 10)
+  "podAnnotations" .Values.server.podAnnotations
+  "podLabels" .Values.server.podLabels
+  "podSecurityContext" .Values.server.podSecurityContext
+  "securityContext" .Values.server.securityContext
+  "resources" .Values.server.resources
+  "nodeSelector" .Values.server.nodeSelector
+  "tolerations" .Values.server.tolerations
+  "affinity" .Values.server.affinity
+  "serviceAccount" (dict "create" true "automountServiceAccountToken" false)
+  "services" (dict "http" (dict "name" $name "type" .Values.server.service.type "ports" (dict "http" (dict "port" .Values.server.service.port "targetPort" "http"))))
+  "ingress" $ingress
+  "podDisruptionBudget" .Values.server.podDisruptionBudget
+-}}
+{{- $ctx := dict "Values" $values "Chart" .Chart "Release" .Release "Capabilities" .Capabilities "Template" .Template -}}
+{{- $resources := list
+  (include "template-library.serviceAccount" $ctx)
+  (include "template-library.service" $ctx)
+  (include "template-library.deployment" $ctx)
+  (include "template-library.ingress" $ctx)
+  (include "template-library.podDisruptionBudget" $ctx)
+-}}
+{{- range $resource := $resources }}
+{{- if ($resource | trim) }}
+---
+{{ $resource }}
+{{- end }}
+{{- end }}
+{{- end }}

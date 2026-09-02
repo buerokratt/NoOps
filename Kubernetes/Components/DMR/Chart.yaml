@@ -1,0 +1,17 @@
+apiVersion: v2
+name: dmr
+description: Distributed Message Rooms server and agent deployment for Bürokratt
+type: application
+version: 0.2.0
+appVersion: "1.1.1"
+keywords:
+  - buerokratt
+  - dmr
+  - rabbitmq
+home: https://github.com/buerokratt/DMR
+sources:
+  - https://github.com/buerokratt/DMR
+dependencies:
+  - name: byk-helm-template-library
+    version: 1.0.0
+    repository: oci://ghcr.io/buerokratt

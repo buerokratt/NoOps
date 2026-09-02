@@ -1,0 +1,68 @@
+{{- if .Values.agents.enabled }}
+{{- range $agent := .Values.agents.items }}
+{{- if not $agent.name }}{{ fail "agents.items[].name is required" }}{{ end }}
+{{- if not $agent.agentId }}{{ fail (printf "agentId is required for agent %s" $agent.name) }}{{ end }}
+{{- if not $agent.outgoingMessageEndpoint }}{{ fail (printf "outgoingMessageEndpoint is required for agent %s" $agent.name) }}{{ end }}
+{{- if and (not $agent.privateKey) (not $agent.existingSecret) }}{{ fail (printf "privateKey or existingSecret is required for agent %s" $agent.name) }}{{ end }}
+{{- $agentCtx := dict "root" $ "agent" $agent -}}
+{{- $name := include "dmr.agentName" $agentCtx -}}
+{{- $selector := dict "app.kubernetes.io/name" (include "dmr.name" $) "app.kubernetes.io/instance" $.Release.Name "app.kubernetes.io/component" "agent" "dmr.buerokratt.ee/agent" $agent.name -}}
+{{- $env := list
+  (dict "name" "PORT" "value" "8077")
+  (dict "name" "ENVIRONMENT" "value" "production")
+  (dict "name" "LOGGER_COLORS" "value" "false")
+  (dict "name" "AGENT_ID" "value" $agent.agentId)
+  (dict "name" "OUTGOING_MESSAGE_ENDPOINT" "value" $agent.outgoingMessageEndpoint)
+  (dict "name" "DMR_SERVER_WEBSOCKET_URL" "value" (default (printf "http://%s:%v" (include "dmr.serverName" $) $.Values.server.service.port) $.Values.agents.serverWebSocketUrl))
+  (dict "name" "AGENT_PRIVATE_KEY" "valueFrom" (dict "secretKeyRef" (dict "name" (default $name $agent.existingSecret) "key" (default "private-key" $agent.existingSecretKey))))
+-}}
+{{- $env = concat $env ($agent.extraEnv | default list) -}}
+{{- $values := dict
+  "nameOverride" "dmr-agent"
+  "fullnameOverride" $name
+  "workload" (dict "kind" "Deployment" "selectorLabels" $selector)
+  "replicaCount" 1
+  "image" $.Values.agents.image
+  "imagePullSecrets" $.Values.imagePullSecrets
+  "containerPorts" (list (dict "name" "http" "containerPort" 8077 "protocol" "TCP"))
+  "env" $env
+  "startupProbe" (dict "httpGet" (dict "path" "/v1/health" "port" "http") "periodSeconds" 5 "failureThreshold" 30)
+  "readinessProbe" (dict "httpGet" (dict "path" "/v1/health" "port" "http") "periodSeconds" 5)
+  "livenessProbe" (dict "httpGet" (dict "path" "/v1/health" "port" "http") "periodSeconds" 10)
+  "podAnnotations" $.Values.agents.podAnnotations
+  "podLabels" $.Values.agents.podLabels
+  "podSecurityContext" $.Values.agents.podSecurityContext
+  "securityContext" $.Values.agents.securityContext
+  "resources" $.Values.agents.resources
+  "nodeSelector" $.Values.agents.nodeSelector
+  "tolerations" $.Values.agents.tolerations
+  "affinity" $.Values.agents.affinity
+  "serviceAccount" (dict "create" true "automountServiceAccountToken" false)
+  "services" (dict "http" (dict "name" $name "type" $.Values.agents.service.type "ports" (dict "http" (dict "port" $.Values.agents.service.port "targetPort" "http"))))
+-}}
+{{- $ctx := dict "Values" $values "Chart" $.Chart "Release" $.Release "Capabilities" $.Capabilities "Template" $.Template -}}
+{{- $resources := list
+  (include "template-library.serviceAccount" $ctx)
+  (include "template-library.service" $ctx)
+  (include "template-library.deployment" $ctx)
+-}}
+{{- range $resource := $resources }}
+{{- if ($resource | trim) }}
+---
+{{ $resource }}
+{{- end }}
+{{- end }}
+{{- if and $agent.privateKey (not $agent.existingSecret) }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "dmr.labels" $ | nindent 4 }}
+type: Opaque
+stringData:
+  private-key: {{ $agent.privateKey | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
