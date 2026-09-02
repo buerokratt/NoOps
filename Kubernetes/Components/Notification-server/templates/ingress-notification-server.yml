@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "{{ .Values.release_name }}-ingress"
+  name: "{{ include "template-library.resourceName" (dict "root" . "suffix" "ingress") }}"
   annotations:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -16,7 +16,7 @@ metadata:
     nginx.ingress.kubernetes.io/server-snippet: |
       add_header X-Robots-Tag "noindex, nofollow";
   labels:
-    name: "{{ .Values.release_name }}-ingress"
+    name: "{{ include "template-library.resourceName" (dict "root" . "suffix" "ingress") }}"
 spec:
   ingressClassName: {{ .Values.ingress.className | quote }}
   rules:
@@ -27,7 +27,7 @@ spec:
         path: "/"
         backend:
           service:
-            name: "{{ .Values.release_name }}"
+            name: "{{ include "template-library.fullname" . }}"
             port:
               number: 4040
   tls:

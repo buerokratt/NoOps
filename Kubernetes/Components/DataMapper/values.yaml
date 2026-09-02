@@ -1,6 +1,5 @@
 nameOverride: component-byk-dmapper
 fullnameOverride: component-byk-dmapper
-release_name: component-byk-dmapper
 
 replicaCount: 1
 podAnnotations: {}

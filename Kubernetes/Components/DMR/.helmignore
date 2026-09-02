@@ -1,4 +1,6 @@
 .git/
 .github/
 .DS_Store
-*.tgz
+# Root-anchored on purpose. A bare *.tgz also matches charts/*.tgz, which
+# excludes the vendored dependency and breaks templating.
+/*.tgz

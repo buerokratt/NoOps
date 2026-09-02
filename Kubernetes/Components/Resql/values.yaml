@@ -1,6 +1,5 @@
 nameOverride: component-byk-resql
 fullnameOverride: component-byk-resql
-release_name: component-byk-resql
 replicaCount: 1
 podAnnotations: {}
 workload:

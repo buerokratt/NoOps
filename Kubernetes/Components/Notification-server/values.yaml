@@ -1,6 +1,5 @@
 nameOverride: component-notification-node
 fullnameOverride: component-notification-node
-release_name: component-notification-node
 replicaCount: 1
 podAnnotations: {}
 workload:
