@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "seaweedfs.fullname" . }}-filer
+  labels:
+    {{- include "seaweedfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: filer
+spec:
+  serviceName: {{ include "seaweedfs.fullname" . }}-filer
+  replicas: {{ .Values.filer.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: filer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: filer
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: filer
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["weed"]
+          args:
+            - filer
+            - -master={{ include "seaweedfs.fullname" . }}-master:{{ .Values.master.port }}
+            - -ip=$(POD_IP)
+            - -ip.bind=0.0.0.0
+            - -port={{ .Values.filer.port }}
+            - -port.grpc={{ .Values.filer.grpcPort }}
+            - -defaultReplication={{ .Values.filer.defaultReplication }}
+            - -defaultStoreDir=/data
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: WEED_FILER_BUCKETS_FOLDER
+              value: "/buckets"
+          ports:
+            - name: http
+              containerPort: {{ .Values.filer.port }}
+            - name: grpc
+              containerPort: {{ .Values.filer.grpcPort }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 20
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.filer.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.filer.persistence.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.filer.persistence.size }}

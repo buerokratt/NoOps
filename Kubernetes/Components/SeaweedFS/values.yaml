@@ -1,0 +1,88 @@
+image:
+  repository: chrislusf/seaweedfs
+  tag: "4.17"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+master:
+  replicas: 1
+  port: 9333
+  grpcPort: 19333
+  volumeSizeLimitMB: 1000
+  defaultReplication: "000"
+  persistence:
+    size: 1Gi
+    storageClass: longhorn
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+volume:
+  replicas: 1
+  port: 8080
+  grpcPort: 18080
+  maxVolumes: 0
+  minFreeSpacePercent: 5
+  persistence:
+    size: 10Gi
+    storageClass: longhorn
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+
+filer:
+  replicas: 1
+  port: 8888
+  grpcPort: 18888
+  defaultReplication: "000"
+  persistence:
+    size: 1Gi
+    storageClass: longhorn
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+s3:
+  replicas: 1
+  port: 8333
+  credentials:
+    accessKey: admin
+    secretKey: PASSWWORD
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  className: nginx
+  host: s3.example.eu
+  path: /
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+  tls:
+    enabled: true
+    secretName: seaweedfs-s3-tls
