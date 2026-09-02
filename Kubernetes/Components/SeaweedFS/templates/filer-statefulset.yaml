@@ -33,7 +33,7 @@ spec:
             - -ip.bind=0.0.0.0
             - -port={{ .Values.filer.port }}
             - -port.grpc={{ .Values.filer.grpcPort }}
-            - -defaultReplication={{ .Values.filer.defaultReplication }}
+            - -defaultReplicaPlacement={{ .Values.filer.defaultReplication }}
             - -defaultStoreDir=/data
           env:
             - name: POD_IP
