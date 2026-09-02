@@ -20,8 +20,6 @@ containerPorts:
 
 env: []
 
-containerPorts:
-  - {name: http, containerPort: 3000}
 startupProbe:
   httpGet:
     port: http
@@ -53,16 +51,9 @@ services:
         targetPort: http
         protocol: TCP
 
-
 resources:
   requests: {cpu: 100m, memory: 200Mi}
   limits: {cpu: 100m, memory: 200Mi}
-
-services:
-  http:
-    name: component-byk-dmapper
-    ports:
-      http: {port: 3000, targetPort: http}
 
 ingress: {enabled: false}
 istio: {enabled: false}

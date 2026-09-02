@@ -3,7 +3,7 @@ name: datamapper
 description: A Helm chart for Datamapper
 type: application
 
-version: 0.2.3
+version: 0.2.4
 appVersion: 2.0.0
 
 dependencies:
