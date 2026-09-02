@@ -1,7 +1,12 @@
 # DMR Helm chart
 
 Deploys the Bürokratt Distributed Message Rooms server and, optionally, one or
-more client-cluster DMR agents.
+more client-cluster DMR agents. The server and the agents are normally installed
+into different clusters, as two separate releases of this chart.
+
+RabbitMQ is server-side only. The server is the sole broker client; agents reach
+the server over WebSocket. An agent-only install renders no broker resources and
+needs no broker configuration.
 
 ## Prerequisites
 
@@ -55,8 +60,6 @@ Then use a values file:
 
 ```yaml
 server:
-  enabled: false
-rabbitmq:
   enabled: false
 agents:
   enabled: true

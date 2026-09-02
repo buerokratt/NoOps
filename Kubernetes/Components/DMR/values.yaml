@@ -109,6 +109,10 @@ agents:
   tolerations: []
   affinity: {}
 
+# Server-side only. The server is the sole RabbitMQ client; agents talk to the
+# server over WebSocket and never connect to a broker. Nothing here is rendered
+# unless server.enabled is also true, so an agent-only install can ignore this
+# whole section.
 rabbitmq:
   # Creates a RabbitmqCluster custom resource. Install the RabbitMQ Cluster
   # Operator first, or set enabled=false and configure an external broker.

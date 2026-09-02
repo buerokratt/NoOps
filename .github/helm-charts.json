@@ -65,6 +65,12 @@
       "setValues": [
         "image.tag=2.19.2"
       ]
+    },
+    {
+      "name": "dmr",
+      "path": "Kubernetes/Components/DMR",
+      "enabled": true,
+      "setValues": []
     }
   ]
 }

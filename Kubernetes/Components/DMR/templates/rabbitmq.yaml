@@ -1,4 +1,4 @@
-{{- if .Values.rabbitmq.enabled }}
+{{- if and .Values.rabbitmq.enabled .Values.server.enabled }}
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
