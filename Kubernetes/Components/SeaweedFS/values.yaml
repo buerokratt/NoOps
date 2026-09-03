@@ -61,7 +61,7 @@ s3:
   port: 8333
   credentials:
     accessKey: admin
-    secretKey: PASSWWORD
+    secretKey: {{ S3_SECRET_ACCESS_KEY }}
   resources:
     requests:
       cpu: 50m
@@ -76,7 +76,7 @@ service:
 ingress:
   enabled: true
   className: nginx
-  host: s3.example.eu
+  host: {{ url.name.s3 }}
   path: /
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
