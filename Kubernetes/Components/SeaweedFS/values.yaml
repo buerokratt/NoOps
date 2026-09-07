@@ -30,7 +30,7 @@ volume:
   maxVolumes: 0
   minFreeSpacePercent: 5
   persistence:
-    size: 10Gi
+    size: 3Gi
     storageClass: longhorn
   resources:
     requests:
