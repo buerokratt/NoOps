@@ -20,6 +20,8 @@ spec:
         app.kubernetes.io/name: {{ include "seaweedfs.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/component: s3
+      annotations:
+        rollout-timestamp: {{ now | quote }}
     spec:
       containers:
         - name: s3
