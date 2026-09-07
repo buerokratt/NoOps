@@ -6,6 +6,8 @@ metadata:
     {{- include "seaweedfs.labels" . | nindent 4 }}
     app.kubernetes.io/component: s3
 spec:
+  strategy:
+    type: Recreate
   replicas: {{ .Values.s3.replicas }}
   selector:
     matchLabels:
