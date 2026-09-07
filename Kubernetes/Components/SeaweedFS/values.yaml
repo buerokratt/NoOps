@@ -76,7 +76,7 @@ service:
 ingress:
   enabled: true
   className: nginx
-  host: s3.{{ domain.name }}
+  host: {{ s3.domain.name }}
   path: /
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
