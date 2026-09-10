@@ -6,9 +6,16 @@ import os
 def run_helm_command(command):
     """Run a Helm command and handle errors."""
     try:
-        subprocess.run(command, check=True)
+        completed = subprocess.run(command, check=True, capture_output=True, text=True)
+        if completed.stdout:
+            print(completed.stdout, end="")
     except subprocess.CalledProcessError as e:
+        if e.stdout:
+            print(e.stdout, end="")
+        if e.stderr:
+            print(e.stderr, end="")
         print(f"An error occurred while running Helm: {e}")
+        raise
 
 def uninstall(deployment_name, namespace):
     """Uninstall a Helm release."""
@@ -22,7 +29,10 @@ def uninstall(deployment_name, namespace):
         run_helm_command(command)
         print(f"Uninstallation of {deployment_name} completed successfully.\n")
     except subprocess.CalledProcessError as e:
-        if "release: not found" in str(e):
+        helm_output = " ".join(
+            str(part) for part in (e.stdout, e.stderr, e.output, e) if part
+        )
+        if "release: not found" in helm_output:
             print(f"Release {deployment_name} not found in namespace {namespace}. Skipping...\n")
         else:
             print(f"An error occurred while uninstalling {deployment_name}: {e}")
