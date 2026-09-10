@@ -108,8 +108,12 @@ def main():
     files = sys.argv[1:]
     target_deployment = None
 
-    # Check if the last argument is a deployment name (filter)
-    if len(files) > 1 and (files[-1].startswith('component-') or files[-1].startswith('module-')):
+    # Check if the last argument is a deployment name (filter).
+    # Deployment names never end with .yaml/.yml, config files always do,
+    # so a trailing non-YAML argument is a single-deployment filter.
+    # (The old prefix check only recognised component-/module- names and
+    # silently broke filtering for post-deploy-* and vault-* releases.)
+    if len(files) > 1 and not files[-1].endswith(('.yaml', '.yml')):
         target_deployment = files.pop()
 
     for file_name in files:
