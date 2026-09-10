@@ -60,6 +60,19 @@ spec:
           volumeMounts:
             - name: resql-volume
               mountPath: /root/DSL/
+
+        - name: init-copy-files-ckb-llm
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pwd
+              cp -r ../Resql/ckb /root/DSL/
+              cp -r ../Resql/rag-search /root/DSL/
+              ls -la /root/DSL/
+          volumeMounts:
+            - name: resql-volume
+              mountPath: /root/DSL/
       containers:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
