@@ -1,78 +1,34 @@
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: module-byk-analytics-gui
+fullnameOverride: module-byk-analytics-gui
+replicaCount: 1
+ 
+workload:
+  kind: Deployment
+  selectorLabels: {app: module-byk-analytics-gui}
+ 
+image:
+  repository: ghcr.io
+  name: buerokratt/analytics-module
+  tag: "v3.3.2"
+  pullPolicy: IfNotPresent
+ 
+containerPorts:
+  - {name: http, containerPort: 3001}
 
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-domain: {{ domain.name }} # Domain name
-secretname: {{ admin.cert.Name.value }} # Cert name value, change this as suited to environment
-
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
-  whitelistSourceRange: "{{ ip.whitelist }}" # Client based IP if the whitelisting is needed, if not, leave as it is
-
-release_name: "module-byk-analytics-gui"
-
-images:
-  gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/analytics-module"
-    tag: "{{ module.analytics.gui.version }}" # Images (tags) are up to date, currently no changes needed
-  dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "{{ module.analytics.image.version }}" # Images (tags) are up to date, currently no changes needed
-env:
-  REACT_APP_RUUTER_API_URL: "{{ url.name.ruuter }}/v2/public/backoffice"
-  NODE_ENV: "development"
-  CHOKIDAR_USEPOLLING: "true"
-  REACT_APP_API_URL: "{{ url.name.ruuter }}/v2/private/analytics"
-  REACT_APP_BUEROKRATT_CHATBOT_URL: "http://byk-bot:5005" # Does not need to be changed
-  REACT_APP_OPENSEARCH_DASHBOARD_URL: "https://opensearch.org/"
-#  REACT_APP_OPENDATAPORT_URL: "https://avaandmed.eesti.ee" # for production
-#  REACT_APP_OPENDATAPORT_URL: "https://avaandmeddev.eesti.ee" # for dev
-  REACT_APP_OPENDATAPORT_URL: "http://avaandmedtest.eesti.ee" # for test
-  REACT_APP_RUUTER_V2_PRIVATE_API_URL: "{{ url.name.ruuter }}/v2/private/backoffice" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_RUUTER_V2_ANALYTICS_API_URL: "{{ url.name.ruuter }}/v2/private/analytics" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_MENU_URL: "{{ url.name.admin }}" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_MENU_PATH: "/chat/menu.json"
-  REACT_APP_AUTH_BASE_URL: "{{ url.name.ruuter }}/v2/private/backoffice" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_APP_PORT: "3001"
-  REACT_APP_LOCAL: "false"
-  REACT_APP_DOCKER_RUUTER: "http://byk-ruuter-private:8080"
-  REACT_APP_CUSTOMER_SERVICE_LOGIN: "{{ url.name.admin }}/et/dev-auth" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_CONVERSATIONS_BASE_URL: "{{ url.name.admin }}/chat" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_TRAINING_BASE_URL: "{{ url.name.admin }}/training" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_ANALYTICS_BASE_URL: "{{ url.name.admin }}/analytics" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_SERVICES_BASE_URL: "{{ url.name.admin }}/services" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_SETTINGS_BASE_URL: "{{ url.name.admin }}/chat" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_MONITORING_BASE_URL: "{{ url.name.admin }}/monitoring" # Change the domain name, leave subdomain and subpath same
-  REACT_APP_SERVICE_ID: "analytics"
-  REACT_APP_RUUTER_PRIVATE_API_URL: "{{ url.name.ruuter }}/v2/private/backoffice"  # Change the domain name, leave subdomain and subpath same  
-  REACT_APP_BASE_API_PATH: "{{ url.name.ruuter }}/v2/private/backoffice" 
-  REACT_APP_NOTIFICATION_NODE_URL: "{{ url.name.ruuter }}"
-  REACT_APP_RUUTER_PRIVATE_ENDED_API_URL: "{{ url.name.ruuter }}/v2/private/analytics"
-
-
-liquibase:
-  jdbcUrl: "jdbc:postgresql://component-databases-users-db:5432/byk?user=byk"    
-  dbPassword: "{{ usersDB.password }}"   # Change password accordingly
-
+env: []
+ 
 resources:
-  requests:
-    memory: "10Mi"
-    cpu: "1m"
-  limits:
-    memory: "50Mi"
-    cpu: "10m"
+  requests: {cpu: 1m, memory: 10Mi}
+  limits: {cpu: 10m, memory: 50Mi}
+ 
+services:
+  http:
+    name: module-byk-analytics-gui
+    ports:
+      http: {port: 3001, targetPort: http, protocol: TCP}
+ 
+ingress: {enabled: false}
+istio: {enabled: false}
+ 
+constantsIni: |
+  NODE_ENV=development

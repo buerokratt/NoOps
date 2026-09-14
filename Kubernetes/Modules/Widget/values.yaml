@@ -1,46 +1,122 @@
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-domain: {{ domain.name }} # Domain name
-secretname: {{ widget.cert.Name.value }} # Cert name value, change this as suited to environment
-
-ingress:
-  certIssuerName: {{ cert.Issuer.Name }} # Change this if your certIssuerName has set up different
-  #whitelistSourceRange: ""
-
-release_name: "module-byk-widget"
-
-images:
-  gui:
-    registry: "ghcr.io"
-    repository: "buerokratt/chat-widget"
-    tag: "{{ component.widget.gui.version }}" # Images (tags) are up to date, currently no changes needed
-  dsl:
-    registry: "ghcr.io"
-    repository: "buerokratt/buerokratt-dsl"
-    tag: "{{ module.backoffice.gui.version }}"  # Images (tags) are up to date, currently no changes needed
-
-config: 
-  header_origin: "{{ url.name.domain }}" # Change the domain name, leave subdomain and subpath same
-
+nameOverride: widget
+fullnameOverride: widget
+replicaCount: 1
+ 
+workload:
+  kind: Deployment
+  selectorLabels: {app: widget}
+ 
+image:
+  repository: ghcr.io
+  name: buerokratt/widget
+  tag: "v3.3.2"
+  pullPolicy: IfNotPresent
+ 
+containerPorts:
+  - {name: http, containerPort: 80}
+ 
+env: []
+ 
 resources:
-  requests:
-    memory: "10Mi"
-    cpu: "1m"
-  limits:
-    memory: "50Mi"
-    cpu: "5m"
+  requests: {cpu: 1m, memory: 10Mi}
+  limits: {cpu: 5m, memory: 50Mi}
+
+services:
+  http:
+    name: widget
+    ports:
+      http: {port: 80, targetPort: http, protocol: TCP}
+ 
+ingress: {enabled: false}
+istio: {enabled: false}
+
+indexHtml: |
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Title</title>
+  </head>
+  <body>
+    <div id="byk-va"></div>
+    <script>
+      window._env_ = {
+        RUUTER_API_URL: '{{ url.name.ruuter }}/v2/public/backoffice',
+        NOTIFICATION_NODE_URL: '{{ url.name.ruuter }}',
+        TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara',
+        OFFICE_HOURS: {
+          TIMEZONE: 'Europe/Tallinn',
+          BEGIN: 0,
+          END: 24,
+          DAYS: [1, 2, 3, 4, 5, 6, 7],
+        },
+        ENABLE_HIDDEN_FEATURES: 'FALSE',
+        ENABLE_MULTI_DOMAIN: '{{ MULTI.DOMAIN }}',
+        TERMINATION_TIMEOUT: 10,
+        STREAM_TYPING_SPEED: 10,
+        WIDGET_HEIGHT: {{ widget.height }},
+        WIDGET_WIDTH: {{ widget.width }},
+        FALLBACK_LANGUAGE: "et",
+        <!-- FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
+      };
+    </script>
+    <script id="script-bundle" type="text/javascript" src="./widget_bundle.js" crossorigin=""></script>
+  </body>
+  <style>
+    .background {
+      background: #004d40;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+  </html>
+
+envConfigJs: |
+  window._env_ = {
+    RUUTER_API_URL: '{{ url.name.ruuter }}/v2/public/backoffice',
+    NOTIFICATION_NODE_URL: '{{ url.name.ruuter }}',
+    TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara',
+    OFFICE_HOURS: {
+      TIMEZONE: 'Europe/Tallinn',
+      BEGIN: 0,
+      END: 24,
+      DAYS: [1, 2, 3, 4, 5, 6, 7],
+    },
+    ENABLE_HIDDEN_FEATURES: 'FALSE',
+    ENABLE_MULTI_DOMAIN: '{{ MULTI.DOMAIN }}',
+    TERMINATION_TIMEOUT: 10,
+    STREAM_TYPING_SPEED: 20,
+    WIDGET_HEIGHT: 450,
+    WIDGET_WIDTH: 400,
+    FALLBACK_LANGUAGE: "et",
+    <!-- FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
+  };
+
+nginxConfig: |
+  server {
+      listen 80;
+      server_name localhost;
+
+      server_tokens off;
+      add_header 'Access-Control-Allow-Origin' '{{ .Values.config.header_origin }}' always;
+
+      location / {
+          root /usr/share/nginx/html/widget;
+          index index.html;
+      }
+
+      location /status {
+          access_log off;
+          default_type text/plain;
+          add_header Content-Type text/plain;
+          return 200 "alive";
+      }
+
+      location ~* \.(js|jpg|png|css)$ {
+          root /usr/share/nginx/html/widget;
+      }
+  }
+
+config:
+  header_origin: "*"

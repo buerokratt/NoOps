@@ -3,64 +3,8 @@ kind: ConfigMap
 metadata:
   name: widget-index-config
 data:
-  index.html: |-
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>Title</title>
-    </head>
-    <body>
-    <div id="byk-va"></div>
-    <script>
-      window._env_ = {
-        RUUTER_API_URL: '{{ url.name.ruuter }}/v2/public/backoffice',
-        NOTIFICATION_NODE_URL: '{{ url.name.ruuter }}',
-        TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara',
-        OFFICE_HOURS: {
-          TIMEZONE: 'Europe/Tallinn',
-          BEGIN: 0,
-          END: 24,
-          DAYS: [1, 2, 3, 4, 5, 6, 7],
-        },
-        ENABLE_HIDDEN_FEATURES: 'FALSE',
-        ENABLE_MULTI_DOMAIN: '{{ MULTI.DOMAIN }}',
-        TERMINATION_TIMEOUT: 10,
-        STREAM_TYPING_SPEED: 10,
-        WIDGET_HEIGHT: {{ widget.height }},
-        WIDGET_WIDTH: {{ widget.width }},
-        FALLBACK_LANGUAGE: "et",
-        <!-- FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
-      };
-    </script>
-    <script id="script-bundle" type="text/javascript" src="./widget_bundle.js" crossorigin=""></script>
-    </body>
-    <style>
-      .background {
-        background: #004d40;
-        width: 100vw;
-        height: 100vh;
-      }
-    </style>
-    </html>
-  env-config.js: |2
-      window._env_ = {
-        RUUTER_API_URL: '{{ url.name.ruuter }}/v2/public/backoffice',
-        NOTIFICATION_NODE_URL: '{{ url.name.ruuter }}',
-        TIM_AUTHENTICATION_URL: '{{ url.name.tim }}/oauth2/authorization/tara',
-        OFFICE_HOURS: {
-          TIMEZONE: 'Europe/Tallinn',
-          BEGIN: 0,
-          END: 24,
-          DAYS: [1, 2, 3, 4, 5, 6, 7],
-        },
-        ENABLE_HIDDEN_FEATURES: 'FALSE',
-        ENABLE_MULTI_DOMAIN: '{{ MULTI.DOMAIN }}',
-        TERMINATION_TIMEOUT: 10,
-        STREAM_TYPING_SPEED: 20,
-        WIDGET_HEIGHT: 450,
-        WIDGET_WIDTH: 400,
-        FALLBACK_LANGUAGE: "et",
-    <!--FEEDBACK_RATING_COLORS_ENABLED: 'FALSE', -->
-      };
+  index.html: |
+{{ .Values.indexHtml | nindent 4 }}
+
+  env-config.js: |
+{{ .Values.envConfigJs | nindent 4 }}
