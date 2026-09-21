@@ -34,7 +34,7 @@ spec:
               ls -l /DSL && cd /DSL/services &&
               liquibase
               --url={{ .Values.liquibase.jdbcUrl }}
-              --password={{ .Values.liquibase.dbPassword }} --changeLogFile=master.yml update
+              --password={{ .Values.liquibase.dbPassword }} --changeLogFile=changelog.yaml update
           volumeMounts:
             - name: liquibase
               mountPath: /DSL/
