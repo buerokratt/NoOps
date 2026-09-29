@@ -1,0 +1,15 @@
+{{- if .Values.tim.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.tim.nameOverride | default "tim" }}
+  labels:
+    app: {{ .Values.tim.nameOverride | default "tim" }}
+spec:
+  type: {{ .Values.tim.service.type | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.tim.service.port }}
+      targetPort: {{ .Values.tim.service.port }}
+  selector:
+    app: {{ .Values.tim.nameOverride | default "tim" }}
+{{- end }}

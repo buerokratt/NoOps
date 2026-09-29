@@ -1,0 +1,15 @@
+{{- if .Values.timPostgresql.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.timPostgresql.nameOverride }}
+spec:
+  type: {{ .Values.timPostgresql.service.type | default "ClusterIP" }}
+  selector:
+    app: {{ .Values.timPostgresql.nameOverride }}
+  ports:
+    - name: postgres
+      port: {{ .Values.timPostgresql.service.port }}
+      targetPort: {{ .Values.timPostgresql.service.port }}
+      nodePort: {{- if eq .Values.timPostgresql.service.type "NodePort" }} {{ .Values.timPostgresql.service.externalPort }} {{- end }}
+{{- end }}

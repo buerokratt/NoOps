@@ -1,0 +1,51 @@
+{{- if .Values.resqlUsers.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+  labels:
+    app: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+spec:
+  replicas: {{ .Values.resqlUsers.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+    spec:
+      volumes:
+      - name: dsl
+        emptyDir: {}
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          volumeMounts:
+          - name: dsl
+            mountPath: /DSL
+          command:
+            - sh
+            - -c
+            - |
+                git clone --single-branch --depth 1 --branch dev https://github.com/buerokratt/Common-Knowledge.git /tmp/ckb &&
+                cp -r /tmp/ckb/DSL/Resql/ckb /DSL/
+                cp -r /tmp/ckb/DSL/Resql/users /DSL/
+                cp -rv /DSL/users/GET/* /DSL/ckb/GET                
+      containers:
+        - name: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+          image: "{{ .Values.resqlUsers.image.repository }}:{{ .Values.resqlUsers.image.tag }}"
+          imagePullPolicy: {{ .Values.resqlUsers.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.resqlUsers.service.port }}
+          volumeMounts:
+            - name: dsl
+              mountPath: /DSL
+          env:
+            {{- range .Values.resqlUsers.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resqlUsers.resources | nindent 12 }}
+{{- end }}

@@ -1,0 +1,55 @@
+{{- if .Values.ruuterInternal.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ruuterInternal.nameOverride | default "ruuter-internal" }}
+  labels:
+    app: {{ .Values.ruuterInternal.nameOverride | default "ruuter-internal" }}
+spec:
+  replicas: {{ .Values.ruuterInternal.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ruuterInternal.nameOverride | default "ruuter-internal" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ruuterInternal.nameOverride | default "ruuter-internal" }}
+    spec:
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          volumeMounts:
+          - name: dsl
+            mountPath: /DSL
+          command:
+            - sh
+            - -c
+            - |
+                git clone --single-branch --depth 1 --branch dev https://github.com/buerokratt/Common-Knowledge.git /tmp/ckb &&
+                cp -r /tmp/ckb/DSL/Ruuter.internal/ckb /DSL/  
+      containers:
+        - name: {{ .Values.ruuterInternal.nameOverride | default "ruuter-internal" }}
+          image: "{{ .Values.ruuterInternal.image.repository }}:{{ .Values.ruuterInternal.image.tag }}"
+          imagePullPolicy: {{ .Values.ruuterInternal.image.pullPolicy }}
+          env:
+            {{- range .Values.ruuterInternal.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.ruuterInternal.service.port }}
+          resources:
+            {{- toYaml .Values.ruuterInternal.resources | nindent 12 }}
+          volumeMounts:
+            - name: constants-config
+              mountPath: /app/constants.ini
+              subPath: constants.ini
+            - name: dsl
+              mountPath: /DSL
+      volumes:
+        - name: dsl
+          emptyDir: {}
+        - name: constants-config
+          configMap:
+            name: {{ .Values.ruuterInternal.nameOverride | default "ruuter-internal" }}-config
+{{- end }}

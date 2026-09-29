@@ -1,0 +1,16 @@
+{{- if .Values.resqlCkb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.resqlCkb.nameOverride | default "resql-ckb" }}
+  labels:
+    app: {{ .Values.resqlCkb.nameOverride | default "resql-ckb" }}
+spec:
+  type: {{ .Values.resqlCkb.service.type | default "ClusterIP" }}
+  selector:
+    app: {{ .Values.resqlCkb.nameOverride | default "resql-ckb" }}
+  ports:
+    - port: {{ .Values.resqlCkb.service.port }}
+      targetPort: {{ .Values.resqlCkb.service.port }}
+      protocol: TCP
+{{- end }}

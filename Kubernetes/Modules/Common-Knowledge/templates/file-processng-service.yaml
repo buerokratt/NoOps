@@ -1,0 +1,15 @@
+{{- if .Values.fileProcessing.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}
+spec:
+  type: {{ .Values.fileProcessing.service.type | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.fileProcessing.service.port }}
+      targetPort: {{ .Values.fileProcessing.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}
+{{- end }}

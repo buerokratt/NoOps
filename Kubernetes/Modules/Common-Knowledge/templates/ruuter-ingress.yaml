@@ -1,0 +1,27 @@
+{{- if .Values.ruuter.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ruuter
+  annotations:
+    {{- range $key, $value := .Values.ruuter.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: {{ .Values.ruuter.ingress.host }}
+      http:
+        paths:
+          - path: /ckb/
+            pathType: Prefix
+            backend:
+              service:
+                name: ruuter
+                port:
+                  number: {{ .Values.ruuter.service.port }}
+  tls:
+    - hosts:
+        - {{ .Values.ruuter.ingress.host }}
+      secretName: {{ .Values.ruuter.ingress.tlsSecret }}
+{{- end }}

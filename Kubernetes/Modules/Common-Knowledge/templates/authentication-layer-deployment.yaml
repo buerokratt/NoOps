@@ -1,0 +1,67 @@
+{{- if .Values.authenticationLayer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+  labels:
+    app: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+    spec:
+      containers:
+        - name: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+          image: "{{ .Values.authenticationLayer.image.repository }}:{{ .Values.authenticationLayer.image.tag }}"
+          imagePullPolicy: {{ .Values.authenticationLayer.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.authenticationLayer.service.port }}
+          {{- if .Values.authenticationLayer.env }}
+          env:
+          {{- range $key, $value := .Values.authenticationLayer.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+          {{- end }}
+          {{- end }}
+          {{- if .Values.authenticationLayer.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: env-config-volume
+              mountPath: /usr/share/nginx/html/customer-service/env-config.js
+              subPath: env-config.js
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/conf.d
+            - name: run
+              mountPath: /var/run
+            - name: log
+              mountPath: /var/log/nginx
+            - name: cache
+              mountPath: /var/cache/nginx
+          {{- end }}
+      {{- if .Values.authenticationLayer.enabled }}
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: nginx-config-volume
+          configMap:
+            name: constant-config
+        - name: env-config-volume
+          configMap:
+            name: constant-config
+        - name: run
+          emptyDir:
+            medium: ""
+        - name: log
+          emptyDir:
+            medium: ""
+        - name: cache
+          emptyDir:
+            medium: ""
+      {{- end }}
+{{- end }}

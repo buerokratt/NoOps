@@ -1,0 +1,24 @@
+{{- if .Values.scheduler.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.scheduler.nameOverride }}
+  labels:
+    app: {{ .Values.scheduler.nameOverride }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.scheduler.nameOverride }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.scheduler.nameOverride }}
+    spec:
+      containers:
+        - name: {{ .Values.scheduler.nameOverride }}
+          image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag }}"
+          imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.scheduler.service.port }}
+{{- end }}

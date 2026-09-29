@@ -1,0 +1,16 @@
+{{- if .Values.resqlUsers.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+  labels:
+    app: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+spec:
+  type: {{ .Values.resqlUsers.service.type | default "ClusterIP" }}
+  selector:
+    app: {{ .Values.resqlUsers.nameOverride | default "resql-ckb" }}
+  ports:
+    - port: {{ .Values.resqlUsers.service.port }}
+      targetPort: {{ .Values.resqlUsers.service.port }}
+      protocol: TCP
+{{- end }}

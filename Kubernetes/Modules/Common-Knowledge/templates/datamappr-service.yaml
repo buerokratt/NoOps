@@ -1,0 +1,17 @@
+{{- if .Values.dataMapper.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+  labels:
+    app: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+spec:
+  type: {{ .Values.dataMapper.service.type }}
+  selector:
+    app: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+  ports:
+    - port: {{ .Values.dataMapper.service.port }}
+      targetPort: {{ .Values.dataMapper.service.port }}
+      protocol: TCP
+      name: http
+{{- end }}

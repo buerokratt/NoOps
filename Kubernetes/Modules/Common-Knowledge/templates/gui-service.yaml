@@ -1,0 +1,13 @@
+{{- if .Values.gui.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gui.nameOverride | default "gui" }}
+spec:
+  type: {{ .Values.gui.service.type }}
+  ports:
+    - port: {{ .Values.gui.service.port }}
+      targetPort: {{ .Values.gui.service.port }}
+  selector:
+    app: {{ .Values.gui.nameOverride | default "gui" }}
+{{- end }}

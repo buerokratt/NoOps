@@ -1,0 +1,59 @@
+{{- if .Values.liquibase.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-liquibase
+  labels:
+    app: liquibase
+spec:
+  backoffLimit: {{ .Values.liquibase.backoffLimit | default 3 }}
+  template:
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+        - name: liquibase-repo
+          emptyDir: {}
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          command:
+            - sh
+            - -c
+            - |
+              git clone --single-branch --depth 1 --branch {{ .Values.liquibase.branch }} {{ .Values.liquibase.repo }} /tmp/repo && \
+              mkdir -p /liquibase-files && \
+              cp -r /tmp/repo/DSL/Liquibase/* /liquibase-files/ && \
+              chown -R 1000:1000 /liquibase-files && \
+              ls -la /liquibase-files
+          volumeMounts:
+            - name: liquibase-repo
+              mountPath: /liquibase-files
+      containers:
+        - name: liquibase
+          image: "{{ .Values.liquibase.image.repository }}:{{ .Values.liquibase.image.tag }}"
+          imagePullPolicy: {{ .Values.liquibase.image.pullPolicy }}
+          env:
+            {{- range .Values.database.env }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquibase.dbSecret | default (printf "%s-db-secret" .Release.Name) }}
+                  key: password
+          volumeMounts:
+            - name: liquibase-repo
+              mountPath: /liquibase-files
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              ls -R /liquibase-files
+              cd /liquibase-files
+              liquibase \
+                --url=jdbc:postgresql://{{ .Values.liquibase.dbHost }}:5432/ckb_db \
+                --changeLogFile=/changelog.yaml \
+                --username=byk \
+                --password=$(POSTGRES_PASSWORD) \
+                update
+{{- end }}

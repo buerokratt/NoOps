@@ -1,0 +1,37 @@
+{{- if .Values.scrapperServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.scrapperServer.nameOverride }}
+  labels:
+    app: {{ .Values.scrapperServer.nameOverride }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.scrapperServer.nameOverride }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.scrapperServer.nameOverride }}
+    spec:
+      containers:
+        - name: {{ .Values.scrapperServer.nameOverride }}
+          image: "{{ .Values.scrapperServer.image.repository }}:{{ .Values.scrapperServer.image.tag }}"
+          imagePullPolicy: {{ .Values.scrapperServer.image.pullPolicy }}
+          env:
+            {{- range .Values.scrapperServer.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.scrapperServer.service.port }}
+          volumeMounts: {{- if .Values.scrapperServer.volumes.enabled }}
+            - name: data
+              mountPath: /data
+          {{- end }}
+      volumes: {{- if .Values.scrapperServer.volumes.enabled }}
+        - name: data
+          emptyDir: {}
+      {{- end }}
+{{- end }}

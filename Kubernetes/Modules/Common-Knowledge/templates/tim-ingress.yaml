@@ -1,0 +1,30 @@
+{{- if and .Values.tim.enabled .Values.tim.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.tim.nameOverride | default "tim" }}-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  labels:
+    name: {{ .Values.tim.nameOverride | default "tim" }}-ingress
+spec:
+  rules:
+    - host: {{ .Values.tim.ingress.host }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: {{ .Values.tim.nameOverride | default "tim" }}
+                port:
+                  number: {{ .Values.tim.service.port }}
+  tls:
+    - hosts:
+        - {{ .Values.tim.ingress.host }}
+      secretName: {{ .Values.tim.ingress.secretName }}
+{{- end }}

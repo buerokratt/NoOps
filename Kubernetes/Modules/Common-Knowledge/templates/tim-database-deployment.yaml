@@ -1,0 +1,42 @@
+{{- if .Values.timPostgresql.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.timPostgresql.nameOverride | default "tim-postgresql" }}
+  labels:
+    app: {{ .Values.timPostgresql.nameOverride | default "tim-postgresql" }}
+spec:
+  replicas: {{ .Values.timPostgresql.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.timPostgresql.nameOverride | default "tim-postgresql" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.timPostgresql.nameOverride | default "tim-postgresql" }}
+    spec:
+      containers:
+        - name: {{ .Values.timPostgresql.nameOverride | default "tim-postgresql" }}
+          image: "{{ .Values.timPostgresql.image.repository }}:{{ .Values.timPostgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.timPostgresql.image.pullPolicy }}
+          env:
+            {{- range .Values.timPostgresql.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.timPostgresql.secret.name }}
+                  key: POSTGRES_PASSWORD
+          ports:
+            - containerPort: {{ .Values.timPostgresql.service.port }}
+          resources:
+            {{- toYaml .Values.timPostgresql.resources | nindent 12 }}
+      volumes:
+        {{- if .Values.timPostgresql.persistence.enabled }}
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.timPostgresql.persistence.existingClaim | default (printf "%s-pvc" (.Values.timPostgresql.nameOverride | default "tim-postgresql")) }}
+        {{- end }}
+{{- end }}

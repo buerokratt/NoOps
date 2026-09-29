@@ -1,0 +1,13 @@
+{{- if .Values.cronManager.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.cronManager.nameOverride | default "cron-manager" }}
+spec:
+  type: {{ .Values.cronManager.service.type }}
+  ports:
+    - port: {{ .Values.cronManager.service.port }}
+      targetPort: {{ .Values.cronManager.service.port }}
+  selector:
+    app: {{ .Values.cronManager.nameOverride | default "cron-manager" }}
+{{- end }}

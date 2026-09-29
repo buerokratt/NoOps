@@ -1,0 +1,19 @@
+{{- if .Values.rabbitmq.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.rabbitmq.nameOverride }}
+  labels:
+    app: {{ .Values.rabbitmq.nameOverride }}
+spec:
+  type: {{ .Values.rabbitmq.service.type }}
+  ports:
+    - name: amqp
+      port: {{ .Values.rabbitmq.service.amqpPort }}
+      targetPort: {{ .Values.rabbitmq.service.amqpPort }}
+    - name: management
+      port: {{ .Values.rabbitmq.service.uiPort }}
+      targetPort: {{ .Values.rabbitmq.service.uiPort }}
+  selector:
+    app: {{ .Values.rabbitmq.nameOverride }}
+{{- end }}

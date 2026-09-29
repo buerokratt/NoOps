@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+  namespace: byrokratt
+data:
+  rabbitmq.conf: |
+    deprecated_features.permit.transient_nonexcl_queues = true
+    deprecated_features.permit.global_qos = true

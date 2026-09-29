@@ -1,0 +1,49 @@
+{{- if .Values.searchService.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.searchService.nameOverride | default "search-service" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.searchService.nameOverride | default "search-service" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.searchService.nameOverride | default "search-service" }}
+    spec:
+      restartPolicy: {{ .Values.searchService.restartPolicy }}
+      containers:
+        - name: {{ .Values.searchService.nameOverride | default "search-service" }}
+          image: "{{ .Values.searchService.image.repository }}:{{ .Values.searchService.image.tag }}"
+          imagePullPolicy: {{ .Values.searchService.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.searchService.service.port }}
+          env:
+            {{- range .Values.searchService.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          {{- if .Values.searchService.volumes.enabled }}
+          volumeMounts:
+{{- range .Values.searchService.extraVolumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+{{- end }}
+          {{- end }}
+      {{- if .Values.searchService.volumes.enabled }}
+      volumes:
+{{- range .Values.searchService.extraVolumes }}
+        - name: {{ .name }}
+          {{- if .configMap }}
+          configMap:
+            name: {{ .configMap.name }}
+          {{- end }}
+          {{- if .secret }}
+          secret:
+            secretName: {{ .secret.secretName }}
+          {{- end }}
+{{- end }}
+      {{- end }}
+{{- end }}

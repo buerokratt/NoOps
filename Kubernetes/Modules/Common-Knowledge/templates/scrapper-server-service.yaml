@@ -1,0 +1,13 @@
+{{- if .Values.scrapperServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.scrapperServer.nameOverride }}
+spec:
+  type: {{ .Values.scrapperServer.service.type }}
+  ports:
+    - port: {{ .Values.scrapperServer.service.port }}
+      targetPort: {{ .Values.scrapperServer.service.port }}
+  selector:
+    app: {{ .Values.scrapperServer.nameOverride }}
+{{- end }}

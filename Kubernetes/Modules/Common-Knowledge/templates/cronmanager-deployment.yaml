@@ -1,0 +1,47 @@
+{{- if .Values.cronManager.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.cronManager.nameOverride | default "cron-manager" }}
+  labels:
+    app: {{ .Values.cronManager.nameOverride | default "cron-manager" }}
+spec:
+  replicas: {{ .Values.cronManager.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.cronManager.nameOverride | default "cron-manager" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.cronManager.nameOverride | default "cron-manager" }}
+    spec:
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          volumeMounts:
+            - name: dsl
+              mountPath: /DSL
+          command:
+            - sh
+            - -c
+            - |
+                git clone --single-branch --depth 1 --branch dev https://github.com/buerokratt/Common-Knowledge.git /tmp/ckb &&
+                cp -r /tmp/ckb/DSL/CronManager/* /DSL
+      containers:
+        - name: {{ .Values.cronManager.nameOverride | default "cron-manager" }}
+          image: "{{ .Values.cronManager.image.repository }}:{{ .Values.cronManager.image.tag }}"
+          imagePullPolicy: {{ .Values.cronManager.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.cronManager.service.port }}
+          env:
+            {{- range .Values.cronManager.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: dsl
+              mountPath: /DSL
+      volumes:
+        - name: dsl
+          emptyDir: {} 
+{{- end }}

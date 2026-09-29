@@ -1,0 +1,671 @@
+# Global settings applied across templates
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  imagePullPolicy: IfNotPresent
+  labels: {}
+  annotations: {}
+  domain: DOMAIN # 
+  tim_postgresql:
+    auth:
+      username: tim
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# --- Database (PostgreSQL) -----------------------------------------------------
+database:
+  enabled: false
+  nameOverride: database
+  image:
+    repository: postgres
+    tag: "14.1"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5432
+    annotations: {}
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+    accessModes: ["ReadWriteOnce"]
+    existingClaim: ""
+  env:
+    - name: POSTGRES_USER
+      value: "byk"
+    - name: POSTGRES_DB
+      value: "ckb_db"
+    - name: PGDATA
+      value: /var/lib/postgresql/data/pgdata
+  secret:
+    create: true
+    name: database-secret
+    keys:
+      POSTGRES_PASSWORD: "01234"
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# --- Liquibase --------------------------------------------------------
+liquibase:
+  enabled: false
+  backoffLimit: 3
+  image:
+    repository: liquibase/liquibase
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  repo: "https://github.com/buerokratt/Buerokratt-Chatbot.git"
+  branch: "v3.3.1"
+  path: "DSL/Liquibase"
+  env:
+    - name: POSTGRES_USER
+      value: "byk"
+    - name: LIQUIBASE_URL
+      value: "jdbc:postgresql://ckb-database:5432/ckb_db"
+
+# --- File Processing API --------------------------------------------------------
+fileProcessing:
+  enabled: true
+  nameOverride: file-processing-api
+  # Release the existing RWO mounts before starting the replacement Pod.
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: fileproc-dev-1.3.5
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8888
+  ingress:
+    enabled: true
+    className: ""
+    hosts: []
+    tls: []
+  env:
+    - name: AWS_ACCESS_KEY_ID
+      value: "admin"
+    - name: AWS_SECRET_ACCESS_KEY
+      value: "" # Password
+    - name: AWS_REGION
+      value: "us-east-1"
+    - name: S3_BUCKET_NAME
+      value: "ckb"
+    - name: S3_ENDPOINT_URL
+      value: "https://s3" #s3 url
+    - name: SOURCE_PATH
+      value: ""
+    - name: S3_PRESIGNED_URL_EXPIRATION
+      value: "3600"
+    - name: S3_UPLOAD_URL_EXPIRATION
+      value: "3600"
+    - name: AUTO_CLEANUP_COMPLETED_TASKS
+      value: "true"
+    - name: COMPLETED_TASK_CLEANUP_DELAY_MINUTES
+      value: "5"
+    - name: PERIODIC_CLEANUP_INTERVAL_MINUTES
+      value: "60"
+    - name: MAX_TASK_AGE_HOURS
+      value: "24"
+  probes:
+    path: /docs
+    initialDelaySeconds: 40
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  persistence:
+    enabled: true
+    size: 1Gi
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+# --- ReSQL (ckb) ---------------------------------------------------------------
+resqlCkb:
+  enabled: false
+  nameOverride: resql-ckb
+  image:
+    repository: ghcr.io/buerokratt/resql
+    tag: v1.3.4
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8090
+  env:
+    - name: server.port
+      value: "8090"
+    - name: SQLMS_DATASOURCES_0_NAME
+      value: "byk"
+    - name: SQLMS_DATASOURCES_0_JDBCURL
+      value: "jdbc:postgresql://database:5432/ckb_db"
+    - name: SQLMS_DATASOURCES_0_USERNAME
+      value: "byk"
+    - name: SQLMS_DATASOURCES_0_PASSWORD
+      value: "01234"
+    - name: LOGGING_LEVEL_ROOT
+      value: "INFO"
+  volumes:
+    enabled: true
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+  extraVolumes: []
+  extraVolumeMounts: []
+
+# --- Ruuter (public) -----------------------------------------------------------
+ruuter:
+  enabled: false
+  ingress:
+    enabled: true
+    host: RUUTER.DOMAIN
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tlsSecret: ruuter-tls
+  nameOverride: ruuter
+  image:
+    repository: ghcr.io/buerokratt/ruuter
+    tag: v2.2.8
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8086
+  env:
+    - name: application.cors.allowedOrigins
+      value: "https://RUUTER.DOMAIN,http://ruuter:8089,https://TIM.DOMAIN,https://ADMIN.DOMAIN"
+    - name: application.httpCodesAllowList
+      value: "200,201,202,400,401,403,500"
+    - name: application.internalRequests.allowedIPs
+      value: "127.0.0.1"
+    - name: application.logging.displayRequestContent
+      value: "true"
+    - name: application.logging.displayResponseContent
+      value: "true"
+    - name: application.logging.printStackTrace
+      value: "true"
+    - name: application.internalRequests.disabled
+      value: "true"
+    - name: server.port
+      value: "8086"
+    - name: logging.level.root
+      value: "INFO"
+  config:
+    constantsIni: |-
+      configmap somehow
+  volumes:
+    mountConstantsIni: true
+    mountDSL: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+# --- Ruuter (internal) ---------------------------------------------------------
+ruuterInternal:
+  enabled: true
+  ingress:
+    enabled: false
+    host: ruuter.ckb-test.buerokratt.ee
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt"
+    tlsSecret: ruuter-tls
+  nameOverride: ruuter-internal
+  image:
+    repository: ghcr.io/buerokratt/ruuter
+    tag: v2.2.8
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8089
+  env:
+    - name: application.cors.allowedOrigins
+      value: "http://localhost:8086,http://localhost:8089,http://localhost:3001,http://localhost:3003,http://localhost:3004,http://localhost:8080"
+    - name: application.httpCodesAllowList
+      value: "200,201,202,400,401,403,500"
+    - name: application.internalRequests.allowedIPs
+      value: "127.0.0.1"
+    - name: application.logging.displayRequestContent
+      value: "true"
+    - name: application.logging.displayResponseContent
+      value: "true"
+    - name: application.logging.printStackTrace
+      value: "true"
+    - name: application.internalRequests.disabled
+      value: "true"
+    - name: server.port
+      value: "8089"
+  config:
+    constantsIni: |-
+      configmap somehow
+  volumes:
+    mountConstantsIni: true
+    mountDSL: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+# --- Data Mapper ---------------------------------------------------------------
+dataMapper:
+  enabled: false
+  nameOverride: ckb-data-mapper
+  image: 
+    repository: ghcr.io/buerokratt/datamapper
+    tag: v2.2.9
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3005
+  env:
+    - name: PORT
+      value: "3005"
+    - name: CONTENT_FOLDER
+      value: "/data"
+  volumes:
+    enabled: true
+  extraVolumes:
+    - name: dsl
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: dsl
+      mountPath: /DSL
+
+# --- Data Export ---------------------------------------------------------------
+dataExport:
+  enabled: true
+  nameOverride: data-export
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: data-export-dev-1-1-1
+    pullPolicy: IfNotPresent
+  command: ["python", "debug.py"]
+  service:
+    type: ClusterIP
+    port: 8889
+    targetPort: 8888
+  env:
+    - name: DB_URI
+      value: "postgresql://byk:01234@database:5432/byk"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+
+# --- Authentication Layer ------------------------------------------------------
+authenticationLayer:
+  enabled: false
+  nameOverride: authentication-layer
+  image:
+    repository: ghcr.io/buerokratt/authentication-layer
+    tag: v1.1.1
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3004
+  ingress:
+    enabled: false
+    host: ADMIN.DOMAIN
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tlsSecret: admin-tls
+
+# --- GUI (React) ---------------------------------------------------------------
+gui:
+  enabled: true
+  nameOverride: ckb-gui
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: v1.0.1
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3001
+  env:
+    - name: NODE_ENV
+      value: development
+    - name: BASE_URL
+      value: https://RUUTER.DOMAIN/v2/backoffice
+    - name: REACT_APP_RUUTER_API_URL
+      value: https://RUUTER.DOMAIN/v2/backoffice
+    - name: REACT_APP_CUSTOMER_SERVICE_LOGIN
+      value: https://ADMIN.DOMAIN/et/dev-auth
+    - name: REACT_APP_CSP
+      value: "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src * data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; connect-src 'self' http://localhost:8086 http://localhost:8085 http://localhost:4040 https://admin.dev.buerokratt.ee/chat/menu.json https://*.s3.amazonaws.com;"
+    - name: DEBUG_ENABLED
+      value: "true"
+    - name: CHOKIDAR_USEPOLLING
+      value: "true"
+    - name: PORT
+      value: "3001"
+    - name: REACT_APP_CKB_BASE_URL
+      value: https://RUUTER.DOMAIN/v2/ckb
+    - name: REACT_APP_SERVICE_ID
+      value: ckb
+    - name: REACT_APP_ENABLE_HIDDEN_FEATURES
+      value: "true"
+    - name: REACT_APP_VALIDATIONS_ENABLED
+      value: "FALSE"
+    - name: REACT_APP_RUUTER_API_URL
+      value: "https://RUUTER.DOMAIN/v2/private/ckb"
+    - name: REACT_APP_RUUTER_PRIVATE_API_URL
+      value: "https://RUUTER.DOMAIN/v2/private/backoffice"
+    - name: REACT_APP_MENU_JSON
+      value: '[{"id":"conversations","label":{"et":"Vestlused","en":"Conversations"},"path":"/chat","children":[{"label":{"et":"Vastamata","en":"Unanswered"},"path":"/unanswered"},{"label":{"et":"Aktiivsed","en":"Active"},"path":"/active"},{"label":{"et":"Ootel","en":"Pending"},"path":"/pending"},{"label":{"et":"Ajalugu","en":"History"},"path":"/history"},{"label":{"et":"Valideerimised","en":"Validations"},"path":"/validations"}]},{"id":"training","label":{"et":"Treening","en":"Training"},"path":"/training","children":[{"label":{"et":"Treening","en":"Training"},"path":"/training","children":[{"label":{"et":"Teemad","en":"Themes"},"path":"/training/intents"},{"hidden":true,"label":{"et":"Avalikud teemad","en":"Public themes"},"path":"/training/common-intents"},{"label":{"et":"Teemade järeltreenimine","en":"Post training themes"},"path":"/training/intents-followup-training"},{"label":{"et":"Vastused","en":"Answers"},"path":"/training/responses"},{"label":{"et":"Reeglid","en":"Rules"},"path":"/training/rules"},{"hidden":true,"label":{"et":"Konfiguratsioon","en":"Configuration"},"path":"/training/configuration"},{"label":{"et":"Vormid","en":"Forms"},"path":"/training/forms"},{"label":{"et":"Mälukohad","en":"Slots"},"path":"/training/slots"},{"hidden":true,"label":{"et":"Automatic Teenused","en":"Automatic Services"},"path":"/auto-services"}]},{"label":{"et":"Ajaloolised vestlused","en":"Historical conversations"},"path":"/history","children":[{"label":{"et":"Ajalugu","en":"History"},"path":"/history/history"},{"hidden":true,"label":{"et":"Pöördumised","en":"Appeals"},"path":"/history/appeal"}]},{"label":{"et":"Mudelipank ja analüütika","en":"Modelbank and analytics"},"path":"/analytics","children":[{"label":{"et":"Teemade ülevaade","en":"Overview of topics"},"path":"/analytics/overview"},{"label":{"et":"Mudelite võrdlus","en":"Comparison of models"},"path":"/analytics/models"},{"hidden":true,"label":{"et":"Testlood","en":"testTracks"},"path":"/analytics/testcases"}]},{"label":{"et":"Treeni uus mudel","en":"Train new model"},"path":"/train-new-model"}]},{"id":"analytics","label":{"et":"Analüütika","en":"Analytics"},"path":"/analytics","children":[{"label":{"et":"Ülevaade","en":"Overview"},"path":"/overview"},{"label":{"et":"Vestlused","en":"Chats"},"path":"/chats"},{"label":{"et":"Tagasiside","en":"Feedback"},"path":"/feedback"}]},{"id":"services","hidden":false,"label":{"et":"Teenused","en":"Services"},"path":"/services","children":[{"label":{"et":"Ülevaade","en":"Overview"},"path":"/overview"},{"label":{"et":"Probleemsed teenused","en":"Faulty Services"},"path":"/faultyServices"},{"label":{"et":"API varamu","en":"API Registry"},"path":"/api-registry"}]},{"id":"knowledge-center","label":{"et":"Teadmuskeskus","en":"Knowledge Center"},"path":"/knowledge-center","children":[{"id":"rag-search","label":{"et":"Mudelid ja seadistused","en":"Models management"},"path":"/rag-search","children":[{"label":{"et":"Mudelite ühendused","en":"LLM connections"},"path":"/rag-search/llm-connections"},{"label":{"et":"Viiba Seaded","en":"Prompt Configurations"},"path":"/rag-search/prompt-configurations"},{"label":{"et":"Testi mudelit","en":"Test LLM"},"path":"/rag-search/test-llm"}]},{"id":"ckb","label":{"et":"Teadmusbaas","en":"Knowledge Base"},"path":"/ckb","children":[{"label":{"et":"Agentuur","en":"Agency"},"path":"/agency"},{"label":{"et":"Aruanded","en":"Reports"},"path":"/reports"},{"label":{"et":"API Integratsioonid","en":"API Integrations"},"path":"/api"}]}]},{"id":"settings","label":{"et":"Haldus","en":"Administration"},"path":"/settings","children":[{"label":{"et":"Kasutajad","en":"Users"},"path":"/users"},{"label":{"et":"Vestlusbot","en":"Chatbot"},"path":"/chatbot","children":[{"label":{"et":"Seaded","en":"Settings"},"path":"/chatbot/settings"},{"label":{"et":"Tervitussõnum","en":"Welcome message"},"path":"/chatbot/welcome-message"},{"label":{"et":"Välimus ja käitumine","en":"Appearance and behavior"},"path":"/chatbot/appearance"},{"label":{"et":"Erakorralised teated","en":"Emergency notices"},"path":"/chatbot/emergency-notices"},{"label":{"et":"Tagasiside","en":"Feedback"},"path":"/chatbot/feedback"}]},{"label":{"et":"Vestluste analüüs","en":"Chat analysis"},"path":"/chat-analysis"},{"label":{"et":"Asutuse tööaeg","en":"Office opening hours"},"path":"/working-time"},{"label":{"et":"Sessiooni pikkus","en":"Session length"},"path":"/session-length"},{"label":{"et":"SKMi konfiguratsioon","en":"SKM Configuration"},"path":"/skm-configuration"},{"label":{"et":"Vestluse Kustutamine","en":"Delete Conversations"},"path":"/delete-conversations"},{"label":{"et":"Anonümiseerija","en":"Anonymizer"},"path":"/anonymizer"},{"hidden": false,"label":{"et":"Multidomeenid","en":"Multi-Domains"},"path":"/multi-domains"}]},{"id":"monitoring","hidden":true,"label":{"et":"Seire","en":"Monitoring"},"path":"/monitoring","children":[{"label":{"et":"Aktiivaeg","en":"Working hours"},"path":"/uptime"}]}]'
+    - name: REACT_APP_NOTIFICATION_NODE_URL
+      value: "https://RUUTER.DOMAIN"
+    - name: REACT_APP_CONVERSATIONS_BASE_URL
+      value: https://ADMIN.DOMAIN/chat
+    - name: REACT_APP_TRAINING_BASE_URL
+      value: https://ADMIN.DOMAIN/training
+    - name: REACT_APP_ANALYTICS_BASE_URL
+      value: https://ADMIN.DOMAIN/analytics
+    - name: REACT_APP_SERVICES_BASE_URL
+      value: https://ADMIN.DOMAIN/services
+    - name: REACT_APP_SETTINGS_BASE_URL
+      value: https://ADMIN.DOMAIN/chat
+
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+  ingress:
+    enabled: true
+    host: ADMIN.DOMAIN
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tlsSecret: admin-tls
+
+# --- Cron Manager --------------------------------------------------------------
+cronManager:
+  enabled: false
+  nameOverride: cron-manager
+  image:
+    repository: ghcr.io/buerokratt/cronmanager
+    tag: v1.1.1
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9010
+  env:
+    - name: SERVER_PORT
+      value: "9010"
+  volumes:
+    enabled: true
+
+# --- OpenSearch ----------------------------------------------------------------
+opensearch:
+  enabled: false
+  nameOverride: opensearch-node
+  image:
+    repository: opensearchproject/opensearch
+    tag: "2.11.1"
+    pullPolicy: IfNotPresent
+  service:
+    annotations: {}
+    node:
+      type: ClusterIP
+      ports:
+        rest: 9200
+        metrics: 9600
+  env:
+    - name: node.name
+      value: "opensearch-node"
+    - name: discovery.type
+      value: "single-node"
+    - name: bootstrap.memory_lock
+      value: "true"
+    - name: OPENSEARCH_JAVA_OPTS
+      value: "-Xms1g -Xmx1g"
+    - name: plugins.security.disabled
+      value: "true"
+    - name: node.max_local_storage_nodes
+      value: '2'
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: ""
+    accessModes: ["ReadWriteOnce"]
+    existingClaim: ""
+  resources: {}
+
+# --- Search Service ------------------------------------------------------------
+searchService:
+  enabled: true
+  nameOverride: search-service
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: search-dev-1.3.5
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+    externalPort: 3009
+  env:
+    - name: OPENSEARCH_URL
+      value: "http://component-opensearch-node:9200"
+    - name: DATA_PATH
+      value: "/app/data"
+    - name: PORT
+      value: "3000"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  restartPolicy: Always
+
+# --- TIM ----------------------------------------------------------------------
+tim:
+  enabled: false
+  nameOverride: tim
+  ingress:
+    enabled: true
+    host: TIM.DOMAIN
+    secretName: tim-tls
+  image:
+    repository: ghcr.io/buerokratt/tim
+    tag: pre-apha-2.7.1
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8085
+  env:
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: tim-postgres-secret
+          key: POSTGRES_PASSWORD
+  config:
+    security_allowlist_jwt: "ruuter,ruuter-internal,data-mapper,resql,tim,tim-postgresql,chat-widget,authentication-layer,127.0.0.1,::1"
+    jwt_keystore_password: "defaultpassword"
+    jwt_issuer: "DOMAIN"
+    spring_profiles_active: "dev"
+    logging_level_root: "DEBUG"
+    legacy_cookie_name: "PHPSESSID"
+    legacy_cookie_domain: "DOMAIN" 
+    legacy_referer_marker: "NA"
+    legacy_url: "NA"
+    oauth2_client_id: "" #client_id
+    oauth2_client_secret: "" #client_secret
+    oauth2_client_scope: "openid"
+    oauth2_user_auth_uri: "X/oidc/authorize"
+    oauth2_access_token_uri: "X/oidc/token"
+    oauth2_jwk_uri: "X/oidc/jwks"
+    resources:
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+      requests:
+        cpu: "250m"
+        memory: "256Mi"
+
+# --- TIM PostgreSQL ------------------------------------------------------------
+timPostgresql:
+  enabled: false
+  nameOverride: tim-postgresql
+  image:
+    repository: postgres
+    tag: "14.1"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5432
+    externalPort: 9876
+  env:
+    - name: POSTGRES_USER
+      value: "tim"
+    - name: POSTGRES_DB
+      value: "tim"
+    - name: POSTGRES_HOST_AUTH_METHOD
+      value: "trust"
+  secret:
+    create: true
+    name: tim-postgres-secret
+    keys:
+      POSTGRES_PASSWORD: "Ab123"
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+    accessModes: ["ReadWriteOnce"]
+    existingClaim: ""
+
+# --- Scrapper (server & celery) -----------------------------------------------
+scrapperServer:
+  enabled: true
+  nameOverride: scrapper-server
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: server-dev-1.3.9
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    - name: RUUTER_INTERNAL
+      value: "http://ruuter-internal:8089"
+    - name: BROKER_URL
+      value: "pyamqp://admin:admin@rabbit-scrapper/scrapper"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  dependsOn:
+    rabbitmq: true
+
+scrapperCelery:
+  enabled: true
+  nameOverride: scrapper-celery
+  image: 
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: v1.0.1-scrapper-celery
+    pullPolicy: IfNotPresent
+  env:
+    - name: RUUTER_INTERNAL
+      value: "http://ruuter-internal:8089"
+    - name: BROKER_URL
+      value: "pyamqp://admin:admin@rabbit-scrapper/scrapper"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+
+# --- Cleaning Server -----------------------------------------------------------
+cleaningServer:
+  enabled: true
+  nameOverride: cleaning-server
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: cleaner-dev-1.3.10
+    pullPolicy: IfNotPresent
+  # The cleaner image starts uvicorn through its own CMD.
+  command: []
+  service:
+    type: ClusterIP
+    port: 8123
+  env:
+    - name: RUUTER_INTERNAL
+      value: "http://ruuter-internal:8089"
+    - name: BROKER_URL
+      value: "pyamqp://admin:admin@rabbit-scrapper/scrapper"
+  volumes:
+    enabled: true
+  extraVolumes: []
+  extraVolumeMounts: []
+  vault:
+    enabled: true
+    address: http://vault-central-buerokratt-vault.central.svc.cluster.local:8200
+    secretPath: ckb/llm/connections/azure_openai/cleaner
+    approleSecretName: ckb-cleaner-approle
+    agentImage:
+      repository: hashicorp/vault
+      tag: "1.21.3"
+      pullPolicy: IfNotPresent
+
+# --- RabbitMQ (scrapper) -------------------------------------------------------
+rabbitmq:
+  enabled: true
+  nameOverride: rabbit-scrapper
+  image:
+    repository: rabbitmq
+    tag: 4-management
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    amqpPort: 5672
+    uiPort: 15672
+  env:
+    - name: RABBITMQ_DEFAULT_USER
+      value: "admin"
+    - name: RABBITMQ_DEFAULT_PASS
+      value: "admin"
+    - name: RABBITMQ_DEFAULT_VHOST
+      value: "scrapper"
+
+# --- Scheduler -----------------------------------------------------------------
+scheduler:
+  enabled: true
+  nameOverride: scheduler
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: scheduler-dev-1-1-1
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8124
+
+resqlUsers:
+  enabled: false

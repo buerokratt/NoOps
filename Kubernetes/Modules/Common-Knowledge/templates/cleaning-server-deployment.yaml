@@ -1,0 +1,109 @@
+{{- if .Values.cleaningServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.cleaningServer.nameOverride }}
+  labels:
+    app: {{ .Values.cleaningServer.nameOverride }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.cleaningServer.nameOverride }}
+  template:
+    metadata:
+      {{- if .Values.cleaningServer.vault.enabled }}
+      annotations:
+        checksum/vault-agent: {{ include (print $.Template.BasePath "/cleaning-server-vault-agent-configmap.yaml") . | sha256sum }}
+      {{- end }}
+      labels:
+        app: {{ .Values.cleaningServer.nameOverride }}
+    spec:
+      {{- if .Values.cleaningServer.vault.enabled }}
+      initContainers:
+        - name: vault-agent-cleaner-init
+          image: "{{ .Values.cleaningServer.vault.agentImage.repository }}:{{ .Values.cleaningServer.vault.agentImage.tag }}"
+          imagePullPolicy: {{ .Values.cleaningServer.vault.agentImage.pullPolicy }}
+          command: ["vault", "agent", "-config=/vault/agent/agent.hcl", "-exit-after-auth"]
+          volumeMounts:
+            - name: vault-agent-config
+              mountPath: /vault/agent
+              readOnly: true
+            - name: vault-agent-credentials
+              mountPath: /agent/credentials
+              readOnly: true
+            - name: vault-agent-token
+              mountPath: /agent/out
+      {{- end }}
+      containers:
+        - name: {{ .Values.cleaningServer.nameOverride }}
+          image: "{{ .Values.cleaningServer.image.repository }}:{{ .Values.cleaningServer.image.tag }}"
+          imagePullPolicy: {{ .Values.cleaningServer.image.pullPolicy }}
+          {{- with .Values.cleaningServer.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            {{- range .Values.cleaningServer.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            {{- if .Values.cleaningServer.vault.enabled }}
+            - name: VAULT_ADDR
+              value: {{ .Values.cleaningServer.vault.address | quote }}
+            - name: VAULT_SECRET_PATH
+              value: {{ .Values.cleaningServer.vault.secretPath | quote }}
+            - name: VAULT_TOKEN_PATH
+              value: /agent/out/token
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.cleaningServer.service.port }}
+          {{- if or .Values.cleaningServer.volumes.enabled .Values.cleaningServer.vault.enabled }}
+          volumeMounts:
+          {{- if .Values.cleaningServer.volumes.enabled }}
+            - name: scrapped-data
+              mountPath: /scrapped-data
+          {{- end }}
+          {{- if .Values.cleaningServer.vault.enabled }}
+            - name: vault-agent-token
+              mountPath: /agent/out
+              readOnly: true
+          {{- end }}
+          {{- end }}
+        {{- if .Values.cleaningServer.vault.enabled }}
+        - name: vault-agent-cleaner
+          image: "{{ .Values.cleaningServer.vault.agentImage.repository }}:{{ .Values.cleaningServer.vault.agentImage.tag }}"
+          imagePullPolicy: {{ .Values.cleaningServer.vault.agentImage.pullPolicy }}
+          command: ["vault", "agent", "-config=/vault/agent/agent.hcl"]
+          volumeMounts:
+            - name: vault-agent-config
+              mountPath: /vault/agent
+              readOnly: true
+            - name: vault-agent-credentials
+              mountPath: /agent/credentials
+              readOnly: true
+            - name: vault-agent-token
+              mountPath: /agent/out
+            - name: scrapped-data
+              mountPath: /scrapped-data
+        {{- end }}
+      {{- if or .Values.cleaningServer.volumes.enabled .Values.cleaningServer.vault.enabled }}
+      volumes:
+      {{- if .Values.cleaningServer.volumes.enabled }}
+        - name: scrapped-data
+          persistentVolumeClaim:
+            claimName: scrapped-data-pvc
+      {{- end }}
+      {{- if .Values.cleaningServer.vault.enabled }}
+        - name: vault-agent-config
+          configMap:
+            name: {{ .Values.cleaningServer.nameOverride }}-vault-agent
+        - name: vault-agent-credentials
+          secret:
+            secretName: {{ .Values.cleaningServer.vault.approleSecretName }}
+        - name: vault-agent-token
+          emptyDir:
+            medium: Memory
+      {{- end }}
+      {{- end }}
+{{- end }}

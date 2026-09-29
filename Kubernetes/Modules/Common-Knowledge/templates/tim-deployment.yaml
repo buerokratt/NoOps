@@ -1,0 +1,46 @@
+{{- if .Values.tim.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.tim.nameOverride | default "tim" }}
+  labels:
+    app: {{ .Values.tim.nameOverride | default "tim" }}
+spec:
+  replicas: {{ .Values.tim.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.tim.nameOverride | default "tim" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.tim.nameOverride | default "tim" }}
+    spec:
+      containers:
+        - name: {{ .Values.tim.nameOverride | default "tim" }}
+          image: "{{ .Values.tim.image.repository }}:{{ .Values.tim.image.tag }}"
+          imagePullPolicy: {{ .Values.tim.image.pullPolicy }}
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tim-postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: "OAUTH2_CLIENT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: "tim-env-secret"
+                  key: "oauth2_client_secret"
+            - name: "KEY_STORE_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: "tim-env-secret"
+                  key: "jwt_integration_key_store_password"
+          volumeMounts:
+            - name: application-properties
+              mountPath: /workspace/app/src/main/resources/application.properties
+              subPath: application.properties
+      volumes:
+        - name: application-properties
+          configMap:
+            name: tim-config
+{{- end }}

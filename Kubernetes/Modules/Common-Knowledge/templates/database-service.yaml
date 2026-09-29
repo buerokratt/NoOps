@@ -1,0 +1,13 @@
+{{- if .Values.database.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-database
+spec:
+  type: {{ .Values.database.service.type | default "ClusterIP" }}
+  selector:
+    app: database
+  ports:
+    - port: {{ .Values.database.service.port }}
+      targetPort: {{ .Values.database.service.port }}
+{{- end }}

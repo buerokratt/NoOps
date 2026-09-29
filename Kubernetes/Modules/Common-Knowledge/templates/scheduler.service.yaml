@@ -1,0 +1,15 @@
+{{- if .Values.scheduler.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.scheduler.nameOverride }}
+  labels:
+    app: {{ .Values.scheduler.nameOverride }}
+spec:
+  type: {{ .Values.scheduler.service.type }}
+  ports:
+    - port: {{ .Values.scheduler.service.port }}
+      targetPort: {{ .Values.scheduler.service.port }}
+  selector:
+    app: {{ .Values.scheduler.nameOverride }}
+{{- end }}

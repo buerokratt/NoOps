@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.ruuter.nameOverride | default "ruuter" }}-config
+data:
+  constants.ini: |-
+    CKB_USERS_RESQL=http://component-byk-resql:8082
+    CKB_RESQL=http://component-byk-resql:8082/ckb
+    CKB_RUUTER=http://component-byk-ruuter:8080/backoffice
+    CKB_RUUTER_INTERNAL=http://ruuter-internal:8089/ckb
+    CKB_DMAPPER=http://component-byk-dmapper:3000
+    CKB_DMAPPER_HBS=http://component-byk-dmapper:3000/ckb/hbs
+    CKB_CLEANING_SERVICE=http://cleaning-server:8123
+    CKB_SCHEDULER_SERVICE=http://scheduler:8124
+    CKB_SCRAPPER_SERVICE=http://scrapper-server:8080
+    CKB_TIM=http://component-byk-tim:8085
+    CKB_PROJECT_LAYER=ckb
+    COOKIE_SAME_SITE=Lax
+    CKB_SEARCH=http://search-service:3000
+    CKB_FILE_MANAGER=http://file-processing-api:8888/api/v1

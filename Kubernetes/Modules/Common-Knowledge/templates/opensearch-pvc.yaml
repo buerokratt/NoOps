@@ -1,0 +1,17 @@
+{{- if and .Values.opensearch.enabled (not .Values.opensearch.persistence.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.opensearch.nameOverride | default "opensearch-node" }}-pvc
+spec:
+  accessModes:
+    {{- range .Values.opensearch.persistence.accessModes }}
+    - {{ . }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.opensearch.persistence.size }}
+  {{- if .Values.opensearch.persistence.storageClass }}
+  storageClassName: {{ .Values.opensearch.persistence.storageClass }}
+  {{- end }}
+{{- end }}

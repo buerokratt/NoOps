@@ -1,0 +1,17 @@
+{{- if .Values.ruuter.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+  labels:
+    app: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+spec:
+  type: {{ .Values.ruuter.service.type | default "ClusterIP" }}
+  selector:
+    app: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+  ports:
+    - port: {{ .Values.ruuter.service.port }}
+      targetPort: {{ .Values.ruuter.service.port }}
+      protocol: TCP
+      name: http
+{{- end }}

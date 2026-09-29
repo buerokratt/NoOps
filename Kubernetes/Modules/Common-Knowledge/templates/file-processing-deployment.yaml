@@ -1,0 +1,57 @@
+{{- if .Values.fileProcessing.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}
+  labels:
+    app: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}
+spec:
+  replicas: {{ .Values.fileProcessing.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}
+    spec:
+      containers:
+        - name: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}
+          image: "{{ .Values.fileProcessing.image.repository }}:{{ .Values.fileProcessing.image.tag }}"
+          imagePullPolicy: {{ .Values.fileProcessing.image.pullPolicy }}
+          env:
+            {{- range .Values.fileProcessing.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.fileProcessing.service.port }}
+          resources:
+            {{- toYaml .Values.fileProcessing.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.fileProcessing.enabled }}
+            - name: files
+              mountPath: /app/data/files
+            - name: logs
+              mountPath: /app/data/logs
+            - name: scrapped-data
+              mountPath: /scrapped-data
+            - name: search-data
+              mountPath: /app/data
+            {{- end }}
+      volumes:
+        {{- if .Values.fileProcessing.enabled }}
+        - name: files
+          persistentVolumeClaim:
+            claimName: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}-files-pvc
+        - name: logs
+          persistentVolumeClaim:
+            claimName: {{ .Values.fileProcessing.nameOverride | default "file-processing" }}-logs-pvc
+        - name: scrapped-data
+          persistentVolumeClaim:
+            claimName: scrapped-data-pvc
+        - name: search-data
+          persistentVolumeClaim:
+            claimName: search-data-pvc
+        {{- end }}
+{{- end }}

@@ -1,0 +1,15 @@
+{{- if .Values.authenticationLayer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+  labels:
+    app: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+spec:
+  type: {{ .Values.authenticationLayer.service.type }}
+  selector:
+    app: {{ .Values.authenticationLayer.nameOverride | default "authentication-layer" }}
+  ports:
+    - port: {{ .Values.authenticationLayer.service.port }}
+      targetPort: {{ .Values.authenticationLayer.service.port }}
+{{- end }}

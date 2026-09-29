@@ -1,0 +1,19 @@
+{{- if .Values.opensearch.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.opensearch.nameOverride | default "opensearch-node" }}
+  annotations:
+{{ toYaml .Values.opensearch.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.opensearch.service.node.type }}
+  ports:
+    - name: rest
+      port: {{ .Values.opensearch.service.node.ports.rest }}
+      targetPort: {{ .Values.opensearch.service.node.ports.rest }}
+    - name: metrics
+      port: {{ .Values.opensearch.service.node.ports.metrics }}
+      targetPort: {{ .Values.opensearch.service.node.ports.metrics }}
+  selector:
+    app: {{ .Values.opensearch.nameOverride | default "opensearch-node" }}
+{{- end }}

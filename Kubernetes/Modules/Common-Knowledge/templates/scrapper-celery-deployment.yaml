@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.scrapperCelery.nameOverride }}
+  labels:
+    app: {{ .Values.scrapperCelery.nameOverride }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.scrapperCelery.nameOverride }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.scrapperCelery.nameOverride }}
+    spec:
+      containers:
+        - name: {{ .Values.scrapperCelery.nameOverride }}
+          image: "{{ .Values.scrapperCelery.image.repository }}:{{ .Values.scrapperCelery.image.tag }}"
+          imagePullPolicy: {{ .Values.scrapperCelery.image.pullPolicy }}
+          env:
+            {{- range .Values.scrapperCelery.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: scrapped-data
+              mountPath: /scrapped-data
+            - name: search-data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: scrapped-data
+          persistentVolumeClaim:
+            claimName: scrapped-data-pvc
+        - name: search-data
+          persistentVolumeClaim:
+            claimName: search-data-pvc

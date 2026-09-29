@@ -1,0 +1,19 @@
+{{- if and .Values.timPostgresql.enabled .Values.timPostgresql.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.timPostgresql.persistence.existingClaim | default (printf "%s-pvc" (.Values.timPostgresql.nameOverride | default "tim-postgresql")) }}
+  labels:
+    app: {{ .Values.timPostgresql.nameOverride | default "tim-postgresql" }}
+spec:
+  accessModes:
+    {{- range .Values.timPostgresql.persistence.accessModes }}
+    - {{ . }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.timPostgresql.persistence.size }}
+  {{- if .Values.timPostgresql.persistence.storageClass }}
+  storageClassName: {{ .Values.timPostgresql.persistence.storageClass }}
+  {{- end }}
+{{- end }}

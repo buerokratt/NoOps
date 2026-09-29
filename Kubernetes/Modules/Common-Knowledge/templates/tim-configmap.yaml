@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tim-config
+data:
+  application.properties: |
+    security.oauth2.client.client-id={{ .Values.tim.config.oauth2_client_id }}
+    security.oauth2.client.client-secret=${OAUTH2_CLIENT_SECRET}
+    security.oauth2.client.scope={{ .Values.tim.config.oauth2_client_scope }}
+    security.oauth2.client.registered-redirect-uri=https://tim.{{ .Values.global.domain }}/authenticate
+    security.oauth2.client.user-authorization-uri={{ .Values.tim.config.oauth2_user_auth_uri }}
+    security.oauth2.client.access-token-uri={{ .Values.tim.config.oauth2_access_token_uri }}
+    security.oauth2.resource.jwk.key-set-uri={{ .Values.tim.config.oauth2_jwk_uri }}
+    security.allowlist.jwt={{ .Values.tim.config.security_allowlist_jwt }}
+    security.cookie.same-site=Lax
+    frontpage.redirect.url=https://admin.{{ .Values.global.domain }}/ckb
+
+    logging.level.root={{ .Values.tim.config.logging_level_root }}
+
+    spring.datasource.url=jdbc:postgresql://tim-postgresql:5432/tim
+    spring.datasource.username={{ .Values.global.tim_postgresql.auth.username }}
+    spring.datasource.password=${POSTGRES_PASSWORD}
+    spring.datasource.driver-class-name=org.postgresql.Driver
+    spring.liquibase.change-log=classpath:master.xml
+
+    spring.profiles.active={{ .Values.tim.config.spring_profiles_active }}
+
+    # Legacy integration properties
+    legacy-portal-integration.sessionCookieName={{ .Values.tim.config.legacy_cookie_name }}
+    legacy-portal-integration.sessionCookieDomain={{ .Values.tim.config.legacy_cookie_domain }}
+    legacy-portal-integration.taraAuthDeployedOnLegacyDomain=true
+    legacy-portal-integration.sessionTimeoutMinutes=30
+    legacy-portal-integration.requestIpHeader=X-FORWARDED-FOR
+    legacy-portal-integration.requestIpAttribute=request_ip
+    legacy-portal-integration.redirectUrlHeader=Referer
+    legacy-portal-integration.redirectUrlAttribute=url_redirect
+    legacy-portal-integration.legacyPortalRefererMarker={{ .Values.tim.config.legacy_referer_marker }}
+    legacy-portal-integration.legacyUrl={{ .Values.tim.config.legacy_url }}
+
+    # JWT configuration
+    jwt-integration.signature.key-store=classpath:jwtkeystore.jks
+    jwt-integration.signature.key-store-password=${KEY_STORE_PASSWORD}
+    jwt-integration.signature.keyStoreType=JKS
+    jwt-integration.signature.keyAlias=jwtsign
+    jwt-integration.signature.issuer={{ .Values.tim.config.jwt_issuer }}
+    jwt-integration.signature.cookieName=JWTTOKEN
+
+    userIPHeaderName=x-forwarded-for
+    userIPLoggingPrefix=from IP
+    userIPLoggingMDCkey=userIP
+
+    headers.contentSecurityPolicy=upgrade-insecure-requests;default-src 'self' 'unsafe-inline' 'unsafe-eval' https://tim.{{ .Values.global.domain }} https://admin.{{ .Values.global.domain }} https://ruuter.{{ .Values.global.domain }}/v2/public/ https://ruuter.{{ .Values.global.domain }}/v2/private/ tim ruuter ruuter-private backoffice-login;object-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' https://{{ .Values.global.domain }} https://admin.{{ .Values.global.domain }} https://tim.{{ .Values.global.domain }};connect-src 'self' https://{{ .Values.global.domain }} https://tim.{{ .Values.global.domain }} https://admin.{{ .Values.global.domain }} https://ruuter.{{ .Values.global.domain }}/v2/public/ https://ruuter.{{ .Values.global.domain }}/v2/private/;frame-src 'self';media-src 'none'
+    cors.allowedOrigins=https://{{ .Values.global.domain }},https://admin.{{ .Values.global.domain }},https://ruuter.{{ .Values.global.domain }}/v2/public/,https://ruuter.{{ .Values.global.domain }}/v2/private/
+    auth.success.redirect.whitelist=https://admin.{{ .Values.global.domain }}/auth/callback,https://{{ .Values.global.domain }},https://{{ .Values.global.domain }}/auth/callback,https://admin.{{ .Values.global.domain }}
+
+    server.port={{ .Values.tim.service.port }}
+    jwt.whitelist.period=30000

@@ -1,0 +1,41 @@
+{{- if .Values.opensearch.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.opensearch.nameOverride | default "opensearch-node" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.opensearch.nameOverride | default "opensearch-node" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.opensearch.nameOverride | default "opensearch-node" }}
+    spec:
+      containers:
+        - name: {{ .Values.opensearch.nameOverride | default "opensearch-node" }}
+          image: "{{ .Values.opensearch.image.repository }}:{{ .Values.opensearch.image.tag }}"
+          imagePullPolicy: {{ .Values.opensearch.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.opensearch.service.node.ports.rest }}
+            - containerPort: {{ .Values.opensearch.service.node.ports.metrics }}
+          env:
+            {{- range .Values.opensearch.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.opensearch.resources | nindent 12 }}
+          {{- if .Values.opensearch.persistence.enabled }}
+          volumeMounts:
+            - name: opensearch-data
+              mountPath: /usr/share/opensearch/data
+          {{- end }}
+      {{- if .Values.opensearch.persistence.enabled }}
+      volumes:
+        - name: opensearch-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.opensearch.persistence.existingClaim | default (printf "%s-pvc" .Values.opensearch.nameOverride) }}
+      {{- end }}
+{{- end }}

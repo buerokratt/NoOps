@@ -1,0 +1,55 @@
+{{- if .Values.ruuter.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+  labels:
+    app: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+spec:
+  replicas: {{ .Values.ruuter.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+    spec:
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          volumeMounts:
+          - name: dsl
+            mountPath: /DSL
+          command:
+            - sh
+            - -c
+            - |
+                git clone --single-branch --depth 1 --branch environment https://github.com/varmoh/Common-Knowledge.git /tmp/ckb &&
+                cp -r /tmp/ckb/DSL/Ruuter/ckb /DSL/    
+      containers:
+        - name: {{ .Values.ruuter.nameOverride | default "ruuter" }}
+          image: "{{ .Values.ruuter.image.repository }}:{{ .Values.ruuter.image.tag }}"
+          imagePullPolicy: {{ .Values.ruuter.image.pullPolicy }}
+          env:
+            {{- range .Values.ruuter.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          ports:
+            - containerPort: {{ .Values.ruuter.service.port }}
+          resources:
+            {{- toYaml .Values.ruuter.resources | nindent 12 }}
+          volumeMounts:
+            - name: constants-config
+              mountPath: /app/config/constants.ini
+              subPath: constants.ini
+            - name: dsl
+              mountPath: /DSL
+      volumes:
+        - name: dsl
+          emptyDir: {}
+        - name: constants-config
+          configMap:
+            name: {{ .Values.ruuter.nameOverride | default "ruuter" }}-config
+{{- end }}

@@ -1,0 +1,52 @@
+{{- if .Values.dataMapper.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+  labels:
+    app: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+spec:
+  replicas: {{ .Values.dataMapper.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+    spec:
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          volumeMounts:
+          - name: dsl
+            mountPath: /workspace/app/module
+          command:
+            - sh
+            - -c
+            - |
+                git clone --single-branch --depth 1 --branch wip https://github.com/buerokratt/Common-Knowledge.git /tmp/ckb &&
+                cp -r /tmp/ckb/DSL/DMapper/ckb /workspace/app/module
+      containers:
+        - name: {{ .Values.dataMapper.nameOverride | default "data-mapper" }}
+          image: "{{ .Values.dataMapper.image.repository }}:{{ .Values.dataMapper.image.tag }}"
+          imagePullPolicy: {{ .Values.dataMapper.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.dataMapper.service.port }}
+          env:
+            {{- range .Values.dataMapper.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          {{- if .Values.dataMapper.extraVolumeMounts }}
+          volumeMounts:
+            - name: dsl
+              mountPath: /workspace/app/module
+      {{- end }}
+      {{- if .Values.dataMapper.volumes.enabled }}
+      volumes:
+        - name: dsl
+          emptyDir: {}
+      {{- end }}
+
+{{- end }}
