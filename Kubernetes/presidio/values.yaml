@@ -14,4 +14,10 @@ env:
   PORT: "8089"
   PYTHONUNBUFFERED: "1"
 
-
+resources:
+  requests:
+    memory: "1Gi"
+    cpu: "100m"
+  limits:
+    memory: "1Gi"
+    cpu: "100m"
