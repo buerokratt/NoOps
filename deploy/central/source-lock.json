@@ -68,7 +68,7 @@
     },
     "Resql": {
       "repository": "buerokratt/Resql",
-      "commit": "4c76ef8921529221d7991e77f2fc41e4e22c2d06",
+      "commit": "657cd99b4639c55026000297f4a60de32a52e43d",
       "components": [
         "resql"
       ]
