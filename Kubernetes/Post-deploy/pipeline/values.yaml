@@ -47,3 +47,6 @@ images:
 liquibase:
   jdbcUrl: "jdbc:postgresql://databases-users-db:5432/byk?user=byk"    
   dbPassword: "{{ usersDB.password }}"   # Change password accordingly
+# Mock data loading is an explicit development action, never a normal upgrade.
+seed:
+  enabled: false

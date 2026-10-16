@@ -105,14 +105,55 @@ spec:
           ports:
             - containerPort: 3010
           env:
+            - name: TRAINING_RESPONSES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_RESPONSES_INDEX" | quote }}
+            - name: TRAINING_INTENTS_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_INTENTS_INDEX" | quote }}
+            - name: TRAINING_RULES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_RULES_INDEX" | quote }}
+            - name: TRAINING_STORIES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_STORIES_INDEX" | quote }}
+            - name: TRAINING_TEST_STORIES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_TEST_STORIES_INDEX" | quote }}
+            - name: TRAINING_FORMS_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_FORMS_INDEX" | quote }}
+            - name: TRAINING_ENTITIES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_ENTITIES_INDEX" | quote }}
+            - name: TRAINING_REGEXES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_REGEXES_INDEX" | quote }}
+            - name: TRAINING_EXAMPLES_ENTITIES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_EXAMPLES_ENTITIES_INDEX" | quote }}
+            - name: TRAINING_SLOTS_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_SLOTS_INDEX" | quote }}
+            - name: TRAINING_CONFIG_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_CONFIG_INDEX" | quote }}
+            - name: TRAINING_NOTIFICATIONS_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_NOTIFICATIONS_INDEX" | quote }}
+            - name: SERVICE_SERVICES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "SERVICE_SERVICES_INDEX" | quote }}
+            - name: SERVICE_FAULTS_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "SERVICE_FAULTS_INDEX" | quote }}
+            - name: SERVICE_RUUTERLOG_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "SERVICE_RUUTERLOG_INDEX" | quote }}
+            - name: SHARED_DOMAIN_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "SHARED_DOMAIN_INDEX" | quote }}
+            - name: COMMON_COMPANIES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "COMMON_COMPANIES_INDEX" | quote }}
             - name: OPENSEARCH_PROTOCOL
-              value: "http"
+              value: {{ .Values.opensearch.protocol | quote }}
             - name: OPENSEARCH_HOST
-              value: "component-opensearch-node"
+              value: {{ .Values.opensearch.host | quote }}
             - name: OPENSEARCH_PORT
-              value: "9200"
+              value: {{ .Values.opensearch.port | quote }}
             - name: OPENSEARCH_AUTH
-              value: "admin:admin"
+              {{- if .Values.opensearch.credentialsSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opensearch.credentialsSecret | quote }}
+                  key: auth
+              {{- else }}
+              value: {{ .Values.opensearch.auth | quote }}
+              {{- end }}
           resources:
             requests:
               memory: "{{ .Values.resources.pipeline.requests.memory }}"

@@ -21,7 +21,14 @@ spec:
           env:
 {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
+              {{- if and $.Values.opensearch.credentialsSecret (or (eq $key "OPENSEARCH_USERNAME") (eq $key "OPENSEARCH_PASSWORD")) }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.opensearch.credentialsSecret | quote }}
+                  key: {{ ternary "username" "password" (eq $key "OPENSEARCH_USERNAME") }}
+              {{- else }}
               value: "{{ $value }}"
+              {{- end }}
 {{- end }}
           volumeMounts:
             - name: app-node-modules

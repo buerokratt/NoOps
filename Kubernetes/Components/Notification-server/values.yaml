@@ -54,3 +54,12 @@ env:
   AZURE_AGENTIC_PROJECT_NAME: "{{ AZURE_AGENTIC_PROJECT_NAME }}"
   AZURE_AGENTIC_API_VERSION: "{{ AZURE_AGENTIC_API_VERSION }}"
   
+
+global:
+  opensearch:
+    indices:
+      chatbotNotifications: notifications
+      chatbotChatQueue: chatqueue
+
+opensearch:
+  credentialsSecret: "" # Existing Secret with username/password, populated before deployment.

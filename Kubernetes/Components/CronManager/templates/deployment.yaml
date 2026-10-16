@@ -85,8 +85,15 @@ spec:
           value: "{{ .Values.contstants.TRAINING_PUBLIC_RUUTER }}"
         - name: TRAINING_DMAPPER
           value: "{{ .Values.contstants.TRAINING_DMAPPER }}"
+        {{- if .Values.opensearch.credentialsSecret }}
+        - name: OPENSEARCH_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.opensearch.credentialsSecret | quote }}
+              key: auth
+        {{- end }}
         - name: TRAINING_OPENSEARCH
-          value: "{{ .Values.contstants.TRAINING_OPENSEARCH }}"
+          value: {{ .Values.opensearch.url | quote }}
         - name: TRAINING_TIM
           value: "{{ .Values.contstants.TRAINING_TIM }}"
         - name: TRAINING_RESQL

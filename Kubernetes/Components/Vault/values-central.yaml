@@ -1,0 +1,179 @@
+# Central Vault - serves backoffice, LLM-Module and CKB from one instance.
+#
+# Usage:
+#   helm upgrade --install vault-central . -n central -f values-central.yaml
+#
+# Policy bodies are copied verbatim from buerokratt/Buerokratt-Chatbot PR #2183
+# (vault/vault-init.sh) so the compose and Helm bootstraps stay diffable.
+# The one deliberate deviation is documented inline on
+# llm-module-llm-orchestration-policy.
+#
+# BEFORE DEPLOYING: replace every REPLACE-ME namespace below and make sure each
+# namespace already exists - the RBAC Roles are created in them and will fail
+# otherwise.
+
+image:
+  tag: "1.21.3"
+
+bootstrap:
+  image:
+    tag: "1.21.3"
+  enabled: true
+
+  kvMount: secret
+  approleMount: approle
+
+  modules:
+    - llm-module
+    - ckb
+
+  roles:
+    # --- backoffice ---------------------------------------------------------
+    # Unchanged from the standalone backoffice Vault: PR #2183 leaves
+    # secret/backoffice/* byte-identical, so this migrates 1:1.
+    #
+    # NOTE the "-central" suffix on secretName. The running vault-backoffice
+    # release already owns a Secret called "backoffice-vault-approle" in this
+    # namespace, and that is what the live backoffice agent mounts
+    # (Modules/Buerokratt-Chatbot/values.yaml:85). If central wrote to that same
+    # name, provision_role would see a role_id mismatch, mint a fresh secret_id
+    # and overwrite it - leaving the live agent holding central's credentials
+    # while still pointed at the old Vault, so its next re-auth fails.
+    # Central therefore writes to its own Secret, and the module switches
+    # credentialsSecretName to it at cutover.
+    - name: backoffice-service
+      policyName: backoffice-admin-policy
+      tokenPeriod: 1h
+      secretName: backoffice-vault-approle-central
+      secretNamespace: REPLACE-ME-backoffice-namespace
+      policy: |
+        path "secret/data/backoffice/*" {
+          capabilities = ["create", "read", "update", "delete"]
+        }
+
+        path "secret/metadata/backoffice/*" {
+          capabilities = ["read", "list", "delete"]
+        }
+
+    # --- llm-module ---------------------------------------------------------
+    - name: llm-module-gui-service
+      policyName: llm-module-gui-policy
+      tokenPeriod: 20m
+      secretName: llm-module-gui-approle
+      secretNamespace: rag-module
+      policy: |
+        path "secret/data/llm-module/encryption/public_key" { capabilities = ["read"] }
+        path "secret/metadata/llm-module/encryption/public_key" { capabilities = ["read"] }
+        path "secret/data/llm-module/encryption/private_key" { capabilities = ["deny"] }
+        path "secret/data/llm-module/llm/*" { capabilities = ["deny"] }
+        path "secret/data/llm-module/embeddings/*" { capabilities = ["deny"] }
+
+    - name: llm-module-cron-manager-service
+      policyName: llm-module-cron-manager-policy
+      tokenPeriod: 30m
+      secretName: llm-module-cron-approle
+      secretNamespace: rag-module
+      policy: |
+        path "secret/data/llm-module/encryption/public_key" { capabilities = ["read"] }
+        path "secret/metadata/llm-module/encryption/public_key" { capabilities = ["read"] }
+        path "secret/data/llm-module/encryption/private_key" { capabilities = ["read"] }
+        path "secret/metadata/llm-module/encryption/private_key" { capabilities = ["read"] }
+        path "secret/data/llm-module/llm/connections/*" { capabilities = ["create", "read", "update", "delete"] }
+        path "secret/metadata/llm-module/llm/connections/*" { capabilities = ["read", "list", "delete"] }
+        path "secret/data/llm-module/embeddings/connections/*" { capabilities = ["create", "read", "update", "delete"] }
+        path "secret/metadata/llm-module/embeddings/connections/*" { capabilities = ["read", "list", "delete"] }
+        path "auth/token/lookup-self" { capabilities = ["read"] }
+
+    - name: llm-module-llm-orchestration-service
+      policyName: llm-module-llm-orchestration-policy
+      tokenPeriod: 1h
+      secretName: llm-module-llm-approle
+      secretNamespace: rag-module
+      # Deviates from PR #2183 by exactly one grant: the two Langfuse paths.
+      # #2183 omitted them; the author has since confirmed that was an
+      # oversight, not intent. langfuse-web and langfuse-worker do run in our
+      # cluster (the repo default enabled: false is overridden at install), and
+      # src/llm_orchestration_service.py reads langfuse/config on startup.
+      # Without the grant that read is denied inside a try/except, so tracing
+      # would switch off silently - one warning line, langfuse_client left None,
+      # and all 14 guarded call sites skipped.
+      #
+      # This restores parity with LLM-Module's superseded policy at
+      # kubernetes/charts/Vault-Init/templates/configmap.yaml:200-201.
+      # Only llm-module gets it; CKB has no Langfuse usage.
+      policy: |
+        path "secret/data/llm-module/llm/connections/*" { capabilities = ["read", "list"] }
+        path "secret/metadata/llm-module/llm/connections/*" { capabilities = ["read", "list"] }
+        path "secret/data/llm-module/embeddings/connections/*" { capabilities = ["read", "list"] }
+        path "secret/metadata/llm-module/embeddings/connections/*" { capabilities = ["read", "list"] }
+        path "secret/data/llm-module/encryption/*" { capabilities = ["deny"] }
+        path "secret/data/llm-module/langfuse/*" { capabilities = ["read"] }
+        path "secret/metadata/llm-module/langfuse/*" { capabilities = ["read", "list"] }
+        path "auth/token/lookup-self" { capabilities = ["read"] }
+
+    # --- ckb ----------------------------------------------------------------
+    - name: ckb-gui-service
+      policyName: ckb-gui-policy
+      tokenPeriod: 20m
+      secretName: ckb-gui-approle
+      secretNamespace: REPLACE-ME-ckb-namespace
+      policy: |
+        path "secret/data/ckb/encryption/public_key" { capabilities = ["read"] }
+        path "secret/metadata/ckb/encryption/public_key" { capabilities = ["read"] }
+        path "secret/data/ckb/encryption/private_key" { capabilities = ["deny"] }
+        path "secret/data/ckb/llm/*" { capabilities = ["deny"] }
+        path "secret/data/ckb/embeddings/*" { capabilities = ["deny"] }
+
+    - name: ckb-cron-manager-service
+      policyName: ckb-cron-manager-policy
+      tokenPeriod: 30m
+      secretName: ckb-cron-approle
+      secretNamespace: REPLACE-ME-ckb-namespace
+      policy: |
+        path "secret/data/ckb/encryption/public_key" { capabilities = ["read"] }
+        path "secret/metadata/ckb/encryption/public_key" { capabilities = ["read"] }
+        path "secret/data/ckb/encryption/private_key" { capabilities = ["read"] }
+        path "secret/metadata/ckb/encryption/private_key" { capabilities = ["read"] }
+        path "secret/data/ckb/llm/connections/*" { capabilities = ["create", "read", "update", "delete"] }
+        path "secret/metadata/ckb/llm/connections/*" { capabilities = ["read", "list", "delete"] }
+        path "secret/data/ckb/embeddings/connections/*" { capabilities = ["create", "read", "update", "delete"] }
+        path "secret/metadata/ckb/embeddings/connections/*" { capabilities = ["read", "list", "delete"] }
+        path "auth/token/lookup-self" { capabilities = ["read"] }
+
+    - name: ckb-llm-orchestration-service
+      policyName: ckb-llm-orchestration-policy
+      tokenPeriod: 1h
+      secretName: ckb-llm-approle
+      secretNamespace: REPLACE-ME-ckb-namespace
+      policy: |
+        path "secret/data/ckb/llm/connections/*" { capabilities = ["read", "list"] }
+        path "secret/metadata/ckb/llm/connections/*" { capabilities = ["read", "list"] }
+        path "secret/data/ckb/embeddings/connections/*" { capabilities = ["read", "list"] }
+        path "secret/metadata/ckb/embeddings/connections/*" { capabilities = ["read", "list"] }
+        path "secret/data/ckb/encryption/*" { capabilities = ["deny"] }
+        path "auth/token/lookup-self" { capabilities = ["read"] }
+
+    # CKB-only: the cleaning-server has no encryption-key access, just read-only
+    # access to the LLM connections it needs for cleanup jobs.
+    - name: ckb-cleaner-service
+      policyName: ckb-cleaner-policy
+      tokenPeriod: 1h
+      secretName: ckb-cleaner-approle
+      secretNamespace: REPLACE-ME-ckb-namespace
+      policy: |
+        path "secret/data/ckb/llm/connections/*" { capabilities = ["read", "list"] }
+        path "secret/metadata/ckb/llm/connections/*" { capabilities = ["read", "list"] }
+        path "secret/data/ckb/encryption/*" { capabilities = ["deny"] }
+        path "auth/token/lookup-self" { capabilities = ["read"] }
+
+    # The central bootstrap publishes this seed AppRole into the CKB namespace.
+    # The separate CKB Job uses it only to seed the cleaner connection in KV v2.
+    - name: ckb-cleaner-seed-service
+      policyName: ckb-cleaner-seed-policy
+      tokenPeriod: 20m
+      secretName: ckb-cleaner-seed-approle
+      secretNamespace: REPLACE-ME-ckb-namespace
+      policy: |
+        path "secret/data/ckb/llm/connections/azure_openai/cleaner" {
+          capabilities = ["create", "read", "update"]
+        }

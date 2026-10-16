@@ -4,6 +4,28 @@ metadata:
   name: urls-env-config
 data:
   constants.ini: |
+    TRAINING_RESPONSES_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_RESPONSES_INDEX" }}
+    TRAINING_INTENTS_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_INTENTS_INDEX" }}
+    TRAINING_RULES_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_RULES_INDEX" }}
+    TRAINING_STORIES_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_STORIES_INDEX" }}
+    TRAINING_TEST_STORIES_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_TEST_STORIES_INDEX" }}
+    TRAINING_FORMS_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_FORMS_INDEX" }}
+    TRAINING_ENTITIES_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_ENTITIES_INDEX" }}
+    TRAINING_REGEXES_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_REGEXES_INDEX" }}
+    TRAINING_EXAMPLES_ENTITIES_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_EXAMPLES_ENTITIES_INDEX" }}
+    TRAINING_SLOTS_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_SLOTS_INDEX" }}
+    TRAINING_CONFIG_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_CONFIG_INDEX" }}
+    TRAINING_NOTIFICATIONS_INDEX={{ index (.Values.global.opensearch.resources) "TRAINING_NOTIFICATIONS_INDEX" }}
+    SERVICE_SERVICES_INDEX={{ index (.Values.global.opensearch.resources) "SERVICE_SERVICES_INDEX" }}
+    SERVICE_FAULTS_INDEX={{ index (.Values.global.opensearch.resources) "SERVICE_FAULTS_INDEX" }}
+    SERVICE_RUUTERLOG_INDEX={{ index (.Values.global.opensearch.resources) "SERVICE_RUUTERLOG_INDEX" }}
+    SHARED_DOMAIN_INDEX={{ index (.Values.global.opensearch.resources) "SHARED_DOMAIN_INDEX" }}
+    COMMON_COMPANIES_INDEX={{ index (.Values.global.opensearch.resources) "COMMON_COMPANIES_INDEX" }}
+    OPENSEARCH_SCRIPT_PREFIX={{ index (.Values.global.opensearch.resources) "OPENSEARCH_SCRIPT_PREFIX" }}
+    COMMON_COMPANIES_PIPELINE={{ index (.Values.global.opensearch.resources) "COMMON_COMPANIES_PIPELINE" }}
+
+    CHATBOT_NOTIFICATION_INDEX={{ .Values.global.opensearch.indices.chatbotNotifications }}
+    CHATBOT_CHATQUEUE_INDEX={{ .Values.global.opensearch.indices.chatbotChatQueue }}
     DOMAIN={{ domain.name }}
     COOKIE_SAME_SITE={{ cookie.policy }}
     
@@ -16,7 +38,7 @@ data:
     CHATBOT_RESQL=http://component-byk-resql:8082/backoffice
     CHATBOT_DMAPPER=http://component-byk-dmapper:3000
     CHATBOT_TIM=http://component-byk-tim:8085
-    CHATBOT_OPENSEARCH=http://component-opensearch-node:9200
+    CHATBOT_OPENSEARCH={{ .Values.opensearch.url }}
     CHATBOT_NOTIFICATIONS=http://component-notification-node:4040
     CHATBOT_BOT=http://component-byk-bot:5005
     CHATBOT_PROJECT_LAYER=backoffice
@@ -44,8 +66,8 @@ data:
     S3_FERRY=http://component-byk-s3-ferry-publish:3000
     DMAPPER=http://component-byk-dmapper:3000
     CRON_MANAGER=http://component-byk-cronmanager:9010
-    OPENSEARCH=http://component-opensearch-node:9200
-    VAULT_AGENT_BACKOFFICE=http://module-byk-backoffice-gui-vault-agent:8203
+    OPENSEARCH={{ .Values.opensearch.url }}
+    VAULT_AGENT_BACKOFFICE={{ .Values.vault.agentURL }}
 
     XTR=http://component-byk-xtr:8080
     XTR_AR_USERNAME:{{ xtr.user }}

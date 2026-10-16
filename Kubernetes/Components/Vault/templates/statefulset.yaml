@@ -1,3 +1,4 @@
+{{- if .Values.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -12,6 +13,8 @@ spec:
       {{- include "buerokratt-vault.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "buerokratt-vault.selectorLabels" . | nindent 8 }}
     spec:
@@ -28,7 +31,7 @@ spec:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           args:
             - server
-            
+
           env:
             - name: VAULT_ADDR
               value: http://127.0.0.1:8200
@@ -95,7 +98,14 @@ spec:
     - metadata:
         name: data
         labels:
-          {{- include "buerokratt-vault.labels" . | nindent 10 }}
+          # Freeze the old chart label for upgrades from chart 0.2.0.
+          # It must never track the current chart version.
+          {{- with .Values.persistence.claimTemplateChartLabel }}
+          helm.sh/chart: {{ . | quote }}
+          {{- end }}
+          app.kubernetes.io/name: {{ include "buerokratt-vault.name" . }}
+          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/managed-by: {{ .Release.Service }}
       spec:
         accessModes:
           {{- toYaml .Values.persistence.accessModes | nindent 10 }}
@@ -106,3 +116,4 @@ spec:
         storageClassName: {{ . | quote }}
         {{- end }}
   {{- end }}
+{{- end }}

@@ -24,6 +24,15 @@ spec:
             - containerPort: 8080
               name: http
           env:
+            - name: TRAINING_OPENSEARCH
+              value: {{ .Values.opensearch.url | quote }}
+            {{- if .Values.opensearch.credentialsSecret }}
+            - name: OPENSEARCH_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opensearch.credentialsSecret | quote }}
+                  key: auth
+            {{- end }}
             - name: NVIDIA_VISIBLE_DEVICES
               value: all
             - name: server.port

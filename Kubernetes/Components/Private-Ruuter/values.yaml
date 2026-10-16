@@ -70,3 +70,36 @@ resources:
   limits:
     memory: "4000Mi"
     cpu: "100m"
+
+global:
+  opensearch:
+    resources:
+      TRAINING_RESPONSES_INDEX: "responses"
+      TRAINING_INTENTS_INDEX: "intents"
+      TRAINING_RULES_INDEX: "rules"
+      TRAINING_STORIES_INDEX: "stories"
+      TRAINING_TEST_STORIES_INDEX: "test-stories"
+      TRAINING_FORMS_INDEX: "forms"
+      TRAINING_ENTITIES_INDEX: "entities"
+      TRAINING_REGEXES_INDEX: "regexes"
+      TRAINING_EXAMPLES_ENTITIES_INDEX: "examples-entities"
+      TRAINING_SLOTS_INDEX: "slots"
+      TRAINING_CONFIG_INDEX: "config"
+      TRAINING_NOTIFICATIONS_INDEX: "notifications"
+      SERVICE_SERVICES_INDEX: "services"
+      SERVICE_FAULTS_INDEX: "faults"
+      SERVICE_RUUTERLOG_INDEX: "ruuterlog"
+      SHARED_DOMAIN_INDEX: "domain"
+      COMMON_COMPANIES_INDEX: "companies"
+      OPENSEARCH_SCRIPT_PREFIX: ""
+      COMMON_COMPANIES_INGEST_ENABLED: "false"
+      COMMON_COMPANIES_PIPELINE: "companies-pipeline"
+      COMMON_MUNICIPALITIES_INDEX: "municipalities"
+    indices:
+      chatbotNotifications: notifications
+      chatbotChatQueue: chatqueue
+
+opensearch:
+  url: "http://component-opensearch-node:9200" # Endpoint only; Ruuter DSL authentication is separate.
+vault:
+  agentURL: "http://module-byk-backoffice-gui-vault-agent:8203"

@@ -1,0 +1,140 @@
+{{- if .Values.enabled }}
+{{- $address := required "vault.address is required" .Values.vault.address }}
+{{- if not (or (hasPrefix "https://" $address) (and .Values.vault.allowInsecureHTTP (hasPrefix "http://" $address))) }}
+{{- fail "vault.address must use HTTPS (HTTP requires explicit development opt-in)" }}
+{{- end }}
+{{- $target := required "targetSecret is required" .Values.targetSecret }}
+{{- $credentials := required "vault.credentialsSecret is required" .Values.vault.credentialsSecret }}
+{{- if eq $target $credentials }}
+{{- fail "targetSecret must differ from vault.credentialsSecret" }}
+{{- end }}
+{{- $path := required "vault.secretPath is required" .Values.vault.secretPath }}
+{{- $name := printf "%s-os-credentials" (.Release.Name | trunc 40 | trimSuffix "-") }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $name }}
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $name }}
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: [{{ $target | quote }}]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $name }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $name }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $name }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $name }}
+data:
+  sync.py: |
+{{ .Files.Get "files/sync.py" | indent 4 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $name }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
+  template:
+    spec:
+      serviceAccountName: {{ $name }}
+      automountServiceAccountToken: true
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: sync
+          image: {{ .Values.image | quote }}
+          command: ["python3", "-B", "/app/sync.py"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: VAULT_ADDR
+              value: {{ $address | quote }}
+            - name: VAULT_APPROLE_MOUNT
+              value: {{ .Values.vault.approleMount | quote }}
+            - name: VAULT_KV_MOUNT
+              value: {{ .Values.vault.kvMount | quote }}
+            - name: VAULT_SECRET_PATH
+              value: {{ $path | quote }}
+            - name: VAULT_ALLOW_INSECURE_HTTP
+              value: {{ .Values.vault.allowInsecureHTTP | quote }}
+            {{- if .Values.vault.caSecret }}
+            - name: VAULT_CACERT
+              value: /vault-ca/ca.crt
+            {{- end }}
+            - name: TARGET_SECRET
+              value: {{ $target | quote }}
+            - name: TARGET_NAMESPACE
+              value: {{ .Release.Namespace | quote }}
+          volumeMounts:
+            - name: script
+              mountPath: /app
+              readOnly: true
+            - name: approle
+              mountPath: /approle
+              readOnly: true
+            {{- if .Values.vault.caSecret }}
+            - name: vault-ca
+              mountPath: /vault-ca
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: script
+          configMap:
+            name: {{ $name }}
+        - name: approle
+          secret:
+            secretName: {{ $credentials | quote }}
+            defaultMode: 0440
+            items:
+              - key: role_id
+                path: role_id
+              - key: secret_id
+                path: secret_id
+        {{- if .Values.vault.caSecret }}
+        - name: vault-ca
+          secret:
+            secretName: {{ .Values.vault.caSecret | quote }}
+            items:
+              - key: ca.crt
+                path: ca.crt
+        {{- end }}
+{{- end }}

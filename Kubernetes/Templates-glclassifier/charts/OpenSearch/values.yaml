@@ -1,3 +1,6 @@
+server:
+  enabled: true # Disable all bundled server resources for a central cluster.
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

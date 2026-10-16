@@ -1,3 +1,5 @@
+{{- if .Values.bootstrap.enabled }}
+{{- include "opensearch.bootstrap.validate" . }}
 
 apiVersion: batch/v1
 kind: Job
@@ -8,7 +10,8 @@ metadata:
     "helm.sh/hook-weight": "1"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-#  ttlSecondsAfterFinished: 120
+  activeDeadlineSeconds: {{ .Values.bootstrap.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.bootstrap.backoffLimit }}
   template:
     metadata:
       name: "job-{{ .Values.release_name }}-common"
@@ -16,7 +19,29 @@ spec:
       initContainers:
        - name: wait-for-opensearch
          image: curlimages/curl:7.85.0
-         command: ['sh', '-c', 'until curl -s http://component-opensearch-node:9200; do echo waiting for opensearch; sleep 5; done']
+         command: ['sh', '-c', 'until curl --connect-timeout 5 --max-time 10 --fail --silent --show-error --user "$OPENSEARCH_AUTH" "$OPENSEARCH_URL"; do echo waiting for opensearch; sleep 5; done']
+         env:
+            {{- if .Values.bootstrap.caSecret }}
+            - name: CURL_CA_BUNDLE
+              value: /opensearch-ca/ca.crt
+            {{- end }}
+            - name: OPENSEARCH_URL
+              value: {{ .Values.bootstrap.url | quote }}
+            - name: OPENSEARCH_AUTH
+              {{- if .Values.bootstrap.credentialsSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.bootstrap.credentialsSecret | quote }}
+                  key: auth
+              {{- else }}
+              value: {{ .Values.bootstrap.auth | quote }}
+              {{- end }}
+         {{- if .Values.bootstrap.caSecret }}
+         volumeMounts:
+           - name: opensearch-ca
+             mountPath: /opensearch-ca
+             readOnly: true
+         {{- end }}
        - name: opensearch-clone-common
          image: alpine/git:2.36.3
          volumeMounts:
@@ -26,7 +51,7 @@ spec:
          args:
             - "-c"
             - >
-              git clone $DSL_REPO /tmp/dsl-source && cd /tmp/dsl-source && git checkout main &&
+              git clone $DSL_REPO /tmp/dsl-source && cd /tmp/dsl-source && git checkout "$DSL_REF" &&
               echo 'downloaded' &&
               cp -r /tmp/dsl-source/$DSL_PATH/fieldMappings /root/common/ &&
               cp -r /tmp/dsl-source/$DSL_PATH/mock /root/common/ &&
@@ -36,6 +61,8 @@ spec:
               echo 'moved' &&
               ls /root/common
          env:
+            - name: DSL_REF
+              value: {{ .Values.images.opensearch.common.ref | quote }}
             - name: DSL_REPO
               value: {{ .Values.images.opensearch.common.repo }}
             - name: DSL_PATH
@@ -47,14 +74,83 @@ spec:
           args:
             - "-c"
             - >
-              apk add curl &&
+              apk add --no-cache bash curl jq &&
               cd /common &&
-              sh deploy-opensearch.sh http://component-opensearch-node:9200 admin:admin
+              bash deploy-opensearch.sh "$OPENSEARCH_URL" "$OPENSEARCH_AUTH"
+          env:
+             - name: TRAINING_RESPONSES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_RESPONSES_INDEX" | quote }}
+             - name: TRAINING_INTENTS_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_INTENTS_INDEX" | quote }}
+             - name: TRAINING_RULES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_RULES_INDEX" | quote }}
+             - name: TRAINING_STORIES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_STORIES_INDEX" | quote }}
+             - name: TRAINING_TEST_STORIES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_TEST_STORIES_INDEX" | quote }}
+             - name: TRAINING_FORMS_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_FORMS_INDEX" | quote }}
+             - name: TRAINING_ENTITIES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_ENTITIES_INDEX" | quote }}
+             - name: TRAINING_REGEXES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_REGEXES_INDEX" | quote }}
+             - name: TRAINING_EXAMPLES_ENTITIES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_EXAMPLES_ENTITIES_INDEX" | quote }}
+             - name: TRAINING_SLOTS_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_SLOTS_INDEX" | quote }}
+             - name: TRAINING_CONFIG_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_CONFIG_INDEX" | quote }}
+             - name: TRAINING_NOTIFICATIONS_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "TRAINING_NOTIFICATIONS_INDEX" | quote }}
+             - name: SERVICE_SERVICES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "SERVICE_SERVICES_INDEX" | quote }}
+             - name: SERVICE_FAULTS_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "SERVICE_FAULTS_INDEX" | quote }}
+             - name: SERVICE_RUUTERLOG_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "SERVICE_RUUTERLOG_INDEX" | quote }}
+             - name: SHARED_DOMAIN_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "SHARED_DOMAIN_INDEX" | quote }}
+             - name: COMMON_COMPANIES_INDEX
+               value: {{ index (.Values.global.opensearch.resources) "COMMON_COMPANIES_INDEX" | quote }}
+             - name: OPENSEARCH_SCRIPT_PREFIX
+               value: {{ index (.Values.global.opensearch.resources) "OPENSEARCH_SCRIPT_PREFIX" | quote }}
+             - name: COMMON_COMPANIES_PIPELINE
+               value: {{ index (.Values.global.opensearch.resources) "COMMON_COMPANIES_PIPELINE" | quote }}
+             {{- if .Values.bootstrap.caSecret }}
+             - name: CURL_CA_BUNDLE
+               value: /opensearch-ca/ca.crt
+             {{- end }}
+             - name: OPENSEARCH_URL
+               value: {{ .Values.bootstrap.url | quote }}
+             - name: OPENSEARCH_AUTH
+               {{- if .Values.bootstrap.credentialsSecret }}
+               valueFrom:
+                 secretKeyRef:
+                   name: {{ .Values.bootstrap.credentialsSecret | quote }}
+                   key: auth
+               {{- else }}
+               value: {{ .Values.bootstrap.auth | quote }}
+               {{- end }}
           volumeMounts:
+            {{- if .Values.bootstrap.caSecret }}
+            - name: opensearch-ca
+              mountPath: /opensearch-ca
+              readOnly: true
+            {{- end }}
             - name: opensearch-repos
               mountPath: /common
 
       volumes:
+        {{- if .Values.bootstrap.caSecret }}
+        - name: opensearch-ca
+          secret:
+            secretName: {{ .Values.bootstrap.caSecret | quote }}
+            items:
+              - key: ca.crt
+                path: ca.crt
+        {{- end }}
         - name: opensearch-repos
           emptyDir: {}
       restartPolicy: Never
+
+{{- end }}

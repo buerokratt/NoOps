@@ -164,6 +164,23 @@ spec:
         - name: "{{ .Values.release_name }}"
           image: "{{ .Values.images.scope.registry }}/{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
           env:
+            - name: OPENSEARCH_URL
+              value: {{ .Values.opensearch.url | quote }}
+            {{- if .Values.opensearch.credentialsSecret }}
+            - name: OPENSEARCH_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opensearch.credentialsSecret | quote }}
+                  key: auth
+            {{- end }}
+            - name: TRAINING_INTENTS_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_INTENTS_INDEX" | quote }}
+            - name: TRAINING_RULES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_RULES_INDEX" | quote }}
+            - name: TRAINING_RESPONSES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_RESPONSES_INDEX" | quote }}
+            - name: TRAINING_STORIES_INDEX
+              value: {{ index (.Values.global.opensearch.resources) "TRAINING_STORIES_INDEX" | quote }}
 #            - name: EXTENSION
 #              value: .handlebars
             - name: CONTENT_FOLDER

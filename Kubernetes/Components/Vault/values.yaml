@@ -1,9 +1,11 @@
+enabled: true # Disable this release when using a separately managed Central Vault.
+
 nameOverride: ""
 fullnameOverride: ""
 
 image:
   repository: hashicorp/vault
-  tag: "1.18"
+  tag: "1.21.3"
   pullPolicy: IfNotPresent
 
 replicaCount: 1
@@ -16,6 +18,9 @@ persistence:
   enabled: true
   size: 1Gi
   storageClass: ""
+  # Match the immutable claim template of existing releases. For a release
+  # first installed from phase 6/7 without this label, explicitly set "".
+  claimTemplateChartLabel: "buerokratt-vault-0.2.0"
   accessModes:
     - ReadWriteOnce
 
@@ -48,30 +53,49 @@ vaultConfig: |
 bootstrap:
   enabled: true
 
-  # The Secret is created in the same namespace as this Helm release.
-  # Mount this Secret into the Vault Agent deployment.
-  credentialsSecretName: backoffice-vault-approle
-
   kvMount: secret
   approleMount: approle
-  roleName: backoffice-service
-  policyName: backoffice-admin-policy
-  tokenPeriod: 1h
 
-  # This policy covers paths used by PR #2088, including:
-  # secret/data/backoffice/<domain>/azure-agentic
-  policy: |
-    path "secret/data/backoffice/*" {
-      capabilities = ["create", "read", "update", "delete"]
-    }
+  # One entry per AppRole this Vault should provision.
+  #
+  #   name            - AppRole name
+  #   policyName      - ACL policy name bound to the role
+  #   tokenPeriod     - periodic token period (renewed forever, no max_ttl)
+  #   secretName      - Kubernetes Secret holding role_id/secret_id
+  #   secretNamespace - namespace that Secret is written to. Leave empty for the
+  #                     release namespace. Set it to the CONSUMING workload's
+  #                     namespace when Vault runs somewhere else - a Secret cannot
+  #                     be mounted across namespaces.
+  #   policy          - the ACL policy body (HCL)
+  #
+  # The default below reproduces the single-role backoffice setup exactly, so
+  # upgrading an existing release with default values is a no-op.
+  roles:
+    - name: backoffice-service
+      policyName: backoffice-admin-policy
+      tokenPeriod: 1h
+      secretName: backoffice-vault-approle
+      secretNamespace: ""
+      # This policy covers paths used by PR #2088, including:
+      # secret/data/backoffice/<domain>/azure-agentic
+      policy: |
+        path "secret/data/backoffice/*" {
+          capabilities = ["create", "read", "update", "delete"]
+        }
 
-    path "secret/metadata/backoffice/*" {
-      capabilities = ["read", "list", "delete"]
-    }
+        path "secret/metadata/backoffice/*" {
+          capabilities = ["read", "list", "delete"]
+        }
+
+  # Modules that need an RSA-2048 keypair generated at
+  # secret/<module>/encryption/{public_key,private_key}.
+  # Generated only when absent - never regenerated, since that would silently
+  # break decryption of anything already encrypted with the old public key.
+  modules: []
 
   image:
     repository: hashicorp/vault
-    tag: "1.18"
+    tag: "1.21.3"
     pullPolicy: IfNotPresent
 
   resources: {}

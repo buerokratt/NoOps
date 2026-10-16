@@ -1,3 +1,4 @@
+{{- if .Values.enabled }}
 {{- if .Values.networkPolicy.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -17,4 +18,5 @@ spec:
       ports:
         - protocol: TCP
           port: 8200
+{{- end }}
 {{- end }}

@@ -18,6 +18,10 @@ spec:
           ports:
             - containerPort: 4040
           env:
+            - name: CHATBOT_NOTIFICATION_INDEX
+              value: {{ .Values.global.opensearch.indices.chatbotNotifications | quote }}
+            - name: CHATBOT_CHATQUEUE_INDEX
+              value: {{ .Values.global.opensearch.indices.chatbotChatQueue | quote }}
             - name: OPENSEARCH_PROTOCOL
               value: "{{ .Values.env.OPENSEARCH_PROTOCOL }}"
             - name: OPENSEARCH_HOST
@@ -25,9 +29,23 @@ spec:
             - name: OPENSEARCH_PORT
               value: "{{ .Values.env.OPENSEARCH_PORT }}"
             - name: OPENSEARCH_USERNAME
+              {{- if .Values.opensearch.credentialsSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opensearch.credentialsSecret | quote }}
+                  key: username
+              {{- else }}
               value: "{{ .Values.env.OPENSEARCH_USERNAME }}"
+              {{- end }}
             - name: OPENSEARCH_PASSWORD
+              {{- if .Values.opensearch.credentialsSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opensearch.credentialsSecret | quote }}
+                  key: password
+              {{- else }}
               value: "{{ .Values.env.OPENSEARCH_PASSWORD }}"
+              {{- end }}
             - name: PORT
               value: "{{ .Values.env.PORT }}"
             - name: REFRESH_INTERVAL

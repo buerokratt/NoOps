@@ -1,3 +1,4 @@
+{{- if .Values.server.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -73,4 +74,5 @@ spec:
       volumes:
         - name: opensearch-{{ namespace }}-data
           persistentVolumeClaim:
-            claimName: opensearch-{{ namespace }}-data  
+            claimName: opensearch-{{ namespace }}-data
+{{- end }}

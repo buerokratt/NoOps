@@ -1,0 +1,6 @@
+apiVersion: v2
+name: opensearch-credentials
+description: Deliver Central Vault credentials to an existing OpenSearch Secret
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

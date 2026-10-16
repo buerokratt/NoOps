@@ -1,0 +1,25 @@
+# Install once per workload identity and namespace. No Vault server is deployed.
+enabled: false
+image: python:3.13-alpine # Pin a reviewed digest before deployment.
+imagePullSecrets: []
+vault:
+  address: ""
+  approleMount: approle
+  credentialsSecret: "" # Existing Secret with role_id and secret_id keys.
+  kvMount: secret
+  secretPath: "" # Relative to KV mount, e.g. opensearch/installation-a/bootstrap.
+  caSecret: "" # Optional Secret with ca.crt; otherwise use system trust.
+  allowInsecureHTTP: false # Explicit development-only option for legacy Vault.
+targetSecret: "" # Existing Opaque Secret in this release namespace.
+# Target must have annotation opensearch.buerokratt.ee/vault-path matching
+# <vault.kvMount>/<vault.secretPath>. This chart never creates/deletes Secrets.
+activeDeadlineSeconds: 120
+backoffLimit: 1
+ttlSecondsAfterFinished: 86400
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi

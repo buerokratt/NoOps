@@ -1,3 +1,4 @@
+{{- if .Values.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -22,136 +23,283 @@ data:
 
     KV_MOUNT={{ .Values.bootstrap.kvMount | quote }}
     APPROLE_MOUNT={{ .Values.bootstrap.approleMount | quote }}
-    ROLE_NAME={{ .Values.bootstrap.roleName | quote }}
-    POLICY_NAME={{ .Values.bootstrap.policyName | quote }}
-    TOKEN_PERIOD={{ .Values.bootstrap.tokenPeriod | quote }}
-    CREDS_SECRET={{ .Values.bootstrap.credentialsSecretName | quote }}
 
-    apk add --no-cache curl jq >/dev/null
+    # Fallback for roles that do not pin an explicit secretNamespace.
+    DEFAULT_NAMESPACE="$(cat "$NAMESPACE_FILE")"
+
+    apk add --no-cache curl jq openssl >/dev/null
 
     wait_for_vault() {
       i=0
-      until curl -fsS "$VAULT_ADDR/v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200" >/dev/null; do
+      until curl --connect-timeout 5 --max-time 30 -fsS "$VAULT_ADDR/v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200" >/dev/null; do
         i=$((i + 1))
         [ "$i" -lt 90 ] || { echo "Vault did not become reachable" >&2; exit 1; }
         sleep 2
       done
     }
 
+    # Keep response bodies out of failure messages; API errors are never absence.
+    api_request() (
+      set -eu
+      method="$1"; url="$2"; allow_missing="$3"; shift 3
+      umask 077
+      response_file="$(mktemp)"
+      trap 'rm -f "$response_file"' EXIT
+      status="$(curl --connect-timeout 5 --max-time 30 --silent --show-error \
+        -X "$method" -o "$response_file" -w '%{http_code}' "$@" "$url")" || exit 1
+      case "$status" in
+        2??)
+          if [ "$allow_missing" = true ] && [ ! -s "$response_file" ]; then
+            echo "Secret read returned an empty success response" >&2
+            exit 1
+          fi
+          cat "$response_file" ;;
+        404) if [ "$allow_missing" = true ]; then exit 0; fi
+             echo "API request failed: HTTP $status" >&2; exit 1 ;;
+        *) echo "API request failed: HTTP $status" >&2; exit 1 ;;
+      esac
+    )
+
     vault_get() {
-      curl -fsS -H "X-Vault-Token: $ROOT_TOKEN" "$VAULT_ADDR$1"
+      api_request GET "$VAULT_ADDR$1" false -H "X-Vault-Token: $ROOT_TOKEN"
     }
 
     vault_post() {
-      path="$1"
-      body="$2"
-      curl -fsS -X POST -H "X-Vault-Token: $ROOT_TOKEN" \
-        -H 'Content-Type: application/json' -d "$body" "$VAULT_ADDR$path"
+      api_request POST "$VAULT_ADDR$1" false -H "X-Vault-Token: $ROOT_TOKEN" \
+        -H 'Content-Type: application/json' -d "$2"
     }
 
     k8s_request() {
-      method="$1"
-      path="$2"
-      body="${3:-}"
+      local method path body token
+      method="$1"; path="$2"; body="${3:-}"
       token="$(cat "$SA_TOKEN_FILE")"
-      if [ -n "$body" ]; then
-        curl -fsS --cacert "$SA_CA_FILE" -X "$method" \
-          -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
-          -d "$body" "$K8S_API$path"
-      else
-        curl -fsS --cacert "$SA_CA_FILE" -X "$method" \
-          -H "Authorization: Bearer $token" "$K8S_API$path"
-      fi
+      api_request "$method" "$K8S_API$path" false --cacert "$SA_CA_FILE" \
+        -H "Authorization: Bearer $token" -H 'Content-Type: application/json' -d "$body"
     }
+
+    k8s_get_secret() {
+      local token
+      token="$(cat "$SA_TOKEN_FILE")"
+      api_request GET "$K8S_API$1" true --cacert "$SA_CA_FILE" -H "Authorization: Bearer $token"
+    }
+
+    initialize_if_needed() (
+      set -eu
+      response="$(api_request GET "$VAULT_ADDR/v1/sys/init" false)"
+      initialized="$(printf '%s' "$response" | jq -er '.initialized | if type == "boolean" then tostring else error("Invalid initialization status") end')"
+      [ "$initialized" = false ] || exit 0
+      # Existing recovery material must never be replaced automatically.
+      if [ -e "$INIT_FILE" ]; then
+        echo "Initialization file already exists; refusing to replace it" >&2
+        exit 1
+      fi
+      umask 077
+      init_dir="$(mktemp -d "$DATA_DIR/.init.XXXXXX")"
+      trap 'rm -rf "$init_dir"' EXIT
+      api_request POST "$VAULT_ADDR/v1/sys/init" false -H 'Content-Type: application/json' \
+        -d '{"secret_shares":{{ .Values.bootstrap.init.secretShares }},"secret_threshold":{{ .Values.bootstrap.init.secretThreshold }}}' > "$init_dir/init.json"
+      jq -e '(.root_token | type == "string" and length > 0) and
+        (.keys_base64 | type == "array" and length > 0) and
+        all(.keys_base64[]; type == "string" and length > 0)' "$init_dir/init.json" >/dev/null
+      # Publish a complete protected file without overwriting concurrent output.
+      ln "$init_dir/init.json" "$INIT_FILE"
+    )
 
     wait_for_vault
 
-    INITIALIZED="$(curl -fsS "$VAULT_ADDR/v1/sys/init" | jq -r '.initialized')"
-    if [ "$INITIALIZED" != "true" ]; then
-      echo "Initializing Vault"
-      curl -fsS -X POST -H 'Content-Type: application/json' \
-        -d '{"secret_shares":{{ .Values.bootstrap.init.secretShares }},"secret_threshold":{{ .Values.bootstrap.init.secretThreshold }}}' \
-        "$VAULT_ADDR/v1/sys/init" > "$INIT_FILE"
-      chmod 600 "$INIT_FILE"
-    fi
+    initialize_if_needed
 
     if [ ! -s "$INIT_FILE" ]; then
       echo "Vault is initialized but $INIT_FILE is unavailable; cannot automatically unseal" >&2
       exit 1
     fi
 
-    ROOT_TOKEN="$(jq -r '.root_token' "$INIT_FILE")"
-    UNSEAL_KEY="$(jq -r '.keys_base64[0]' "$INIT_FILE")"
+    ROOT_TOKEN="$(jq -er '.root_token | select(type == "string" and length > 0)' "$INIT_FILE")"
+    UNSEAL_KEY="$(jq -er '.keys_base64[0] | select(type == "string" and length > 0)' "$INIT_FILE")"
 
     unseal_if_needed() {
-      sealed="$(curl -fsS "$VAULT_ADDR/v1/sys/seal-status" | jq -r '.sealed')"
+      local response sealed
+      response="$(api_request GET "$VAULT_ADDR/v1/sys/seal-status" false)" || return 1
+      sealed="$(printf '%s' "$response" | jq -er '.sealed | if type == "boolean" then tostring else error("Invalid seal status") end')" || return 1
       if [ "$sealed" = "true" ]; then
         echo "Unsealing Vault"
-        curl -fsS -X POST -H 'Content-Type: application/json' \
+        curl --connect-timeout 5 --max-time 30 -fsS -X POST -H 'Content-Type: application/json' \
           -d "{\"key\":\"$UNSEAL_KEY\"}" "$VAULT_ADDR/v1/sys/unseal" >/dev/null
       fi
     }
 
     unseal_if_needed
 
-    curl -sS -X POST -H "X-Vault-Token: $ROOT_TOKEN" -H 'Content-Type: application/json' \
-      -d '{"type":"kv","options":{"version":"2"}}' \
-      "$VAULT_ADDR/v1/sys/mounts/$KV_MOUNT" >/dev/null || true
+    # Enable only confirmed missing mounts; validate existing engine types.
+    mounts="$(vault_get /v1/sys/mounts)"
+    mount_type="$(printf '%s' "$mounts" | jq -er --arg mount "$KV_MOUNT/" 'if has($mount) then .[$mount].type else "absent" end')"
+    if [ "$mount_type" = absent ]; then
+      vault_post "/v1/sys/mounts/$KV_MOUNT" '{"type":"kv","options":{"version":"2"}}' >/dev/null
+    else
+      printf '%s' "$mounts" | jq -e --arg mount "$KV_MOUNT/" '.[$mount].type == "kv" and .[$mount].options.version == "2"' >/dev/null
+    fi
+    mounts="$(vault_get /v1/sys/auth)"
+    mount_type="$(printf '%s' "$mounts" | jq -er --arg mount "$APPROLE_MOUNT/" 'if has($mount) then .[$mount].type else "absent" end')"
+    case "$mount_type" in
+      absent) vault_post "/v1/sys/auth/$APPROLE_MOUNT" '{"type":"approle"}' >/dev/null ;;
+      approle) : ;;
+      *) echo "Unexpected AppRole mount type" >&2; exit 1 ;;
+    esac
 
-    curl -sS -X POST -H "X-Vault-Token: $ROOT_TOKEN" -H 'Content-Type: application/json' \
-      -d '{"type":"approle"}' "$VAULT_ADDR/v1/sys/auth/$APPROLE_MOUNT" >/dev/null || true
+    # ---------------------------------------------------------------------------
+    # Role provisioning
+    # ---------------------------------------------------------------------------
 
+    # Create/update one policy + AppRole, then publish its credentials into a
+    # Kubernetes Secret in the CONSUMING workload's namespace (a Secret cannot be
+    # mounted across namespaces, so it must live where the agent pod runs).
+    # Usage: provision_role <role> <policy_name> <period> <secret_name> <secret_ns> <policy_json>
+    provision_role() {
+      # Declared bare and assigned separately on purpose: `local x="$(cmd)"`
+      # makes local's own exit status win, hiding a failing command from
+      # `set -e`. Splitting the two keeps the original error behaviour.
+      local role policy_name period secret_name secret_ns policy_json
+      local role_json role_id secret_path existing existing_role_id existing_secret_id
+      local secret_id login_body secret_json response validation_token
+
+      role="$1"; policy_name="$2"; period="$3"
+      secret_name="$4"; secret_ns="$5"; policy_json="$6"
+
+      [ -n "$secret_ns" ] || secret_ns="$DEFAULT_NAMESPACE"
+
+      vault_post "/v1/sys/policies/acl/$policy_name" "$policy_json" >/dev/null
+
+      role_json="$(jq -n --arg policy "$policy_name" --arg period "$period" \
+        '{token_policies:[$policy],token_period:$period,token_num_uses:0,secret_id_ttl:"0",secret_id_num_uses:0,bind_secret_id:true}')"
+      vault_post "/v1/auth/$APPROLE_MOUNT/role/$role" "$role_json" >/dev/null
+
+      response="$(vault_get "/v1/auth/$APPROLE_MOUNT/role/$role/role-id")"
+      role_id="$(printf '%s' "$response" | jq -er '.data.role_id | select(type == "string" and length > 0)')"
+
+      secret_path="/api/v1/namespaces/$secret_ns/secrets/$secret_name"
+      existing="$(k8s_get_secret "$secret_path")"
+      if [ -n "$existing" ]; then
+        existing_role_id="$(printf '%s' "$existing" | jq -er '.data.role_id | select(type == "string" and length > 0)')"
+        existing_role_id="$(printf '%s' "$existing_role_id" | base64 -d)"
+        existing_secret_id="$(printf '%s' "$existing" | jq -er '.data.secret_id | select(type == "string" and length > 0)')"
+        existing_secret_id="$(printf '%s' "$existing_secret_id" | base64 -d)"
+        if [ "$existing_role_id" != "$role_id" ] || [ -z "$existing_secret_id" ]; then
+          echo "$role: existing credentials require explicit repair or rotation" >&2
+          return 1
+        fi
+        login_body="$(jq -n --arg role "$role_id" --arg secret "$existing_secret_id" '{role_id:$role,secret_id:$secret}')"
+        response="$(api_request POST "$VAULT_ADDR/v1/auth/$APPROLE_MOUNT/login" false \
+          -H 'Content-Type: application/json' -d "$login_body")"
+        validation_token="$(printf '%s' "$response" | jq -er '.auth.client_token | select(type == "string" and length > 0)')"
+        api_request POST "$VAULT_ADDR/v1/auth/token/revoke-self" false \
+          -H "X-Vault-Token: $validation_token" >/dev/null
+        echo "$role: reusing valid AppRole credentials"
+        return 0
+      fi
+
+      echo "$role: minting AppRole secret_id for missing Secret"
+      response="$(vault_post "/v1/auth/$APPROLE_MOUNT/role/$role/secret-id" '{}')"
+      secret_id="$(printf '%s' "$response" | jq -er '.data.secret_id | select(type == "string" and length > 0)')"
+
+      secret_json="$(jq -n \
+        --arg name "$secret_name" --arg namespace "$secret_ns" \
+        --arg role_id "$(printf '%s' "$role_id" | base64 | tr -d '\n')" \
+        --arg secret_id "$(printf '%s' "$secret_id" | base64 | tr -d '\n')" \
+        '{apiVersion:"v1",kind:"Secret",metadata:{name:$name,namespace:$namespace},type:"Opaque",data:{role_id:$role_id,secret_id:$secret_id}}')"
+
+      k8s_request POST "/api/v1/namespaces/$secret_ns/secrets" "$secret_json" >/dev/null
+
+      echo "$role: credentials stored in Secret $secret_ns/$secret_name"
+    }
+
+    # Return a state only for a successful read or a confirmed 404. Transport,
+    # authorization and server errors must never trigger key generation.
+    read_rsa_secret() {
+      local status
+      status="$(curl --connect-timeout 5 --max-time 30 -sS -o "$2" -w '%{http_code}' \
+        -H "X-Vault-Token: $ROOT_TOKEN" \
+        "$VAULT_ADDR/v1/$KV_MOUNT/data/$1")" || return 1
+      case "$status" in
+        200)
+          jq -e '.data.data.key | type == "string" and length > 0' "$2" >/dev/null || return 1
+          echo present ;;
+        404) echo absent ;;
+        *) echo "ERROR: reading $1 returned HTTP $status; refusing to generate keys" >&2; return 1 ;;
+      esac
+    }
+
+    # CAS=0 also protects against concurrent bootstraps and soft-deleted keys.
+    create_rsa_secret() {
+      curl --connect-timeout 5 --max-time 30 -fsS -X POST -H "X-Vault-Token: $ROOT_TOKEN" \
+        -H 'Content-Type: application/json' --data-binary "@$2" \
+        "$VAULT_ADDR/v1/$KV_MOUNT/data/$1" >/dev/null
+    }
+
+    # Use a subshell so every exit cleans up private material. Store the private
+    # key first: if publishing the public key fails, the next run can derive it
+    # from the persisted private key without ever rotating the pair.
+    ensure_rsa_keypair() (
+      set -eu
+      module="$1"
+      umask 077
+      key_dir="$(mktemp -d)"
+      trap 'rm -rf "$key_dir"' EXIT
+      trap 'exit 1' HUP INT TERM
+
+      public_state="$(read_rsa_secret "$module/encryption/public_key" "$key_dir/public.json")"
+      private_state="$(read_rsa_secret "$module/encryption/private_key" "$key_dir/private.json")"
+
+      if [ "$private_state" = absent ]; then
+        if [ "$public_state" = present ]; then
+          echo "ERROR: $module has a public key but no private key; restore the matching private key from backup" >&2
+          exit 1
+        fi
+        openssl genrsa -out "$key_dir/private.pem" 2048 2>/dev/null
+        jq -n --rawfile key "$key_dir/private.pem" \
+          --arg created_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          --arg key_id "rsa-keypair-$(date +%s)" \
+          '{options:{cas:0},data:{key:$key,algorithm:"RSA-OAEP",key_size:2048,key_id:$key_id,created_at:$created_at}}' \
+          > "$key_dir/write-private.json"
+        create_rsa_secret "$module/encryption/private_key" "$key_dir/write-private.json"
+        # Keep the same response shape as read_rsa_secret for recovery below.
+        jq '{data:{data:.data}}' "$key_dir/write-private.json" > "$key_dir/private.json"
+      else
+        jq -r '.data.data.key' "$key_dir/private.json" > "$key_dir/private.pem"
+      fi
+
+      openssl rsa -in "$key_dir/private.pem" -pubout -out "$key_dir/derived-public.pem" 2>/dev/null
+      if [ "$public_state" = present ]; then
+        jq -r '.data.data.key' "$key_dir/public.json" > "$key_dir/public.pem"
+        openssl rsa -pubin -in "$key_dir/public.pem" -pubout -out "$key_dir/normalized-public.pem" 2>/dev/null
+        if ! cmp -s "$key_dir/derived-public.pem" "$key_dir/normalized-public.pem"; then
+          echo "ERROR: $module RSA keys do not match; restore the matching pair from backup" >&2
+          exit 1
+        fi
+        echo "$module: RSA keypair already exists - skipping"
+      else
+        jq --rawfile key "$key_dir/derived-public.pem" \
+          '{options:{cas:0},data:(.data.data + {key:$key})}' \
+          "$key_dir/private.json" > "$key_dir/write-public.json"
+        create_rsa_secret "$module/encryption/public_key" "$key_dir/write-public.json"
+        echo "$module: published public key for persisted private key"
+      fi
+    )
+{{ range .Values.bootstrap.roles }}
     POLICY_JSON="$(cat <<'POLICY' | jq -Rs '{policy:.}'
-{{ .Values.bootstrap.policy | indent 4 }}
+{{ .policy | indent 4 }}
     POLICY
     )"
-    vault_post "/v1/sys/policies/acl/$POLICY_NAME" "$POLICY_JSON" >/dev/null
+    provision_role {{ .name | quote }} {{ .policyName | quote }} {{ .tokenPeriod | default "1h" | quote }} {{ .secretName | quote }} {{ .secretNamespace | default "" | quote }} "$POLICY_JSON"
+{{- end }}
+{{ range .Values.bootstrap.modules }}
+    ensure_rsa_keypair {{ . | quote }}
+{{- end }}
 
-    ROLE_JSON="$(jq -n --arg policy "$POLICY_NAME" --arg period "$TOKEN_PERIOD" \
-      '{token_policies:[$policy],token_period:$period,token_num_uses:0,secret_id_ttl:"0",secret_id_num_uses:0,bind_secret_id:true}')"
-    vault_post "/v1/auth/$APPROLE_MOUNT/role/$ROLE_NAME" "$ROLE_JSON" >/dev/null
-
-    ROLE_ID="$(vault_get "/v1/auth/$APPROLE_MOUNT/role/$ROLE_NAME/role-id" | jq -r '.data.role_id')"
-
-    NAMESPACE="$(cat "$NAMESPACE_FILE")"
-    SECRET_PATH="/api/v1/namespaces/$NAMESPACE/secrets/$CREDS_SECRET"
-    EXISTING_SECRET="$(k8s_request GET "$SECRET_PATH" 2>/dev/null || true)"
-    EXISTING_ROLE_ID="$(printf '%s' "$EXISTING_SECRET" | jq -r '.data.role_id // empty' | base64 -d 2>/dev/null || true)"
-    EXISTING_SECRET_ID="$(printf '%s' "$EXISTING_SECRET" | jq -r '.data.secret_id // empty' | base64 -d 2>/dev/null || true)"
-
-    SECRET_ID=""
-    if [ "$EXISTING_ROLE_ID" = "$ROLE_ID" ] && [ -n "$EXISTING_SECRET_ID" ]; then
-      LOGIN_BODY="$(jq -n --arg role "$ROLE_ID" --arg secret "$EXISTING_SECRET_ID" '{role_id:$role,secret_id:$secret}')"
-      if curl -fsS -X POST -H 'Content-Type: application/json' -d "$LOGIN_BODY" \
-        "$VAULT_ADDR/v1/auth/$APPROLE_MOUNT/login" | jq -e '.auth.client_token' >/dev/null 2>&1; then
-        SECRET_ID="$EXISTING_SECRET_ID"
-        echo "Reusing valid AppRole secret_id"
-      fi
-    fi
-
-    if [ -z "$SECRET_ID" ]; then
-      echo "Minting AppRole secret_id"
-      SECRET_ID="$(vault_post "/v1/auth/$APPROLE_MOUNT/role/$ROLE_NAME/secret-id" '{}' | jq -r '.data.secret_id')"
-    fi
-
-    SECRET_JSON="$(jq -n \
-      --arg name "$CREDS_SECRET" --arg namespace "$NAMESPACE" \
-      --arg role_id "$(printf '%s' "$ROLE_ID" | base64 | tr -d '\n')" \
-      --arg secret_id "$(printf '%s' "$SECRET_ID" | base64 | tr -d '\n')" \
-      '{apiVersion:"v1",kind:"Secret",metadata:{name:$name,namespace:$namespace},type:"Opaque",data:{role_id:$role_id,secret_id:$secret_id}}')"
-
-    if [ -n "$EXISTING_SECRET" ]; then
-      RESOURCE_VERSION="$(printf '%s' "$EXISTING_SECRET" | jq -r '.metadata.resourceVersion')"
-      SECRET_JSON="$(printf '%s' "$SECRET_JSON" | jq --arg rv "$RESOURCE_VERSION" '.metadata.resourceVersion=$rv')"
-      k8s_request PUT "$SECRET_PATH" "$SECRET_JSON" >/dev/null
-    else
-      k8s_request POST "/api/v1/namespaces/$NAMESPACE/secrets" "$SECRET_JSON" >/dev/null
-    fi
-
-    echo "Vault bootstrap complete; credentials stored in Secret $NAMESPACE/$CREDS_SECRET"
+    echo "Vault bootstrap complete"
 
     while true; do
       sleep 10
       unseal_if_needed || true
     done
+{{- end }}
 {{- end }}

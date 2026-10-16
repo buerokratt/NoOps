@@ -114,7 +114,7 @@ spec:
             - name: application.cors.allowedOrigins
               value: "{{ .Values.env.APPLICATION_CORS_ALLOWED_ORIGINS }}"
             - name: application.openSearchConfiguration.url
-              value: "{{ .Values.env.APPLICATION_OPENSEARCH_CONFIGURATION_URL }}"
+              value: {{ .Values.opensearch.url | quote }}
             - name: application.openSearchConfiguration.index
               value: "ruuterlog"              
             - name: application.httpCodesAllowList

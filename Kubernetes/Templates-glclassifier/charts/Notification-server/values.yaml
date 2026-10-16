@@ -49,3 +49,6 @@ istio:
 
 istio:
   enabled: false
+
+opensearch:
+  credentialsSecret: "" # Existing Secret with username/password, populated before deployment.

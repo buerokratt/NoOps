@@ -36,7 +36,8 @@ images:
       repo: https://github.com/buerokratt/Training-Module.git
       path: DSL/OpenSearch
     common:
-      repo: https://github.com/varmoh/Common-Services
+      ref: main
+      repo: https://github.com/buerokratt/Common-Services
       path: DSL/OpenSearch
 
 env:
@@ -47,3 +48,39 @@ env:
   OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
   DISABLE_INSTALL_DEMO_CONFIG: "true"
   DISABLE_SECURITY_PLUGIN: "true"
+
+bootstrap:
+  enabled: false
+  # Enable for central clusters: HTTPS and a credential Secret become mandatory.
+  requireSecureConnection: false
+  caSecret: "" # Optional Secret with ca.crt for a private CA.
+  activeDeadlineSeconds: 600
+  backoffLimit: 1
+  url: "http://component-opensearch-node:9200"
+  credentialsSecret: ""
+  auth: "admin:admin"
+
+global:
+  opensearch:
+    resources:
+      TRAINING_RESPONSES_INDEX: "responses"
+      TRAINING_INTENTS_INDEX: "intents"
+      TRAINING_RULES_INDEX: "rules"
+      TRAINING_STORIES_INDEX: "stories"
+      TRAINING_TEST_STORIES_INDEX: "test-stories"
+      TRAINING_FORMS_INDEX: "forms"
+      TRAINING_ENTITIES_INDEX: "entities"
+      TRAINING_REGEXES_INDEX: "regexes"
+      TRAINING_EXAMPLES_ENTITIES_INDEX: "examples-entities"
+      TRAINING_SLOTS_INDEX: "slots"
+      TRAINING_CONFIG_INDEX: "config"
+      TRAINING_NOTIFICATIONS_INDEX: "notifications"
+      SERVICE_SERVICES_INDEX: "services"
+      SERVICE_FAULTS_INDEX: "faults"
+      SERVICE_RUUTERLOG_INDEX: "ruuterlog"
+      SHARED_DOMAIN_INDEX: "domain"
+      COMMON_COMPANIES_INDEX: "companies"
+      OPENSEARCH_SCRIPT_PREFIX: ""
+      COMMON_COMPANIES_INGEST_ENABLED: "false"
+      COMMON_COMPANIES_PIPELINE: "companies-pipeline"
+      COMMON_MUNICIPALITIES_INDEX: "municipalities"
