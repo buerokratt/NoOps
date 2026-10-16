@@ -109,3 +109,7 @@ data:
     AZURE_SEARCH_API_KEY={{ AZURE_SEARCH_API_KEY }}
 
     CHAT_HISTORY_EXPORT_RESPONSE_SIZE_LIMIT_KB=20480
+        
+    SERVICE_VAULT_AGENT=http://vault-agent-service-module:8205
+    
+    SERVICE_VAULT_SECRETS_PATH=service-module/prod
