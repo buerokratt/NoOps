@@ -19,6 +19,7 @@ jobs:
         run: |
           python3 ci/release.py validate
           python3 ci/release.py materialize
+      - run: python3 -m pip install PyYAML==6.0.2
       - name: Check deployment contracts without a cluster
         working-directory: deploy/central
         run: |
@@ -27,4 +28,5 @@ jobs:
           python3 tests/operator-vault-contract.py
           python3 tests/port-forward-contract.py
           python3 tests/generation-contract.py
+          python3 tests/widget-repair-contract.py
           python3 tests/synthetic-knowledge-contract.py

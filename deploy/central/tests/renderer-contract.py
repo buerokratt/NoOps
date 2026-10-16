@@ -1,4 +1,4 @@
-import importlib.util,json,subprocess,tempfile,hashlib,base64
+import importlib.util,json,subprocess,tempfile,hashlib,base64,yaml
 from pathlib import Path
 root=Path(__file__).resolve().parents[1];spec=importlib.util.spec_from_file_location('renderer',root/'deployment/render.py');r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
@@ -79,6 +79,8 @@ with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
  fixed,_,_=r.render({**local,'widgetRuntimeFixes':True,'widgetLLMEnabled':True,'llmGenerationEnabled':True,'llmProviderCIDRs':['8.8.8.8/32']},images,state)
  fix=next(o for o in fixed['items'] if o['kind']=='ConfigMap' and o['metadata']['name']=='widget-runtime-fixes')
  assert len(fix['data'])==6
+ for key,value in fix['data'].items():
+  if not key.startswith('resql-'):yaml.safe_load(value)
  cfg=next(o for o in fixed['items'] if o['kind']=='ConfigMap' and o['metadata']['name']=='backend-config')['data']['constants.ini']
  assert 'CHATBOT_BOT=http://central-byk-test-llm:8100' in cfg
  fixed_backend=next(o for o in fixed['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-backend')['spec']['template']['spec']

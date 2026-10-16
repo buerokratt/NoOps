@@ -179,3 +179,24 @@ only that new test chat before restoring the previous bot setting. Preserve all
 other chats, accounts, availability, schemas, engine Pods and Vault state. Do not
 reindex the already accepted RUN3 fixture, call a production connection, broaden
 provider egress or claim CKB ingestion acceptance.
+
+
+## Recovery from RUN3 private Ruuter startup failure
+
+The original10cc widget-domain override had an unquoted inline object and failed
+YAML parsing. Quoting alone still fails Ruuter's brace-delimited expression parser.
+The corrected fallback constructs explicit empty grants with Object.fromEntries.
+Real pinned Ruuter startup and empty-domain HTTP200 have been verified locally.
+Buerokratt CI parses all changed YAML; renderer CI parses all widget overrides.
+
+For an existing10cc install, run repair-widget-yaml.py with --package pointing to
+that exact verified package, original --bindings, --kubeconfig and --state-dir.
+Plan first, repeat with --execute. The helper checks cluster identity, protected
+baseline, exact known override/owner/live contracts and server admission. It backs
+up installation.json, patches only the one ConfigMap data value/creation hash,
+synchronizes that same original state, and deterministically replaces only the
+backend Pod so the subPath mount refreshes. It changes no images, DBs, schema Jobs,
+credentials, engine/Vault resources or bot activity. Retry uses the same restart
+annotation and does not force another rollout. Reconnect frontend port-forward if
+the original upgrade stopped before that step, then run health and RUN4 prompt.
+Do not apply the full installer or replay the synthetic fixture to repair startup.
