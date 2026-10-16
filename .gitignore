@@ -4,3 +4,11 @@
 rit-tst-1.yaml
 /Kubernetes/__pycache__
 /Kubernetes/deploy-kube.sh
+# Central build inputs/output and private operator state
+/.central-build/
+/.central-release/
+/installation-state/
+/operator-bindings.json
+/published-images.json
+/rit-byrokratt.yaml
+*.kubeconfig

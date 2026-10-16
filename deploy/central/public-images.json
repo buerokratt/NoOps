@@ -1,0 +1,10 @@
+{
+  "opensearch": "opensearchproject/opensearch@sha256:e321cb03c643874c42240458a618db56bc1e4fc143b10c41bec653542bc6851b",
+  "postgres": "postgres@sha256:3162a6ead070474b27289f09eac4c865e75f93847a2d7098f718ee5a721637c4",
+  "redis": "redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+  "qdrant": "qdrant/qdrant@sha256:d122138f76868edba68d36cb0833139c1d1761f00f09e48e61f8314196e6a4c6",
+  "python": "python@sha256:2d9aefe2fef018a7eb2c13064c89c71929800fd2e5dccdbf52ea5da5bb8d929a",
+  "vault": "hashicorp/vault@sha256:5f244d447c6f90107149c9565da5ffedf847cec673ba0062a82fc3dd83c89e65",
+  "nginx": "nginx@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236",
+  "liquibase": "liquibase/liquibase@sha256:dc2e5237941efb92cc6ae0cffd40a5b6f476559d5ed20fd7ca711df4895997a3"
+}

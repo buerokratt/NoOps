@@ -1,0 +1,66 @@
+{
+  "mappings": {
+    "properties": {
+      "month": {
+        "type": "text"
+      },
+      "county": {
+        "type": "text"
+      },
+      "local_government": {
+        "type": "text"
+      },
+      "field_of_activity": {
+        "type": "text"
+      },
+      "average_salary_in_field_of_activity_municipality": {
+        "type": "text"
+      },
+      "average_salary_estonia": {
+        "type": "text"
+      },
+      "average_salary_in_field_of_activity": {
+        "type": "text"
+      },
+      "legal_entities_count_municipality": {
+        "type": "text"
+      },
+      "companies_count_municipality": {
+        "type": "text"
+      },
+      "companies_count_estonia": {
+        "type": "text"
+      },
+      "companies_count_in_field_of_activity": {
+        "type": "text"
+      },
+      "companies_count_with_employees_municipality": {
+        "type": "text"
+      },
+      "companies_count_with_employees_estonia": {
+        "type": "text"
+      },
+      "companies_count_with_employees_in_field_of_activity_estonia": {
+        "type": "text"
+      },
+      "municipality_legal_entities_kmd_count": {
+        "type": "text"
+      },
+      "total_turnover": {
+        "type": "text"
+      },
+      "export": {
+        "type": "text"
+      },
+      "vat_payable": {
+        "type": "text"
+      },
+      "municipal_employers_tsd_count": {
+        "type": "text"
+      },
+      "labor_taxes_declared_by_municipal_employer": {
+        "type": "text"
+      }
+    }
+  }
+}

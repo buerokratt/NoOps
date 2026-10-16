@@ -1,0 +1,27 @@
+name: Central validate
+on:
+  push:
+    branches: [feat/central-opensearch-migration]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate source locks and materialize reviewed sources
+        working-directory: deploy/central
+        run: |
+          python3 ci/release.py validate
+          python3 ci/release.py materialize
+      - name: Check deployment contracts without a cluster
+        working-directory: deploy/central
+        run: |
+          python3 tests/renderer-contract.py
+          python3 tests/install-contract.py
+          python3 tests/operator-vault-contract.py

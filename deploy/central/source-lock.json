@@ -1,0 +1,84 @@
+{
+  "repositories": {
+    "Buerokratt-Chatbot": {
+      "repository": "buerokratt/Buerokratt-Chatbot",
+      "commit": "4985a25725bf20ed23124faa5cdf5cbf6da5bf6f",
+      "components": [
+        "backoffice",
+        "legacy"
+      ]
+    },
+    "Chat-Widget": {
+      "repository": "buerokratt/Chat-Widget",
+      "commit": "eb93fc5c17050c3cf0c9df193cbe7d2018ea5190",
+      "components": [
+        "widget"
+      ]
+    },
+    "Service-Module": {
+      "repository": "buerokratt/Service-Module",
+      "commit": "312911c4fb0264ffac6fd01e00439dd7a80b65cc",
+      "components": [
+        "service-gui",
+        "servicePipeline"
+      ]
+    },
+    "LLM-Module": {
+      "repository": "buerokratt/LLM-Module",
+      "commit": "047fb723673200f0b2fac4aaca8b37b1221f83e8",
+      "components": [
+        "llm-gui",
+        "llmNotification",
+        "llm"
+      ]
+    },
+    "Common-Knowledge": {
+      "repository": "buerokratt/Common-Knowledge",
+      "commit": "6da4baf45eb999c72d5d29c9dc4c3878b4a175f7",
+      "components": [
+        "ckb-gui",
+        "knowledge"
+      ]
+    },
+    "Common-Services": {
+      "repository": "buerokratt/Common-Services",
+      "commit": "5e680ca3623d4ab5a57cdcd38f60122136acab0a",
+      "components": []
+    },
+    "CronManager": {
+      "repository": "buerokratt/CronManager",
+      "commit": "ea3307bee3410bb2178848bb8339ca486f3a145f",
+      "components": [
+        "cron"
+      ]
+    },
+    "DataMapper": {
+      "repository": "buerokratt/DataMapper",
+      "commit": "e348b975b4e30d10f9c56d3b152fc629763cf7e7",
+      "components": [
+        "datamapper"
+      ]
+    },
+    "Ruuter": {
+      "repository": "buerokratt/Ruuter",
+      "commit": "89c6678d266138406a2ab704bf15e2f08b279f46",
+      "components": [
+        "ruuter"
+      ]
+    },
+    "Resql": {
+      "repository": "buerokratt/Resql",
+      "commit": "3d769527379c58805d424b7829a1d1a9480f3b96",
+      "components": [
+        "resql"
+      ]
+    },
+    "TIM": {
+      "repository": "buerokratt/TIM",
+      "commit": "4073bb591467f60cf2e1fa862b8cf39c69aa0987",
+      "components": [
+        "tim"
+      ]
+    }
+  }
+}

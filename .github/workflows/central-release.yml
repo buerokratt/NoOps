@@ -1,0 +1,50 @@
+name: Central release
+on:
+  push:
+    branches: [feat/central-opensearch-migration]
+    paths: ["deploy/central/**", ".github/workflows/central-release.yml"]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish GHCR images and create operator archive (never deploy)
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: central-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.event_name == 'push' || inputs.publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Materialize exact source commits
+        working-directory: deploy/central
+        run: |
+          python3 ci/release.py validate
+          python3 ci/release.py materialize
+          python3 tests/renderer-contract.py
+          python3 tests/install-contract.py
+          python3 tests/operator-vault-contract.py
+      - name: Log in to GHCR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ACTOR: ${{ github.actor }}
+        run: printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GH_ACTOR" --password-stdin
+      - name: Build digest-bound operator delivery
+        working-directory: deploy/central
+        run: python3 ci/release.py release
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: central-operator-${{ github.sha }}
+          path: |
+            deploy/central/.central-release/*.tar.gz
+            deploy/central/.central-release/*.sha256
+            deploy/central/.central-release/published-images.json
+          if-no-files-found: error

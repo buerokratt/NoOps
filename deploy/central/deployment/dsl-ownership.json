@@ -1,0 +1,51 @@
+[
+  {
+    "module": "Buerokratt-Chatbot",
+    "source": "sources/Buerokratt-Chatbot/DSL/Ruuter.private",
+    "destination": "deployment/dsl/chatbot-private",
+    "guardsPreserved": true,
+    "SQLSchemaRewrites": false
+  },
+  {
+    "module": "Buerokratt-Chatbot",
+    "source": "sources/Buerokratt-Chatbot/DSL/Ruuter.public",
+    "destination": "deployment/dsl/chatbot-public",
+    "guardsPreserved": true,
+    "SQLSchemaRewrites": false
+  },
+  {
+    "module": "Service-Module",
+    "source": "sources/Service-Module/DSL/Ruuter",
+    "destination": "deployment/dsl/service",
+    "guardsPreserved": true,
+    "SQLSchemaRewrites": false
+  },
+  {
+    "module": "Common-Knowledge",
+    "source": "sources/Common-Knowledge/DSL/Ruuter",
+    "destination": "deployment/dsl/ckb",
+    "guardsPreserved": true,
+    "SQLSchemaRewrites": false
+  },
+  {
+    "module": "Common-Knowledge",
+    "source": "sources/Common-Knowledge/DSL/Ruuter.internal",
+    "destination": "deployment/dsl/ckb-internal",
+    "guardsPreserved": true,
+    "SQLSchemaRewrites": false
+  },
+  {
+    "module": "LLM-Module",
+    "source": "sources/LLM-Module/DSL/Ruuter.private",
+    "destination": "deployment/dsl/llm-private",
+    "guardsPreserved": true,
+    "SQLSchemaRewrites": false
+  },
+  {
+    "module": "LLM-Module",
+    "source": "sources/LLM-Module/DSL/Ruuter.public",
+    "destination": "deployment/dsl/llm-public",
+    "guardsPreserved": true,
+    "SQLSchemaRewrites": false
+  }
+]

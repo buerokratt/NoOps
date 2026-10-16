@@ -1,0 +1,40 @@
+{
+  "prefix": "central-byk-test/llm-module",
+  "kvMount": "secret",
+  "approleMount": "approle",
+  "localRoles": [
+    {
+      "name": "fresh-test-gui",
+      "policyName": "fresh-test-gui",
+      "tokenPeriod": "2m",
+      "secretName": "fresh-test-gui-approle",
+      "secretNamespace": "fresh-central-byk-local",
+      "policy": "path \"secret/data/central-byk-test/llm-module/encryption/public_key\" { capabilities = [\"read\"] }\npath \"secret/data/central-byk-test/llm-module/encryption/private_key\" { capabilities = [\"deny\"] }\npath \"secret/data/central-byk-test/llm-module/llm/connections/*\" { capabilities = [\"deny\"] }\npath \"secret/metadata/central-byk-test/llm-module/llm/connections/*\" { capabilities = [\"deny\"] }\npath \"secret/data/central-byk-test/llm-module/embeddings/connections/*\" { capabilities = [\"deny\"] }\npath \"secret/metadata/central-byk-test/llm-module/embeddings/connections/*\" { capabilities = [\"deny\"] }\npath \"auth/token/lookup-self\" { capabilities = [\"read\"] }\npath \"auth/token/renew-self\" { capabilities = [\"update\"] }\npath \"auth/token/revoke-self\" { capabilities = [\"update\"] }\n"
+    },
+    {
+      "name": "fresh-test-cron",
+      "policyName": "fresh-test-cron",
+      "tokenPeriod": "2m",
+      "secretName": "fresh-test-cron-approle",
+      "secretNamespace": "fresh-central-byk-local",
+      "policy": "path \"secret/data/central-byk-test/llm-module/encryption/public_key\" { capabilities = [\"read\"] }\npath \"secret/data/central-byk-test/llm-module/encryption/private_key\" { capabilities = [\"read\"] }\npath \"secret/data/central-byk-test/llm-module/llm/connections/*\" { capabilities = [\"create\", \"read\", \"update\", \"delete\"] }\npath \"secret/metadata/central-byk-test/llm-module/llm/connections/*\" { capabilities = [\"read\", \"list\", \"delete\"] }\npath \"secret/data/central-byk-test/llm-module/embeddings/connections/*\" { capabilities = [\"create\", \"read\", \"update\", \"delete\"] }\npath \"secret/metadata/central-byk-test/llm-module/embeddings/connections/*\" { capabilities = [\"read\", \"list\", \"delete\"] }\npath \"auth/token/lookup-self\" { capabilities = [\"read\"] }\npath \"auth/token/renew-self\" { capabilities = [\"update\"] }\npath \"auth/token/revoke-self\" { capabilities = [\"update\"] }\n"
+    },
+    {
+      "name": "fresh-test-llm",
+      "policyName": "fresh-test-llm",
+      "tokenPeriod": "2m",
+      "secretName": "fresh-test-llm-approle",
+      "secretNamespace": "fresh-central-byk-local",
+      "policy": "path \"secret/data/central-byk-test/llm-module/encryption/private_key\" { capabilities = [\"deny\"] }\npath \"secret/data/central-byk-test/llm-module/llm/connections/*\" { capabilities = [\"read\"] }\npath \"secret/metadata/central-byk-test/llm-module/llm/connections/*\" { capabilities = [\"read\", \"list\"] }\npath \"secret/data/central-byk-test/llm-module/embeddings/connections/*\" { capabilities = [\"read\"] }\npath \"secret/metadata/central-byk-test/llm-module/embeddings/connections/*\" { capabilities = [\"read\", \"list\"] }\npath \"secret/data/central-byk-test/llm-module/langfuse/config\" { capabilities = [\"read\"] }\npath \"auth/token/lookup-self\" { capabilities = [\"read\"] }\npath \"auth/token/renew-self\" { capabilities = [\"update\"] }\npath \"auth/token/revoke-self\" { capabilities = [\"update\"] }\n"
+    },
+    {
+      "name": "fresh-test-os-knowledge-delivery",
+      "policyName": "fresh-test-os-knowledge-delivery",
+      "tokenPeriod": "2m",
+      "secretName": "fresh-test-os-knowledge-approle",
+      "secretNamespace": "fresh-central-byk-local",
+      "policy": "path \"secret/data/opensearch/central-byk-test/knowledge\" { capabilities = [\"read\"] }\npath \"auth/token/revoke-self\" { capabilities = [\"update\"] }\n"
+    }
+  ],
+  "remoteRequiresUniqueNames": true
+}
