@@ -27,3 +27,4 @@ jobs:
           python3 tests/operator-vault-contract.py
           python3 tests/port-forward-contract.py
           python3 tests/generation-contract.py
+          python3 tests/synthetic-knowledge-contract.py

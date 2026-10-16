@@ -58,8 +58,9 @@ with tempfile.TemporaryDirectory() as tmp:
  before={p.name:p.read_bytes() for p in state.iterdir() if p.is_file()}
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv):u.main()
  assert not calls and before=={p.name:p.read_bytes() for p in state.iterdir() if p.is_file()}
+ argv+=['--frontend-image','ghcr.io/buerokratt/noops/central-frontend@sha256:'+'3'*64]
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv+['--execute']):u.main()
- assert len(calls)==4 and (state/'before-generation-upgrade/installation.json').read_bytes()==before['installation.json']
+ assert len(calls)==5 and (state/'before-runtime-upgrade-222222222222/installation.json').read_bytes()==before['installation.json']
  assert json.loads(binding.read_text())['llmGenerationEnabled'] is True
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv+['--execute']):u.main()
  live[('Deployment',r.OWNER+'-llm')]['spec']['template']['spec']['containers'][0]['image']='foreign:drift'
@@ -74,4 +75,4 @@ with tempfile.TemporaryDirectory() as tmp:
   try:health.llm_health_check({'llmGenerationEnabled':True},bad)
   except health.Stop:pass
   else:raise AssertionError('unhealthy generating service accepted')
- print(json.dumps({'status':'PASS','planReadOnly':True,'fourScopedTargetsOnly':True,'existingStateBackupExact':True,'temporaryOperatorChangesAccepted':True,'retryPass':True,'foreignDriftRejected':True,'clusterCalls':0}))
+ print(json.dumps({'status':'PASS','planReadOnly':True,'fiveScopedTargetsOnly':True,'existingStateBackupExact':True,'temporaryOperatorChangesAccepted':True,'retryPass':True,'foreignDriftRejected':True,'clusterCalls':0}))

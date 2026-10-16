@@ -17,7 +17,7 @@
     },
     "Service-Module": {
       "repository": "buerokratt/Service-Module",
-      "commit": "5c660e8cba29c4c1d234f974dae48e9ad23f7ec4",
+      "commit": "ada519af0a147f2eab57057ceaf97a92f69a6350",
       "components": [
         "service-gui",
         "servicePipeline"
@@ -25,7 +25,7 @@
     },
     "LLM-Module": {
       "repository": "buerokratt/LLM-Module",
-      "commit": "12088b7190962289dae9de972695bf8a165ab10e",
+      "commit": "36756ce926ac91a0acea23e3e8a8f30402c828bd",
       "components": [
         "llm-gui",
         "llmNotification",
@@ -34,7 +34,7 @@
     },
     "Common-Knowledge": {
       "repository": "buerokratt/Common-Knowledge",
-      "commit": "33ebd89c38299f8fad3ab1943b6ac2d31feb7803",
+      "commit": "f3117d404243acca3af7f6d366e62d67457605b1",
       "components": [
         "ckb-gui",
         "knowledge"

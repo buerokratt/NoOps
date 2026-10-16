@@ -119,3 +119,27 @@ and state. It requires enabled generation, connected Redis and verified embeddin
 startup. Provider output still needs an LLM GUI test: use the existing testing
 connection, verify completed output/SSE, then reload and check single storage.
 Keep chatbot bot routing disabled pending separate routing correction/acceptance.
+
+## Run-2 retrieval/GUI acceptance repair
+
+The upgrade helper also accepts `--frontend-image` with this package's immutable
+frontend reference. It changes only the frontend image alongside the scoped
+LLM upgrade and saves a version-specific state backup. Existing frontend APIs,
+credentials, data and backend Pod remain untouched. Reconnect the frontend
+port-forward after its Pod changes.
+
+The LLM image owns `/app/logs` as UID1000; real EmbeddingManager write smoke runs
+without network access in CI. CKB account/auth requests use backoffice while
+agency/data calls use CKB; Service GUI URLs no longer duplicate the private prefix.
+
+For isolated RAG acceptance, `deployment/synthetic-knowledge.py --bindings ...
+--kubeconfig ... --state-dir ...` plans a single fictional library reference.
+Repeat with `--execute` to embed it through the existing testing connection and
+index one fixed point in task Qdrant. It refuses foreign points/nonempty knowledge
+or incompatible vector schema. Repeat runs reuse the exact fixture with no extra
+provider call. It never imports real data or runs the unfinished CKB S3/pipeline.
+Afterward ask: "According to the Central Test municipal library reference, what
+three services does the library provide?" Verify a generated reply and real
+inference_results storage, not the known fixture inference view endpoint.
+The Test LLM screen has no history restoration feature; reload restoration there
+is unsupported. Service/CKB browser checks still require operator acceptance.
