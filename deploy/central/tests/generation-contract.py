@@ -36,7 +36,7 @@ with tempfile.TemporaryDirectory() as tmp:
   def __init__(self,*args):self.state=state
   def identity(self):pass
   def preservation(self,first=False):pass
-  def wait(self,o):assert o['kind'] in ['Deployment','Service','NetworkPolicy']
+  def wait(self,o):assert o['kind'] in ['Deployment','Service','NetworkPolicy','ConfigMap']
   def kube(self,ns,*args,payload=None,**kw):
    assert ns==r.OWNER
    if args[0]=='get':return copy.deepcopy(live.get((args[1],args[2])))
@@ -49,6 +49,7 @@ with tempfile.TemporaryDirectory() as tmp:
      for key in keys[:-1]:parent=parent[key]
      if operation['op']=='test':assert parent[keys[-1]]==operation['value']
      else:parent[keys[-1]]=operation['value']
+   out['metadata'].setdefault('resourceVersion','1')
    if not dry:calls.append(identity(out));live[identity(out)]=out
    return out
  fake=type('Module',(),{'Installer':FakeInstaller,'OWNER':m.OWNER,'LABEL':m.LABEL,'HASH':m.HASH})
@@ -58,9 +59,9 @@ with tempfile.TemporaryDirectory() as tmp:
  before={p.name:p.read_bytes() for p in state.iterdir() if p.is_file()}
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv):u.main()
  assert not calls and before=={p.name:p.read_bytes() for p in state.iterdir() if p.is_file()}
- argv+=['--frontend-image','ghcr.io/buerokratt/noops/central-frontend@sha256:'+'3'*64]
+ argv+=['--frontend-image','ghcr.io/buerokratt/noops/central-frontend@sha256:'+'3'*64,'--widget-datamapper','ghcr.io/buerokratt/datamapper/central-datamapper@sha256:'+'4'*64,'--enable-widget-llm']
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv+['--execute']):u.main()
- assert len(calls)==5 and (state/'before-runtime-upgrade-222222222222/installation.json').read_bytes()==before['installation.json']
+ assert len(calls)==8 and (state/'before-runtime-upgrade-222222222222/installation.json').read_bytes()==before['installation.json']
  assert json.loads(binding.read_text())['llmGenerationEnabled'] is True
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv+['--execute']):u.main()
  live[('Deployment',r.OWNER+'-llm')]['spec']['template']['spec']['containers'][0]['image']='foreign:drift'
@@ -75,4 +76,4 @@ with tempfile.TemporaryDirectory() as tmp:
   try:health.llm_health_check({'llmGenerationEnabled':True},bad)
   except health.Stop:pass
   else:raise AssertionError('unhealthy generating service accepted')
- print(json.dumps({'status':'PASS','planReadOnly':True,'fiveScopedTargetsOnly':True,'existingStateBackupExact':True,'temporaryOperatorChangesAccepted':True,'retryPass':True,'foreignDriftRejected':True,'clusterCalls':0}))
+ print(json.dumps({'status':'PASS','planReadOnly':True,'eightScopedTargetsOnly':True,'existingStateBackupExact':True,'temporaryOperatorChangesAccepted':True,'retryPass':True,'foreignDriftRejected':True,'clusterCalls':0}))

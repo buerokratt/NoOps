@@ -2,7 +2,7 @@
   "repositories": {
     "Buerokratt-Chatbot": {
       "repository": "buerokratt/Buerokratt-Chatbot",
-      "commit": "e7b18958dcf718df5787dcb40a4e921dbbe99eb8",
+      "commit": "e8e42ca4332f1a6c2e1d901fc5b5440d3973fa53",
       "components": [
         "backoffice",
         "legacy"
@@ -10,7 +10,7 @@
     },
     "Chat-Widget": {
       "repository": "buerokratt/Chat-Widget",
-      "commit": "7b8f7109191b41e592bef6d5190aed9dea7a8c00",
+      "commit": "84b155e6cf69b5823a17487dc903dd1f4ff3f211",
       "components": [
         "widget"
       ]
@@ -25,7 +25,7 @@
     },
     "LLM-Module": {
       "repository": "buerokratt/LLM-Module",
-      "commit": "36756ce926ac91a0acea23e3e8a8f30402c828bd",
+      "commit": "0fcc98a5c384f6f394ef4a339b6ea0f706982d76",
       "components": [
         "llm-gui",
         "llmNotification",
@@ -54,7 +54,7 @@
     },
     "DataMapper": {
       "repository": "buerokratt/DataMapper",
-      "commit": "e99a8110340f87da8a7ed5fb2a516bfb44916382",
+      "commit": "56c72d21a305bedd33efd2858f66d100eb2459c5",
       "components": [
         "datamapper"
       ]

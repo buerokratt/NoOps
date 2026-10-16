@@ -143,3 +143,39 @@ three services does the library provide?" Verify a generated reply and real
 inference_results storage, not the known fixture inference view endpoint.
 The Test LLM screen has no history restoration feature; reload restoration there
 is unsupported. Service/CKB browser checks still require operator acceptance.
+
+
+## Run-3 widget repair and testing-only LLM adapter
+
+After the successful RUN3 LLM GUI acceptance, upgrade the existing installation
+with `generation-upgrade.py --frontend-image <this-release-frontend>
+--widget-datamapper <this-release-datamapper> --enable-widget-llm` in addition to
+its usual binding, images, kubeconfig, original state, LLM image and provider CIDR
+arguments. Run the plan first, then repeat with `--execute`. Preserve original
+private state and image overrides. Do not run the full installer or reseed the DSL
+PVC. The helper permits only the existing scoped generation targets plus frontend,
+backend Deployment, backend-config and one widget-runtime-fixes ConfigMap. It
+replaces the backend Pod to activate interpreter caches, preserving its existing
+DB/key PVCs, init-free runtime, credentials and all schema Jobs.
+
+The six read-only file overrides fix greeting SQL's cross-database Service table
+reference, greeting Service lookup, missing account-domain selections, bot request
+timeout and TIM's null session duration. DataMapper grants no domains for missing
+selections. Widget session duration defaults to 30 minutes before serialization.
+The internal bot constant points to this task's LLM Service. The adapter is opt-in,
+uses only the existing testing connection and consumes the guarded orchestration
+stream through EOF so inference storage completes. It returns one final Rasa-format
+reply through the existing widget/chat notification path; widget token streaming
+is not implemented. Missing testing connection fails closed, without production
+fallback. Existing generation-disabled bindings omit these new resources/env vars.
+
+The upgrade does not enable `is_bot_active` in the application database. For the
+controlled browser test, first retain its exact previous value and verify there
+are no existing bot-assigned active chats that switching it off could transfer.
+Temporarily enable the bot through the standard backoffice control, create one
+new marked widget chat, ask the synthetic library question once, verify its final
+reply and single inference/chat-message storage, then reload and reconnect. End
+only that new test chat before restoring the previous bot setting. Preserve all
+other chats, accounts, availability, schemas, engine Pods and Vault state. Do not
+reindex the already accepted RUN3 fixture, call a production connection, broaden
+provider egress or claim CKB ingestion acceptance.

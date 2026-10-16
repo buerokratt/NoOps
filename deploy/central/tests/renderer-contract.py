@@ -76,6 +76,17 @@ with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
   try:r.render({**local,**bad},images,state)
   except r.Stop:pass
   else:raise AssertionError('unsafe generation binding accepted')
+ fixed,_,_=r.render({**local,'widgetRuntimeFixes':True,'widgetLLMEnabled':True,'llmGenerationEnabled':True,'llmProviderCIDRs':['8.8.8.8/32']},images,state)
+ fix=next(o for o in fixed['items'] if o['kind']=='ConfigMap' and o['metadata']['name']=='widget-runtime-fixes')
+ assert len(fix['data'])==6
+ cfg=next(o for o in fixed['items'] if o['kind']=='ConfigMap' and o['metadata']['name']=='backend-config')['data']['constants.ini']
+ assert 'CHATBOT_BOT=http://central-byk-test-llm:8100' in cfg
+ fixed_backend=next(o for o in fixed['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-backend')['spec']['template']['spec']
+ assert sum(m['name']=='widget-fixes' and m['readOnly'] for co in fixed_backend['containers'] for m in co['volumeMounts'])==6
+ for invalid in [{'widgetLLMEnabled':True},{'widgetRuntimeFixes':'true'},{'widgetRuntimeFixes':True,'widgetLLMEnabled':'true'}]:
+  try:r.render({**local,**invalid},images,state)
+  except r.Stop:pass
+  else:raise AssertionError('unsafe widget configuration accepted')
  assert list(stages)==['namespace','storage','provision','schema','vaultDelivery','engineBootstrap','applications','ingress']
  backend=next(o for o in manifest['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-backend')['spec']['template']['spec']
  for co in backend['containers']:

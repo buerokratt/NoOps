@@ -28,5 +28,7 @@
   "imagePullConfigFile": null,
   "frontendAccessMode": "ingress",
   "llmGenerationEnabled": false,
-  "llmProviderCIDRs": []
+  "llmProviderCIDRs": [],
+  "widgetRuntimeFixes": true,
+  "widgetLLMEnabled": false
 }
