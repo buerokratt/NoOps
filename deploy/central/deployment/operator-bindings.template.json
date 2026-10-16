@@ -26,5 +26,7 @@
   "imagePullSecret": null,
   "serviceOpenAPIAllowedOrigins": [],
   "imagePullConfigFile": null,
-  "frontendAccessMode": "ingress"
+  "frontendAccessMode": "ingress",
+  "llmGenerationEnabled": false,
+  "llmProviderCIDRs": []
 }

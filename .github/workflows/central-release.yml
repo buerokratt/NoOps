@@ -33,6 +33,7 @@ jobs:
           python3 tests/install-contract.py
           python3 tests/operator-vault-contract.py
           python3 tests/port-forward-contract.py
+          python3 tests/generation-contract.py
       - name: Log in to GHCR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -16,7 +16,7 @@ def main():
  run('install.py','--bindings',a.bindings,'--kubeconfig',a.kubeconfig,'--state-dir',str(state),'--manifest',str(manifest),'--vault-token-file',a.vault_token_file,'--execute')
  pending=a.skip_browser_origin_health or json.loads(Path(a.bindings).read_text()).get('frontendAccessMode','ingress')=='port-forward'
  if not pending:run('health.py','--bindings',a.bindings,'--kubeconfig',a.kubeconfig,'--state-dir',str(state))
- print(json.dumps({'status':'INSTALLED_HEALTH_ACCEPTED' if not pending else 'INSTALLED_ORIGIN_ACCEPTANCE_PENDING','context':'rit-byrokratt','namespace':'central-byk-test','generationEnabled':False,'preservedExistingVault':True}))
+ print(json.dumps({'status':'INSTALLED_HEALTH_ACCEPTED' if not pending else 'INSTALLED_ORIGIN_ACCEPTANCE_PENDING','context':'rit-byrokratt','namespace':'central-byk-test','generationEnabled':json.loads(Path(a.bindings).read_text()).get('llmGenerationEnabled',False),'preservedExistingVault':True}))
 if __name__=='__main__':
  try:main()
  except (ValueError,subprocess.CalledProcessError) as e:print('Stopped:',type(e).__name__);raise SystemExit(1)

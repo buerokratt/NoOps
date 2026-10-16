@@ -25,7 +25,7 @@
     },
     "LLM-Module": {
       "repository": "buerokratt/LLM-Module",
-      "commit": "d0471201d16a216ea37c99af52f2b44a1760c863",
+      "commit": "12088b7190962289dae9de972695bf8a165ab10e",
       "components": [
         "llm-gui",
         "llmNotification",

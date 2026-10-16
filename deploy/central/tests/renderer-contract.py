@@ -60,6 +60,21 @@ with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
   try:r.render({**local,'frontendAccessMode':mode},images,state)
   except r.Stop:pass
   else:raise AssertionError('invalid access mode accepted')
+ # Generation is explicit and permits only bound public provider host IPs.
+ enabled,_,_=r.render({**local,'llmGenerationEnabled':True,'llmProviderCIDRs':['8.8.8.8/32']},images,state)
+ provider=next(o for o in enabled['items'] if o['kind']=='NetworkPolicy' and o['metadata']['name']=='llm-provider-egress')
+ assert provider['spec']['podSelector']=={'matchLabels':{'app':'central-byk-test-llm'}}
+ assert provider['spec']['egress']==[{'to':[{'ipBlock':{'cidr':'8.8.8.8/32'}}],'ports':[{'protocol':'TCP','port':443}]}]
+ for name in ['llm','notification']:
+  pod=next(o for o in enabled['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-'+name)['spec']['template']['spec']
+  co=next(c for c in pod['containers'] if c['name']==name)
+  assert next(e['value'] for e in co['env'] if e['name']=='LLM_GENERATION_ENABLED')=='true'
+ backend_service=next(o for o in enabled['items'] if o['kind']=='Service' and o['metadata']['name']=='central-byk-test-backend')
+ assert {'name':'resql','port':8082,'targetPort':8082} in backend_service['spec']['ports']
+ for bad in [{'llmGenerationEnabled':'true'},{'llmGenerationEnabled':True},{'llmProviderCIDRs':['0.0.0.0/0']},{'llmProviderCIDRs':['10.0.0.1/32']},{'llmProviderCIDRs':['8.8.8.0/24']},{'llmProviderCIDRs':'8.8.8.8/32'}]:
+  try:r.render({**local,**bad},images,state)
+  except r.Stop:pass
+  else:raise AssertionError('unsafe generation binding accepted')
  assert list(stages)==['namespace','storage','provision','schema','vaultDelivery','engineBootstrap','applications','ingress']
  backend=next(o for o in manifest['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-backend')['spec']['template']['spec']
  for co in backend['containers']:

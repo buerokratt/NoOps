@@ -82,3 +82,40 @@ for login, cookies and browser tabs. No DNS record, external ingress or inbound
 firewall opening is required. Kubernetes API access and internal Pod networking
 are still required. This mode has offline contract coverage; actual cluster CNI,
 port-forward and browser acceptance are operator checks after deployment.
+
+## Opt-in model generation
+
+`llmGenerationEnabled` defaults to false. Enable it with boolean true and
+`llmProviderCIDRs`: current public provider host addresses as /32 or /128 CIDRs.
+Only the LLM Pod receives HTTPS egress to these destinations. Address changes need
+binding/policy updates. Runtime model downloads stay offline; the producer image
+bundles verified guardrails embeddings. Credentials remain in Resql/Vault. The
+backend Service exposes Resql8082 for connection lookups. Bot activation stays
+false; this change does not activate the external chatbot bot route.
+
+For an existing installation, use the NEW package's `deployment/generation-upgrade.py`
+with the ORIGINAL state, bindings and image overrides:
+
+```sh
+python3 deployment/generation-upgrade.py \
+  --bindings "$BYK_PRIVATE/bindings.json" \
+  --images "$BYK_PRIVATE/images-resql-fixed.json" \
+  --kubeconfig "$BYK_KUBECONFIG" --state-dir "$BYK_PRIVATE/state" \
+  --llm-image "IMMUTABLE_NEW_LLM_IMAGE_FROM_THIS_PACKAGE" \
+  --provider-cidr "CURRENT_PROVIDER_IP/32"
+# Repeat with --execute after GENERATION_UPGRADE_PLAN_PASS.
+```
+
+Plan checks identity, preservation and server admission without mutation. Execute
+changes only task LLM/notification Deployments, backend Service and provider policy.
+It accepts the exact temporary generation/port/policy repairs from testing, rejects
+unrelated drift, backs up old binding/image/manifest/stages and synchronizes that
+same private state. No schema/provisioning Jobs, DB/PVCs or Vault credentials change.
+If a patch fails, rerun using the same state to finish. Do not initialize new state
+or rerun the new create-only installer against the old manifest without this upgrade.
+
+Then run this package's `deployment/health.py` with the updated original bindings
+and state. It requires enabled generation, connected Redis and verified embedding
+startup. Provider output still needs an LLM GUI test: use the existing testing
+connection, verify completed output/SSE, then reload and check single storage.
+Keep chatbot bot routing disabled pending separate routing correction/acceptance.

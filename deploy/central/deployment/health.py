@@ -4,6 +4,12 @@ import argparse,json,ssl,subprocess,urllib.request,urllib.error,http.cookies
 from pathlib import Path
 from urllib.parse import urlsplit
 class Stop(Exception):pass
+def llm_health_check(binding,llm):
+ enabled=binding.get('llmGenerationEnabled',False)
+ if type(enabled) is not bool:raise Stop('invalid_llm_generation_enabled')
+ if llm.get('generation_enabled') is not enabled or llm.get('redis_session_store')!='connected':raise Stop('LLM_generation_or_storage_health_failed')
+ if enabled and llm.get('guardrails_embedding_loaded') is not True:raise Stop('LLM_offline_guardrails_embedding_not_loaded')
+ return 'LLM_generation_enabled_offline_embeddings_Redis_connected' if enabled else 'LLM_generation_disabled_Redis_connected'
 def main():
  p=argparse.ArgumentParser();p.add_argument('--bindings',required=True);p.add_argument('--kubeconfig',required=True);p.add_argument('--state-dir',required=True);p.add_argument('--loopback-origin');a=p.parse_args();b=json.loads(Path(a.bindings).read_text());state=Path(a.state_dir)
  if b.get('context')!='rit-byrokratt' or b.get('applicationNamespace')!='central-byk-test':raise Stop('target_scope_mismatch')
@@ -57,8 +63,7 @@ def main():
  req('/api/private/services/slots');checks.append('real_Service_inline_template_route')
  # Exec only explicit task deployments; these endpoints neither generate nor write data.
  llm=kube('exec','deployment/central-byk-test-llm','-c','llm','--','/app/.venv/bin/python3','-c',"import json,urllib.request;print(json.dumps(json.load(urllib.request.urlopen('http://127.0.0.1:8100/health'))))")
- if llm.get('generation_enabled') is not False or llm.get('redis_session_store')!='connected':raise Stop('LLM_non_generating_storage_health_failed')
- checks.append('LLM_generation_disabled_Redis_connected')
+ checks.append(llm_health_check(b,llm))
  ckb=kube('exec','deployment/central-byk-test-knowledge','-c','knowledge','--','node','-e',"fetch('http://127.0.0.1:3000/health').then(async r=>{if(!r.ok)process.exit(1);console.log(JSON.stringify(await r.json()))}).catch(()=>process.exit(1))")
  if ckb.get('status')!='healthy':raise Stop('knowledge_engine_health_failed')
  checks.append('real_knowledge_scoped_engine_health')
