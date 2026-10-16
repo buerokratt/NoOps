@@ -49,6 +49,7 @@ with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
  assert net['spec']['ingress']==[{'from':[{'podSelector':{}}]}]
  assert api_policy(forwarded)['spec']['egress']==policy['spec']['egress']
  backend_local=next(o for o in forwarded['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-backend')['spec']['template']['spec']
+ assert [co['name'] for co in backend_local['containers']]==['ruuter-public','ruuter-private','resql','tim','mapper','cron','adapter-chatbot','adapter-common','adapter-service','adapter-logging','service-pipeline','vault-agent-cron']
  for co in backend_local['containers']:
   if co['name'].startswith('ruuter-'):
    assert next(e['value'] for e in co['env'] if e['name']=='application.cors.allowedOrigins')=='http://localhost:18080'
