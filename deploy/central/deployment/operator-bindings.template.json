@@ -30,5 +30,6 @@
   "llmGenerationEnabled": false,
   "llmProviderCIDRs": [],
   "widgetRuntimeFixes": true,
-  "widgetLLMEnabled": false
+  "widgetLLMEnabled": false,
+  "llmGeneralKnowledgeEnabled": false
 }

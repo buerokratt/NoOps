@@ -102,3 +102,16 @@ with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
   else:raise AssertionError('unsafe binding accepted')
  sql=next(o for o in manifest['items'] if o['kind']=='Secret' and o['metadata']['name']=='database-provision')['data']['provision.sql'];assert '\n\\gexec' in base64.b64decode(sql).decode()
  print(json.dumps({'status':'PASS','resources':len(seen),'repeatRenderExact':True,'nonrootAndDigestBindings':True,'storageKeysSchemaNotRuntimeInitializers':True,'scopeAndUnboundNegatives':4,'apiEgressEndpoint6443':True,'legacy443Compatible':True,'apiPortNegatives':8,'otherResourcesUnchanged':True,'portForwardResources':98,'noFrontendTLSOrIngress':True,'portForwardOriginNegatives':7}))
+
+with tempfile.TemporaryDirectory() as td:
+ state=Path(td);state.chmod(0o700)
+ # Reuse the validated fixture binding/images, but only opt in to general answers.
+ enabled={**local,'llmGenerationEnabled':True,'llmProviderCIDRs':['8.8.8.8/32'],'llmGeneralKnowledgeEnabled':True}
+ manifest,_,_=r.render(enabled,images,state)
+ llm=next(o for o in manifest['items'] if o['kind']=='Deployment' and o['metadata']['name']==r.OWNER+'-llm')
+ assert {'name':'ALLOW_GENERAL_KNOWLEDGE','value':'true'} in llm['spec']['template']['spec']['containers'][0]['env']
+ for bad in [{**enabled,'llmGeneralKnowledgeEnabled':'true'},{**enabled,'llmGenerationEnabled':False}]:
+  try:r.render(bad,images,state)
+  except r.Stop:pass
+  else:raise AssertionError('unsafe general knowledge binding accepted')
+ print(json.dumps({'status':'PASS','generalKnowledgeExplicitOptIn':True,'invalidAndDisabledGenerationRejected':True}))

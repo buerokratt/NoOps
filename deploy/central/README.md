@@ -200,3 +200,66 @@ credentials, engine/Vault resources or bot activity. Retry uses the same restart
 annotation and does not force another rollout. Reconnect frontend port-forward if
 the original upgrade stopped before that step, then run health and RUN4 prompt.
 Do not apply the full installer or replay the synthetic fixture to repair startup.
+
+
+## Guardrail preload recovery after RUN4
+
+The LLM service retries missing shared guardrail environments after transient
+Resql/Vault startup failures, with a single lifespan-owned worker and5s exponential
+backoff capped60s. Ready environments are retained. Each adapter is published only
+after full initialization; synchronous setup runs off the event loop. Shutdown
+drains an in-flight initializer before closing service resources. Generation-disabled
+mode performs no preload or retries. The worker does not generate answers or
+substitute another environment when a connection is absent. An unconfigured
+production environment may remain absent while testing is ready.
+
+Health now includes guardrails_environments. After upgrading only the immutable
+LLM image with the existing generation-upgrade helper and original repaired state,
+run deployment/guardrails-health.py with --bindings, --kubeconfig, --state-dir and
+--environment testing. It waits up to180s for enabled generation, verified offline
+embeddings, shared testing guardrails and connected Redis. This read-only check
+uses local LLM health through kubectl exec; no provider generation or DB writes.
+Keep all original image overrides, frontend/backend images and repaired widget
+ConfigMap. No backend/frontend rollout, fixture replay or schema Jobs are needed.
+
+A focused operator test should verify testing preload, send one marked synthetic
+library prompt in the existing LLM GUI testing connection, confirm the shared
+adapter log plus input/output guardrails, completed output and one new inference
+row. Preserve RUN3/RUN4 rows and current operator bot/LLM settings and chats; the
+operator enabled switches and sent additional questions after RUN4.
+Do not induce a remote backend outage to retest the race: controlled recovery and
+shutdown scenarios are covered by isolated CI tests. Remote acceptance is separate.
+
+
+## Working test deployment: official sources plus general answers
+
+The user opted into approved sources plus general knowledge in this test namespace.
+Use generation-upgrade.py --enable-general-knowledge with the new LLM image and
+original repaired state. This changes only the LLM Pod, preserving other images,
+backend and all data/configuration. Default bindings remain grounded-only. General
+fallback is permitted only for testing requests, is visibly labelled in the user's
+language, carries no retrieved-source references, and retains input/output rails,
+limits, storage and budget accounting. Relevant approved content takes precedence.
+Current legal/tax/officeholder facts must not be guessed from training memory.
+
+Run official-web-import.py with original --bindings, --kubeconfig and --state-dir
+first to plan, then repeat --execute. It downloads exactly the approved EMTA
+standard VAT page and current president biography over HTTPS on the operator Mac,
+without widening cluster egress. Bounded page text/source hashes/retrieval times are
+saved privately to state/official-web-documents.json. Up to16passages use the existing
+testing embedding connection, then task Qdrant. The existing synthetic fixture and
+all foreign points remain unchanged. Plans perform no embeddings/writes to Qdrant.
+Owned old points are backed up privately with vectors before replacement and are
+removed only after new content is verified. Repeats reuse embeddings; --refresh
+(planning only) downloads a new snapshot for a later explicit refresh. Do not run
+synthetic-knowledge.py after importing real data: its fixture-only guard will reject
+other knowledge, and it is no longer the relevant importer.
+
+The importer refreshes the local shared BM25 corpus through a loopback-only
+/knowledge/refresh endpoint, including source updates that keep the point count
+unchanged. Failed refresh preserves the prior in-memory corpus. A final
+GUARDRAILS_PRELOAD_PASS with --require-general-knowledge verifies the intended
+LLM mode. Browser acceptance must cover sourced Estonian VAT/president questions,
+a labelled general question, single storage/history and preservation. Existing
+operator switches/chats must be retained. This is a real curated-page import path;
+the broader CKB GUI S3/scraper/cleaning pipeline remains separately unqualified.

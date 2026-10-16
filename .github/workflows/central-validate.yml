@@ -29,4 +29,6 @@ jobs:
           python3 tests/port-forward-contract.py
           python3 tests/generation-contract.py
           python3 tests/widget-repair-contract.py
+          python3 tests/guardrails-health-contract.py
+          python3 tests/official-web-import-contract.py
           python3 tests/synthetic-knowledge-contract.py

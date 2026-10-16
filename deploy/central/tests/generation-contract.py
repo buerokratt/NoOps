@@ -59,7 +59,10 @@ with tempfile.TemporaryDirectory() as tmp:
  before={p.name:p.read_bytes() for p in state.iterdir() if p.is_file()}
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv):u.main()
  assert not calls and before=={p.name:p.read_bytes() for p in state.iterdir() if p.is_file()}
- argv+=['--frontend-image','ghcr.io/buerokratt/noops/central-frontend@sha256:'+'3'*64,'--widget-datamapper','ghcr.io/buerokratt/datamapper/central-datamapper@sha256:'+'4'*64,'--enable-widget-llm']
+ with patch.object(u,'load',modules),patch.object(sys,'argv',argv+['--execute']):u.main()
+ assert len(calls)==4 and (state/'before-runtime-upgrade-222222222222/installation.json').read_bytes()==before['installation.json']
+ calls.clear()
+ argv+=['--enable-general-knowledge','--frontend-image','ghcr.io/buerokratt/noops/central-frontend@sha256:'+'3'*64,'--widget-datamapper','ghcr.io/buerokratt/datamapper/central-datamapper@sha256:'+'4'*64,'--enable-widget-llm']
  with patch.object(u,'load',modules),patch.object(sys,'argv',argv+['--execute']):u.main()
  assert len(calls)==8 and (state/'before-runtime-upgrade-222222222222/installation.json').read_bytes()==before['installation.json']
  assert json.loads(binding.read_text())['llmGenerationEnabled'] is True
