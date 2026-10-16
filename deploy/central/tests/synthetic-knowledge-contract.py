@@ -29,3 +29,19 @@ except ValueError as exc:assert str(exc)=='collection_embedding_schema_mismatch'
 else:raise AssertionError('incompatible collection changed')
 assert calls==before
 print(json.dumps({'status':'PASS','planNoProviderOrWrites':True,'singlePointCreated':True,'idempotentNoRepeatProviderCall':True,'foreignPointRejected':True,'schemaMismatchNoWrites':True,'clusterCalls':0}))
+
+# Exercise the actual command transport, not only population logic.
+from unittest.mock import patch
+from types import SimpleNamespace
+code='print("large worker")\n' * 1000
+installer=SimpleNamespace(base=['kubectl','--context','rit-byrokratt'])
+with patch.object(m.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout=b'{"status":"SYNTHETIC_KNOWLEDGE_PLAN_PASS"}',stderr=b'')) as run:
+ assert m.run_worker(installer,'central-byk-test',code)['status']=='SYNTHETIC_KNOWLEDGE_PLAN_PASS'
+ args,kwargs=run.call_args
+ assert args[0][-2:]==['/app/.venv/bin/python3','-'] and '-i' in args[0]
+ assert code not in args[0] and kwargs['input']==code.encode() and kwargs['capture_output'] is True
+with patch.object(m.subprocess,'run',return_value=SimpleNamespace(returncode=1,stdout=b'',stderr=b'414 Request-URI Too Large private-do-not-export')):
+ try:m.run_worker(installer,'central-byk-test',code)
+ except ValueError as exc:assert str(exc)=='exec_uri_too_large'
+ else:raise AssertionError('transport failure ignored')
+print(json.dumps({'status':'PASS','largeWorkerUsesStdin':True,'noSourceInExecURI':True,'transportErrorRedacted':True}))

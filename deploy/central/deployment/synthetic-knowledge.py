@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Operator-only single synthetic RAG reference; no imports or application seed replay."""
-import argparse,contextlib,hashlib,importlib.util,io,json,math,os,re,uuid,urllib.request,urllib.error
+import argparse,contextlib,hashlib,importlib.util,io,json,math,os,re,subprocess,uuid,urllib.request,urllib.error
 from pathlib import Path
 COLLECTION='contextual_chunks_azure'
 POINT_ID=str(uuid.uuid5(uuid.NAMESPACE_URL,'central-byk-test:synthetic-library-reference:v1'))
@@ -57,12 +57,27 @@ def worker(execute):
  return populate(request,embedding,execute)
 
 
+def run_worker(installer,namespace,code):
+ # Keep source out of exec URL query arguments: Rancher/proxies limit URI size.
+ command=installer.base+['--namespace',namespace,'exec','-i','deployment/central-byk-test-llm','-c','llm','--','/app/.venv/bin/python3','-']
+ try:completed=subprocess.run(command,input=code.encode(),capture_output=True,timeout=240)
+ except subprocess.TimeoutExpired:raise ValueError('fixture_worker_timeout') from None
+ if completed.returncode:
+  # Never echo stderr: kubectl/provider failures may contain private data.
+  error=completed.stderr.decode(errors='replace').lower()
+  reason=next((label for token,label in [('request-uri too large','exec_uri_too_large'),('414','exec_uri_too_large'),('forbidden','exec_forbidden'),('not found','exec_target_not_found'),('unable to upgrade connection','exec_upgrade_failed')] if token in error),'exec_transport_failed')
+  raise ValueError(reason)
+ try:return json.loads(completed.stdout)
+ except ValueError:raise ValueError('fixture_worker_non_json_output') from None
+
+
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  for key in ['bindings','kubeconfig','state-dir']:p.add_argument('--'+key,required=True)
- p.add_argument('--execute',action='store_true');a=p.parse_args();state=Path(a.state_dir)
+ p.add_argument('--execute',action='store_true');p.add_argument('--package');a=p.parse_args();state=Path(a.state_dir)
  if state.stat().st_mode&0o077:raise ValueError('private_state_required')
- spec=importlib.util.spec_from_file_location('fixture_installer',Path(__file__).with_name('install.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+ installer_file=Path(a.package).resolve(strict=True)/'deployment/install.py' if a.package else Path(__file__).with_name('install.py')
+ spec=importlib.util.spec_from_file_location('fixture_installer',installer_file);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
  binding=json.loads(Path(a.bindings).read_text())
  if binding.get('llmGenerationEnabled') is not True:raise ValueError('enabled_generation_binding_required')
  i=m.Installer(binding,a.kubeconfig,state);i.identity();i.preservation(first=False)
@@ -75,7 +90,7 @@ def main():
  # Transport only this reviewed script into the task LLM container; no host shell.
  source=Path(__file__).read_text().rsplit("\nif __name__=='__main__':",1)[0]
  code=source+'\ntry: print(json.dumps(worker('+repr(a.execute)+')))\nexcept Exception as exc: print(json.dumps({"status":"STOPPED","reason":str(exc) if re.fullmatch(r"(?:task_endpoint_http_[0-9]{3}|synthetic_point_conflict|collection_contains_other_knowledge_stop|collection_embedding_schema_mismatch|fixture_verification_failed|testing_connection_required|invalid_provider_embedding)",str(exc)) else type(exc).__name__}))\n'
- result=i.kube(m.OWNER,'exec','deployment/central-byk-test-llm','-c','llm','--','/app/.venv/bin/python3','-c',code,timeout=240)
+ result=run_worker(i,m.OWNER,code)
  if not result or result.get('status') not in ['SYNTHETIC_KNOWLEDGE_PLAN_PASS','SYNTHETIC_KNOWLEDGE_REUSED','SYNTHETIC_KNOWLEDGE_INDEXED']:raise ValueError('fixture_operation_failed_'+str((result or {}).get('reason','unknown')))
  i.preservation(first=False);print(json.dumps(result))
 
