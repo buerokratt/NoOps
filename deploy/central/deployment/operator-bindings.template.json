@@ -14,6 +14,7 @@
   "vaultPodSelector": null,
   "vaultPort": 8200,
   "kubernetesAPICIDR": null,
+  "kubernetesAPIPort": 6443,
   "storageClass": null,
   "preboundStorageVerified": false,
   "ingressClass": null,
@@ -24,5 +25,6 @@
   "frontendTLSKeyFile": null,
   "imagePullSecret": null,
   "serviceOpenAPIAllowedOrigins": [],
-  "imagePullConfigFile": null
+  "imagePullConfigFile": null,
+  "frontendAccessMode": "ingress"
 }

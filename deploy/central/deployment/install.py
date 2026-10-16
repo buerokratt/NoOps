@@ -8,6 +8,11 @@ class Installer:
  def __init__(self,binding,kubeconfig,state):
   self.b=binding;self.state=state
   if binding.get('context')!='rit-byrokratt' or binding.get('applicationNamespace')!=OWNER:raise Stop('target_scope_mismatch')
+  mode=binding.get('frontendAccessMode','ingress')
+  if mode not in ('ingress','port-forward'):raise Stop('invalid_frontend_access_mode')
+  if mode=='port-forward':
+   u=__import__('urllib.parse',fromlist=['urlsplit']).urlsplit(binding.get('frontendOrigin') or '')
+   if u.scheme not in ('http','https') or u.hostname not in ('localhost','127.0.0.1','::1') or u.username or u.password or u.path not in ('','/') or u.query or u.fragment:raise Stop('port_forward_requires_loopback_origin')
   self.base=['kubectl','--kubeconfig',str(Path(kubeconfig).resolve(strict=True)),'--context','rit-byrokratt','--request-timeout=30s']
  def kube(self,ns,*args,payload=None,missing=False,timeout=90):
   command=self.base+['--namespace',ns]+list(args)+(['--ignore-not-found'] if missing else [])
@@ -23,6 +28,7 @@ class Installer:
    if self.kube(OWNER,'get','namespace',name,'-o','json')['metadata']['uid']!=self.b.get(field):raise Stop('namespace_identity_mismatch_'+name)
   sc=self.kube(OWNER,'get','storageclass',self.b['storageClass'],'-o','json')
   if sc.get('provisioner')=='kubernetes.io/no-provisioner' and not self.b.get('preboundStorageVerified'):raise Stop('static_storage_requires_prebound_contract')
+  if self.b.get('frontendAccessMode','ingress')=='port-forward':return
   self.kube(OWNER,'get','ingressclass',self.b['ingressClass'],'-o','json')
   host=__import__('urllib.parse',fromlist=['urlsplit']).urlsplit(self.b['frontendOrigin']).hostname
   routes=self.kube(OWNER,'get','ingresses','--all-namespaces','-o','json')['items']

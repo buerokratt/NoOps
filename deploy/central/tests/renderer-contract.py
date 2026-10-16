@@ -19,6 +19,47 @@ with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
     assert '@sha256:' in co['image'];assert co['securityContext']['allowPrivilegeEscalation']==False
     assert all(m['name'] in names for m in co.get('volumeMounts',[]))
    if obj['kind']!='Job':assert not any('initialize' in co['name'] or 'liquibase' in co['name'] for co in pod.get('initContainers',[]))
+ # API egress must use an exact bound destination tuple and only delivery Pods.
+ def api_policy(value):
+  return next(o for o in value['items'] if o['kind']=='NetworkPolicy' and o['metadata']['name']=='vault-delivery-api')
+ legacy=api_policy(manifest)
+ assert legacy['spec']['egress']==[{'to':[{'ipBlock':{'cidr':'10.96.0.1/32'}}],'ports':[{'protocol':'TCP','port':443}]}]
+ endpoint={**b,'kubernetesAPICIDR':'192.0.2.119/32','kubernetesAPIPort':6443}
+ routed,_,_=r.render(endpoint,images,state);policy=api_policy(routed)
+ assert policy['spec']['egress']==[{'to':[{'ipBlock':{'cidr':'192.0.2.119/32'}}],'ports':[{'protocol':'TCP','port':6443}]}]
+ assert policy['metadata']['namespace']=='central-byk-test'
+ assert policy['spec']['podSelector']==legacy['spec']['podSelector']
+ values=policy['spec']['podSelector']['matchExpressions']
+ assert values==[{'key':'app','operator':'In','values':['vault-deliver-'+x for x in c['accounts']]}]
+ def except_api(value):
+  return [o for o in value['items'] if not (o['kind']=='NetworkPolicy' and o['metadata']['name']=='vault-delivery-api')]
+ assert except_api(routed)==except_api(manifest)
+ explicit,_,_=r.render({**b,'kubernetesAPIPort':443},images,state)
+ assert explicit==manifest
+ for invalid in [None,True,False,0,-1,65536,'6443',6443.0]:
+  try:r.render({**endpoint,'kubernetesAPIPort':invalid},images,state)
+  except r.Stop as exc:assert str(exc)=='invalid_kubernetes_api_port'
+  else:raise AssertionError('invalid API port accepted')
+ # Port-forward mode needs no frontend DNS/TLS or ingress controller.
+ local={**endpoint,'frontendAccessMode':'port-forward','frontendOrigin':'http://localhost:18080','frontendTLSCertFile':None,'frontendTLSKeyFile':None,'ingressClass':None,'ingressNamespace':None}
+ forwarded,pstages,_=r.render(local,images,state)
+ assert len(forwarded['items'])==98 and pstages['ingress']==[]
+ assert not any(o['kind']=='Ingress' or o['kind']=='Secret' and o['metadata']['name']=='frontend-tls' for o in forwarded['items'])
+ net=next(o for o in forwarded['items'] if o['kind']=='NetworkPolicy' and o['metadata']['name']=='test-isolation')
+ assert net['spec']['ingress']==[{'from':[{'podSelector':{}}]}]
+ assert api_policy(forwarded)['spec']['egress']==policy['spec']['egress']
+ backend_local=next(o for o in forwarded['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-backend')['spec']['template']['spec']
+ for co in backend_local['containers']:
+  if co['name'].startswith('ruuter-'):
+   assert next(e['value'] for e in co['env'] if e['name']=='application.cors.allowedOrigins')=='http://localhost:18080'
+ for invalid_origin in ['http://example.invalid:18080','https://example.invalid','http://localhost.evil.invalid:18080','http://user@localhost:18080','http://localhost:18080/path','http://localhost:18080?x=1','http://localhost:18080#fragment']:
+  try:r.render({**local,'frontendOrigin':invalid_origin},images,state)
+  except r.Stop:pass
+  else:raise AssertionError('non-loopback or malformed origin accepted')
+ for mode in [None,'invalid']:
+  try:r.render({**local,'frontendAccessMode':mode},images,state)
+  except r.Stop:pass
+  else:raise AssertionError('invalid access mode accepted')
  assert list(stages)==['namespace','storage','provision','schema','vaultDelivery','engineBootstrap','applications','ingress']
  backend=next(o for o in manifest['items'] if o['kind']=='Deployment' and o['metadata']['name']=='central-byk-test-backend')['spec']['template']['spec']
  for co in backend['containers']:
@@ -31,4 +72,4 @@ with tempfile.TemporaryDirectory(prefix='fresh-render-',dir='/tmp') as td:
   except r.Stop:pass
   else:raise AssertionError('unsafe binding accepted')
  sql=next(o for o in manifest['items'] if o['kind']=='Secret' and o['metadata']['name']=='database-provision')['data']['provision.sql'];assert '\n\\gexec' in base64.b64decode(sql).decode()
- print(json.dumps({'status':'PASS','resources':len(seen),'repeatRenderExact':True,'nonrootAndDigestBindings':True,'storageKeysSchemaNotRuntimeInitializers':True,'scopeAndUnboundNegatives':4}))
+ print(json.dumps({'status':'PASS','resources':len(seen),'repeatRenderExact':True,'nonrootAndDigestBindings':True,'storageKeysSchemaNotRuntimeInitializers':True,'scopeAndUnboundNegatives':4,'apiEgressEndpoint6443':True,'legacy443Compatible':True,'apiPortNegatives':8,'otherResourcesUnchanged':True,'portForwardResources':98,'noFrontendTLSOrIngress':True,'portForwardOriginNegatives':7}))

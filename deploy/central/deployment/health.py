@@ -13,7 +13,10 @@ def main():
   parsed=urlsplit(a.loopback_origin)
   if parsed.scheme!='http' or parsed.hostname not in ['localhost','127.0.0.1'] or parsed.username or parsed.password or parsed.path not in ['','/']:raise Stop('only_explicit_loopback_forward_allowed')
   origin=a.loopback_origin.rstrip('/')
- elif urlsplit(origin).scheme!='https':raise Stop('verified_frontend_TLS_required')
+ elif b.get('frontendAccessMode','ingress')=='port-forward':
+  parsed=urlsplit(origin)
+  if parsed.scheme not in ('http','https') or parsed.hostname not in ('localhost','127.0.0.1','::1') or parsed.username or parsed.password or parsed.path not in ('','/') or parsed.query or parsed.fragment:raise Stop('port_forward_requires_loopback_origin')
+ elif b.get('frontendAccessMode','ingress')!='ingress' or urlsplit(origin).scheme!='https':raise Stop('verified_frontend_TLS_required')
  base=['kubectl','--kubeconfig',str(Path(a.kubeconfig).resolve(strict=True)),'--context','rit-byrokratt','--namespace','central-byk-test','--request-timeout=30s']
  def kube(*args):
   r=subprocess.run(base+list(args),capture_output=True,timeout=40)

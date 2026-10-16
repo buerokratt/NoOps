@@ -42,12 +42,18 @@ def render(binding,images,state):
  if binding.get('context')!='rit-byrokratt' or binding.get('applicationNamespace')!=OWNER:raise Stop('target_scope_mismatch')
  for name in ['expectedAPIServer','expectedKubeSystemUID','expectedCentralNamespaceUID','expectedVaultClusterID']:
   if not binding.get(name):raise Stop('unbound_'+name)
- url=origin(binding.get('frontendOrigin'),'frontendOrigin');host=urlsplit(url).hostname
- storage=require(binding.get('storageClass'),r'[a-z0-9][a-z0-9.-]*','storageClass');ingress=require(binding.get('ingressClass'),r'[a-z0-9][a-z0-9.-]*','ingressClass')
+ api_port=binding.get('kubernetesAPIPort',443)
+ if type(api_port) is not int or not 1<=api_port<=65535:raise Stop('invalid_kubernetes_api_port')
+ access=binding.get('frontendAccessMode','ingress')
+ if access not in ('ingress','port-forward'):raise Stop('invalid_frontend_access_mode')
+ url=origin(binding.get('frontendOrigin'),'frontendOrigin',access=='ingress');host=urlsplit(url).hostname
+ if access=='port-forward' and host not in ('localhost','127.0.0.1','::1'):raise Stop('port_forward_requires_loopback_origin')
+ storage=require(binding.get('storageClass'),r'[a-z0-9][a-z0-9.-]*','storageClass')
+ ingress=require(binding.get('ingressClass'),r'[a-z0-9][a-z0-9.-]*','ingressClass') if access=='ingress' else None
  vault=origin(binding.get('workloadVaultAddress'),'workloadVaultAddress',not binding.get('allowVaultHTTP',False));origin(binding.get('vaultAddress'),'vaultAddress',not binding.get('allowVaultHTTP',False))
  mount=require(binding.get('vaultKVMount'),r'[A-Za-z0-9_-]+','vaultKVMount');authmount=require(binding.get('vaultAppRoleMount'),r'[A-Za-z0-9_-]+','vaultAppRoleMount')
  if not isinstance(binding.get('vaultPodSelector'),dict) or not binding['vaultPodSelector']:raise Stop('vault_pod_selector_required')
- if not binding.get('ingressNamespace'):raise Stop('ingress_namespace_required')
+ if access=='ingress' and not binding.get('ingressNamespace'):raise Stop('ingress_namespace_required')
  for name in IMAGE_KEYS:
   require(images.get(name),r'[A-Za-z0-9._:/-]+@sha256:[a-f0-9]{64}','image_'+name)
  pull_name=binding.get('imagePullSecret')
@@ -222,20 +228,24 @@ def render(binding,images,state):
  frontconf='server { listen 8080; server_tokens off; root /usr/share/nginx/html; location = / { return 302 /chat/; } location = /chat/auth { try_files /login.html =404; } location /chat/ { try_files $uri $uri/ /chat/index.html; } location /widget/ { try_files $uri $uri/ /widget/index.html; } location /services/ { try_files $uri $uri/ /services/index.html; } location /ckb/ { try_files $uri $uri/ /ckb/index.html; } location /rag-search/ { try_files $uri $uri/ /rag-search/index.html; } location /api/public/ { proxy_pass http://'+OWNER+'-backend:8086/; proxy_set_header Host $host; } location /api/private/ { proxy_pass http://'+OWNER+'-backend:8088/; proxy_set_header Host $host; } location /notifications/ { proxy_pass http://'+OWNER+'-notification:4040/; proxy_buffering off; proxy_read_timeout 3600s; } location /llm-notifications/ { proxy_pass http://'+OWNER+'-llm:4040/; proxy_buffering off; proxy_read_timeout 3600s; } location ~ ^/vault-agent-gui/v1/'+mount+'/data/'+OWNER+'/llm-module/encryption/public_key$ { limit_except GET { deny all; } rewrite ^/vault-agent-gui/(.*)$ /$1 break; proxy_pass http://127.0.0.1:8202; } location /vault-agent-gui/ { return 404; } location /status { return 200 "alive"; } }'
  config('frontend-config',{'default.conf':frontconf,'runtime-config.js':'window.centralVault='+json.dumps({'prefix':OWNER+'/llm-module','mount':mount})+';'});a,vs=agent('gui',8202);front=container('frontend','frontend',mounts=[mountv('config','/etc/nginx/conf.d/default.conf',True,'default.conf'),mountv('config','/usr/share/nginx/html/runtime-config.js',True,'runtime-config.js'),mountv('tmp','/tmp')],port=8080,readonly=True,probe={'httpGet':{'path':'/status','port':8080},'initialDelaySeconds':5,'periodSeconds':5})
  deployment(OWNER+'-frontend',[front,a],[volume('config','configMap',{'name':'frontend-config'}),volume('tmp','emptyDir',{}),*vs]);service(OWNER+'-frontend',[('http',8080)])
- certfile=Path(binding.get('frontendTLSCertFile') or '');keyfile=Path(binding.get('frontendTLSKeyFile') or '')
- if not certfile.is_file() or not keyfile.is_file():raise Stop('dedicated_frontend_tls_files_required')
- if keyfile.stat().st_mode&0o077:raise Stop('frontend_tls_key_must_be_private')
- subprocess.run(['openssl','x509','-in',str(certfile),'-noout','-checkhost',host],check=True,capture_output=True)
- subprocess.run(['openssl','x509','-in',str(certfile),'-noout','-checkend','3600'],check=True,capture_output=True)
- certpub=subprocess.run(['openssl','x509','-in',str(certfile),'-noout','-pubkey'],check=True,capture_output=True).stdout
- keypub=subprocess.run(['openssl','pkey','-in',str(keyfile),'-pubout'],check=True,capture_output=True).stdout
- if certpub!=keypub:raise Stop('frontend_tls_key_pair_mismatch')
- tlssecret=secret('frontend-tls',{'tls.crt':certfile.read_text(),'tls.key':keyfile.read_text()},stage='ingress');tlssecret['type']='kubernetes.io/tls'
- resource('networking.k8s.io/v1','Ingress',OWNER,stage='ingress',spec={'ingressClassName':ingress,'tls':[{'hosts':[host],'secretName':'frontend-tls'}],'rules':[{'host':host,'http':{'paths':[{'path':'/','pathType':'Prefix','backend':{'service':{'name':OWNER+'-frontend','port':{'number':8080}}}}]}}]})
+ if access=='ingress':
+  certfile=Path(binding.get('frontendTLSCertFile') or '');keyfile=Path(binding.get('frontendTLSKeyFile') or '')
+  if not certfile.is_file() or not keyfile.is_file():raise Stop('dedicated_frontend_tls_files_required')
+  if keyfile.stat().st_mode&0o077:raise Stop('frontend_tls_key_must_be_private')
+  subprocess.run(['openssl','x509','-in',str(certfile),'-noout','-checkhost',host],check=True,capture_output=True)
+  subprocess.run(['openssl','x509','-in',str(certfile),'-noout','-checkend','3600'],check=True,capture_output=True)
+  certpub=subprocess.run(['openssl','x509','-in',str(certfile),'-noout','-pubkey'],check=True,capture_output=True).stdout
+  keypub=subprocess.run(['openssl','pkey','-in',str(keyfile),'-pubout'],check=True,capture_output=True).stdout
+  if certpub!=keypub:raise Stop('frontend_tls_key_pair_mismatch')
+  tlssecret=secret('frontend-tls',{'tls.crt':certfile.read_text(),'tls.key':keyfile.read_text()},stage='ingress');tlssecret['type']='kubernetes.io/tls'
+  resource('networking.k8s.io/v1','Ingress',OWNER,stage='ingress',spec={'ingressClassName':ingress,'tls':[{'hosts':[host],'secretName':'frontend-tls'}],'rules':[{'host':host,'http':{'paths':[{'path':'/','pathType':'Prefix','backend':{'service':{'name':OWNER+'-frontend','port':{'number':8080}}}}]}}]})
  # New test namespace only: no API credentials in normal workloads and no shared ingress.
- resource('networking.k8s.io/v1','NetworkPolicy','test-isolation',spec={'podSelector':{},'policyTypes':['Ingress','Egress'],'ingress':[{'from':[{'podSelector':{}}]},{'from':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':binding['ingressNamespace']}}}],'ports':[{'protocol':'TCP','port':8080}]}],'egress':[{'to':[{'podSelector':{}}]},{'to':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':'kube-system'}}}],'ports':[{'protocol':'UDP','port':53},{'protocol':'TCP','port':53}]},{'to':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':'central'}},'podSelector':{'matchLabels':{'buerokratt.ee/deployment':OWNER}}}],'ports':[{'protocol':'TCP','port':9443}]},{'to':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':'central'}},'podSelector':{'matchLabels':binding['vaultPodSelector']}}],'ports':[{'protocol':'TCP','port':int(binding.get('vaultPort',8200))}]}]})
- # Delivery jobs alone reach the Kubernetes API. Bind its actual service CIDR privately.
- cidr=str(ipaddress.ip_network(binding.get('kubernetesAPICIDR',''),strict=False));resource('networking.k8s.io/v1','NetworkPolicy','vault-delivery-api',spec={'podSelector':{'matchExpressions':[{'key':'app','operator':'In','values':['vault-deliver-'+x for x in c['accounts']]}]},'policyTypes':['Egress'],'egress':[{'to':[{'ipBlock':{'cidr':cidr}}],'ports':[{'protocol':'TCP','port':443}]}]})
+ frontend_ingress=[{'from':[{'podSelector':{}}]}]
+ if access=='ingress':frontend_ingress.append({'from':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':binding['ingressNamespace']}}}],'ports':[{'protocol':'TCP','port':8080}]})
+ resource('networking.k8s.io/v1','NetworkPolicy','test-isolation',spec={'podSelector':{},'policyTypes':['Ingress','Egress'],'ingress':frontend_ingress,'egress':[{'to':[{'podSelector':{}}]},{'to':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':'kube-system'}}}],'ports':[{'protocol':'UDP','port':53},{'protocol':'TCP','port':53}]},{'to':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':'central'}},'podSelector':{'matchLabels':{'buerokratt.ee/deployment':OWNER}}}],'ports':[{'protocol':'TCP','port':9443}]},{'to':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':'central'}},'podSelector':{'matchLabels':binding['vaultPodSelector']}}],'ports':[{'protocol':'TCP','port':int(binding.get('vaultPort',8200))}]}]})
+ # Delivery jobs alone reach the Kubernetes API. Bind the destination IP/port
+ # seen by the CNI after service DNAT (often an API endpoint on TCP6443).
+ cidr=str(ipaddress.ip_network(binding.get('kubernetesAPICIDR',''),strict=False));resource('networking.k8s.io/v1','NetworkPolicy','vault-delivery-api',spec={'podSelector':{'matchExpressions':[{'key':'app','operator':'In','values':['vault-deliver-'+x for x in c['accounts']]}]},'policyTypes':['Egress'],'egress':[{'to':[{'ipBlock':{'cidr':cidr}}],'ports':[{'protocol':'TCP','port':api_port}]}]})
  resource('networking.k8s.io/v1','NetworkPolicy','engine-isolation','central',spec={'podSelector':{'matchLabels':{'buerokratt.ee/deployment':OWNER}},'policyTypes':['Ingress'],'ingress':[{'from':[{'namespaceSelector':{'matchLabels':{'kubernetes.io/metadata.name':OWNER}}}],'ports':[{'protocol':'TCP','port':9443}]}]})
  for item in items:
   copied=json.loads(json.dumps(item));copied['metadata']['annotations'].pop('buerokratt.ee/creation-sha256',None)
