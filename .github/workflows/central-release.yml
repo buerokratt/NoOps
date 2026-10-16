@@ -47,4 +47,5 @@ jobs:
             deploy/central/.central-release/*.tar.gz
             deploy/central/.central-release/*.sha256
             deploy/central/.central-release/published-images.json
+          include-hidden-files: true
           if-no-files-found: error
