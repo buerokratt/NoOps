@@ -113,3 +113,27 @@ data:
     SERVICE_VAULT_AGENT=http://vault-agent-service-module:8205
     
     SERVICE_VAULT_SECRETS_PATH=service-module/prod
+
+    CKB_USERS_RESQL=http://component-byk-resql:8082
+    CKB_RESQL=http://component-byk-resql:8082/ckb
+    CKB_RUUTER=http://component-byk-ruuter:8080/backoffice
+    CKB_RUUTER_INTERNAL=http://ruuter-internal:8089/ckb
+    CKB_DMAPPER=http://component-byk-dmapper:3000
+    CKB_DMAPPER_HBS=http://component-byk-dmapper:3000/ckb/hbs
+    CKB_CLEANING_SERVICE=http://cleaning-server:8123
+    CKB_SCHEDULER_SERVICE=http://scheduler:8124
+    CKB_SCRAPPER_SERVICE=http://scrapper-server:8080
+    CKB_TIM=http://component-byk-tim:8085
+    CKB_PROJECT_LAYER=ckb
+    CKB_SEARCH=http://search-service:3000
+    CKB_FILE_MANAGER=http://file-processing-api:8888/api/v1
+    RAG_SEARCH_RUUTER_PUBLIC=http://component-byk-ruuter:8080/backoffice
+    RAG_SEARCH_RUUTER_PRIVATE=http://component-byk-ruuter-private:8080/backoffice
+    RAG_SEARCH_DMAPPER=http://component-byk-dmapper:3000
+    RAG_SEARCH_RESQL=http://component-byk-resql:8082/rag-search
+    RAG_SEARCH_PROJECT_LAYER=rag-search
+    RAG_SEARCH_TIM=http://component-byk-tim:8085
+    RAG_SEARCH_CRON_MANAGER=http://cron-manager-llm:9010
+    RAG_SEARCH_LLM_ORCHESTRATOR=http://llm-orchestration-service:8100/orchestrate
+    RAG_SEARCH_LLM_CACHE_CLEAR=http://llm-orchestration-service:8100/cache/clear
+    RAG_SEARCH_PROMPT_REFRESH=http://llm-orchestration-service:8100/prompt-config/refresh
