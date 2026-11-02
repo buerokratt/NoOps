@@ -63,6 +63,17 @@ spec:
           volumeMounts:
             - name: shared-volume
               mountPath: /shared-data/    
+        - name: init-copy-files-ckb-llm
+          image: "{{ .Values.images.backoffice.registry }}/{{ .Values.images.backoffice.repository }}:{{ .Values.images.backoffice.tag }}"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              cp -r ../Ruuter/private/ckb /DSL
+              cp -r ../Ruuter/private/rag-search /DSL
+              ls -la
+          volumeMounts:
+            - name: privateruuter-volume
+              mountPath: /DSL/
         - name: setup-symlink
           image: busybox
           securityContext:
