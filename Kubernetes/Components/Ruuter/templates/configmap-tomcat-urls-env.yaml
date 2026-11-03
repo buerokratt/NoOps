@@ -96,3 +96,12 @@ data:
     ID_MAX_TOKENS=1000
     ID_QUERY_TYPE=vector_semantic_hybrid
     ID_BGK_SYSTEM_MESSAGE=X
+    RAG_SEARCH_RUUTER_PUBLIC=http://component-byk-ruuter:8080/backoffice
+    RAG_SEARCH_RUUTER_PRIVATE=http://component-byk-ruuter-private:8080/rag-search
+    RAG_SEARCH_DMAPPER=http://component-byk-dmapper:3000
+    RAG_SEARCH_RESQL=http://component-byk-resql:8082/rag-search
+    RAG_SEARCH_PROJECT_LAYER=rag-search
+    RAG_SEARCH_TIM=http://component-byk-tim:8085
+    RAG_SEARCH_CRON_MANAGER=http://cron-manager-llm:9010
+    RAG_SEARCH_LLM_ORCHESTRATOR=http://llm-orchestration-service:8100/orchestrate
+    CKB_RUUTER_INTERNAL=http://ruuter-internal:8089/ckb
