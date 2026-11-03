@@ -1,0 +1,39 @@
+{{- if .Values.dataExport.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.dataExport.nameOverride | default "data-export" }}
+  labels:
+    app: {{ .Values.dataExport.nameOverride | default "data-export" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.dataExport.nameOverride | default "data-export" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.dataExport.nameOverride | default "data-export" }}
+    spec:
+      containers:
+        - name: {{ .Values.dataExport.nameOverride | default "data-export" }}
+          image: "{{ .Values.dataExport.image.repository }}:{{ .Values.dataExport.image.tag }}"
+          imagePullPolicy: {{ .Values.dataExport.image.pullPolicy }}
+          command: {{ toJson .Values.dataExport.command }}
+          ports:
+            - containerPort: {{ .Values.dataExport.service.targetPort }}
+          env:
+            {{- range .Values.dataExport.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+      {{- if .Values.dataExport.volumes.enabled }}
+      volumes:
+        - name: data
+          emptyDir: {}
+        {{- range .Values.dataExport.extraVolumes }}
+        - name: {{ .name }}
+          {{ toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+{{- end }}

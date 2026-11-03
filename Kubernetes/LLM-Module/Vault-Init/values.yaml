@@ -1,0 +1,60 @@
+enabled: true
+
+images:
+  vault:
+    registry: "docker.io"
+    repository: "hashicorp/vault"
+    tag: "1.20.3"
+
+release_name: "vault-init"
+
+# Vault service dependency
+vault:
+  serviceName: "vault"
+  addr: "http://vault:8200"
+
+# Pod affinity to ensure co-location with Vault
+affinity:
+  enabled: true
+  # Ensure this pod is scheduled on same node as Vault pod
+  colocateWithVault: true
+
+
+job:
+  backoffLimit: 3
+  restartPolicy: "Never"
+
+
+volumes:
+  vaultData:
+    enabled: true
+    mountPath: "/vault/data"
+  
+  agentCredentials:
+    enabled: true
+    mountPath: "/agent/credentials"
+    size: "100Mi"
+    accessMode: "ReadWriteOnce"
+    storageClass: ""
+
+langfuse:
+  host: "http://langfuse-web:3005"
+  secretName: "langfuse-web-secrets"
+
+
+
+
+# Init script configuration
+initScript:
+  enabled: true
+  filename: "vault-init.sh"
+
+pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "50m"
+  limits:
+    memory: "256Mi"
+    cpu: "200m"

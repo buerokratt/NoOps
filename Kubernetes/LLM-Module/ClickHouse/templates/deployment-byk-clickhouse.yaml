@@ -1,0 +1,88 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: clickhouse
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+        component: clickhouse
+    spec:
+      {{- if .Values.securityContext }}
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- end }}
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.clickhouse.registry }}/{{ .Values.images.clickhouse.repository }}:{{ .Values.images.clickhouse.tag }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.httpPort }}
+              protocol: TCP
+            - name: native
+              containerPort: {{ .Values.service.nativePort }}
+              protocol: TCP
+          # Non-sensitive env's from values.yaml
+          env:
+            - name: CLICKHOUSE_DB
+              value: "{{ .Values.env.CLICKHOUSE_DB }}"
+          # Sensitive env's from Kubernetes Secret
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.healthcheck.enabled }}
+          livenessProbe:
+            httpGet:
+              path: "{{ .Values.healthcheck.httpPath }}"
+              port: {{ .Values.service.httpPort }}
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: "{{ .Values.healthcheck.httpPath }}"
+              port: {{ .Values.service.httpPort }}
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          {{- end }}
+          {{- if .Values.persistence.enabled }}
+          volumeMounts:
+            - name: langfuse-clickhouse-data
+              mountPath: /var/lib/clickhouse
+            - name: langfuse-clickhouse-logs
+              mountPath: /var/log/clickhouse-server
+          {{- end }}
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+      {{- if .Values.persistence.enabled }}
+      volumes:
+        - name: langfuse-clickhouse-data
+          persistentVolumeClaim:
+            claimName: "{{ .Values.release_name }}-data"
+        - name: langfuse-clickhouse-logs
+          persistentVolumeClaim:
+            claimName: "{{ .Values.release_name }}-logs"
+      {{- end }}
+      restartPolicy: Always
+{{- end }}

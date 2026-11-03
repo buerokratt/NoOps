@@ -1,0 +1,15 @@
+{{- if .Values.cleaningServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.cleaningServer.nameOverride }}
+  labels:
+    app: {{ .Values.cleaningServer.nameOverride }}
+spec:
+  type: {{ .Values.cleaningServer.service.type }}
+  ports:
+    - port: {{ .Values.cleaningServer.service.port }}
+      targetPort: {{ .Values.cleaningServer.service.port }}
+  selector:
+    app: {{ .Values.cleaningServer.nameOverride }}
+{{- end }}

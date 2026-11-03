@@ -1,0 +1,27 @@
+enabled: true
+release_name: "component-byk-liquibase2"
+backoffLimit: 3
+
+images:
+  scope:
+    repository: "liquibase/liquibase"
+    tag: "4.33.0"
+
+env:
+  - name: LIQUIBASE_URL
+    value: "postgresql://byk:01234@component-databases-users-db:5432/byk"
+  - name: LIQUIBASE_CHANGELOG_FILE
+    value: master.yml
+
+
+
+pullPolicy: IfNotPresent
+
+podAnnotations: 
+  dsl-checksum: "211bdc77c12b"
+
+secrets:
+  POSTGRES_USER: "byk"
+  POSTGRES_PASSWORD: "{{ usersDB.password }}"
+
+dslBranch: "{{ llm.liquibase.branch }}"

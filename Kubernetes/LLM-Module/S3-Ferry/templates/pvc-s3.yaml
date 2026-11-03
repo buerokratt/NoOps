@@ -1,0 +1,36 @@
+{{- if .Values.persistence.enabled }}
+# Shared volume PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: s3-ferry-shared
+  labels:
+    app: s3-ferry
+spec:
+  accessModes:
+    - {{ .Values.persistence.accessMode }}
+  {{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.shared.size }}
+
+---
+# Cron data PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: s3-ferry-cron-data
+  labels:
+    app: s3-ferry
+spec:
+  accessModes:
+    - {{ .Values.persistence.accessMode }}
+  {{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.cronData.size }}
+{{- end }}

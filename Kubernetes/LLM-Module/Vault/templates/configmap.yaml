@@ -1,0 +1,62 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.release_name }}-config"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: vault
+data:
+  vault.hcl: |
+    # HashiCorp Vault Server Configuration
+    # Single-node Raft for the RAG-Module services
+
+    # Storage backend - Raft
+    storage "raft" {
+      path    = "/vault/file"
+      node_id = "vault-node-1"
+
+      # NOTE: No retry_join for a single node. A lone node self-bootstraps.
+      # A retry_join pointing at itself causes repeated
+      # "failed to get raft challenge ... Vault is sealed" errors and a
+      # messy double Raft init on every boot. Add retry_join back only when
+      # you actually have peer nodes to join.
+    }
+
+    # HTTP API listener.
+    # Vault automatically uses the next port up (8201) as its internal
+    # cluster port, so do NOT define a separate listener on 8201 — that
+    # collides with the cluster listener ("bind: address already in use")
+    # and degrades the login/request-forwarding path the agents rely on.
+    listener "tcp" {
+      address     = "0.0.0.0:8200"
+      tls_disable = true
+
+      # Enable CORS for web UI access
+      cors_enabled = true
+      cors_allowed_origins = [
+        "http://localhost:8200",
+        "http://vault:8200"
+      ]
+    }
+
+    # API and cluster addresses.
+    # cluster_addr tells Vault where its internal cluster port (8201) is
+    # reachable; Vault binds that port itself — no listener block needed.
+    api_addr     = "http://vault:8200"
+    cluster_addr = "http://vault:8201"
+
+    # Security and performance settings
+    disable_mlock = false
+    disable_cache = false
+    ui = false
+
+    # Default lease and maximum lease durations
+    default_lease_ttl = "168h"  # 7 days
+    max_lease_ttl     = "720h"  # 30 days
+
+    # Logging configuration
+    log_level  = "INFO"
+    log_format = "json"
+
+{{- end }}

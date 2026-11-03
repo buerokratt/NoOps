@@ -1,0 +1,100 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: langfuse-web
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+        component: langfuse-web
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      initContainers:
+        {{- range .Values.dependencies }}
+        - name: wait-for-{{ .name }}
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for {{ .name }} at {{ .host }}:{{ .port }}..."
+              until nc -z {{ .host }} {{ .port }} 2>/dev/null; do
+                echo "{{ .name }} not ready yet, retrying in 5s..."
+                sleep 5
+              done
+              echo "{{ .name }} is ready."
+        {{- end }}
+        - name: create-langfuse-db
+          image: postgres:16-alpine
+          envFrom:
+            - secretRef:
+                name: langfuse-web-secrets
+          command:
+            - sh
+            - -c
+            - |
+              if psql "$DATABASE_ADMIN_URL" -tAc "SELECT 1 FROM pg_database WHERE datname='langfuse-db'" | grep -q 1; then
+                echo "langfuse-db exists."
+              else
+                psql "$DATABASE_ADMIN_URL" -c 'CREATE DATABASE "langfuse-db"'
+              fi
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.langfuse_web.registry }}/{{ .Values.images.langfuse_web.repository }}:{{ .Values.images.langfuse_web.tag }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
+          {{- end }}
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- if .Values.healthcheck.enabled }}
+          startupProbe:
+            httpGet:
+              path: /api/public/health
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.startupFailureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: /api/public/health
+              port: {{ .Values.service.targetPort }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /api/public/health
+              port: {{ .Values.service.targetPort }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          {{- end }}
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+      restartPolicy: Always
+{{- end }}

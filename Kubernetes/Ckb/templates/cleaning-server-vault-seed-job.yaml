@@ -1,0 +1,40 @@
+{{- $seed := .Values.cleaningServer.vault.seed }}
+{{- if and .Values.cleaningServer.enabled .Values.cleaningServer.vault.enabled $seed.enabled (not (contains "{{" $seed.apiKey)) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.cleaningServer.nameOverride }}-vault-seed
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: seed
+          image: "{{ .Values.cleaningServer.vault.agentImage.repository }}:{{ .Values.cleaningServer.vault.agentImage.tag }}"
+          imagePullPolicy: {{ .Values.cleaningServer.vault.agentImage.pullPolicy }}
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              export VAULT_ADDR={{ .Values.cleaningServer.vault.address | quote }}
+              VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id=@/approle/role_id secret_id=@/approle/secret_id)
+              export VAULT_TOKEN
+              vault kv put secret/{{ .Values.cleaningServer.vault.secretPath }} api_key=@/seed/api_key endpoint={{ $seed.endpoint | quote }} deployment={{ $seed.deployment | quote }} api_version={{ $seed.apiVersion | quote }}
+          volumeMounts:
+            - name: seed-approle
+              mountPath: /approle
+              readOnly: true
+            - name: seed-input
+              mountPath: /seed
+              readOnly: true
+      volumes:
+        - name: seed-approle
+          secret:
+            secretName: {{ $seed.approleSecretName }}
+        - name: seed-input
+          secret:
+            secretName: {{ .Values.cleaningServer.nameOverride }}-vault-seed
+{{- end }}

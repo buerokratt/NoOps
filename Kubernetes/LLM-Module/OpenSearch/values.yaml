@@ -1,0 +1,80 @@
+replicas: 1
+
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+
+release_name: "opensearch-node"
+dashboards_release_name: "opensearch-dashboards"
+
+opensearch:
+  image:
+    repository: opensearchproject/opensearch
+    tag: "2.11.1"
+    pullPolicy: IfNotPresent
+  
+ 
+  cluster:
+    name: "opensearch-cluster"
+    nodeName: "opensearch-node"
+    discoveryType: "single-node"
+    seed_hosts: "opensearch"
+  
+  # Java memory configuration  
+  javaOpts: "-Xms512m -Xmx512m"
+  
+  # Security configuration 
+  security:
+    enabled: false
+  
+  # Performance settings
+  bootstrapMemoryLock: false
+  
+  # Ports configuration for pod
+  ports:
+    api: 9200
+    performance: 9600
+  
+  # Persistent storage configuration
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    mountPath: /usr/share/opensearch/data
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 200m
+      memory: 1Gi
+  
+  # Service configuration
+  service:
+    type: ClusterIP
+    api: 9200
+    performance: 9600
+  
+  # Ingress configuration
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    hosts:
+      - host: opensearch.global-classifier.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+
+  # Ulimits (required for OpenSearch memory locking)
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+    nofile:
+      soft: 65536
+      hard: 65536

@@ -1,0 +1,104 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.release_name }}
+  labels:
+    app: {{ .Values.release_name }}
+    component: vault-init
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.release_name }}
+        component: vault-init
+    spec:
+      restartPolicy: {{ .Values.job.restartPolicy }}
+      # Run as root to allow chown of PVC directories (mirrors docker-compose user: "0")
+      securityContext:
+        runAsUser: 0
+      {{- if .Values.affinity.enabled }}
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ .Values.vault.serviceName }}
+            topologyKey: kubernetes.io/hostname
+      {{- end }}
+      volumes:
+        {{- if .Values.volumes.vaultData.enabled }}
+        - name: vault-data
+          persistentVolumeClaim:
+            claimName: vault-storage-{{ .Values.vault.serviceName }}-0
+        {{- end }}
+        {{- if .Values.volumes.agentCredentials.enabled }}
+        - name: vault-agent-creds
+          persistentVolumeClaim:
+            claimName: vault-agent-creds
+        {{- end }}
+        {{- if .Values.initScript.enabled }}
+        - name: init-script
+          configMap:
+            name: {{ .Values.release_name }}-script
+            defaultMode: 0755
+        {{- end }}
+      containers:
+      - name: vault-init
+        image: "{{ .Values.images.vault.registry }}/{{ .Values.images.vault.repository }}:{{ .Values.images.vault.tag }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            apk add --no-cache curl jq uuidgen openssl
+        
+            mkdir -p \
+              /agent/credentials \
+              /agent/out
+        
+            chown -R vault:vault \
+              /agent/credentials \
+              /agent/out
+        
+            chmod 755 \
+              /agent/credentials \
+              /agent/out
+        
+            su vault -s /bin/sh /scripts/{{ .Values.initScript.filename }}
+
+        env:
+          - name: VAULT_ADDR
+            value: {{ .Values.vault.addr | quote }}
+          - name: VAULT_SKIP_VERIFY
+            value: "true"
+
+          - name: LANGFUSE_HOST
+            value: {{ .Values.langfuse.host | quote }}
+        # The Langfuse public and secret keys both come from this Secret, which is
+        # created by the Langfuse-Web subchart. On a cold deploy this Job may sit
+        # in CreateContainerConfigError until that Secret exists; kubelet retries.
+        envFrom:
+          - secretRef:
+              name: {{ .Values.langfuse.secretName }}
+              optional: true
+        volumeMounts:
+          {{- if .Values.volumes.vaultData.enabled }}
+          - name: vault-data
+            mountPath: {{ .Values.volumes.vaultData.mountPath }}
+          {{- end }}
+          {{- if .Values.volumes.agentCredentials.enabled }}
+          - name: vault-agent-creds
+            mountPath: {{ .Values.volumes.agentCredentials.mountPath }}
+          {{- end }}
+          {{- if .Values.initScript.enabled }}
+          - name: init-script
+            mountPath: "/scripts"
+            readOnly: true
+          {{- end }}
+        {{- if .Values.resources }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        {{- end }}

@@ -1,0 +1,119 @@
+replicas: 1
+enabled: true
+
+images:
+  langfuse_worker:
+    registry: "docker.io"
+    repository: "langfuse/langfuse-worker"
+    tag: "3"
+
+release_name: "langfuse-worker"
+
+service:
+  type: ClusterIP
+  port: 3030
+
+# Environment variables 
+env:
+  # Non-sensitive configuration
+  HOSTNAME: "0.0.0.0"
+  NEXTAUTH_URL: "http://localhost:3000"
+  TELEMETRY_ENABLED: "true"
+  LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "true"
+  
+  # ClickHouse configuration (non-sensitive)
+  CLICKHOUSE_URL: "http://clickhouse:8123"
+  CLICKHOUSE_CLUSTER_ENABLED: "false"
+  
+  # S3/MinIO configuration (non-sensitive)
+  LANGFUSE_USE_AZURE_BLOB: "false"
+  LANGFUSE_S3_EVENT_UPLOAD_BUCKET: "rag-search"
+  LANGFUSE_S3_EVENT_UPLOAD_REGION: "auto"
+  LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: "http://minio:9000"
+  LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_EVENT_UPLOAD_PREFIX: "langfuse/events/"
+  
+  LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: "rag-search"
+  LANGFUSE_S3_MEDIA_UPLOAD_REGION: "auto"
+  LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: "http://minio:9000"
+  LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: "langfuse/media/"
+  
+  LANGFUSE_S3_BATCH_EXPORT_ENABLED: "false"
+  LANGFUSE_S3_BATCH_EXPORT_BUCKET: "rag-search"
+  LANGFUSE_S3_BATCH_EXPORT_PREFIX: "langfuse/exports/"
+  LANGFUSE_S3_BATCH_EXPORT_REGION: "auto"
+  LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: "http://minio:9000"
+  LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT: "http://minio:9000"
+  LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: "true"
+  LANGFUSE_INGESTION_QUEUE_DELAY_MS: ""
+  LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS: ""
+  
+  # Redis configuration (non-sensitive)
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  REDIS_TLS_ENABLED: "false"
+  REDIS_TLS_CA: "/certs/ca.crt"
+  REDIS_TLS_CERT: "/certs/redis.crt"
+  REDIS_TLS_KEY: "/certs/redis.key"
+  
+  # Email configuration
+  EMAIL_FROM_ADDRESS: ""
+  SMTP_CONNECTION_URL: ""
+
+dependencies:
+  - name: postgres
+    host: component-databases-users-db
+    port: 5432
+  - name: clickhouse
+    host: clickhouse
+    port: 9000
+  - name: redis
+    host: redis
+    port: 6379
+  - name: minio
+    host: minio
+    port: 9000
+
+waitForWeb:
+  enabled: true
+  url: "http://langfuse-web:3005/api/public/health"
+
+# Reference to Kubernetes Secret
+# Sensitive credentials should be set in templates/secret.yaml before deployment
+envFrom:
+  - secretRef:
+      name: langfuse-worker-secrets
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "100m"
+  limits:
+    memory: "2Gi"
+    cpu: "500m"
+
+pullPolicy: IfNotPresent
+
+healthcheck:
+  enabled: true
+  path: "/api/health"
+  initialDelaySeconds: 20
+  periodSeconds: 15
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+secrets:
+  DATABASE_URL: "postgresql://byk:{{ usersDB.password }}@component-databases-users-db:5432/langfuse-db"
+  ENCRYPTION_KEY: "{{ llm.langfuse.encryption.key }}"
+  SALT: "{{ llm.langfuse.salt }}"
+  CLICKHOUSE_MIGRATION_URL: "clickhouse://clickhouse:9000"
+  CLICKHOUSE_USER: "{{ llm.clickhouse.user }}"
+  CLICKHOUSE_PASSWORD: "{{ llm.clickhouse.password }}"
+  LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: "{{ llm.minio.user }}"
+  LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: "{{ llm.minio.password }}"
+  LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: "{{ llm.minio.user }}"
+  LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: "{{ llm.minio.password }}"
+  LANGFUSE_S3_BATCH_EXPORT_ACCESS_KEY_ID: "{{ llm.minio.user }}"
+  LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY: "{{ llm.minio.password }}"
+  REDIS_AUTH: "{{ llm.redis.password }}"
