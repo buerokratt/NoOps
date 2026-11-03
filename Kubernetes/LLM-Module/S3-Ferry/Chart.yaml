@@ -1,0 +1,6 @@
+apiVersion: v2
+name: S3-Ferry
+description: A Helm chart for S3-Ferry
+type: application
+version: 0.1.0
+appVersion: "latest"

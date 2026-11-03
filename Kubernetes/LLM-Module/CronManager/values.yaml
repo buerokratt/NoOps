@@ -1,0 +1,77 @@
+replicas: 1
+enabled: true
+release_name: "cron-manager-llm"
+
+cronmanager:
+  image:
+    registry: ghcr.io
+    repository: buerokratt/cronmanager 
+    tag: "{{ llm.cronmanager.image.version }}"
+    pullPolicy: IfNotPresent
+
+  environment:
+    containerPort: "8080"
+    pythonPath: "/app:/app/src:/app/src/vector_indexer:/app/src/intent_data_enrichment:/app/src/api_tool_indexer"
+    VAULT_ADDR: "http://vault:8200"
+
+service:
+  type: ClusterIP
+  port: 9010
+  targetPort: 8080
+
+# PVC Configuration
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteMany
+  size: 500Mi
+
+# Service URLs 
+constants:
+  RAG_MODULE_RUUTER_PRIVATE: "http://component-byk-ruuter-private:8080/rag-search"
+  RAG_MODULE_RUUTER_PUBLIC: "http://component-byk-ruuter:8080/rag-search"
+  RAG_MODULE_RESQL: "http://component-byk-resql:8082/backoffice"
+  RAG_MODULE_TIM: "http://component-byk-tim:8085"
+  RAG_MODULE_DATAMAPPER: "http://component-byk-dmapper:3000"
+
+# Endpoint URLs for cron job scripts, rendered into constants.ini ([DSL]) and
+# mounted at /app/config/constants.ini. Container env vars cannot be used:
+# CronManager runs job scripts with an empty environment.
+dslConstants:
+  LANGFUSE_URL: "http://langfuse-web:3000"
+  LOKI_URL: "http://loki:3100"
+  QDRANT_URL: "http://qdrant:6333"
+  RAG_SEARCH_RESQL: "http://component-byk-resql:8082/rag-search"
+  RAG_SEARCH_RUUTER_PRIVATE: "http://component-byk-ruuter-private:8080/backoffice"
+  RAG_SEARCH_RUUTER_PUBLIC: "http://component-byk-ruuter:8080/backoffice"
+  RAG_SEARCH_RUUTER_PUBLIC_INTERNAL_SERVICE: "http://component-byk-ruuter-private:8080/services"
+  RUUTER_COMMON_SERVICE_BASE_URL: "http://component-byk-ruuter-private:8080/common-services"
+  RAG_SEARCH_DMAPPER: "http://component-byk-dmapper:3000"
+  RAG_SEARCH_PROJECT_LAYER: "rag-search"
+  RAG_SEARCH_TIM: "http://component-byk-tim:8085"
+  RAG_SEARCH_CRON_MANAGER: "http://cron-manager-llm:9010"
+  RAG_SEARCH_LLM_ORCHESTRATOR: "http://llm-orchestration-service:8100/orchestrate"
+  RAG_SEARCH_LLM_CACHE_CLEAR: "http://llm-orchestration-service:8100/cache/clear"
+  RAG_SEARCH_PROMPT_REFRESH: "http://llm-orchestration-service:8100/prompt-config/refresh"
+  SERVICE_DMAPPER_HBS: "http://component-byk-dmapper:3000/services/hbs"
+  SERVICE_PROJECT_LAYER: "services"
+  RAG_SEARCH_LLM_SERVICE: "http://llm-orchestration-service:8100"
+  VAULT_AGENT_URL: "http://localhost:8203"
+  CKB_RUUTER_INTERNAL: "http://ruuter-internal:8089/ckb"
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "100m"
+  limits:
+    memory: "2Gi"
+    cpu: "500m"
+
+podAnnotations: 
+  dsl-checksum: "initial"
+
+# Vault Agent sidecar configuration
+vaultAgent:
+  enabled: true
+
+dslBranch: "{{ llm.module.branch }}"

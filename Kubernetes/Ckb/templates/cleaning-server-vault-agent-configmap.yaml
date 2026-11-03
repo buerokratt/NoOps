@@ -1,0 +1,35 @@
+{{- if and .Values.cleaningServer.enabled .Values.cleaningServer.vault.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.cleaningServer.nameOverride }}-vault-agent
+  labels:
+    app: {{ .Values.cleaningServer.nameOverride }}
+data:
+  agent.hcl: |
+    vault {
+      address = {{ .Values.cleaningServer.vault.address | quote }}
+      retry {
+        num_retries = 5
+      }
+    }
+
+    auto_auth {
+      method "approle" {
+        mount_path = "auth/approle"
+        config = {
+          role_id_file_path                   = "/agent/credentials/role_id"
+          secret_id_file_path                 = "/agent/credentials/secret_id"
+          remove_secret_id_file_after_reading = false
+        }
+      }
+
+      sink "file" {
+        config = {
+          path = "/agent/out/token"
+          mode = 0640
+        }
+      }
+    }
+
+{{- end }}

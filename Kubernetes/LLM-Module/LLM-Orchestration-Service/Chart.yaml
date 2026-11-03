@@ -1,0 +1,6 @@
+apiVersion: v2
+name: LLM-Orchestration-Service
+description: LLM Orchestration Service for RAG Module
+version: 0.1.0
+appVersion: "1.0.0"
+type: application

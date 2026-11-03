@@ -1,0 +1,6 @@
+apiVersion: v2
+name: Liquibase
+description: A Helm chart for Liquibase for database migrations
+type: application
+version: 0.1.0
+appVersion: "1.0"

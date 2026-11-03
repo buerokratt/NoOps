@@ -1,0 +1,14 @@
+{{- if .Values.searchService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.searchService.nameOverride | default "search-service" }}
+spec:
+  type: {{ .Values.searchService.service.type }}
+  ports:
+    - port: {{ .Values.searchService.service.port }}
+      targetPort: {{ .Values.searchService.service.port }}
+      
+  selector:
+    app: {{ .Values.searchService.nameOverride | default "search-service" }}
+{{- end }}

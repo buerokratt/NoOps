@@ -1,0 +1,71 @@
+replicas: 1
+enabled: true
+
+images:
+  vault:
+    registry: "docker.io"
+    repository: "hashicorp/vault"
+    tag: "1.20.3"
+
+release_name: "vault"
+
+service:
+  type: ClusterIP
+   # Set to true for headless service (direct pod access)
+  headless: false
+  port: 8200
+  targetPort: 8200
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  mountPath: "/vault/file"
+
+# Vault configuration
+vault:
+  config:
+    # File storage backend
+    storage_file_path: "/vault/file"
+    # API settings
+    disable_mlock: true
+    ui: true
+    # Network settings
+    listener_address: "0.0.0.0:8200"
+    cluster_address: "0.0.0.0:8201"
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "50m"
+  limits:
+    memory: "512Mi"
+    cpu: "200m"
+
+pullPolicy: IfNotPresent
+
+healthcheck:
+  enabled: false
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 20
+  successThreshold: 1
+  # Vault health endpoint
+  httpPath: "/v1/sys/health"
+
+securityContext:
+  enabled: true
+  runAsNonRoot: false
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 0
+
+# Init container configuration
+initContainer:
+  enabled: true
+  image:
+    registry: "docker.io"
+    repository: "busybox"
+    tag: "1.35"

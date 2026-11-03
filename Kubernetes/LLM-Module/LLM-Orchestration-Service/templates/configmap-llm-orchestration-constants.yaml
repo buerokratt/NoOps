@@ -1,0 +1,17 @@
+{{- if .Values.enabled }}
+# constants.ini for the LLM orchestration service: service endpoint URLs.
+# Mounted at /app/constants.ini, replacing the copy baked into the image.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.release_name }}-constants"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: llm-orchestration
+data:
+  constants.ini: |
+    [DSL]
+    {{- range $key, $value := .Values.constants }}
+    {{ $key }}={{ $value }}
+    {{- end }}
+{{- end }}

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ckb-service-constants
+data:
+  constants.ini: |-
+    CKB_RUUTER_INTERNAL=http://ruuter-internal:8089/ckb
+    CKB_EESTI_BASE_URL=https://www.eesti.ee
+    CKB_VAULT={{ .Values.cleaningServer.vault.address }}

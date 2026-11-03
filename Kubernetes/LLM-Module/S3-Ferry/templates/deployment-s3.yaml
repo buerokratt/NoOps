@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.release_name }}
+  labels:
+    app: {{ .Values.release_name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.release_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.release_name }}
+    spec:
+      containers:
+        - name: {{ .Values.release_name }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          # Non-sensitive env's from ConfigMap
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          # Sensitive env's from Kubernetes Secret
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
+          {{- end }}
+           
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: shared
+              mountPath: /app/shared
+            - name: cron-data
+              mountPath: /app/data
+            {{- end }}
+            - name: datasets
+              mountPath: /app/datasets
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: shared
+          persistentVolumeClaim:
+            claimName: s3-ferry-shared
+        - name: cron-data
+          persistentVolumeClaim:
+            claimName: s3-ferry-cron-data
+        {{- end }}
+        - name: datasets
+          emptyDir: {}
+   

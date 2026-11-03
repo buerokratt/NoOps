@@ -1,0 +1,15 @@
+enabled: true
+
+# Agent configuration
+agent:
+  # Port where agent listens for API requests from CronManager
+  port: 8203
+  
+  # Token TTL for CronManager
+  tokenTTL: "30m"
+  
+  # Credentials location (shared volume from vault-init)
+  credentialsPath: "/agent/credentials"
+  
+  # Token cache location (separate volume for CronManager)
+  tokenPath: "/agent/cron-token"

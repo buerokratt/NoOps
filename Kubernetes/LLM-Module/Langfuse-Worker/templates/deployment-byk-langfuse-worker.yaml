@@ -1,0 +1,96 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: langfuse-worker
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+        component: langfuse-worker
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      initContainers:
+        {{- range .Values.dependencies }}
+        - name: wait-for-{{ .name }}
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for {{ .name }} at {{ .host }}:{{ .port }}..."
+              until nc -z {{ .host }} {{ .port }} 2>/dev/null; do
+                echo "{{ .name }} not ready yet, retrying in 5s..."
+                sleep 5
+              done
+              echo "{{ .name }} is ready."
+        {{- end }}
+        {{- if .Values.waitForWeb.enabled }}
+        - name: wait-for-langfuse-web
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Langfuse-Web (DB migrations) at {{ .Values.waitForWeb.url }}..."
+              until wget -q -O /dev/null {{ .Values.waitForWeb.url | quote }}; do
+                echo "Langfuse-Web not healthy yet, retrying in 10s..."
+                sleep 10
+              done
+              echo "Langfuse-Web is healthy."
+        {{- end }}
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.langfuse_worker.registry }}/{{ .Values.images.langfuse_worker.repository }}:{{ .Values.images.langfuse_worker.tag }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - name: worker
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          # Non-sensitive env's from values.yaml
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          # Sensitive env's from Kubernetes Secret
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.healthcheck.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.healthcheck.path }}
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.healthcheck.path }}
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          {{- end }}
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+      restartPolicy: Always
+{{- end }}

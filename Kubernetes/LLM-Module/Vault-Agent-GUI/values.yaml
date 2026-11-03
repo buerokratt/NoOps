@@ -1,0 +1,17 @@
+# Vault Agent GUI Configuration
+
+enabled: true
+
+# Agent configuration
+agent:
+  # Port where agent listens for API requests from GUI
+  port: 8202
+  
+  # Token TTL for GUI (short-lived)
+  tokenTTL: "15m"
+  
+  # Credentials location (shared volume from vault-init)
+  credentialsPath: "/agent/credentials"
+  
+  # Token cache location (separate volume for GUI)
+  tokenPath: "/agent/gui-token"

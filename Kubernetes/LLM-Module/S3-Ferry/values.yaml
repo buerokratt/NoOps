@@ -1,0 +1,65 @@
+replicas: 1
+
+release_name: "s3-ferry"
+
+image:
+  registry: "ghcr.io"
+  repository: "buerokratt/s3-ferry"
+  pullPolicy: IfNotPresent
+  tag: "{{ llm.s3ferry.image.version }}"
+
+nameOverride: ""
+fullnameOverride: ""
+
+port: 3000
+
+service:
+  type: ClusterIP
+  port: 3006
+  targetPort: 3000
+
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  outputDatasets:
+    size: 5Gi
+  shared:
+    size: 2Gi
+  cronData:
+    size: 3Gi
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Environment variables (non-sensitive)
+env:
+  API_CORS_ORIGIN: "*"
+  API_DOCUMENTATION_ENABLED: "true"
+  S3_REGION: "eu-west-1"
+  S3_ENDPOINT_URL: "http://minio:9000"
+  S3_ENDPOINT_NAME: "minio:9000"
+  S3_DATA_BUCKET_PATH: "resources"
+  S3_DATA_BUCKET_NAME: "rag-search"
+  FS_DATA_DIRECTORY_PATH: "/app"
+  S3_HEALTH_ENDPOINT: "http://minio:9000/minio/health/live"
+  MINIO_BROWSER_REDIRECT_URL: "http://localhost:9091"
+  GF_USERS_ALLOW_SIGN_UP: "false"
+  PORT: "3000"
+
+# Reference to Kubernetes Secret 
+envFrom:
+  - secretRef:
+      name: s3-ferry-secrets
+
+secrets:
+  S3_SECRET_ACCESS_KEY: "{{ llm.s3ferry.secret.access.key }}"
+  S3_ACCESS_KEY_ID: "{{ llm.s3ferry.access.key.id }}"
+  GF_SECURITY_ADMIN_USER: "{{ llm.grafana.admin.user }}"
+  GF_SECURITY_ADMIN_PASSWORD: "{{ llm.grafana.admin.password }}"

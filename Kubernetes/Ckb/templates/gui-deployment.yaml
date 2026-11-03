@@ -1,0 +1,27 @@
+{{- if .Values.gui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.gui.nameOverride | default "gui" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.gui.nameOverride | default "gui" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.gui.nameOverride | default "gui" }}
+    spec:
+      containers:
+        - name: {{ .Values.gui.nameOverride | default "gui" }}
+          image: "{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}"
+          imagePullPolicy: {{ .Values.gui.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.gui.service.port }}
+          env:
+            {{- range .Values.gui.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+{{- end }}
