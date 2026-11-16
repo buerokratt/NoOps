@@ -1,0 +1,6 @@
+apiVersion: v2
+name: CronManager
+description: CronManager Service for RAG
+type: application
+version: 0.1.0
+appVersion: "1.0"

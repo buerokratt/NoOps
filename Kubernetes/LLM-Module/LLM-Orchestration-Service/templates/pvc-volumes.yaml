@@ -1,0 +1,61 @@
+{{- if and .Values.enabled .Values.volumes.logs.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ .Values.release_name }}-logs"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: llm-orchestration
+    type: logs
+spec:
+  accessModes:
+    - {{ .Values.volumes.logs.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.volumes.logs.size }}
+  {{- if .Values.volumes.logs.storageClass }}
+  storageClassName: {{ .Values.volumes.logs.storageClass }}
+  {{- end }}
+{{- end }}
+
+---
+{{- if and .Values.enabled .Values.volumes.config.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ .Values.release_name }}-config"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: llm-orchestration
+    type: config
+spec:
+  accessModes:
+    - {{ .Values.volumes.config.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.volumes.config.size }}
+  {{- if .Values.volumes.config.storageClass }}
+  storageClassName: {{ .Values.volumes.config.storageClass }}
+  {{- end }}
+{{- end }}
+
+---
+{{- if and .Values.enabled .Values.volumes.optimization.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ .Values.release_name }}-optimization"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: llm-orchestration
+    type: optimization
+spec:
+  accessModes:
+    - {{ .Values.volumes.optimization.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.volumes.optimization.size }}
+  {{- if .Values.volumes.optimization.storageClass }}
+  storageClassName: {{ .Values.volumes.optimization.storageClass }}
+  {{- end }}
+{{- end }}

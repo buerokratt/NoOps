@@ -1,0 +1,18 @@
+{{- if .Values.volumes.agentCredentials.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vault-agent-creds
+  labels:
+    app: {{ .Values.release_name }}
+    component: vault-init
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.volumes.agentCredentials.size }}
+  {{- if .Values.volumes.agentCredentials.storageClass }}
+  storageClassName: {{ .Values.volumes.agentCredentials.storageClass }}
+  {{- end }}
+{{- end }}

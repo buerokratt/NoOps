@@ -1,0 +1,43 @@
+{{- if .Values.opensearch.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.release_name }}-ingress
+  labels:
+    app: {{ .Values.release_name }}
+  {{- with .Values.opensearch.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.opensearch.ingress.className }}
+  ingressClassName: {{ .Values.opensearch.ingress.className }}
+  {{- end }}
+  {{- if .Values.opensearch.ingress.tls }}
+  tls:
+    {{- range .Values.opensearch.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.opensearch.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if .pathType }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ $.Values.release_name }}
+                port:
+                  number: {{ $.Values.opensearch.service.apiPort }}
+          {{- end }}
+    {{- end }}
+{{- end }}

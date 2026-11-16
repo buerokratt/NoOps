@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.release_name }}-config"
+  labels:
+    app: "{{ .Values.release_name }}"
+data:
+  # Mounted at /app/config/constants.ini (NOT /app/constants.ini, which is baked
+  # into the cron-manager image). Read by DSL/CronManager/script/load_constants.sh,
+  # src/constants_loader.py and the Loki logger.
+  constants.ini: |
+    [DSL]
+    {{- range $key, $value := .Values.dslConstants }}
+    {{ $key }}={{ $value }}
+    {{- end }}

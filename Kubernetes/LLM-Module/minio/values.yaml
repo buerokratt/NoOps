@@ -1,0 +1,48 @@
+release_name: "minio"
+
+image:
+  registry: "docker.io"
+  repository: "pgsty/minio"
+  tag: "RELEASE.2026-08-04T00-00-00Z"
+
+replicas: 1
+
+resources:
+  requests:
+    memory: "500Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+env:
+  MINIO_BROWSER_REDIRECT_URL: "http://localhost:9001"
+
+# Reference to Kubernetes Secret
+envFrom:
+  - secretRef:
+      name: minio-secrets
+
+volumes:
+  minio_data:
+    type: pvc
+    size: "5Gi"
+
+ports:
+  api: 9000
+  console: 9001
+
+ingress:
+  enabled: true
+  host: "domain"
+  path: "/"
+  tls:
+    enabled: true
+secretname: "minio-tls"
+
+istio:
+  enabled: false
+
+secrets:
+  MINIO_ROOT_USER: "{{ llm.minio.user }}"
+  MINIO_ROOT_PASSWORD: "{{ llm.minio.password }}"

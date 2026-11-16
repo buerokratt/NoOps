@@ -1,0 +1,167 @@
+{
+  "id": null,
+  "title": "RAG Module Orchestrator",
+  "tags": ["deployment", "models", "triton"],
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "service_name",
+        "type": "query",
+        "label": "Service Name",
+        "refresh": 1,
+        "query": "label_values(service)",
+        "datasource": {
+          "type": "loki",
+          "uid": "loki-datasource"
+        },
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [],
+        "regex": "",
+        "sort": 0,
+        "skipUrlSync": false,
+        "hide": 0
+      },
+      {
+        "name": "log_level",
+        "type": "custom",
+        "label": "Log Level",
+        "multi": true,
+        "includeAll": true,
+        "allValue": "ERROR|INFO|WARNING|DEBUG",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [
+          {
+            "text": "All",
+            "value": "$__all",
+            "selected": true
+          },
+          {
+            "text": "ERROR",
+            "value": "ERROR",
+            "selected": false
+          },
+          {
+            "text": "WARNING", 
+            "value": "WARNING",
+            "selected": false
+          },
+          {
+            "text": "INFO",
+            "value": "INFO",
+            "selected": false
+          },
+          {
+            "text": "DEBUG",
+            "value": "DEBUG",
+            "selected": false
+          }
+        ],
+        "query": "ERROR,INFO,WARNING,DEBUG",
+        "queryType": "",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "hide": 0
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Log Messages Over Time by Level",
+      "type": "graph",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum by (service, level) (count_over_time({service=~\"$service_name\", level=~\"$log_level\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{service}} - {{level}}",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-datasource"
+          }
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Log Count",
+          "min": 0
+        }
+      ],
+      "xAxis": {
+        "show": true
+      },
+      "legend": {
+        "show": true,
+        "values": true,
+        "current": true,
+        "total": true
+      },
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "fill": 1,
+      "linewidth": 2,
+      "pointradius": 2,
+      "bars": false,
+      "lines": true,
+      "points": false,
+      "stack": false,
+      "percentage": false,
+      "nullPointMode": "null as zero"
+    },
+    {
+      "id": 2,
+      "title": "Deployment Logs",
+      "type": "logs",
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "{service=~\"$service_name\", level=~\"$log_level\"}",
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-datasource"
+          }
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending"
+      }
+    }
+  ]
+}

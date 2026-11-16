@@ -1,0 +1,360 @@
+# --- Liquibase --------------------------------------------------------
+liquibase:
+  enabled: true
+  backoffLimit: 3
+  image:
+    repository: liquibase/liquibase
+    tag: "4.33.0"
+    pullPolicy: IfNotPresent
+  repo: "https://github.com/buerokratt/Buerokratt-DSL.git"
+  branch: "{{ ckb.liquibase.branch }}"
+  path: "Liquibase/ckb"
+  dbHost: "component-databases-users-db"
+  dbName: "byk"
+  dbPassword: "{{ usersDB.password }}"
+
+# --- File Processing API --------------------------------------------------------
+fileProcessing:
+  enabled: true
+  nameOverride: file-processing-api
+  # Release the existing RWO mounts before starting the replacement Pod.
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.fileproc.image.version }}"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8888
+  ingress:
+    enabled: true
+    className: ""
+    hosts: []
+    tls: []
+  env:
+    - name: AWS_ACCESS_KEY_ID
+      value: "{{ ckb.s3.access.key.id }}"
+    - name: AWS_SECRET_ACCESS_KEY
+      value: "{{ ckb.s3.secret.access.key }}" # Password
+    - name: AWS_REGION
+      value: "{{ ckb.s3.region }}"
+    - name: S3_BUCKET_NAME
+      value: "{{ ckb.s3.bucket.name }}"
+    - name: S3_ENDPOINT_URL
+      value: "{{ ckb.s3.endpoint.url }}" #s3 url
+    - name: SOURCE_PATH
+      value: ""
+    - name: S3_PRESIGNED_URL_EXPIRATION
+      value: "3600"
+    - name: S3_UPLOAD_URL_EXPIRATION
+      value: "3600"
+    - name: AUTO_CLEANUP_COMPLETED_TASKS
+      value: "true"
+    - name: COMPLETED_TASK_CLEANUP_DELAY_MINUTES
+      value: "5"
+    - name: PERIODIC_CLEANUP_INTERVAL_MINUTES
+      value: "60"
+    - name: MAX_TASK_AGE_HOURS
+      value: "24"
+  probes:
+    path: /docs
+    initialDelaySeconds: 40
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  persistence:
+    enabled: true
+    size: 1Gi
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+# --- Ruuter (internal) ---------------------------------------------------------
+ruuterInternal:
+  enabled: true
+  ingress:
+    enabled: false
+    host: "ruuter.{{ domain.name }}"
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "{{ cert.Issuer.Name }}"
+    tlsSecret: ruuter-tls
+  nameOverride: ruuter-internal
+  image:
+    repository: ghcr.io/buerokratt/ruuter
+    tag: "{{ ckb.ruuter.internal.image.version }}"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8089
+  env:
+    - name: application.cors.allowedOrigins
+      value: "http://localhost:8086,http://localhost:8089,http://localhost:3001,http://localhost:3003,http://localhost:3004,http://localhost:8080"
+    - name: application.httpCodesAllowList
+      value: "200,201,202,400,401,403,500"
+    - name: application.internalRequests.allowedIPs
+      value: "127.0.0.1"
+    - name: application.logging.displayRequestContent
+      value: "true"
+    - name: application.logging.displayResponseContent
+      value: "true"
+    - name: application.logging.printStackTrace
+      value: "true"
+    - name: application.internalRequests.disabled
+      value: "true"
+    - name: server.port
+      value: "8089"
+  config:
+    constantsIni: |-
+      configmap somehow
+  volumes:
+    mountConstantsIni: true
+    mountDSL: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+# --- Data Export ---------------------------------------------------------------
+dataExport:
+  enabled: true
+  nameOverride: data-export
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.data.export.image.version }}"
+    pullPolicy: IfNotPresent
+  command: ["python", "debug.py"]
+  service:
+    type: ClusterIP
+    port: 8889
+    targetPort: 8888
+  env:
+    - name: DB_URI
+      value: "postgresql://byk:{{ usersDB.password }}@component-databases-users-db:5432/byk"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+
+# --- GUI (React) ---------------------------------------------------------------
+gui:
+  enabled: true
+  nameOverride: ckb-gui
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.gui.image.version }}"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3001
+  env:
+    - name: NODE_ENV
+      value: development
+    - name: BASE_URL
+      value: "{{ url.name.ruuter }}/v2/backoffice"
+    - name: REACT_APP_RUUTER_API_URL
+      value: "{{ url.name.ruuter }}/v2/backoffice"
+    - name: REACT_APP_CUSTOMER_SERVICE_LOGIN
+      value: "{{ url.name.admin }}/et/dev-auth"
+    - name: REACT_APP_CSP
+      value: "upgrade-insecure-requests; default-src 'self'; font-src 'self' data:; img-src * data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; connect-src 'self' http://localhost:8086 http://localhost:8085 http://localhost:4040 https://admin.dev.buerokratt.ee/chat/menu.json https://*.s3.amazonaws.com;"
+    - name: DEBUG_ENABLED
+      value: "true"
+    - name: CHOKIDAR_USEPOLLING
+      value: "true"
+    - name: PORT
+      value: "3001"
+    - name: REACT_APP_CKB_BASE_URL
+      value: "{{ url.name.ruuter }}/v2/ckb"
+    - name: REACT_APP_SERVICE_ID
+      value: ckb
+    - name: REACT_APP_ENABLE_HIDDEN_FEATURES
+      value: "true"
+    - name: REACT_APP_VALIDATIONS_ENABLED
+      value: "FALSE"
+    - name: REACT_APP_RUUTER_API_URL
+      value: "{{ url.name.ruuter }}/v2/private/ckb"
+    - name: REACT_APP_RUUTER_PRIVATE_API_URL
+      value: "{{ url.name.ruuter }}/v2/private/backoffice"
+    - name: REACT_APP_MENU_JSON
+      value: '[{"id":"conversations","label":{"et":"Vestlused","en":"Conversations"},"path":"/chat","children":[{"label":{"et":"Vastamata","en":"Unanswered"},"path":"/unanswered"},{"label":{"et":"Aktiivsed","en":"Active"},"path":"/active"},{"label":{"et":"Ootel","en":"Pending"},"path":"/pending"},{"label":{"et":"Ajalugu","en":"History"},"path":"/history"},{"label":{"et":"Valideerimised","en":"Validations"},"path":"/validations"}]},{"id":"training","label":{"et":"Treening","en":"Training"},"path":"/training","children":[{"label":{"et":"Treening","en":"Training"},"path":"/training","children":[{"label":{"et":"Teemad","en":"Themes"},"path":"/training/intents"},{"hidden":true,"label":{"et":"Avalikud teemad","en":"Public themes"},"path":"/training/common-intents"},{"label":{"et":"Teemade järeltreenimine","en":"Post training themes"},"path":"/training/intents-followup-training"},{"label":{"et":"Vastused","en":"Answers"},"path":"/training/responses"},{"label":{"et":"Reeglid","en":"Rules"},"path":"/training/rules"},{"hidden":true,"label":{"et":"Konfiguratsioon","en":"Configuration"},"path":"/training/configuration"},{"label":{"et":"Vormid","en":"Forms"},"path":"/training/forms"},{"label":{"et":"Mälukohad","en":"Slots"},"path":"/training/slots"},{"hidden":true,"label":{"et":"Automatic Teenused","en":"Automatic Services"},"path":"/auto-services"}]},{"label":{"et":"Ajaloolised vestlused","en":"Historical conversations"},"path":"/history","children":[{"label":{"et":"Ajalugu","en":"History"},"path":"/history/history"},{"hidden":true,"label":{"et":"Pöördumised","en":"Appeals"},"path":"/history/appeal"}]},{"label":{"et":"Mudelipank ja analüütika","en":"Modelbank and analytics"},"path":"/analytics","children":[{"label":{"et":"Teemade ülevaade","en":"Overview of topics"},"path":"/analytics/overview"},{"label":{"et":"Mudelite võrdlus","en":"Comparison of models"},"path":"/analytics/models"},{"hidden":true,"label":{"et":"Testlood","en":"testTracks"},"path":"/analytics/testcases"}]},{"label":{"et":"Treeni uus mudel","en":"Train new model"},"path":"/train-new-model"}]},{"id":"analytics","label":{"et":"Analüütika","en":"Analytics"},"path":"/analytics","children":[{"label":{"et":"Ülevaade","en":"Overview"},"path":"/overview"},{"label":{"et":"Vestlused","en":"Chats"},"path":"/chats"},{"label":{"et":"Tagasiside","en":"Feedback"},"path":"/feedback"}]},{"id":"services","hidden":false,"label":{"et":"Teenused","en":"Services"},"path":"/services","children":[{"label":{"et":"Ülevaade","en":"Overview"},"path":"/overview"},{"label":{"et":"Probleemsed teenused","en":"Faulty Services"},"path":"/faultyServices"},{"label":{"et":"API varamu","en":"API Registry"},"path":"/api-registry"}]},{"id":"knowledge-center","label":{"et":"Teadmuskeskus","en":"Knowledge Center"},"path":"/knowledge-center","children":[{"id":"rag-search","label":{"et":"Mudelid ja seadistused","en":"Models management"},"path":"/rag-search","children":[{"label":{"et":"Mudelite ühendused","en":"LLM connections"},"path":"/rag-search/llm-connections"},{"label":{"et":"Viiba Seaded","en":"Prompt Configurations"},"path":"/rag-search/prompt-configurations"},{"label":{"et":"Testi mudelit","en":"Test LLM"},"path":"/rag-search/test-llm"}]},{"id":"ckb","label":{"et":"Teadmusbaas","en":"Knowledge Base"},"path":"/ckb","children":[{"label":{"et":"Agentuur","en":"Agency"},"path":"/agency"},{"label":{"et":"Aruanded","en":"Reports"},"path":"/reports"},{"label":{"et":"API Integratsioonid","en":"API Integrations"},"path":"/api"}]}]},{"id":"settings","label":{"et":"Haldus","en":"Administration"},"path":"/settings","children":[{"label":{"et":"Kasutajad","en":"Users"},"path":"/users"},{"label":{"et":"Vestlusbot","en":"Chatbot"},"path":"/chatbot","children":[{"label":{"et":"Seaded","en":"Settings"},"path":"/chatbot/settings"},{"label":{"et":"Tervitussõnum","en":"Welcome message"},"path":"/chatbot/welcome-message"},{"label":{"et":"Välimus ja käitumine","en":"Appearance and behavior"},"path":"/chatbot/appearance"},{"label":{"et":"Erakorralised teated","en":"Emergency notices"},"path":"/chatbot/emergency-notices"},{"label":{"et":"Tagasiside","en":"Feedback"},"path":"/chatbot/feedback"}]},{"label":{"et":"Vestluste analüüs","en":"Chat analysis"},"path":"/chat-analysis"},{"label":{"et":"Asutuse tööaeg","en":"Office opening hours"},"path":"/working-time"},{"label":{"et":"Sessiooni pikkus","en":"Session length"},"path":"/session-length"},{"label":{"et":"SKMi konfiguratsioon","en":"SKM Configuration"},"path":"/skm-configuration"},{"label":{"et":"Vestluse Kustutamine","en":"Delete Conversations"},"path":"/delete-conversations"},{"label":{"et":"Anonümiseerija","en":"Anonymizer"},"path":"/anonymizer"},{"hidden": false,"label":{"et":"Multidomeenid","en":"Multi-Domains"},"path":"/multi-domains"}]},{"id":"monitoring","hidden":true,"label":{"et":"Seire","en":"Monitoring"},"path":"/monitoring","children":[{"label":{"et":"Aktiivaeg","en":"Working hours"},"path":"/uptime"}]}]'
+    - name: REACT_APP_NOTIFICATION_NODE_URL
+      value: "{{ url.name.ruuter }}"
+    - name: REACT_APP_CONVERSATIONS_BASE_URL
+      value: "{{ url.name.admin }}/chat"
+    - name: REACT_APP_TRAINING_BASE_URL
+      value: "{{ url.name.admin }}/training"
+    - name: REACT_APP_ANALYTICS_BASE_URL
+      value: "{{ url.name.admin }}/analytics"
+    - name: REACT_APP_SERVICES_BASE_URL
+      value: "{{ url.name.admin }}/services"
+    - name: REACT_APP_SETTINGS_BASE_URL
+      value: "{{ url.name.admin }}/chat"
+
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+  ingress:
+    enabled: true
+    host: "admin.{{ domain.name }}"
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "{{ cert.Issuer.Name }}"
+    tlsSecret: admin-tls
+
+# --- Search Service ------------------------------------------------------------
+searchService:
+  enabled: true
+  nameOverride: search-service
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.search.image.version }}"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+    externalPort: 3009
+  env:
+    - name: OPENSEARCH_URL
+      value: "http://component-opensearch-node:9200"
+    - name: DATA_PATH
+      value: "/app/data"
+    - name: PORT
+      value: "3000"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  restartPolicy: Always
+
+# --- Scrapper (server & celery) -----------------------------------------------
+scrapperServer:
+  enabled: true
+  nameOverride: scrapper-server
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.scrapper.server.image.version }}"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    - name: RUUTER_INTERNAL
+      value: "http://ruuter-internal:8089"
+    - name: BROKER_URL
+      value: "pyamqp://{{ ckb.rabbitmq.user }}:{{ ckb.rabbitmq.password }}@rabbit-scrapper/scrapper"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+  dependsOn:
+    rabbitmq: true
+
+scrapperCelery:
+  enabled: true
+  nameOverride: scrapper-celery
+  image: 
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.scrapper.celery.image.version }}"
+    pullPolicy: IfNotPresent
+  env:
+    - name: RUUTER_INTERNAL
+      value: "http://ruuter-internal:8089"
+    - name: BROKER_URL
+      value: "pyamqp://{{ ckb.rabbitmq.user }}:{{ ckb.rabbitmq.password }}@rabbit-scrapper/scrapper"
+  volumes:
+    enabled: false
+  extraVolumes: []
+  extraVolumeMounts: []
+
+# --- Cleaning Server -----------------------------------------------------------
+cleaningServer:
+  enabled: true
+  nameOverride: cleaning-server
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.cleaner.image.version }}"
+    pullPolicy: IfNotPresent
+  # The cleaner image starts uvicorn through its own CMD.
+  command: []
+  service:
+    type: ClusterIP
+    port: 8123
+  env:
+    - name: RUUTER_INTERNAL
+      value: "http://ruuter-internal:8089"
+    - name: BROKER_URL
+      value: "pyamqp://{{ ckb.rabbitmq.user }}:{{ ckb.rabbitmq.password }}@rabbit-scrapper/scrapper"
+  volumes:
+    enabled: true
+  extraVolumes: []
+  extraVolumeMounts: []
+  vault:
+    enabled: true
+    address: "{{ ckb.vault.address }}"
+    secretPath: ckb/llm/connections/azure_openai/cleaner
+    approleSecretName: ckb-cleaner-approle
+    seed:
+      enabled: true
+      approleSecretName: ckb-cleaner-seed-approle
+      apiKey: "{{ ckb.cleaner.azure.api.key }}"
+      endpoint: "{{ ckb.cleaner.azure.endpoint }}"
+      deployment: "{{ ckb.cleaner.azure.deployment }}"
+      apiVersion: "{{ ckb.cleaner.azure.api.version }}"
+    agentImage:
+      repository: hashicorp/vault
+      tag: "1.21.3"
+      pullPolicy: IfNotPresent
+
+# --- RabbitMQ (scrapper) -------------------------------------------------------
+rabbitmq:
+  enabled: true
+  nameOverride: rabbit-scrapper
+  image:
+    repository: rabbitmq
+    tag: 4-management
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    amqpPort: 5672
+    uiPort: 15672
+  env:
+    - name: RABBITMQ_DEFAULT_USER
+      value: "{{ ckb.rabbitmq.user }}"
+    - name: RABBITMQ_DEFAULT_PASS
+      value: "{{ ckb.rabbitmq.password }}"
+    - name: RABBITMQ_DEFAULT_VHOST
+      value: "scrapper"
+
+# --- Scheduler -----------------------------------------------------------------
+scheduler:
+  enabled: true
+  nameOverride: scheduler
+  image:
+    repository: ghcr.io/buerokratt/common-knowledge
+    tag: "{{ ckb.scheduler.image.version }}"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8124

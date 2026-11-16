@@ -1,0 +1,13 @@
+{{- if .Values.dataExport.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.dataExport.nameOverride | default "data-export" }}
+spec:
+  type: {{ .Values.dataExport.service.type }}
+  selector:
+    app: {{ .Values.dataExport.nameOverride | default "data-export" }}
+  ports:
+    - port: {{ .Values.dataExport.service.port }}
+      targetPort: {{ .Values.dataExport.service.targetPort }}
+{{- end }}

@@ -1,0 +1,209 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: llm-orchestration
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+        component: llm-orchestration
+      annotations:
+        # Restart pods when constants.ini changes (subPath mounts are not live-updated)
+        checksum/constants: {{ include (print $.Template.BasePath "/configmap-llm-orchestration-constants.yaml") . | sha256sum }}
+    spec:
+      {{- if .Values.initContainer.enabled }}
+      initContainers:
+        - name: volume-init
+          image: "{{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}"
+          imagePullPolicy: {{ .Values.initContainer.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Initializing runtime volumes..."
+              
+              # Initialize config volume if empty
+              if [ ! -d "{{ .Values.volumes.config.mountPath }}" ] || [ -z "$(ls -A {{ .Values.volumes.config.mountPath }})" ]; then
+                echo "Creating config directory structure..."
+                mkdir -p {{ .Values.volumes.config.mountPath }}
+                # Generate initial config files here
+                # This is where your app would create its runtime config
+                echo "Config volume initialized"
+              fi
+              
+              # Initialize optimization volume if empty  
+              if [ ! -d "{{ .Values.volumes.optimization.mountPath }}" ] || [ -z "$(ls -A {{ .Values.volumes.optimization.mountPath }})" ]; then
+                echo "Creating optimization modules directory structure..."
+                mkdir -p {{ .Values.volumes.optimization.mountPath }}
+                # This is where your app would create its optimized modules
+                echo "Optimization volume initialized"
+              fi
+              
+              # Set proper permissions
+              chmod -R 755 {{ .Values.volumes.config.mountPath }} || true
+              chmod -R 755 {{ .Values.volumes.optimization.mountPath }} || true
+              
+              echo "Volume initialization complete"
+          volumeMounts:
+            {{- if .Values.volumes.config.enabled }}
+            - name: config-volume
+              mountPath: {{ .Values.volumes.config.mountPath }}
+            {{- end }}
+            {{- if .Values.volumes.optimization.enabled }}
+            - name: optimization-volume
+              mountPath: {{ .Values.volumes.optimization.mountPath }}
+            {{- end }}
+      {{- end }}
+      
+      containers:
+        {{- if .Values.vaultAgent.enabled }}
+        # sidecar: LLM connects to localhost:8201, never directly to Vault
+        # Security: Agent enforces llm-orchestration-policy (read-only LLM secrets)
+        - name: vault-agent-llm
+          image: hashicorp/vault:1.20.3
+          command: ["vault", "agent", "-config=/agent/config/agent.hcl", "-log-level=info"]
+          ports:
+          - name: agent-api
+            containerPort: 8201
+            protocol: TCP
+          volumeMounts:
+          - name: vault-agent-config
+            mountPath: /agent/config
+            readOnly: true
+          - name: vault-agent-creds
+            mountPath: /agent/credentials
+            readOnly: true
+          - name: vault-agent-llm-token
+            mountPath: /agent/llm-token
+          securityContext:
+            capabilities:
+              add: ["IPC_LOCK"]
+        {{- end }}
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.llmOrchestration.repository }}:{{ .Values.images.llmOrchestration.tag }}"
+          imagePullPolicy: {{ .Values.images.llmOrchestration.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: ENVIRONMENT
+              value: "{{ .Values.app.environment }}"
+            - name: PORT
+              value: "{{ .Values.service.targetPort }}"
+
+            # Vault configuration
+            {{- if .Values.vaultAgent.enabled }}
+            # Vault Agent proxy URL (localhost sidecar)
+            # WHY: LLM reads encrypted API keys through agent, not Vault directly
+            - name: VAULT_ADDR
+              value: "http://localhost:8201"
+            {{- end }}
+            
+            # Additional environment variables from values
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+          
+          {{- if .Values.healthcheck.enabled }}
+          livenessProbe:
+            httpGet:
+              path: "{{ .Values.healthcheck.httpPath }}"
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: "{{ .Values.healthcheck.readinessPath | default .Values.healthcheck.httpPath }}"
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          {{- end }}
+          
+          volumeMounts:
+            # Service endpoint URLs (constants.ini)
+            - name: constants-ini
+              mountPath: /app/constants.ini
+              subPath: constants.ini
+              readOnly: true
+            # Runtime-generated config volume
+            {{- if .Values.volumes.config.enabled }}
+            - name: config-volume
+              mountPath: {{ .Values.volumes.config.mountPath }}
+            {{- end }}
+            # Runtime-generated optimization modules
+            {{- if .Values.volumes.optimization.enabled }}
+            - name: optimization-volume
+              mountPath: {{ .Values.volumes.optimization.mountPath }}
+            {{- end }}
+            # Persistent logs
+            {{- if .Values.volumes.logs.enabled }}
+            - name: logs-volume
+              mountPath: {{ .Values.volumes.logs.mountPath }}
+            {{- end }}
+            {{- if .Values.vaultAgent.enabled }}
+            - name: vault-agent-llm-token
+              mountPath: /agent/llm-token
+              readOnly: true
+            {{- end }}
+          
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+      
+      volumes:
+        # Service endpoint URLs (constants.ini)
+        - name: constants-ini
+          configMap:
+            name: "{{ .Values.release_name }}-constants"
+        # Runtime-generated config volume (PVC)
+        {{- if .Values.volumes.config.enabled }}
+        - name: config-volume
+          persistentVolumeClaim:
+            claimName: "{{ .Values.release_name }}-config"
+        {{- end }}
+        # Runtime-generated optimization volume (PVC)
+        {{- if .Values.volumes.optimization.enabled }}
+        - name: optimization-volume
+          persistentVolumeClaim:
+            claimName: "{{ .Values.release_name }}-optimization"
+        {{- end }}
+        # Persistent logs (PVC)
+        {{- if .Values.volumes.logs.enabled }}
+        - name: logs-volume
+          persistentVolumeClaim:
+            claimName: "{{ .Values.release_name }}-logs"
+        {{- end }}
+        {{- if .Values.vaultAgent.enabled }}
+        # Vault Agent configuration (from Vault-Agent-LLM chart configmap)
+        - name: vault-agent-config
+          configMap:
+            name: vault-agent-llm-config
+        # Shared AppRole credentials (created by vault-init Job)
+        - name: vault-agent-creds
+          persistentVolumeClaim:
+            claimName: vault-agent-creds
+        # LLM-specific token storage (pod-scoped, short-lived)
+        # Tokens are generated by Vault Agent and destroyed when pod terminates
+        - name: vault-agent-llm-token
+          emptyDir: {}
+        {{- end }}
+{{- end }}

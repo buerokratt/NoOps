@@ -1,0 +1,67 @@
+replicas: 1
+enabled: true
+
+images:
+  clickhouse:
+    registry: "docker.io"
+    repository: "clickhouse/clickhouse-server"
+    tag: "latest"
+
+release_name: "clickhouse"
+
+service:
+  type: ClusterIP
+  # ClickHouse HTTP interface port
+  httpPort: 8123
+  # ClickHouse native protocol port  
+  nativePort: 9000
+
+# Environment variables 
+env:
+  CLICKHOUSE_DB: "default"
+
+# Reference to Kubernetes Secret
+envFrom:
+  - secretRef:
+      name: clickhouse-secrets
+
+# Security context 
+securityContext:
+  runAsUser: 101
+  runAsGroup: 101
+  fsGroup: 101
+
+persistence:
+  enabled: true
+  data:
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 10Gi
+  logs:
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 5Gi
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "100m"
+  limits:
+    memory: "2Gi"
+    cpu: "500m"
+
+pullPolicy: IfNotPresent
+
+healthcheck:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+  # HTTP endpoint for health check
+  httpPath: "/ping"
+
+secrets:
+  CLICKHOUSE_USER: "{{ llm.clickhouse.user }}"
+  CLICKHOUSE_PASSWORD: "{{ llm.clickhouse.password }}"

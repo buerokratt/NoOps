@@ -1,0 +1,50 @@
+replicas: 1
+enabled: true
+
+images:
+  qdrant:
+    registry: "docker.io"
+    repository: "qdrant/qdrant"
+    tag: "v1.15.1"
+
+release_name: "qdrant"
+
+service:
+  type: ClusterIP
+  # Set to true for headless service (direct pod access)
+  headless: false
+  # Qdrant HTTP API port
+  httpPort: 6333
+  # Qdrant gRPC API port
+  grpcPort: 6334
+  # Internal metrics port
+  metricsPort: 6335
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 20Gi
+  mountPath: "/qdrant/storage"
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "100m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+
+pullPolicy: IfNotPresent
+
+healthcheck:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+  # HTTP endpoint for health check
+  httpPath: "/collections"
+
+

@@ -1,0 +1,69 @@
+replicas: 1
+
+release_name: "grafana"
+
+image:
+  repository: grafana/grafana
+  pullPolicy: IfNotPresent
+  tag: "10.0.0"
+
+nameOverride: ""
+fullnameOverride: ""
+
+port: 3000
+
+service:
+  type: ClusterIP
+  port: 4005
+  targetPort: 3000
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 5Gi
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Admin configuration
+admin:
+  enabled: true
+
+# Datasources configuration
+datasources:
+  - name: Loki
+    type: loki
+    url: http://loki:3100
+    access: proxy
+    isDefault: true
+
+# Dashboard providers
+dashboardProviders:
+  - name: 'default'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+
+# Environment variables (non-sensitive)
+env:
+  GF_USERS_ALLOW_SIGN_UP: "false"
+
+# Reference to Kubernetes Secret
+envFrom:
+  - secretRef:
+      name: grafana-secrets
+
+secrets:
+  GF_SECURITY_ADMIN_USER: "{{ llm.grafana.admin.user }}"
+  GF_SECURITY_ADMIN_PASSWORD: "{{ llm.grafana.admin.password }}"

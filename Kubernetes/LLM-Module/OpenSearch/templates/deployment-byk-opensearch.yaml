@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.release_name }}
+  labels:
+    app: {{ .Values.release_name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.release_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.release_name }}
+    spec:
+      containers:
+      - name: {{ .Values.release_name }}
+        image: "{{ .Values.opensearch.image.repository }}:{{ .Values.opensearch.image.tag }}"
+        imagePullPolicy: {{ .Values.opensearch.image.pullPolicy }}
+        securityContext:
+          capabilities:
+            add: ["IPC_LOCK", "SYS_RESOURCE"]
+        ports:
+        - containerPort: {{ .Values.opensearch.ports.api }}
+          name: api
+          protocol: TCP
+        - containerPort: {{ .Values.opensearch.ports.performance }}
+          name: performance
+          protocol: TCP
+        env:
+        # Cluster configuration
+        - name: node.name
+          value: {{ .Values.opensearch.cluster.nodeName | quote }}
+        - name: cluster.name
+          value: {{ .Values.opensearch.cluster.name | quote }}
+        - name: discovery.type
+          value: {{ .Values.opensearch.cluster.discoveryType | quote }}
+        - name: discovery.seed_hosts
+          value: {{ .Values.opensearch.cluster.seed_hosts | quote }}
+        
+        # Java memory configuration
+        - name: OPENSEARCH_JAVA_OPTS
+          value: {{ .Values.opensearch.javaOpts | quote }}
+        
+        # Performance configuration
+        - name: bootstrap.memory_lock
+          value: {{ .Values.opensearch.bootstrapMemoryLock | quote }}
+        
+        # Security configuration
+        {{- if not .Values.opensearch.security.enabled }}
+        - name: plugins.security.disabled
+          value: "true"
+        {{- end }}
+        
+        {{- if .Values.opensearch.persistence.enabled }}
+        volumeMounts:
+        - name: opensearch-data
+          mountPath: {{ .Values.opensearch.persistence.mountPath }}
+        {{- end }}
+        
+        resources:
+          limits:
+            cpu: {{ .Values.opensearch.resources.limits.cpu }}
+            memory: {{ .Values.opensearch.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.opensearch.resources.requests.cpu }}
+            memory: {{ .Values.opensearch.resources.requests.memory }}
+      
+      {{- if .Values.opensearch.persistence.enabled }}
+      volumes:
+      - name: opensearch-data
+        persistentVolumeClaim:
+          claimName: {{ .Values.release_name }}-data-pvc
+      {{- end }}
+      
+      restartPolicy: Always

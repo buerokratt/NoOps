@@ -1,0 +1,123 @@
+replicas: 1
+enabled: true
+
+images:
+  llmOrchestration:
+    repository: "ghcr.io/buerokratt/llm-module"  # Update with actual llm-orchestration image repository
+    tag: "{{ llm.orchestration.image.version }}"
+    pullPolicy: "IfNotPresent"
+
+release_name: "llm-orchestration-service"
+
+service:
+  type: ClusterIP
+  port: 8100
+  targetPort: 8100
+
+app:
+  environment: "production"
+
+# Volume configurations
+volumes:
+  # Runtime-generated config volume (managed by InitContainer + PVC)
+  config:
+    enabled: true
+    mountPath: "/app/src/llm_config_module/config"
+    size: "1Gi"
+    accessMode: "ReadWriteOnce"
+    storageClass: ""
+  
+  # Runtime-generated optimization modules (managed by InitContainer + PVC)
+  optimization:
+    enabled: true
+    mountPath: "/app/src/optimization/optimized_modules"
+    size: "5Gi"
+    accessMode: "ReadWriteOnce"
+    storageClass: ""
+  
+  # Logs volume (persistent)
+  logs:
+    enabled: true
+    mountPath: "/app/logs"
+    size: "5Gi"
+    accessMode: "ReadWriteOnce"
+    storageClass: ""
+  
+
+# InitContainer configuration for runtime volume preparation
+initContainer:
+  enabled: true
+  image: 
+    repository: "ghcr.io/buerokratt/llm-module"  # Update with actual llm-orchestration image repository
+    tag: "{{ llm.orchestration.init.image.version }}"
+    pullPolicy: "IfNotPresent"
+  # InitContainer will prepare the runtime volumes
+  prepareVolumes: true
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "50m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+healthcheck:
+  enabled: false
+  initialDelaySeconds: 40
+  periodSeconds: 30
+  timeoutSeconds: 10
+  failureThreshold: 3
+  successThreshold: 1
+  # LLM orchestration health endpoint
+  httpPath: "/health"
+  # Additional readiness checks
+  readinessPath: "/ready"
+
+# Environment variables injected into the LLM container
+# Redis defaults match the in-cluster Redis service (see Redis chart)
+env:
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  REDIS_AUTH: "myredissecret"
+  REDIS_SESSION_DB: "0"
+  VAULT_AGENT_PROXY: "true"
+  TOOL_CLASSIFIER_ENABLED: "true"
+  SERVICE_WORKFLOW_ENABLED: "true"
+  API_TOOL_CALLING_WORKFLOW_ENABLED: "true"
+  CONTEXT_WORKFLOW_ENABLED: "true"
+  MULTI_INTENT_ENABLED: "true"
+
+# Service endpoint URLs, rendered into constants.ini ([DSL] section) and mounted
+# at /app/constants.ini. Defaults match the service names of the charts in this
+# repo; override per cluster if your service names differ.
+# Note: Ruuter URLs here include the /rag-search suffix (unlike the Ruuter charts'
+# own constants.ini).
+constants:
+  LANGFUSE_URL: "http://langfuse-web:3000"
+  LOKI_URL: "http://loki:3100"
+  QDRANT_URL: "http://qdrant:6333"
+  RAG_SEARCH_RESQL: "http://component-byk-resql:8082/rag-search"
+  RAG_SEARCH_RUUTER_PRIVATE: "http://component-byk-ruuter-private:8080/backoffice"
+  RAG_SEARCH_RUUTER_PUBLIC: "http://component-byk-ruuter:8080/backoffice"
+  RAG_SEARCH_RUUTER_PUBLIC_INTERNAL_SERVICE: "http://component-byk-ruuter-private:8080/services"
+  RUUTER_COMMON_SERVICE_BASE_URL: "http://component-byk-ruuter-private:8080/common-services"
+  RAG_SEARCH_DMAPPER: "http://component-byk-dmapper:3000"
+  RAG_SEARCH_PROJECT_LAYER: "rag-search"
+  RAG_SEARCH_TIM: "http://component-byk-tim:8085"
+  RAG_SEARCH_CRON_MANAGER: "http://cron-manager-llm:9010"
+  RAG_SEARCH_LLM_ORCHESTRATOR: "http://llm-orchestration-service:8100/orchestrate"
+  RAG_SEARCH_LLM_CACHE_CLEAR: "http://llm-orchestration-service:8100/cache/clear"
+  RAG_SEARCH_PROMPT_REFRESH: "http://llm-orchestration-service:8100/prompt-config/refresh"
+  SERVICE_DMAPPER_HBS: "http://component-byk-dmapper:3000/services/hbs"
+  SERVICE_PROJECT_LAYER: "services"
+  RAG_SEARCH_LLM_SERVICE: "http://llm-orchestration-service:8100"
+  VAULT_AGENT_URL: "http://vault-agent-cron:8203"
+  CKB_RUUTER_INTERNAL: "http://ruuter-internal:8089/ckb"
+
+
+# Vault Agent sidecar configuration
+# WHY: LLM Orchestration needs read access to encrypted LLM API keys
+# Security: Agent enforces policy - read-only access to LLM secrets
+vaultAgent:
+  enabled: true

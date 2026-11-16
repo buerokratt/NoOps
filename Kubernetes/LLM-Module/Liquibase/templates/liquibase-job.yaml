@@ -1,0 +1,75 @@
+{{- if .Values.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+spec:
+  backoffLimit: {{ .Values.backoffLimit }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+        - name: liquibase-repo
+          emptyDir: {}
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          volumeMounts:
+            - name: liquibase-repo
+              mountPath: /liquibase-files
+          command:
+            - sh
+            - -c
+            - |
+              git clone --single-branch --depth 1 --branch {{ .Values.dslBranch }} https://github.com/buerokratt/Buerokratt-DSL /tmp/dsl &&
+
+              cp -r /tmp/dsl/Liquibase/rag-search/* /liquibase-files
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.scope.repository }}:{{ .Values.images.scope.tag }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          env:
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
+            # Sensitive env's from Kubernetes Secret
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: liquibase-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: liquibase-secrets
+                  key: POSTGRES_PASSWORD
+                 
+          volumeMounts:
+            - name: liquibase-repo
+              mountPath: /liquibase-files
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "--- Listing files in /liquibase-files ---"
+              ls -R /liquibase-files
+              cd /liquibase-files
+              echo "--- Now running Liquibase ---"
+              liquibase \
+              --defaultsFile=/liquibase-files/liquibase.properties \
+              --changeLogFile=master.yml \
+              --url=jdbc:postgresql://component-databases-users-db:5432/byk \
+              --username=$(POSTGRES_USER) \
+              --password=$(POSTGRES_PASSWORD) \
+              update
+          
+{{- end }}

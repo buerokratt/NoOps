@@ -1,0 +1,387 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.release_name }}-script
+  labels:
+    app: {{ .Values.release_name }}
+    component: vault-init
+data:
+  {{ .Values.initScript.filename }}: |
+    #!/bin/sh
+    set -e
+
+    VAULT_ADDR="${VAULT_ADDR:-http://vault:8200}"
+    UNSEAL_KEYS_FILE="/vault/data/unseal-keys.json"
+    INIT_FLAG="/vault/data/.initialized"
+
+    echo "=== Vault Initialization Script ==="
+
+    # ---------------------------------------------------------------------------
+    # Helpers (used by the SUBSEQUENT DEPLOYMENT branch)
+    # ---------------------------------------------------------------------------
+
+    # Ensure a role_id file exists on disk; fetch from Vault if missing.
+    # Usage: ensure_role_id <role-name> <role_id_file>
+    ensure_role_id() {
+        role="$1"; rid_file="$2"
+        if [ -f "$rid_file" ] && [ -s "$rid_file" ]; then
+            return 0
+        fi
+        echo "Fetching role_id for $role..."
+        rid=$(wget -q -O- \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/$role/role-id" | \
+            grep -o '"role_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$rid" > "$rid_file"
+        chmod 640 "$rid_file"
+    }
+
+    # Return 0 if the on-disk role_id + secret_id still authenticate, 1 otherwise.
+    # Usage: validate_secret_id <role_id_file> <secret_id_file>
+    validate_secret_id() {
+        rid_file="$1"; sid_file="$2"
+        [ -f "$rid_file" ] && [ -f "$sid_file" ] || return 1
+        rid=$(cat "$rid_file"); sid=$(cat "$sid_file")
+        [ -n "$rid" ] && [ -n "$sid" ] || return 1
+        # wget returns non-zero on HTTP 400 (invalid creds); also confirm a token came back.
+        resp=$(wget -q -O- \
+            --post-data="{\"role_id\":\"$rid\",\"secret_id\":\"$sid\"}" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/auth/approle/login" 2>/dev/null) || return 1
+        echo "$resp" | grep -q '"client_token"' || return 1
+        return 0
+    }
+
+    # Mint a fresh secret_id for a role and write it to disk.
+    # Usage: mint_secret_id <role-name> <secret_id_file>
+    mint_secret_id() {
+        role="$1"; sid_file="$2"
+        sid=$(wget -q -O- --post-data='' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/$role/secret-id" | \
+            grep -o '"secret_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$sid" > "$sid_file"
+        chmod 640 "$sid_file"
+    }
+
+    # Reuse the existing secret_id if it still authenticates; otherwise mint a new one.
+    # Usage: reconcile_secret_id <role-name> <role_id_file> <secret_id_file>
+    reconcile_secret_id() {
+        role="$1"; rid_file="$2"; sid_file="$3"
+        ensure_role_id "$role" "$rid_file"
+        if validate_secret_id "$rid_file" "$sid_file"; then
+            echo "$role: existing secret_id still valid - reusing"
+        else
+            echo "$role: secret_id invalid or missing - minting a new one"
+            mint_secret_id "$role" "$sid_file"
+        fi
+    }
+
+    # Create or update an AppRole that issues a PERIODIC token (no max_ttl): the
+    # agent renews it forever and never re-runs approle/login in steady state.
+    # secret_id_ttl=0 + secret_id_num_uses=0 keep the secret_id valid across
+    # restarts. Idempotent: does not invalidate existing secret_ids, safe per run.
+    # Usage: upsert_approle <role-name> <policy-name> <token-period>
+    upsert_approle() {
+        role="$1"; policy="$2"; period="$3"
+        wget -q -O- --post-data='{"token_policies":["'"$policy"'"],"token_period":"'"$period"'","token_num_uses":0,"secret_id_ttl":"0","secret_id_num_uses":0,"bind_secret_id":true}' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/auth/approle/role/$role" >/dev/null
+    }
+
+    # Apply the current AppRole definitions for all three services.
+    ensure_approles() {
+        echo "Ensuring AppRole configs (periodic tokens)..."
+        upsert_approle "gui-service"               "gui-policy"                 "20m"
+        upsert_approle "cron-manager-service"      "cron-manager-policy"        "30m"
+        upsert_approle "llm-orchestration-service" "llm-orchestration-policy"   "1h"
+    }
+
+    # Wait for Vault to be ready
+    echo "Waiting for Vault..."
+    for i in $(seq 1 30); do
+        if wget -q -O- "$VAULT_ADDR/v1/sys/health" >/dev/null 2>&1; then
+            echo "Vault is ready"
+            break
+        fi
+        echo "Waiting... ($i/30)"
+        sleep 2
+    done
+
+    # Check if this is first time
+    if [ ! -f "$INIT_FLAG" ]; then
+        echo "=== FIRST TIME DEPLOYMENT ==="
+        
+        # Initialize Vault
+        echo "Initializing Vault..."
+        wget -q -O- --post-data='{"secret_shares":5,"secret_threshold":3}' \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/init" > "$UNSEAL_KEYS_FILE"
+        
+        ROOT_TOKEN=$(grep -o '"root_token":"[^"]*"' "$UNSEAL_KEYS_FILE" | cut -d':' -f2 | tr -d '"')
+        export VAULT_TOKEN="$ROOT_TOKEN"
+        
+        # Extract unseal keys
+        KEY1=$(grep -o '"keys":\[[^]]*\]' "$UNSEAL_KEYS_FILE" | grep -o '"[^"]*"' | sed -n '2p' | tr -d '"')
+        KEY2=$(grep -o '"keys":\[[^]]*\]' "$UNSEAL_KEYS_FILE" | grep -o '"[^"]*"' | sed -n '3p' | tr -d '"')
+        KEY3=$(grep -o '"keys":\[[^]]*\]' "$UNSEAL_KEYS_FILE" | grep -o '"[^"]*"' | sed -n '4p' | tr -d '"')
+        
+        # Unseal Vault
+        echo "Unsealing Vault..."
+        wget -q -O- --post-data="{\"key\":\"$KEY1\"}" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/unseal" >/dev/null
+        
+        wget -q -O- --post-data="{\"key\":\"$KEY2\"}" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/unseal" >/dev/null
+        
+        wget -q -O- --post-data="{\"key\":\"$KEY3\"}" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/unseal" >/dev/null
+        
+        sleep 2
+        echo "Vault unsealed"
+        
+        # Enable KV v2
+        echo "Enabling KV v2 secrets engine..."
+        wget -q -O- --post-data='{"type":"kv","options":{"version":"2"}}' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/mounts/secret" >/dev/null 2>&1 || echo "KV already enabled"
+        
+        # Enable AppRole
+        echo "Enabling AppRole..."
+        wget -q -O- --post-data='{"type":"approle"}' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/auth/approle" >/dev/null 2>&1 || echo "AppRole already enabled"
+        
+        # Create GUI policy - Read public encryption key only
+        echo "Creating gui-policy..."
+        GUI_POLICY='path "secret/data/encryption/public_key" { capabilities = ["read"] }
+    path "secret/metadata/encryption/public_key" { capabilities = ["read"] }
+    path "secret/data/encryption/private_key" { capabilities = ["deny"] }
+    path "secret/data/llm/*" { capabilities = ["deny"] }
+    path "secret/data/embeddings/*" { capabilities = ["deny"] }'
+        
+        GUI_POLICY_JSON=$(echo "$GUI_POLICY" | jq -Rs '{"policy":.}')
+        wget -q -O- --post-data="$GUI_POLICY_JSON" \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/policies/acl/gui-policy" >/dev/null
+        
+        # Create CronManager policy - Read encryption keys + Write LLM/Embedding secrets
+        echo "Creating cron-manager-policy..."
+        CRON_POLICY='path "secret/data/encryption/public_key" { capabilities = ["read"] }
+    path "secret/metadata/encryption/public_key" { capabilities = ["read"] }
+    path "secret/data/encryption/private_key" { capabilities = ["read"] }
+    path "secret/metadata/encryption/private_key" { capabilities = ["read"] }
+    path "secret/data/llm/connections/*" { capabilities = ["create", "read", "update", "delete"] }
+    path "secret/metadata/llm/connections/*" { capabilities = ["read", "list", "delete"] }
+    path "secret/data/embeddings/connections/*" { capabilities = ["create", "read", "update", "delete"] }
+    path "secret/metadata/embeddings/connections/*" { capabilities = ["read", "list", "delete"] }
+    path "auth/token/lookup-self" { capabilities = ["read"] }'
+        
+        CRON_POLICY_JSON=$(echo "$CRON_POLICY" | jq -Rs '{"policy":.}')
+        wget -q -O- --post-data="$CRON_POLICY_JSON" \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/policies/acl/cron-manager-policy" >/dev/null
+        
+        # Create LLM Orchestration policy - Read LLM/Embedding secrets only
+        echo "Creating llm-orchestration-policy..."
+        LLM_POLICY='path "secret/data/llm/connections/*" { capabilities = ["read", "list"] }
+    path "secret/metadata/llm/connections/*" { capabilities = ["read", "list"] }
+    path "secret/data/embeddings/connections/*" { capabilities = ["read", "list"] }
+    path "secret/metadata/embeddings/connections/*" { capabilities = ["read", "list"] }
+    path "secret/data/encryption/*" { capabilities = ["deny"] }
+    path "secret/data/langfuse/*" { capabilities = ["read"] }
+    path "secret/metadata/langfuse/*" { capabilities = ["read", "list"] }
+    path "auth/token/lookup-self" { capabilities = ["read"] }'
+        
+        LLM_POLICY_JSON=$(echo "$LLM_POLICY" | jq -Rs '{"policy":.}')
+        wget -q -O- --post-data="$LLM_POLICY_JSON" \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/sys/policies/acl/llm-orchestration-policy" >/dev/null
+        
+        # Create the three AppRoles (periodic tokens - see upsert_approle).
+        ensure_approles
+
+        # Ensure credentials directory exists
+        mkdir -p /agent/credentials
+        
+        # Get GUI credentials
+        echo "Getting GUI credentials..."
+        GUI_ROLE_ID=$(wget -q -O- \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/gui-service/role-id" | \
+            grep -o '"role_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$GUI_ROLE_ID" > /agent/credentials/gui_role_id
+        
+        GUI_SECRET_ID=$(wget -q -O- --post-data='' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/gui-service/secret-id" | \
+            grep -o '"secret_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$GUI_SECRET_ID" > /agent/credentials/gui_secret_id
+        
+        # Get CronManager credentials
+        echo "Getting CronManager credentials..."
+        CRON_ROLE_ID=$(wget -q -O- \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/cron-manager-service/role-id" | \
+            grep -o '"role_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$CRON_ROLE_ID" > /agent/credentials/cron_role_id
+        
+        CRON_SECRET_ID=$(wget -q -O- --post-data='' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/cron-manager-service/secret-id" | \
+            grep -o '"secret_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$CRON_SECRET_ID" > /agent/credentials/cron_secret_id
+        
+        # Get LLM Orchestration credentials
+        echo "Getting LLM Orchestration credentials..."
+        LLM_ROLE_ID=$(wget -q -O- \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/llm-orchestration-service/role-id" | \
+            grep -o '"role_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$LLM_ROLE_ID" > /agent/credentials/llm_role_id
+        
+        LLM_SECRET_ID=$(wget -q -O- --post-data='' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            "$VAULT_ADDR/v1/auth/approle/role/llm-orchestration-service/secret-id" | \
+            grep -o '"secret_id":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+        echo "$LLM_SECRET_ID" > /agent/credentials/llm_secret_id
+        
+        # Set secure permissions
+        chmod 640 /agent/credentials/*_role_id
+        chmod 640 /agent/credentials/*_secret_id
+        
+        # Generate RSA keypair for credential encryption/decryption
+        echo "Generating RSA keypair for encryption..."
+        
+        # Create temp directory for key generation
+        TEMP_KEY_DIR="/tmp/vault-keys-$$"
+        mkdir -p "$TEMP_KEY_DIR"
+        
+        # Generate private key (RSA-2048)
+        if ! openssl genrsa -out "$TEMP_KEY_DIR/private.pem" 2048 2>/dev/null; then
+            echo "ERROR: Failed to generate private key"
+            exit 1
+        fi
+        
+        # Extract public key from private key
+        if ! openssl rsa -in "$TEMP_KEY_DIR/private.pem" -pubout -out "$TEMP_KEY_DIR/public.pem" 2>/dev/null; then
+            echo "ERROR: Failed to extract public key"
+            exit 1
+        fi
+        
+        echo "Keys generated successfully"
+        
+        # Read keys and escape for JSON
+        PRIVATE_KEY=$(cat "$TEMP_KEY_DIR/private.pem" | sed ':a;N;$!ba;s/\n/\\n/g')
+        PUBLIC_KEY=$(cat "$TEMP_KEY_DIR/public.pem" | sed ':a;N;$!ba;s/\n/\\n/g')
+        CREATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+        KEY_ID="rsa-keypair-$(date +%s)"
+        
+        # Store public key in Vault
+        echo "Storing public key in Vault..."
+        wget -q -O- --post-data='{"data":{"key":"'"$PUBLIC_KEY"'","algorithm":"RSA-OAEP","key_size":2048,"key_id":"'"$KEY_ID"'","created_at":"'"$CREATED_AT"'"}}' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/secret/data/encryption/public_key" >/dev/null
+        
+        # Store private key in Vault
+        echo "Storing private key in Vault..."
+        wget -q -O- --post-data='{"data":{"key":"'"$PRIVATE_KEY"'","algorithm":"RSA-OAEP","key_size":2048,"key_id":"'"$KEY_ID"'","created_at":"'"$CREATED_AT"'"}}' \
+            --header="X-Vault-Token: $ROOT_TOKEN" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/secret/data/encryption/private_key" >/dev/null
+        
+        # Clean up temporary files
+        rm -rf "$TEMP_KEY_DIR"
+        echo "RSA keypair generated and stored successfully"
+        
+        # Mark as initialized
+        touch "$INIT_FLAG"
+        echo "=== First time setup complete ==="
+
+    else
+        echo "=== SUBSEQUENT DEPLOYMENT ==="
+        
+        # Check if Vault is sealed
+        SEALED=$(wget -q -O- "$VAULT_ADDR/v1/sys/seal-status" | grep -o '"sealed":[^,}]*' | cut -d':' -f2)
+        
+        if [ "$SEALED" = "true" ]; then
+            echo "Vault is sealed. Unsealing..."
+            
+            # Load unseal keys
+            KEY1=$(grep -o '"keys":\[[^]]*\]' "$UNSEAL_KEYS_FILE" | grep -o '"[^"]*"' | sed -n '2p' | tr -d '"')
+            KEY2=$(grep -o '"keys":\[[^]]*\]' "$UNSEAL_KEYS_FILE" | grep -o '"[^"]*"' | sed -n '3p' | tr -d '"')
+            KEY3=$(grep -o '"keys":\[[^]]*\]' "$UNSEAL_KEYS_FILE" | grep -o '"[^"]*"' | sed -n '4p' | tr -d '"')
+            
+            wget -q -O- --post-data="{\"key\":\"$KEY1\"}" \
+                --header='Content-Type: application/json' \
+                "$VAULT_ADDR/v1/sys/unseal" >/dev/null
+            
+            wget -q -O- --post-data="{\"key\":\"$KEY2\"}" \
+                --header='Content-Type: application/json' \
+                "$VAULT_ADDR/v1/sys/unseal" >/dev/null
+            
+            wget -q -O- --post-data="{\"key\":\"$KEY3\"}" \
+                --header='Content-Type: application/json' \
+                "$VAULT_ADDR/v1/sys/unseal" >/dev/null
+            
+            sleep 2
+            echo "Vault unsealed"
+        else
+            echo "Vault is already unsealed"
+        fi
+        
+        # Get root token
+        ROOT_TOKEN=$(grep -o '"root_token":"[^"]*"' "$UNSEAL_KEYS_FILE" | cut -d':' -f2 | tr -d '"')
+        export VAULT_TOKEN="$ROOT_TOKEN"
+
+        # Re-apply AppRole definitions so config changes (e.g. periodic tokens)
+        # take effect on redeploy without re-initializing Vault. Idempotent and
+        # does not invalidate existing secret_ids.
+        ensure_approles
+
+        # Ensure credentials directory exists
+        mkdir -p /agent/credentials
+        
+        # Reconcile secret_ids: reuse the existing one if it still authenticates,
+        # mint a new one only if invalid or missing - keeps one stable secret_id
+        # across restarts instead of rotating every boot. reconcile_secret_id also
+        # ensures the role_id file exists first (validation needs both).
+        reconcile_secret_id "gui-service"                 /agent/credentials/gui_role_id  /agent/credentials/gui_secret_id
+        reconcile_secret_id "cron-manager-service"        /agent/credentials/cron_role_id /agent/credentials/cron_secret_id
+        reconcile_secret_id "llm-orchestration-service"   /agent/credentials/llm_role_id  /agent/credentials/llm_secret_id
+    fi
+
+
+    # Store the Langfuse config where the LLM Orchestration Service reads it.
+    # Outside both branches on purpose: the key must be written on every
+    # deployment, not only the first. Langfuse creates the project and key from
+    # its own LANGFUSE_INIT_* vars, so these values are declared, never generated.
+    if [ -n "${LANGFUSE_INIT_PROJECT_PUBLIC_KEY}" ] && [ -n "${LANGFUSE_INIT_PROJECT_SECRET_KEY}" ]; then
+        echo "Storing Langfuse config in Vault..."
+        LANGFUSE_HOST="${LANGFUSE_HOST:-http://langfuse-web:3005}"
+        LANGFUSE_JSON='{"data":{"public_key":"'"${LANGFUSE_INIT_PROJECT_PUBLIC_KEY}"'","secret_key":"'"${LANGFUSE_INIT_PROJECT_SECRET_KEY}"'","host":"'"${LANGFUSE_HOST}"'"}}'
+
+        if wget -q -O- --post-data="${LANGFUSE_JSON}" \
+            --header="X-Vault-Token: ${ROOT_TOKEN}" \
+            --header='Content-Type: application/json' \
+            "$VAULT_ADDR/v1/secret/data/langfuse/config" >/dev/null; then
+            echo "Langfuse config stored at secret/data/langfuse/config"
+        else
+            echo "Warning: failed to store Langfuse config in Vault"
+        fi
+    else
+        echo "Langfuse init variables not set, skipping Langfuse config"
+    fi
+
+
+    echo "=== Vault init complete ==="

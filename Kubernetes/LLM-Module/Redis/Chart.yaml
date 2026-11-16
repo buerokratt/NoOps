@@ -1,0 +1,6 @@
+apiVersion: v2
+name: Redis
+description: Redis cache and session store for RAG
+type: application
+version: 0.1.0
+appVersion: "7"

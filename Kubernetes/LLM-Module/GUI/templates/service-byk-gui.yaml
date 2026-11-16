@@ -1,0 +1,15 @@
+{{- if .Values.gui.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gui.release_name }}
+spec:
+  type: {{ .Values.gui.service.type }}
+  ports:
+  - port: {{ .Values.gui.service.port }}
+    targetPort: {{ .Values.gui.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    app: {{ .Values.gui.release_name }}
+{{- end }}

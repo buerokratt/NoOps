@@ -1,0 +1,102 @@
+enabled: true
+
+images:
+  vault:
+    registry: "docker.io"
+    repository: "hashicorp/vault"
+    tag: "1.20.3"
+
+release_name: "vault-agent-llm"
+
+# Vault service dependency
+vault:
+  serviceName: "vault"
+  addr: "http://vault:8200"
+
+# Pod affinity to ensure co-location with Vault
+affinity:
+  enabled: true
+  # Ensure this pod is scheduled on same node as Vault pod
+  colocateWithVault: true
+
+
+# DEPRECATED: Standalone deployment disabled - agent runs as sidecar
+deployment:
+  standalone: false  # Set to true only for testing/debugging
+  replicas: 1
+  type: "Deployment"
+
+# Shared volumes for vault ecosystem
+volumes:
+  agentCredentials:
+    enabled: true
+    mountPath: "/agent/credentials"
+    # Uses same PVC as vault-init
+  
+  agentToken:
+    enabled: true
+    mountPath: "/agent/out"
+    # Uses same PVC as vault-init
+  
+  agentConfig:
+    enabled: true
+    mountPath: "/agent/config"
+    # ConfigMap for vault agent configuration
+
+# Vault agent configuration
+agent:
+  enabled: true
+  config:
+    # Auto-auth configuration
+    autoAuth:
+      method: "kubernetes"
+      mountPath: "auth/kubernetes"
+    
+    # Cache configuration
+    cache:
+      enabled: true
+    
+    # Template configuration for secret injection
+    templates:
+      enabled: true
+      secrets:
+        - name: "llm-secrets"
+          path: "/agent/out/secrets.env"
+          template: |
+            {{- with secret "secret/llm-orchestration" -}}
+            OPENAI_API_KEY={{ .Data.data.openai_api_key }}
+            ANTHROPIC_API_KEY={{ .Data.data.anthropic_api_key }}
+            AZURE_OPENAI_API_KEY={{ .Data.data.azure_openai_api_key }}
+            AZURE_OPENAI_ENDPOINT={{ .Data.data.azure_openai_endpoint }}
+            OLLAMA_HOST={{ .Data.data.ollama_host }}
+            VECTOR_DB_HOST={{ .Data.data.vector_db_host }}
+            VECTOR_DB_PORT={{ .Data.data.vector_db_port }}
+            VECTOR_DB_COLLECTION={{ .Data.data.vector_db_collection }}
+            {{- end -}}
+
+pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "50m"
+  limits:
+    memory: "256Mi"
+    cpu: "200m"
+
+probes:
+  livenessProbe:
+    enabled: false
+    httpGet:
+      path: "/v1/sys/health"
+      port: 8200
+    initialDelaySeconds: 30
+    periodSeconds: 30
+  
+  readinessProbe:
+    enabled: false
+    httpGet:
+      path: "/v1/sys/health"
+      port: 8200
+    initialDelaySeconds: 10
+    periodSeconds: 10

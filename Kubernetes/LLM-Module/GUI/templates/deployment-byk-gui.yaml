@@ -1,0 +1,176 @@
+{{- if .Values.gui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.gui.release_name }}
+  labels:
+    app: {{ .Values.gui.release_name }}
+spec:
+  replicas: {{ .Values.gui.replicas  }}
+  selector:
+    matchLabels:
+      app: {{ .Values.gui.release_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.gui.release_name }}
+        
+    spec:
+      containers:
+      # sidecar: GUI connects to localhost:8202 (vault-agent)
+      {{- if .Values.vaultAgent.enabled }}
+      - name: vault-agent-gui
+        image: hashicorp/vault:1.20.3
+        command: ["vault", "agent", "-config=/agent/config/gui-agent.hcl", "-log-level=info"]
+        ports:
+        - name: agent-api
+          containerPort: 8202
+          protocol: TCP
+        volumeMounts:
+        - name: vault-agent-config
+          mountPath: /agent/config
+          readOnly: true
+        - name: vault-agent-creds
+          mountPath: /agent/credentials
+          readOnly: true
+        - name: vault-agent-gui-token
+          mountPath: /agent/gui-token
+        securityContext:
+          capabilities:
+            add: ["IPC_LOCK"]
+        # # Health check: Ensure token file exists and is not empty
+        # livenessProbe:
+        #   exec:
+        #     command:
+        #     - sh
+        #     - -c
+        #     - test -f /agent/gui-token/token && test -s /agent/gui-token/token
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 10
+        #   timeoutSeconds: 3
+        #   failureThreshold: 3
+        # readinessProbe:
+        #   exec:
+        #     command:
+        #     - sh
+        #     - -c
+        #     - test -f /agent/gui-token/token && test -s /agent/gui-token/token
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5
+        #   timeoutSeconds: 3
+      {{- end }}
+      - name: {{ .Values.gui.release_name }}
+        image: "{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}"
+        imagePullPolicy: {{ .Values.gui.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.gui.port }}
+          name: {{ .Values.gui.port }}tcp
+          protocol: TCP
+        env:
+        # Node.js environment configuration
+        - name: NODE_ENV
+          value: {{ .Values.gui.nodeEnv | quote }}
+        - name: PORT
+          value: {{ .Values.gui.port | quote }}
+        - name: DEBUG_ENABLED
+          value: {{ .Values.gui.debugEnabled | quote }}
+        - name: CHOKIDAR_USEPOLLING
+          value: "true"
+        
+        # React application configuration
+        - name: REACT_APP_RUUTER_API_URL
+          value: {{ .Values.gui.services.ruuterPublic | quote }}
+        - name: REACT_APP_RUUTER_PRIVATE_API_URL
+          value: {{ .Values.gui.services.ruuterPrivate | quote }}
+        - name: REACT_APP_EXTERNAL_API_URL
+          value: {{ .Values.gui.services.datasetGenerator | quote }}
+        - name: REACT_APP_CUSTOMER_SERVICE_LOGIN
+          value: {{ printf "%s/et/dev-auth" .Values.gui.services.authenticationLayer | quote }}
+        - name: REACT_APP_NOTIFICATION_NODE_URL
+          value: {{ .Values.gui.services.notificationNode | quote }}
+        - name: REACT_APP_CSP
+          value: {{ .Values.gui.csp | quote }}
+        - name: REACT_APP_SERVICE_ID
+          value: {{ .Values.gui.serviceId | quote }}
+        - name: REACT_APP_ENABLE_HIDDEN_FEATURES
+          value: {{ .Values.gui.enableHiddenFeatures | quote | upper }}
+        - name: REACT_APP_LOCAL
+          value: "false"
+        - name: REACT_APP_AUTH_BASE_URL
+          value: {{ .Values.gui.services.REACT_APP_AUTH_BASE_URL | quote }}
+        - name: REACT_APP_MENU_JSON
+          value: '[{"id":"conversations","label":{"et":"Vestlused","en":"Conversations"},"path":"/chat","children":[{"label":{"et":"Vastamata","en":"Unanswered"},"path":"/unanswered"},{"label":{"et":"Aktiivsed","en":"Active"},"path":"/active"},{"label":{"et":"Ootel","en":"Pending"},"path":"/pending"},{"label":{"et":"Ajalugu","en":"History"},"path":"/history"},{"label":{"et":"Valideerimised","en":"Validations"},"path":"/validations"}]},{"id":"training","label":{"et":"Treening","en":"Training"},"path":"/training","children":[{"label":{"et":"Treening","en":"Training"},"path":"/training","children":[{"label":{"et":"Teemad","en":"Themes"},"path":"/training/intents"},{"hidden":true,"label":{"et":"Avalikud teemad","en":"Public themes"},"path":"/training/common-intents"},{"label":{"et":"Teemade järeltreenimine","en":"Post training themes"},"path":"/training/intents-followup-training"},{"label":{"et":"Vastused","en":"Answers"},"path":"/training/responses"},{"label":{"et":"Reeglid","en":"Rules"},"path":"/training/rules"},{"hidden":true,"label":{"et":"Konfiguratsioon","en":"Configuration"},"path":"/training/configuration"},{"label":{"et":"Vormid","en":"Forms"},"path":"/training/forms"},{"label":{"et":"Mälukohad","en":"Slots"},"path":"/training/slots"},{"hidden":true,"label":{"et":"Automatic Teenused","en":"Automatic Services"},"path":"/auto-services"}]},{"label":{"et":"Ajaloolised vestlused","en":"Historical conversations"},"path":"/history","children":[{"label":{"et":"Ajalugu","en":"History"},"path":"/history/history"},{"hidden":true,"label":{"et":"Pöördumised","en":"Appeals"},"path":"/history/appeal"}]},{"label":{"et":"Mudelipank ja analüütika","en":"Modelbank and analytics"},"path":"/analytics","children":[{"label":{"et":"Teemade ülevaade","en":"Overview of topics"},"path":"/analytics/overview"},{"label":{"et":"Mudelite võrdlus","en":"Comparison of models"},"path":"/analytics/models"},{"hidden":true,"label":{"et":"Testlood","en":"testTracks"},"path":"/analytics/testcases"}]},{"label":{"et":"Treeni uus mudel","en":"Train new model"},"path":"/train-new-model"}]},{"id":"analytics","label":{"et":"Analüütika","en":"Analytics"},"path":"/analytics","children":[{"label":{"et":"Ülevaade","en":"Overview"},"path":"/overview"},{"label":{"et":"Vestlused","en":"Chats"},"path":"/chats"},{"label":{"et":"Tagasiside","en":"Feedback"},"path":"/feedback"}]},{"id":"services","hidden":false,"label":{"et":"Teenused","en":"Services"},"path":"/services","children":[{"label":{"et":"Ülevaade","en":"Overview"},"path":"/overview"},{"label":{"et":"Probleemsed teenused","en":"Faulty Services"},"path":"/faultyServices"},{"label":{"et":"API varamu","en":"API Registry"},"path":"/api-registry"}]},{"id":"knowledge-center","label":{"et":"Teadmuskeskus","en":"Knowledge Center"},"path":"/knowledge-center","children":[{"id":"rag-search","label":{"et":"Mudelid ja seadistused","en":"Models management"},"path":"/rag-search","children":[{"label":{"et":"Mudelite ühendused","en":"LLM connections"},"path":"/llm-connections"},{"label":{"et":"Viiba Seaded","en":"Prompt Configurations"},"path":"/prompt-configurations"},{"label":{"et":"Testi mudelit","en":"Test LLM"},"path":"/test-llm"}]},{"id":"ckb","label":{"et":"Teadmusbaas","en":"Knowledge Base"},"path":"/ckb","children":[{"label":{"et":"Agentuur","en":"Agency"},"path":"/agency"},{"label":{"et":"Aruanded","en":"Reports"},"path":"/reports"},{"label":{"et":"API Integratsioonid","en":"API Integrations"},"path":"/api"}]}]},{"id":"settings","label":{"et":"Haldus","en":"Administration"},"path":"/settings","children":[{"label":{"et":"Kasutajad","en":"Users"},"path":"/chat/users"},{"label":{"et":"Vestlusbot","en":"Chatbot"},"path":"/chat/chatbot","children":[{"label":{"et":"Seaded","en":"Settings"},"path":"/chatbot/settings"},{"label":{"et":"Tervitussõnum","en":"Welcome message"},"path":"/chatbot/welcome-message"},{"label":{"et":"Välimus ja käitumine","en":"Appearance and behavior"},"path":"/chatbot/appearance"},{"label":{"et":"Erakorralised teated","en":"Emergency notices"},"path":"/chatbot/emergency-notices"},{"label":{"et":"Tagasiside","en":"Feedback"},"path":"/chatbot/feedback"}]},{"label":{"et":"Vestluste analüüs","en":"Chat analysis"},"path":"/chat-analysis"},{"label":{"et":"Asutuse tööaeg","en":"Office opening hours"},"path":"/working-time"},{"label":{"et":"Sessiooni pikkus","en":"Session length"},"path":"/chat/session-length"},{"label":{"et":"SKMi konfiguratsioon","en":"SKM Configuration"},"path":"/skm-configuration"},{"label":{"et":"Vestluse Kustutamine","en":"Delete Conversations"},"path":"/delete-conversations"},{"label":{"et":"Anonümiseerija","en":"Anonymizer"},"path":"/anonymizer"},{"hidden": false,"label":{"et":"Multidomeenid","en":"Multi-Domains"},"path":"/multi-domains"}]},{"id":"monitoring","hidden":true,"label":{"et":"Seire","en":"Monitoring"},"path":"/monitoring","children":[{"label":{"et":"Aktiivaeg","en":"Working hours"},"path":"/uptime"}]}]'
+        - name: REACT_APP_CONVERSATIONS_BASE_URL
+          value: {{ .Values.gui.services.REACT_APP_CONVERSATIONS_BASE_URL | quote }}
+        - name: REACT_APP_TRAINING_BASE_URL
+          value: {{ .Values.gui.services.REACT_APP_TRAINING_BASE_URL | quote }}
+        - name: REACT_APP_ANALYTICS_BASE_URL
+          value: {{ .Values.gui.services.REACT_APP_ANALYTICS_BASE_URL | quote }}
+        - name: REACT_APP_SERVICES_BASE_URL
+          value: {{ .Values.gui.services.REACT_APP_SERVICES_BASE_URL | quote }}
+        - name: REACT_APP_SETTINGS_BASE_URL
+          value: {{ .Values.gui.services.REACT_APP_SETTINGS_BASE_URL | quote }}
+
+        {{- if .Values.vaultAgent.enabled }}
+        # Vault Agent proxy URL (localhost sidecar)
+        - name: VAULT_AGENT_URL
+          value: "http://localhost:8202"
+        {{- end }}
+
+        # Vite development server configuration
+        - name: VITE_HOST
+          value: {{ .Values.gui.vite.host | quote }}
+        - name: VITE_ALLOWED_HOSTS
+          value: {{ .Values.gui.vite.allowedHosts | quote }}
+        
+        volumeMounts:
+        - name: vite-config
+          mountPath: /app/vite.config.ts
+          subPath: vite.config.ts
+        
+        resources:
+          limits:
+            cpu: {{ .Values.gui.resources.limits.cpu }}
+            memory: {{ .Values.gui.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.gui.resources.requests.cpu }}
+            memory: {{ .Values.gui.resources.requests.memory }}
+
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.gui.port }}
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.gui.port }}
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 5
+        #   timeoutSeconds: 3
+      
+      volumes:
+      - name: vite-config
+        configMap:
+          name: {{ .Values.gui.release_name }}-vite-config
+      {{- if .Values.vaultAgent.enabled }}
+      # Vault Agent configuration (from Vault-Agent-GUI chart)
+      - name: vault-agent-config
+        configMap:
+          name: vault-agent-gui-config
+      # Shared AppRole credentials (created by vault-init Job)
+      - name: vault-agent-creds
+        persistentVolumeClaim:
+          claimName: vault-agent-creds
+      # GUI-specific token storage (pod-scoped, short-lived)
+      # Tokens are generated by Vault Agent and destroyed when pod terminates
+      - name: vault-agent-gui-token
+        emptyDir: {}
+      {{- end }}
+      
+      restartPolicy: Always
+
+{{- end }}

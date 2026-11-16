@@ -1,0 +1,68 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: redis
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+        component: redis
+    spec:
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.images.redis.registry }}/{{ .Values.images.redis.repository }}:{{ .Values.images.redis.tag }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - name: redis
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          {{- if .Values.auth.enabled }}
+          command:
+            - redis-server
+            - --requirepass
+            - $(REDIS_PASSWORD)
+          {{- end }}
+          # Sensitive env's from Kubernetes Secret
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.healthcheck.enabled }}
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: {{ .Values.healthcheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthcheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthcheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthcheck.failureThreshold }}
+          {{- end }}
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+      
+      restartPolicy: Always
+{{- end }}

@@ -1,0 +1,58 @@
+{{- if .Values.enabled }}
+# ConfigMap for CronManager Vault Agent Configuration
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-agent-cron-config
+  labels:
+    app: vault-agent-cron
+    component: vault-agent
+data:
+  cron-agent.hcl: |
+    # Vault Agent Configuration for CronManager Service
+    # This agent provides CronManager with access to encryption keys and write access to secrets
+
+    vault {
+      address = "http://vault:8200"
+      retry {
+        num_retries = 5
+      }
+    }
+
+    # Auto-authentication using AppRole
+    auto_auth {
+      method "approle" {
+        mount_path = "auth/approle"
+        config = {
+          role_id_file_path   = "{{ .Values.agent.credentialsPath }}/cron_role_id"
+          secret_id_file_path = "{{ .Values.agent.credentialsPath }}/cron_secret_id"
+          remove_secret_id_file_after_reading = false
+        }
+      }
+
+      # Write token to file for CronManager service to use
+      sink "file" {
+        config = {
+          path = "{{ .Values.agent.tokenPath }}/token"
+          mode = 0640
+        }
+      }
+    }
+
+    # Caching configuration
+    cache {
+      default_lease_duration = "{{ .Values.agent.tokenTTL }}"  # Medium TTL for CronManager
+    }
+
+    # API proxy listener for CronManager service
+    listener "tcp" {
+      address     = "0.0.0.0:{{ .Values.agent.port }}"
+      tls_disable = true
+    }
+
+    # API proxy configuration
+    api_proxy {
+      use_auto_auth_token = true
+    }
+{{- end }}

@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      initContainers:
+        - name: create-buckets
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /data/rag-search/resources/langfuse
+              mkdir -p /data/rag-search/resources/models
+              mkdir -p /data/rag-search/resources/datasets
+              mkdir -p /data/rag-search/resources/qdrant
+              mkdir -p /data/rag-search/resources/system
+              echo "Bucket directories created successfully"
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+      containers:
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command:
+           - minio
+           - server
+           - /data
+           - --console-address
+           - :9001
+          ports:
+            - containerPort: {{ .Values.ports.api }}
+              name: api
+              protocol: TCP
+            - containerPort: {{ .Values.ports.console }}
+              name: console
+              protocol: TCP
+          # Non-sensitive env's from values.yaml
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+          # Sensitive env's from Kubernetes Secret
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: pvc-minio-data
+      resources:
+        requests:
+          memory: "{{ .Values.resources.requests.memory }}"
+          cpu: "{{ .Values.resources.requests.cpu }}"
+        limits:
+          memory: "{{ .Values.resources.limits.memory }}"
+          cpu: "{{ .Values.resources.limits.cpu }}"

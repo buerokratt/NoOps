@@ -1,0 +1,71 @@
+{{- if .Values.gui.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.gui.release_name }}-vite-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.gui.release_name }}
+data:
+  vite.config.ts: |
+    import { defineConfig } from 'vite';
+    import react from '@vitejs/plugin-react';
+    import tsconfigPaths from 'vite-tsconfig-paths';
+    import svgr from 'vite-plugin-svgr';
+    import path from 'path';
+    import { removeHiddenMenuItems } from './vitePlugin';
+
+    // https://vitejs.dev/config/
+    export default defineConfig({
+      envPrefix: 'REACT_APP_',
+      plugins: [
+        react(),
+        tsconfigPaths(),
+        svgr(),
+        {
+          name: 'removeHiddenMenuItemsPlugin',
+          transform: (str, id) => {
+            if(!id.endsWith('/menu-structure.json'))
+              return str;
+            return removeHiddenMenuItems(str);
+          },
+        },
+      ],
+      base: '/rag-search',
+      build: {
+        outDir: './build',
+        target: 'es2015',
+        emptyOutDir: true,
+      },
+      server: {
+        host: '0.0.0.0',
+        allowedHosts: [{{- range $index, $host := splitList "," .Values.gui.vite.allowedHosts }}{{ if $index }}, {{ end }}'{{ $host | trim }}'{{- end }}],
+        headers: {
+          ...(process.env.REACT_APP_CSP && {
+            'Content-Security-Policy': process.env.REACT_APP_CSP,
+          }),
+        },
+        proxy: {
+          '/vault-agent-gui': {
+            target: 'http://localhost:8202',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/vault-agent-gui/, ''),
+          },
+          '/sse': {
+            target: 'http://notifications-node:4040',
+            changeOrigin: true,
+          },
+          '/channels': {
+            target: 'http://notifications-node:4040',
+            changeOrigin: true,
+          },
+        },
+      },
+      resolve: {
+        alias: {
+          '~@fontsource': path.resolve(__dirname, 'node_modules/@fontsource'),
+          '@': `${path.resolve(__dirname, './src')}`,
+        },
+      },
+    });
+{{- end }}

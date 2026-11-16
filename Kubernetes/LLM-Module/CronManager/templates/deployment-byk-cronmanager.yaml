@@ -1,0 +1,196 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.release_name }}"
+  template:
+    metadata:
+      annotations:
+        # Restart pods when constants.ini changes (subPath mounts are not live-updated)
+        checksum/constants: {{ include (print $.Template.BasePath "/configmap-cronmanager-config.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        app: "{{ .Values.release_name }}"
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+      initContainers:
+        - name: git-clone
+          image: alpine/git:latest
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+          - name: dsl
+            mountPath: /DSL
+          - name: scripts
+            mountPath: /app/scripts
+          - name: vector-indexer
+            mountPath: /app/src/vector_indexer
+          - name: tool-classifier
+            mountPath: /app/src/tool_classifier
+          - name: intent-data-enrichment
+            mountPath: /app/src/intent_data_enrichment
+          - name: api-tool-indexer
+            mountPath: /app/src/api_tool_indexer
+          - name: src-utils
+            mountPath: /app/src/utils
+          - name: constants-loader
+            mountPath: /app/constants-loader
+          command:
+            - sh
+            - -c
+            - |
+                git clone --single-branch --depth 1 --branch {{ .Values.dslBranch }} https://github.com/buerokratt/LLM-Module /tmp/rag &&
+
+                mkdir -p /app/src/vector_indexer &&
+                mkdir -p /app/scripts &&
+                mkdir -p /DSL &&
+                mkdir -p /app/src/utils &&
+                mkdir -p /app/src/tool_classifier &&
+                mkdir -p /app/src/intent_data_enrichment &&
+                mkdir -p /app/src/api_tool_indexer
+                
+                cp -r /tmp/rag/DSL/CronManager/DSL/* /DSL/ &&
+                cp -r /tmp/rag/DSL/CronManager/script/* /app/scripts/ &&
+                cp -r /tmp/rag/src/vector_indexer/* /app/src/vector_indexer/ &&
+                cp -r /tmp/rag/src/tool_classifier/* /app/src/tool_classifier/ &&
+                cp -r /tmp/rag/src/intent_data_enrichment/* /app/src/intent_data_enrichment/ &&
+                cp -r /tmp/rag/src/api_tool_indexer/* /app/src/api_tool_indexer/ &&
+                cp /tmp/rag/src/utils/decrypt_vault_secrets.py /app/src/utils/ &&
+                # Optional until the cloned branch ships it (older scripts don't need it)
+                { [ ! -f /tmp/rag/src/constants_loader.py ] || cp /tmp/rag/src/constants_loader.py /app/constants-loader/constants_loader.py; } &&
+                cp /tmp/rag/src/__init__.py /app/src/__init__.py &&
+                cp /tmp/rag/grafana-configs/loki_logger.py /app/src/vector_indexer/loki_logger.py &&
+                
+                # Set execute permissions on all shell scripts
+                chmod +x /app/scripts/*.sh &&
+                echo "Scripts copied and permissions set successfully"
+       
+      containers:
+        {{- if .Values.vaultAgent.enabled }}
+        # CronManager connects to localhost:8203, never directly to Vault
+        - name: vault-agent-cron
+          image: hashicorp/vault:1.20.3
+          command: ["vault", "agent", "-config=/agent/config/cron-agent.hcl", "-log-level=info"]
+          ports:
+          - name: agent-api
+            containerPort: 8203
+            protocol: TCP
+          volumeMounts:
+          - name: vault-agent-config
+            mountPath: /agent/config
+            readOnly: true
+          - name: vault-agent-creds
+            mountPath: /agent/credentials
+            readOnly: true
+          - name: vault-agent-cron-token
+            mountPath: /agent/cron-token
+          securityContext:
+            capabilities:
+              add: ["IPC_LOCK"]
+        {{- end }}
+        - name: "{{ .Values.release_name }}"
+          image: "{{ .Values.cronmanager.image.registry }}/{{ .Values.cronmanager.image.repository }}:{{ .Values.cronmanager.image.tag }}"
+          imagePullPolicy: {{ .Values.cronmanager.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.cronmanager.environment.containerPort }}
+              protocol: TCP
+          env:
+            - name: PYTHONPATH
+              value: {{ .Values.cronmanager.environment.pythonPath | quote }}
+            {{- if .Values.vaultAgent.enabled }}
+            # Vault Agent proxy URL (localhost sidecar)
+            - name: vaultAgentUrl
+              value: "http://localhost:8203"
+            {{- end }}
+            - name: RAG_MODULE_RUUTER_PRIVATE
+              value: {{ .Values.constants.RAG_MODULE_RUUTER_PRIVATE | quote }}
+            - name: RAG_MODULE_RESQL
+              value: {{ .Values.constants.RAG_MODULE_RESQL | quote }}
+            - name: RAG_MODULE_TIM
+              value: {{ .Values.constants.RAG_MODULE_TIM | quote }}
+            - name: UV_VERBOSE
+              value: "1"
+        
+          volumeMounts:
+            - name: dsl
+              mountPath: /DSL
+            - name: cronmanager-data
+              mountPath: /app/data
+            - name: scripts
+              mountPath: /app/scripts
+            - name: vector-indexer
+              mountPath: /app/src/vector_indexer
+            - name: tool-classifier
+              mountPath: /app/src/tool_classifier
+            - name: intent-data-enrichment
+              mountPath: /app/src/intent_data_enrichment
+            - name: api-tool-indexer
+              mountPath: /app/src/api_tool_indexer
+            - name: src-utils
+              mountPath: /app/src/utils
+            - name: datasets
+              mountPath: /app/datasets
+            # Endpoint URLs (constants.ini) and its stdlib-only Python loader
+            - name: config-volume
+              mountPath: /app/config/constants.ini
+              subPath: constants.ini
+              readOnly: true
+            - name: constants-loader
+              mountPath: /app/src/constants_loader.py
+              subPath: constants_loader.py
+              readOnly: true
+      volumes:
+        - name: dsl
+          emptyDir: {}
+        - name: scripts
+          emptyDir: {}
+        - name: vector-indexer
+          emptyDir: {}
+        - name: tool-classifier
+          emptyDir: {}
+        - name: intent-data-enrichment
+          emptyDir: {}
+        - name: api-tool-indexer
+          emptyDir: {}
+        - name: datasets
+          emptyDir: {}
+        - name: src-utils
+          emptyDir: {}
+        - name: constants-loader
+          emptyDir: {}
+        - name: cronmanager-data
+          persistentVolumeClaim:
+            claimName: "{{ .Values.release_name }}-data"
+        - name: config-volume
+          configMap:
+            name: "{{ .Values.release_name }}-config"
+        {{- if .Values.vaultAgent.enabled }}
+        # Vault Agent configuration (from Vault-Agent-Cron chart configmap)
+        - name: vault-agent-config
+          configMap:
+            name: vault-agent-cron-config
+        # Shared AppRole credentials (created by vault-init Job)
+        - name: vault-agent-creds
+          persistentVolumeClaim:
+            claimName: vault-agent-creds
+        # CronManager-specific token storage (pod-scoped, short-lived)
+        # Tokens are generated by Vault Agent and destroyed when pod terminates
+        - name: vault-agent-cron-token
+          emptyDir: {}
+        {{- end }}
+
+{{- end }}

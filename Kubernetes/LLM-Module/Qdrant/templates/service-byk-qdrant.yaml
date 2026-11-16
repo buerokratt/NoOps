@@ -1,0 +1,31 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.release_name }}"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: qdrant
+spec:
+  type: {{ .Values.service.type }}
+  {{- if eq .Values.service.type "ClusterIP" }}
+  {{- if .Values.service.headless }}
+  clusterIP: None
+  {{- end }}
+  {{- end }}
+  selector:
+    app: "{{ .Values.release_name }}"
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.service.httpPort }}
+      targetPort: {{ .Values.service.httpPort }}
+    - name: grpc
+      protocol: TCP
+      port: {{ .Values.service.grpcPort }}
+      targetPort: {{ .Values.service.grpcPort }}
+    - name: metrics
+      protocol: TCP
+      port: {{ .Values.service.metricsPort }}
+      targetPort: {{ .Values.service.metricsPort }}
+{{- end }}

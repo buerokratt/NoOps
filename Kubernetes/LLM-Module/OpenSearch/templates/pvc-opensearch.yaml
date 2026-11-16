@@ -1,0 +1,22 @@
+{{- if .Values.opensearch.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.release_name }}-data-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.release_name }}
+spec:
+  accessModes:
+    - {{ .Values.opensearch.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.opensearch.persistence.size }}
+  {{- if .Values.opensearch.persistence.storageClass }}
+  {{- if (eq "-" .Values.opensearch.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.opensearch.persistence.storageClass | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}

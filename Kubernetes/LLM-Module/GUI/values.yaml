@@ -1,0 +1,64 @@
+gui:
+    enabled: true
+    release_name: gui
+    image:
+      repository: "ghcr.io/buerokratt/llm-module" # Update with actual GUI image repository
+      tag: "{{ llm.gui.image.version }}"
+      pullPolicy: Always
+    
+    # React application configuration
+    nodeEnv: production
+    port: 3001
+    debugEnabled: true
+    enableHiddenFeatures: false
+    
+    #service URLs 
+    services:
+      ruuterPublic: "https://component-byk-ruuter:8080"
+      ruuterPrivate: "{{ url.name.ruuter }}/v2/private/backoffice"
+      authenticationLayer: "{{ url.name.ruuter }}"
+      notificationNode: "{{ url.name.ruuter }}"
+      datasetGenerator: "http://dataset-gen-service:8000"
+      REACT_APP_AUTH_BASE_URL: "{{ url.name.ruuter }}/v2/private/backoffice"
+      REACT_APP_CONVERSATIONS_BASE_URL: "{{ url.name.admin }}/chat"
+      REACT_APP_TRAINING_BASE_URL: "{{ url.name.admin }}/training"
+      REACT_APP_ANALYTICS_BASE_URL: "{{ url.name.admin }}/analytics"
+      REACT_APP_SERVICES_BASE_URL: "{{ url.name.admin }}/services"
+      REACT_APP_SETTINGS_BASE_URL: "{{ url.name.admin }}/chat"
+
+    # Content Security Policy - Updated for browser access
+    # csp: "default-src 'self'; connect-src 'self' http://<your-domain>/ruuter-public http://<your-domain>/ruuter-private http://<your-domain> http://<your-domain> http://notifications-node:4040 http://notifications-node:4040 http://dataset-gen-service:8000 http://dataset-gen-service:8000 http://localhost:* http://localhost:* http://global-classifier.local http://global-classifier.local ws://global-classifier.local ws://global-classifier.local; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:;"    
+    csp: "Content-Security-Policy: default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;"
+
+    # Service configuration
+    serviceId: "rag-search"
+    
+    # Vite development server (for development mode)
+    vite:
+      host: "0.0.0.0"
+      allowedHosts: "localhost,127.0.0.1, admin.{{ domain.name }}"  # Update with actual domain for development access
+
+    # Ingress host
+    ingress:
+      host: "admin.{{ domain.name }}"  # Update with actual domain
+      certIssuerName: "{{ cert.Issuer.Name }}" # Change this if your certIssuerName has set up different
+      whitelistSourceRange: ""
+
+    resources:
+      limits:
+        cpu: 200m
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    
+    replicas: 1
+    
+    service:
+      type: ClusterIP
+      port: 3001
+      targetPort: 3001
+
+# Vault Agent sidecar configuration
+vaultAgent:
+  enabled: true

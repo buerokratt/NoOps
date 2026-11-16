@@ -1,0 +1,37 @@
+{{- if and .Values.enabled .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ .Values.release_name }}-data"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: clickhouse
+    type: data
+spec:
+  accessModes:
+    - {{ .Values.persistence.data.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.data.size }}
+  {{- if .Values.persistence.data.storageClass }}
+  storageClassName: {{ .Values.persistence.data.storageClass }}
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ .Values.release_name }}-logs"
+  labels:
+    app: "{{ .Values.release_name }}"
+    component: clickhouse
+    type: logs
+spec:
+  accessModes:
+    - {{ .Values.persistence.logs.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.logs.size }}
+  {{- if .Values.persistence.logs.storageClass }}
+  storageClassName: {{ .Values.persistence.logs.storageClass }}
+  {{- end }}
+{{- end }}
