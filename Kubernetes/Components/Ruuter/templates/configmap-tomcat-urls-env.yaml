@@ -52,7 +52,7 @@ data:
     XTR_AR_PASSWORD:{{ xtr.password }}
 
     CHATBOT_ANONYMIZER=http://presidio-presidio-anonymizer:8089
-    ANONYMIZER_ENABLED=false
+    ANONYMIZER_ENABLED=true
     ANONYMIZER_HASH_TYPE=sha256
 
     SKM_ACTIVE=true
