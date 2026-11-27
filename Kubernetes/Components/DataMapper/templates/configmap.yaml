@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Values.release_name }}-config"
+  name: "component-byk-s3-config"
 data:
   development.env: |
     API_CORS_ORIGIN: "*"
