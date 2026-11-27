@@ -149,8 +149,6 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 3
         volumeMounts:
-        - name: trainbot-rasa-models
-          mountPath: /data
         - name: cron-commonservice
           mountPath: /app/services
         - name: cronconst
@@ -161,22 +159,14 @@ spec:
           subPath: constants.ini
         - name: shared-cron-volume
           mountPath: /cron-data/
-        - name: bot-rasa-models
-          mountPath: /bot/models
       volumes:
       - name: cron-dsl
         emptyDir: {}
       - name: shared-cron-volume
         persistentVolumeClaim:
           claimName: cron-pvc 
-      - name: trainbot-rasa-models
-        persistentVolumeClaim:
-          claimName: pvc-trainbot-models
       - name: cronconst
         configMap:
           name: cronconst
       - name: cron-commonservice
         emptyDir: {}
-      - name: bot-rasa-models
-        persistentVolumeClaim:
-          claimName: pvc-bot-models
